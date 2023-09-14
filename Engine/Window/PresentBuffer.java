@@ -8,8 +8,11 @@
 
 package Engine.Window;
 
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
@@ -76,7 +79,10 @@ public class PresentBuffer extends JPanel implements Runnable {
     *   EMPTY FUNCTION
     */ //----------------------------------------------------------------------
     public void Render() {
-
+        if(mGFX != null) {
+            mGFX.setColor(Color.black);
+            mGFX.fillRect(0, 0, mWidth, mHeight);
+        }
     }
 
     // ------------------------------------------------------------------------
@@ -85,6 +91,12 @@ public class PresentBuffer extends JPanel implements Runnable {
     *   EMPTY FUNCTION
     */ //----------------------------------------------------------------------
     public void Present() {
+        Graphics d2g = (Graphics) getGraphics();
+        d2g.drawImage(mFrameBuffer, 0, 0, mWidth, mHeight, null);
+        d2g.dispose();
+    }
+
+    public void Input() {
 
     }
 
@@ -96,11 +108,34 @@ public class PresentBuffer extends JPanel implements Runnable {
     public void run() {
         Init();
 
+        final double FPS = 60.f;
+        final double TBU = 1000000000 / FPS;
+
+        double lastUpdateTime = System.nanoTime();
+        double lastRenderTime;
+
+        int lastSecondTime = (int) (lastUpdateTime / 1000000000); 
+
         //While the window is present
         while(mRunning) {
+            long now = System.nanoTime();
+            Input();
             Update();
             Render();
             Present();
+            lastRenderTime = System.nanoTime();
+
+            while(now - lastUpdateTime < TBU) {
+                Thread.yield();
+
+                try {
+                    Thread.sleep(10);
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
+
+                now = System.nanoTime();
+            }
         }
     }
 }
