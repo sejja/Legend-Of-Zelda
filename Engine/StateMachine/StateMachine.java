@@ -12,10 +12,13 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 
 import Engine.Input.InputManager;
+import Engine.Math.Vector2D;
 import Engine.StateMachine.States.PlayState;
+import Engine.Window.PresentBuffer;
 
 public class StateMachine {
     ArrayList<State> mStates;
+    public static Vector2D mCoordinates; 
 
     // ------------------------------------------------------------------------
     /*! Constructor
@@ -23,6 +26,8 @@ public class StateMachine {
     *   Adds some basic states
     */ //----------------------------------------------------------------------
     public StateMachine() {
+        mCoordinates = new Vector2D(PresentBuffer.mWidth, PresentBuffer.mHeight);
+
         mStates = new ArrayList<State>();
         mStates.add(new PlayState(this));
     }
@@ -36,6 +41,24 @@ public class StateMachine {
         //Iterate through every state
         for(State x : mStates)
             x.Update();
+    }
+
+    // ------------------------------------------------------------------------
+    /*! Pop
+    *
+    *   Removes a ceratain state
+    */ //----------------------------------------------------------------------
+    public void Pop(State state) {
+        mStates.remove(state);
+    }
+
+    // ------------------------------------------------------------------------
+    /*! Add
+    *
+    *   Adds one state
+    */ //----------------------------------------------------------------------
+    public void Add(State state) {
+        mStates.add(state);
     }
 
     // ------------------------------------------------------------------------

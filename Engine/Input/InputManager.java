@@ -20,7 +20,8 @@ import java.util.List;
 
 public class InputManager implements KeyListener, MouseListener, MouseMotionListener {
     public static List<Key> keys = new ArrayList<Key>();
-    private static Vector2D mMousePosition;exce
+    private static int mouseX;
+    private static int mouseY;
     private static int mouseB = -1;
 
     // ------------------------------------------------------------------------
@@ -30,17 +31,32 @@ public class InputManager implements KeyListener, MouseListener, MouseMotionList
     */ //----------------------------------------------------------------------
     public InputManager(PresentBuffer buf) {
         buf.addKeyListener(this);
-        bug.addMouseListener(this);
+        buf.addMouseListener(this);
     }
 
+    // ------------------------------------------------------------------------
+    /*! Get Mouse X
+    *
+    *   Gets the mouse x screen coordinate
+    */ //----------------------------------------------------------------------
     public int GetMouseX() {
         return mouseX;
     }
 
+    // ------------------------------------------------------------------------
+    /*! Get Mouse Y
+    *
+    *   Returns the mouse y screen coordinate
+    */ //----------------------------------------------------------------------
     public int GetMouseY() {
         return mouseY;
     }
 
+    // ------------------------------------------------------------------------
+    /*! Get Button
+    *
+    *   Returns if the mouse is clicked
+    */ //----------------------------------------------------------------------
     public int GetButton() {
         return mouseB;
     }
@@ -117,6 +133,11 @@ public class InputManager implements KeyListener, MouseListener, MouseMotionList
             keys.get(i).tick();
     }
 
+    // ------------------------------------------------------------------------
+    /*! toogle
+    *
+    *   sets the correct key to pressed or not pressed
+    */ //----------------------------------------------------------------------
     public void toogle(KeyEvent e, boolean pressed) {
         if(e.getKeyCode() == KeyEvent.VK_UP) up.toogle(pressed);
         if(e.getKeyCode() == KeyEvent.VK_LEFT) left.toogle(pressed);
@@ -153,39 +174,66 @@ public class InputManager implements KeyListener, MouseListener, MouseMotionList
         toogle(e, false);
     }
 
+    // ------------------------------------------------------------------------
+    /*! Mouse Clicked
+    *
+    *   EMPTY FUNCTION
+    */ //----------------------------------------------------------------------
     @Override
-    public void mouseClicked(MouseEvent e) {
+    public void mouseClicked(MouseEvent e) {}
 
-    }
-
+    // ------------------------------------------------------------------------
+    /*! Mouse Pressed
+    *
+    *   Refreshes the mouse button state
+    */ //----------------------------------------------------------------------
     @Override
     public void mousePressed(MouseEvent e) {
         mouseB = e.getButton();
     }
 
+    // ------------------------------------------------------------------------
+    /*! Mouse Released
+    *
+    *   Mouse not pressed ATM
+    */ //----------------------------------------------------------------------
     @Override
     public void mouseReleased(MouseEvent e) {
         mouseB = -1;
     }
 
+    // ------------------------------------------------------------------------
+    /*! Mouse Clicked
+    *
+    *   EMPTY FUNCTION
+    */ //----------------------------------------------------------------------
     @Override
-    public void mouseEntered(MouseEvent e) {
+    public void mouseEntered(MouseEvent e) {}
 
-    }
-
+    // ------------------------------------------------------------------------
+    /*! Mouse Clicked
+    *
+    *   EMPTY FUNCTION
+    */ //----------------------------------------------------------------------
     @Override
-    public void mouseExited(MouseEvent e) {
+    public void mouseExited(MouseEvent e) {}
 
-    }
-
+    // ------------------------------------------------------------------------
+    /*! Mouse Clicked
+    *
+    *   Sets the right location for the mouse X and Y Positions
+    */ //----------------------------------------------------------------------
     @Override
     public void mouseDragged(MouseEvent e) {
         mouseX = e.getX();
         mouseY = e.getY();
     }
 
+    // ------------------------------------------------------------------------
+    /*! Mouse Moved
+    *
+    *   EMPTY FUNCTION
+    */ //----------------------------------------------------------------------
     @Override
-    public void mouseMoved(MouseEvent e) {
-
-    }
+    public void mouseMoved(MouseEvent e) {}
 }
