@@ -33,6 +33,7 @@ public class StateMachine {
     *   Calls the Update method on every sub-state
     */ //----------------------------------------------------------------------
     public void Update() {
+        //Iterate through every state
         for(State x : mStates)
             x.Update();
     }
@@ -43,6 +44,7 @@ public class StateMachine {
     *   Calls the Input method on every sub-state
     */ //----------------------------------------------------------------------
     public void Input(InputManager inputmanager) {
+        //Iterate through every state
         for(State x: mStates)
             x.Input(inputmanager);
     }
@@ -53,6 +55,7 @@ public class StateMachine {
     *   Calls the Render method on every sub-state
     */ //----------------------------------------------------------------------
     public void Render(Graphics grphics) {
+        //Iterate through every state
         for(State x : mStates)
             x.Render(grphics);
     }

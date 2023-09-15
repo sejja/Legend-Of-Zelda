@@ -66,7 +66,7 @@ public class PresentBuffer extends JPanel implements Runnable {
         mRunning = true;
         mFrameBuffer = new BufferedImage(mWidth, mHeight, BufferedImage.TYPE_INT_ARGB);
         mGFX = (Graphics2D)mFrameBuffer.getGraphics();
-        mInputManager = new InputManager();
+        mInputManager = new InputManager(this);
     }
 
     // ------------------------------------------------------------------------
@@ -84,6 +84,7 @@ public class PresentBuffer extends JPanel implements Runnable {
     *   Renders the game
     */ //----------------------------------------------------------------------
     public void Render() {
+        //If there is a valid graphics
         if(mGFX != null) {
             mGFX.setColor(Color.black);
             mGFX.fillRect(0, 0, mWidth, mHeight);
@@ -149,3 +150,4 @@ public class PresentBuffer extends JPanel implements Runnable {
         }
     }
 }
+    

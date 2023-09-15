@@ -42,6 +42,8 @@ public class PlayState extends State {
     */ //----------------------------------------------------------------------
     @Override
     public void Input(InputManager inputmanager) {
+        if(inputmanager.down.down)
+            System.out.println("Hello");
         
     }
 
