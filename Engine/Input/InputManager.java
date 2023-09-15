@@ -10,13 +10,18 @@ package Engine.Input;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 
 import Engine.Window.PresentBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InputManager implements KeyListener {
+public class InputManager implements KeyListener, MouseListener, MouseMotionListener {
     public static List<Key> keys = new ArrayList<Key>();
+    private static Vector2D mMousePosition;exce
+    private static int mouseB = -1;
 
     // ------------------------------------------------------------------------
     /*! Constructor
@@ -25,6 +30,19 @@ public class InputManager implements KeyListener {
     */ //----------------------------------------------------------------------
     public InputManager(PresentBuffer buf) {
         buf.addKeyListener(this);
+        bug.addMouseListener(this);
+    }
+
+    public int GetMouseX() {
+        return mouseX;
+    }
+
+    public int GetMouseY() {
+        return mouseY;
+    }
+
+    public int GetButton() {
+        return mouseB;
     }
 
     public class Key {
@@ -133,5 +151,41 @@ public class InputManager implements KeyListener {
     @Override
     public void keyReleased(KeyEvent e) {
         toogle(e, false);
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        mouseB = e.getButton();
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        mouseB = -1;
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        mouseX = e.getX();
+        mouseY = e.getY();
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+
     }
 }
