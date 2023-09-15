@@ -111,10 +111,7 @@ public class PresentBuffer extends JPanel implements Runnable {
         final double FPS = 60.f;
         final double TBU = 1000000000 / FPS;
 
-        double lastUpdateTime = System.nanoTime();
         double lastRenderTime;
-
-        int lastSecondTime = (int) (lastUpdateTime / 1000000000); 
 
         //While the window is present
         while(mRunning) {
@@ -125,9 +122,11 @@ public class PresentBuffer extends JPanel implements Runnable {
             Present();
             lastRenderTime = System.nanoTime();
 
-            while(now - lastUpdateTime < TBU) {
+            //While we have some time to spare, sleep the CPU
+            while(now - lastRenderTime < TBU) {
                 Thread.yield();
 
+                //Thread
                 try {
                     Thread.sleep(10);
                 } catch(Exception e) {
