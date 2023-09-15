@@ -121,6 +121,7 @@ public class PresentBuffer extends JPanel implements Runnable {
 
         final double FPS = 60.f;
         final double TBU = 1000000000 / FPS;
+
         double lastRenderTime;
 
         //While the window is present
