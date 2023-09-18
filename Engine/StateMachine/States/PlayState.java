@@ -22,6 +22,8 @@ import Engine.StateMachine.StateMachine;
 public class PlayState extends State {
 
     private Font mFont;
+    private Sprite mImage;
+    private Vector2D mPos;
 
     // ------------------------------------------------------------------------
     /*! Constructor
@@ -31,6 +33,8 @@ public class PlayState extends State {
     public PlayState(StateMachine superm) {
         super(superm);
         mFont = new Font("Content/Fonts/ZeldaFont.png", 16, 16);
+        mImage = new Sprite("Content/Tiles/Overworld.png");
+        mPos = new Vector2D(300, 600);
     }
 
     // ------------------------------------------------------------------------
@@ -49,7 +53,18 @@ public class PlayState extends State {
     *   EMPTY FUNCTION
     */ //----------------------------------------------------------------------
     @Override
-    public void Input(InputManager inputmanager) {        
+    public void Input(InputManager inputmanager) {
+        if(inputmanager.down.down)
+            mPos.y -= 1;
+        
+        if(inputmanager.up.down)
+            mPos.y += 1;
+
+        if(inputmanager.left.down)
+            mPos.x -= 1;
+
+        if(inputmanager.right.down)
+            mPos.x += 1;
     }
 
     // ------------------------------------------------------------------------
@@ -60,6 +75,6 @@ public class PlayState extends State {
     @Override
     public void Render(Graphics2D g) {
         Sprite.DrawArray((Graphics2D) g, mFont, "THE LEGEND OF ANDONI", new Vector2D(100, 100), 32, 32, 56, 0);
-        Sprite.DrawArray((Graphics2D) g, mFont, "Un dialogo de Zelda", new Vector2D(300, 600), 32, 32, 16, 0);
+        Sprite.DrawArray((Graphics2D) g, mFont, "Un dialogo de Zelda", mPos, 32, 32, 16, 0); 
     }
 }
