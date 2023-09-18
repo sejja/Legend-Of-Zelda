@@ -139,10 +139,10 @@ public class InputManager implements KeyListener, MouseListener, MouseMotionList
     *   sets the correct key to pressed or not pressed
     */ //----------------------------------------------------------------------
     public void toogle(KeyEvent e, boolean pressed) {
-        if(e.getKeyCode() == KeyEvent.VK_UP) up.toogle(pressed);
+        if(e.getKeyCode() == KeyEvent.VK_DOWN) up.toogle(pressed);
         if(e.getKeyCode() == KeyEvent.VK_LEFT) left.toogle(pressed);
         if(e.getKeyCode() == KeyEvent.VK_RIGHT) right.toogle(pressed);
-        if(e.getKeyCode() == KeyEvent.VK_DOWN) down.toogle(pressed);
+        if(e.getKeyCode() == KeyEvent.VK_UP) down.toogle(pressed);
         if(e.getKeyCode() == KeyEvent.VK_ESCAPE) escape.toogle(pressed);
     }
 
