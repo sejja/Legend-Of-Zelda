@@ -33,8 +33,9 @@ public class Sprite {
     public Sprite(String file) {
         u = SIZE;
         v = SIZE;
-        
         mSpriteSheet = LoadSprite(file);
+        mWidth = mSpriteSheet.getWidth() / u;
+        mHeight = mSpriteSheet.getHeight() / v;
         LoadSpriteArray();
     }
 

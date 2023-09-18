@@ -14,16 +14,19 @@ import java.awt.Graphics2D;
 
 import Engine.Graphics.Font;
 import Engine.Graphics.Sprite;
+import Engine.Graphics.Tile.TileManager;
 import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
 import Engine.StateMachine.State;
 import Engine.StateMachine.StateMachine;
+import Gameplay.Player;
 
 public class PlayState extends State {
 
     private Font mFont;
-    private Sprite mImage;
+    private Player mPlayer;
     private Vector2D mPos;
+    private TileManager mTilemap;
 
     // ------------------------------------------------------------------------
     /*! Constructor
@@ -32,8 +35,9 @@ public class PlayState extends State {
     */ //----------------------------------------------------------------------
     public PlayState(StateMachine superm) {
         super(superm);
+        //mTilemap = new TileManager("TiledProject/Test.xml");
         mFont = new Font("Content/Fonts/ZeldaFont.png", 16, 16);
-        mImage = new Sprite("Content/Tiles/Overworld.png");
+        mPlayer = new Player(new Sprite("Content/Animations/Link.png"), new Vector2D(300, 300), 100);
         mPos = new Vector2D(300, 600);
     }
 
@@ -44,7 +48,7 @@ public class PlayState extends State {
     */ //----------------------------------------------------------------------
     @Override
     public void Update() {
-        
+        mPlayer.Update();
     }
 
     // ------------------------------------------------------------------------
@@ -54,17 +58,7 @@ public class PlayState extends State {
     */ //----------------------------------------------------------------------
     @Override
     public void Input(InputManager inputmanager) {
-        if(inputmanager.down.down)
-            mPos.y -= 1;
-        
-        if(inputmanager.up.down)
-            mPos.y += 1;
-
-        if(inputmanager.left.down)
-            mPos.x -= 1;
-
-        if(inputmanager.right.down)
-            mPos.x += 1;
+        mPlayer.Input(inputmanager);
     }
 
     // ------------------------------------------------------------------------
@@ -75,6 +69,7 @@ public class PlayState extends State {
     @Override
     public void Render(Graphics2D g) {
         Sprite.DrawArray((Graphics2D) g, mFont, "THE LEGEND OF ANDONI", new Vector2D(100, 100), 32, 32, 56, 0);
-        Sprite.DrawArray((Graphics2D) g, mFont, "Un dialogo de Zelda", mPos, 32, 32, 16, 0); 
+        //Sprite.DrawArray((Graphics2D) g, mFont, "Un dialogo de Zelda", mPos, 32, 32, 16, 0); 
+        mPlayer.Render(g);
     }
 }

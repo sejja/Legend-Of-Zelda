@@ -28,6 +28,7 @@ public class Player extends Entity {
     public void Update() {
         super.Update();
         Move();
+        mAnimation.SetDelay(50);
     }
 
     // ------------------------------------------------------------------------
