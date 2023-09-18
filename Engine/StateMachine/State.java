@@ -9,6 +9,7 @@
 package Engine.StateMachine;
 
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 import Engine.Input.InputManager;
 
@@ -26,5 +27,5 @@ public abstract class State {
 
     public abstract void Update();
     public abstract void Input(InputManager inputmanager);
-    public abstract void Render(Graphics g);
+    public abstract void Render(Graphics2D g);
 }

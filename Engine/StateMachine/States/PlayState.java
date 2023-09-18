@@ -10,12 +10,19 @@ package Engine.StateMachine.States;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 
+import Engine.Graphics.Font;
+import Engine.Graphics.Sprite;
 import Engine.Input.InputManager;
+import Engine.Math.Vector2D;
 import Engine.StateMachine.State;
 import Engine.StateMachine.StateMachine;
 
 public class PlayState extends State {
+
+    private Font mFont;
+
     // ------------------------------------------------------------------------
     /*! Constructor
     *
@@ -23,6 +30,7 @@ public class PlayState extends State {
     */ //----------------------------------------------------------------------
     public PlayState(StateMachine superm) {
         super(superm);
+        mFont = new Font("Content/Fonts/ZeldaFont.png", 16, 16);
     }
 
     // ------------------------------------------------------------------------
@@ -41,10 +49,7 @@ public class PlayState extends State {
     *   EMPTY FUNCTION
     */ //----------------------------------------------------------------------
     @Override
-    public void Input(InputManager inputmanager) {
-        if(inputmanager.down.down)
-            System.out.println("Hello");
-        
+    public void Input(InputManager inputmanager) {        
     }
 
     // ------------------------------------------------------------------------
@@ -53,8 +58,8 @@ public class PlayState extends State {
     *   Renders onto the screen
     */ //----------------------------------------------------------------------
     @Override
-    public void Render(Graphics g) {
-        g.setColor(Color.red);
-        g.fillRect(10, 10, 100, 100);
+    public void Render(Graphics2D g) {
+        Sprite.DrawArray((Graphics2D) g, mFont, "THE LEGEND OF ANDONI", new Vector2D(100, 100), 32, 32, 56, 0);
+        Sprite.DrawArray((Graphics2D) g, mFont, "Un dialogo de Zelda", new Vector2D(300, 600), 32, 32, 16, 0);
     }
 }

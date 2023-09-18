@@ -1,40 +1,36 @@
 //
-//	Sprite.java
+//	Fonts.java
 //	Legend Of Zelda
 //
-//	Created by Diego Revilla on 15/09/2023
+//	Created by Diego Revilla on 18/09/2023
 //	Copyright Deusto © 2023. All Rights reserved
-// 
+//
 
 package Engine.Graphics;
 
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
-import Engine.Math.Vector2D;
-
-public class Sprite {
-    private BufferedImage mSpriteSheet = null;
+public class Font {
+    private BufferedImage mFontSheet = null;
     private BufferedImage[][] mSpriteArray;
     private final int SIZE = 32;
     public int u;
     public int v;
-    private int mWidth;
-    private int mHeight;
+    private int mXBearing;
+    private int mYBearing;
 
     // ------------------------------------------------------------------------
     /*! Constructor
     *
     *   Constructs an Sprite from the filename
     */ //----------------------------------------------------------------------
-    public Sprite(String file) {
+    public Font(String file) {
         u = SIZE;
         v = SIZE;
         
-        mSpriteSheet = LoadSprite(file);
+        mFontSheet = LoadFont(file);
         LoadSpriteArray();
     }
 
@@ -43,13 +39,13 @@ public class Sprite {
     *
     *   Consntructs an sprite from the filename, the width, and the height
     */ //----------------------------------------------------------------------
-    public Sprite(String file, int w, int h) {
+    public Font(String file, int w, int h) {
         u = w;
         v = h;
 
-        mSpriteSheet = LoadSprite(file);
-        mWidth = mSpriteSheet.getWidth() / u;
-        mHeight = mSpriteSheet.getHeight() / v; 
+        mFontSheet = LoadFont(file);
+        mXBearing = mFontSheet.getWidth() / u;
+        mYBearing = mFontSheet.getHeight() / v; 
         LoadSpriteArray();
     }
 
@@ -58,7 +54,7 @@ public class Sprite {
     *
     *   Sets the size of a Sprite
     */ //----------------------------------------------------------------------
-    public void SetSize(int width, int height) {
+    public void SetBearing(int width, int height) {
         SetWidth(width);
         SetHeight(height);
     }
@@ -104,7 +100,7 @@ public class Sprite {
     *
     *   Loads an sprite from the fisk and uploads it as a bufferedimage
     */ //----------------------------------------------------------------------
-    private BufferedImage LoadSprite(String file) {
+    private BufferedImage LoadFont(String file) {
         BufferedImage sprite = null;
 
         //Add a try/catch clause, as it might fail to get the resource in question
@@ -123,11 +119,14 @@ public class Sprite {
     *   Given a Sprite Sheet, loads every individual sprites in an array
     */ //----------------------------------------------------------------------
     private void LoadSpriteArray() {
-        mSpriteArray = new BufferedImage[mWidth][mHeight];
+        mSpriteArray = new BufferedImage[mXBearing][mYBearing];
 
-        for(int x = 0; x < mWidth; x++) {
-            for(int y = 0; y < mHeight; y++) {
-                mSpriteArray[x][y]  = GetSprite(x, y);
+        //For all the horizontal alignment
+        for(int x = 0; x < mXBearing; x++) {
+
+            //For all the vertical alignment
+            for(int y = 0; y < mYBearing; y++) {
+                mSpriteArray[x][y]  = GetLetter(x, y);
             }
         }
     }
@@ -137,8 +136,8 @@ public class Sprite {
     *
     *   Returns the Sprite Sheet, as an Image
     */ //----------------------------------------------------------------------
-    public BufferedImage GetSpriteSheet() {
-        return mSpriteSheet;
+    public BufferedImage GetFontSheet() {
+        return mFontSheet;
     }
 
     // ------------------------------------------------------------------------
@@ -146,8 +145,22 @@ public class Sprite {
     *
     *   Given an UV coordinate, returns the sprite located at a point in the spritesheet
     */ //----------------------------------------------------------------------
-    public BufferedImage GetSprite(int x, int y) {
-        return mSpriteSheet.getSubimage(x * u, y * v, u, v);
+    public BufferedImage GetLetter(int x, int y) {
+        return mFontSheet.getSubimage(x * u, y * v, u, v);
+    }
+
+    // ------------------------------------------------------------------------
+    /*! Get Font
+    *
+    *   Returns the image of the letter from the font itself. It crops a subimage
+    */ //----------------------------------------------------------------------
+    public BufferedImage GetFont(char c) {
+        int value = c - 65;
+
+        int x = value % mXBearing;
+        int y  = value / mXBearing;
+
+        return GetLetter(x, y);
     }
 
     // ------------------------------------------------------------------------
@@ -166,49 +179,5 @@ public class Sprite {
     */ //----------------------------------------------------------------------
     public BufferedImage[][] GetSpriteArray2D() {
         return mSpriteArray;
-    }
-
-    // ------------------------------------------------------------------------
-    /*! Draw Array
-    *
-    *   Draws an entire array of images
-    */ //----------------------------------------------------------------------
-    public static void DrawArray(Graphics2D g, ArrayList<BufferedImage> img, Vector2D pos, int width, int height, int xOffset, int yOffset) {
-        float x = pos.x;
-        float y = pos.y;
-
-        //For every image
-        for(int i = 0; i < img.size(); i++) {
-
-            //If the image is not null
-            if(img.get(i) != null) {
-                g.drawImage(img.get(i), (int)x, (int)y, width, height, null);
-            }
-
-            x += xOffset;
-            y += yOffset;
-        }
-    }
-
-    // ------------------------------------------------------------------------
-    /*! Draw Array
-    *
-    *   Draws text
-    */ //----------------------------------------------------------------------
-    public static void DrawArray(Graphics2D g, Font f, String word, Vector2D pos, int width, int height, int xOffset, int yOffset) {
-        float x = pos.x;
-        float y = pos.y;
-
-        //For every letter of the word, draw the sprites separately
-        for(int i = 0; i < word.length(); i++) {
-
-            //If it's not a white space
-            if(word.charAt(i) != 32) {
-                g.drawImage(f.GetFont(word.charAt(i)), (int)x, (int)y, width, height, null);
-            }
-        
-            x += xOffset;
-            y += yOffset;
-        }
     }
 }

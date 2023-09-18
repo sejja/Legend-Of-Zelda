@@ -9,6 +9,7 @@
 package Engine.StateMachine;
 
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 import Engine.Input.InputManager;
@@ -77,7 +78,7 @@ public class StateMachine {
     *
     *   Calls the Render method on every sub-state
     */ //----------------------------------------------------------------------
-    public void Render(Graphics grphics) {
+    public void Render(Graphics2D grphics) {
         //Iterate through every state
         for(State x : mStates)
             x.Render(grphics);
