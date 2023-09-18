@@ -17,6 +17,7 @@ import javax.swing.plaf.basic.BasicTabbedPaneUI.MouseHandler;
 import Engine.Graphics.Animation;
 import Engine.Graphics.Sprite;
 import Engine.Math.Vector2D;
+import Engine.Physics.AABB;
 
 public abstract class Entity {
     protected Sprite mSprite;
@@ -24,21 +25,23 @@ public abstract class Entity {
     protected int mSize;
     protected Animation mAnimation;
     protected int mCurrentAnimation;
+    protected AABB mBounds;
 
     private final int UP = 0;
     private final int DOWN = 1;
     private final int RIGHT = 2;
     private final int LEFT = 3;
-    private boolean up = false;
-    private boolean down = false;
-    private boolean right = true;
-    private boolean left = false;
+    protected boolean up = false;
+    protected boolean down = false;
+    protected boolean right = true;
+    protected boolean left = false;
 
     public Entity(Sprite sprite, Vector2D position, int size) {
         mSprite = sprite;
         mPosition = position;
         mSize = size;
         mAnimation = new Animation();
+        mBounds = new AABB(mPosition, size, size);
         SetAnimation(RIGHT, sprite.GetSpriteArray(RIGHT), 10);
     }
 
@@ -51,12 +54,27 @@ public abstract class Entity {
     public void Update() {
         Animate();
         mAnimation.update();
-        //SetHitBoxDirection();
     }
 
     public abstract void Render(Graphics2D g);
     public void Input(KeyHandler key, MouseHandler mouse) {
 
+    }
+
+    public Animation GetAnimation() {
+        return mAnimation;
+    }
+
+    public void SetSprite(Sprite sp) {
+        mSprite = sp;
+    }
+
+    public void SetSize(int i) {
+        mSize = i;
+    }
+
+    public AABB GetBounds() {
+        return mBounds;
     }
 
     public void Animate() {
