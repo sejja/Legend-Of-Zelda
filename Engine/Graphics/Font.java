@@ -128,7 +128,7 @@ public class Font extends Spritesheet {
         for(int i = 0; i < word.length(); i++) {
 
             //If it's not a white space
-            if(word.charAt(i) != 32)
+            if(word.charAt(i) != ' ')
                 g.drawImage(GetFont(word.charAt(i)), (int)x, (int)y, width, height, null);
         
             x += xOffset;
