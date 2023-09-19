@@ -70,13 +70,6 @@ public abstract class Actor extends Entity {
     }
 
     // ------------------------------------------------------------------------
-    /*! Input
-    *
-    *   EMPTY FUNCTION
-    */ //----------------------------------------------------------------------
-    public void Input(InputManager input) {}
-
-    // ------------------------------------------------------------------------
     /*! Set Size
     *
     *   Sets the Size of the Actor

@@ -59,7 +59,6 @@ public class PlayState extends State {
     */ //----------------------------------------------------------------------
     @Override
     public void Input(InputManager inputmanager) {
-        mPlayer.Input(inputmanager);
     }
 
     // ------------------------------------------------------------------------

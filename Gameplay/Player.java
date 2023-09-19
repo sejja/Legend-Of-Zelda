@@ -1,12 +1,14 @@
 package Gameplay;
 
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 
 import Engine.ECSystem.Actor;
 import Engine.Graphics.Animation;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.AnimationMachine;
+import Engine.Input.InputFunction;
 import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
 
@@ -31,6 +33,46 @@ public class Player extends Actor {
         SetScale(size);
         mAnimation = AddComponent(new AnimationMachine(this, sprite));
         SetAnimation(RIGHT, sprite.GetSpriteArray(RIGHT), 10);
+
+        InputManager.SubscribePressed(KeyEvent.VK_UP, new InputFunction() {
+            @Override
+            public void Execute() {
+                up = true;
+                down = false;
+                left = false;
+                right = false;
+             }
+        });
+
+        InputManager.SubscribePressed(KeyEvent.VK_DOWN, new InputFunction() {
+            @Override
+            public void Execute() {
+                up = false;
+                down = true;
+                left = false;
+                right = false;
+            }
+        });
+
+        InputManager.SubscribePressed(KeyEvent.VK_LEFT, new InputFunction() {
+            @Override
+            public void Execute() {
+               up = false;
+                down = false;
+                left = true;
+                right = false;
+            } 
+        });
+
+        InputManager.SubscribePressed(KeyEvent.VK_RIGHT, new InputFunction() {
+            @Override
+            public void Execute() {
+                up = false;
+                down = false;
+                left = false;
+                right = true;
+            }
+        });
     }
 
     public void SetAnimation(int i, BufferedImage[] frames, int delay) {
@@ -101,44 +143,5 @@ public class Player extends Actor {
         }
 
         SetPosition(pos);
-    }
-
-    // ------------------------------------------------------------------------
-    /*! Input
-    *
-    *   Checks the input, and sets directions
-    */ //----------------------------------------------------------------------
-    public void Input(InputManager input) {
-        if(input.up.down) {
-            up = true;
-            down = false;
-            left = false;
-            right = false;
-        } else if(input.down.down) {
-            up = false;
-            down = true;
-            left = false;
-            right = false;
-        } else if(input.left.down) {
-            up = false;
-            down = false;
-            left = true;
-            right = false;
-        } else if(input.right.down) {
-            up = false;
-            down = false;
-            left = false;
-            right = true;
-        } else {
-             up = false;
-            down = false;
-            left = false;
-            right = false;
-        }
-
-        if(input.GetButton() == 1) {
-            System.out.println("Ahoy");
-        }
-    }
-    
+    }    
 }
