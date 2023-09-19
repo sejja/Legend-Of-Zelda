@@ -2,9 +2,8 @@ package Engine.Graphics.Components;
 
 import java.awt.Graphics2D;
 
-import Engine.ECSystem.Base;
 import Engine.ECSystem.Component;
-import Engine.ECSystem.Entity;
+import Engine.ECSystem.Actor;
 import Engine.Graphics.Animation;
 import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Sprite;
@@ -13,7 +12,7 @@ public class AnimationMachine extends Component implements Renderable {
     protected Sprite mSprite;
     protected Animation mAnimation;
 
-    public AnimationMachine(Entity parent, Sprite sprite) {
+    public AnimationMachine(Actor parent, Sprite sprite) {
         super(parent);
         mSprite = sprite;
         mAnimation = new Animation();

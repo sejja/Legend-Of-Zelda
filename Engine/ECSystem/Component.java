@@ -1,13 +1,31 @@
+//
+//	Component.java
+//	Legend Of Zelda
+//
+//	Created by Diego Revilla on 19/09/2023
+//	Copyright Deusto © 2023. All Rights reserved
+//
+
 package Engine.ECSystem;
 
-public abstract class Component {
-    private Entity mParent;
+public abstract class Component implements Base {
+    private Actor mParent;
 
-    protected Component(Entity parent) {
+    // ------------------------------------------------------------------------
+    /*! Conversion Constructor
+    *
+    *   Constructs a Component with a parent
+    */ //----------------------------------------------------------------------
+    protected Component(Actor parent) {
         mParent = parent;
     }
 
-    public Entity GetParent() {
+    // ------------------------------------------------------------------------
+    /*! Returns the parent
+    *
+    *   Gets the Parent of the Component (an actor)
+    */ //----------------------------------------------------------------------
+    public Actor GetParent() {
         return mParent;
     }
     public abstract void Init();
