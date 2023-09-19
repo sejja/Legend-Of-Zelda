@@ -13,13 +13,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import Engine.Graphics.Spritesheet;
+import Engine.Math.Vector2D;
 
-public class TilemapObject {
+public class TilemapObject extends Tilemap {
 
-    public static HashMap<String, Tileblock> mBlocks;
+    public static HashMap<String, Block> mBlocks;
 
     public TilemapObject(String data, Spritesheet sprite, int width , int height, int tilewidth, int tileheight, int tilecolumns) {
-        Tileblock temp;
+        Block temp;
         mBlocks = new HashMap<>();
 
         String[] block = data.split(",");
@@ -29,9 +30,9 @@ public class TilemapObject {
 
             if(tempint != 0) {
                 if(tempint == 172) { // TODO, Review
-                    //tempBlock = new HoleBlock();
+                    temp = new HoleBlock(sprite.GetSprite((int) ((tempint - 1) % tilecolumns), (int) ((tempint - 1) / tilecolumns)), new Vector2D<Integer>((int) (i % width) * tilewidth, (int) (i / height) * tileheight), tilewidth, tileheight);
                 } else {
-                    temp = new ObjectBlock();
+                    temp = new ObjectBlock(sprite.GetSprite((int) ((tempint - 1) % tilecolumns), (int) ((tempint - 1) / tilecolumns)), new Vector2D<Integer>((int) (i % width) * tilewidth, (int) (i / height) * tileheight), tilewidth, tileheight);
                 }
 
                 mBlocks.put(String.valueOf((int) (i % width)) + ", " + String.valueOf((int) (i / height)), temp);
@@ -40,7 +41,7 @@ public class TilemapObject {
     }
 
     public void Render(Graphics2D g) {
-        for(Tileblock block : mBlocks.values()) {
+        for(Block block : mBlocks.values()) {
             block.Render(g); 
         }
     }

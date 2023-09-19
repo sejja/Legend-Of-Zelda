@@ -12,10 +12,11 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 import Engine.Graphics.Spritesheet;
+import Engine.Math.Vector2D;
 
 public class TilemapNorm extends Tilemap {
 
-    private ArrayList<Tileblock> mBlocks;
+    private ArrayList<Block> mBlocks;
 
     public TilemapNorm(String data, Spritesheet sprite, int width , int height, int tilewidth, int tileheight, int tilecolumns) {
         mBlocks = new ArrayList<>();
@@ -26,7 +27,8 @@ public class TilemapNorm extends Tilemap {
             int temp = Integer.parseInt(block[i].replaceAll("\\s+",""));
 
             if(temp != 0) {
-                mBlocks.add(new Normblock());
+
+                mBlocks.add(new Normblock(sprite.GetSprite((int) ((temp - 1) % tilecolumns), (int) ((temp - 1) / tilecolumns)), new Vector2D<Integer>((int) (i % width) * tilewidth, (int) (i / height) * tileheight), tilewidth, tileheight));
             }
         }
     }
