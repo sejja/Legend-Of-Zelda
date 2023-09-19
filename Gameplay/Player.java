@@ -24,9 +24,9 @@ public class Player extends Actor {
     *
     *   Constructs a Player with a sprite, a position, and gives it a size
     */ //----------------------------------------------------------------------
-    public Player(Sprite sprite, Vector2D position, int size) {
+    public Player(Sprite sprite, Vector2D position, Vector2D size) {
         super(sprite, position);
-        SetSize(size);
+        SetScale(size);
         SetAnimation(RIGHT, sprite.GetSpriteArray(RIGHT), 10);
     }
 
@@ -79,21 +79,25 @@ public class Player extends Actor {
     *   Moves the sprite on a certain direction
     */ //----------------------------------------------------------------------
     public void Move() {
+        Vector2D pos = GetPosition();
+
         if(up) {
-            mPosition.y += 1;
+            pos.y += 1;
         }
 
         if(down) {
-            mPosition.y -= 1;
+            pos.y -= 1;
         }
 
         if(left) {
-            mPosition.x -= 1;
+            pos.x -= 1;
         }
 
         if(right) {
-            mPosition.x += 1;
+            pos.x += 1;
         }
+
+        SetPosition(pos);
     }
 
     // ------------------------------------------------------------------------

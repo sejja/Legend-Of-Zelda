@@ -37,7 +37,7 @@ public class PlayState extends State {
         super(superm);
         //mTilemap = new TileManager("TiledProject/Test.xml");
         mFont = new Font("Content/Fonts/ZeldaFont.png", 16, 16);
-        mPlayer = new Player(new Sprite("Content/Animations/Link.png"), new Vector2D(300, 300), 100);
+        mPlayer = new Player(new Sprite("Content/Animations/Link.png"), new Vector2D(300, 300), new Vector2D(100, 100));
         mPos = new Vector2D(300, 600);
     }
 
