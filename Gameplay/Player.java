@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 
 import Engine.ECSystem.Actor;
 import Engine.Graphics.Animation;
-import Engine.Graphics.Sprite;
+import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.AnimationMachine;
 import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
@@ -26,7 +26,7 @@ public class Player extends Actor {
     *
     *   Constructs a Player with a sprite, a position, and gives it a size
     */ //----------------------------------------------------------------------
-    public Player(Sprite sprite, Vector2D position, Vector2D size) {
+    public Player(Spritesheet sprite, Vector2D position, Vector2D size) {
         super(position);
         SetScale(size);
         mAnimation = AddComponent(new AnimationMachine(this, sprite));

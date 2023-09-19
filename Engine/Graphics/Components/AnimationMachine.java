@@ -14,10 +14,10 @@ import Engine.ECSystem.Component;
 import Engine.ECSystem.Actor;
 import Engine.Graphics.Animation;
 import Engine.Graphics.GraphicsPipeline;
-import Engine.Graphics.Sprite;
+import Engine.Graphics.Spritesheet;
 
 public final class AnimationMachine extends Component implements Renderable {
-    private Sprite mSprite;
+    private Spritesheet mSprite;
     private Animation mAnimation;
 
     // ------------------------------------------------------------------------
@@ -25,7 +25,7 @@ public final class AnimationMachine extends Component implements Renderable {
     *
     *   Creates an Animation Machine with a parent and a sprite
     */ //----------------------------------------------------------------------
-    public AnimationMachine(Actor parent, Sprite sprite) {
+    public AnimationMachine(Actor parent, Spritesheet sprite) {
         super(parent);
         mSprite = sprite;
         mAnimation = new Animation();
@@ -45,7 +45,7 @@ public final class AnimationMachine extends Component implements Renderable {
     *
     *   Returns the spritesheet that we are using for animating
     */ //----------------------------------------------------------------------
-    public Sprite GetSpriteSheet() {
+    public Spritesheet GetSpriteSheet() {
         return mSprite;
     }
 
@@ -54,7 +54,7 @@ public final class AnimationMachine extends Component implements Renderable {
     *
     *   Sets the Sprite that we are going to animate
     */ //----------------------------------------------------------------------
-    public void SetAnimationSprite(Sprite sp) {
+    public void SetAnimationSprite(Spritesheet sp) {
         mSprite = sp;
     }
 

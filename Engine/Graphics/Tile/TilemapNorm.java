@@ -11,13 +11,13 @@ package Engine.Graphics.Tile;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
-import Engine.Graphics.Sprite;
+import Engine.Graphics.Spritesheet;
 
 public class TilemapNorm extends Tilemap {
 
     private ArrayList<Tileblock> mBlocks;
 
-    public TilemapNorm(String data, Sprite sprite, int width , int height, int tilewidth, int tileheight, int tilecolumns) {
+    public TilemapNorm(String data, Spritesheet sprite, int width , int height, int tilewidth, int tileheight, int tilecolumns) {
         mBlocks = new ArrayList<>();
 
         String[] block = data.split(",");

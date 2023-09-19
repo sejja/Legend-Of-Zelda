@@ -21,7 +21,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import Engine.Graphics.Sprite;
+import Engine.Graphics.Spritesheet;
 
 public class TileManager {
     public static ArrayList<Tilemap>  mLayers;
@@ -60,7 +60,7 @@ public class TileManager {
         int tilecount;
         int tilecolumns;
         int layers = 0;
-        Sprite sprite;
+        Spritesheet sprite;
         String[] data = new String[10];
 
         try {
@@ -81,7 +81,7 @@ public class TileManager {
 
             list = doc.getElementsByTagName("layers");
             layers = list.getLength();
-            sprite = new Sprite("Tiles/" + imagepath + ".png", tilewidth, tileheight);
+            sprite = new Spritesheet("Tiles/" + imagepath + ".png", tilewidth, tileheight);
         
             //For each layer, get the width and height.
             for(int i = 0; i < layers; i++) {

@@ -1,5 +1,5 @@
 //
-//	Sprite.java
+//	Spritesheet.java
 //	Legend Of Zelda
 //
 //	Created by Diego Revilla on 15/09/2023
@@ -11,31 +11,27 @@ package Engine.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-
 import javax.imageio.ImageIO;
-
 import Engine.Math.Vector2D;
 
-public class Sprite {
-    private BufferedImage mSpriteSheet = null;
-    private BufferedImage[][] mSpriteArray;
-    private final int SIZE = 32;
-    public int u;
-    public int v;
-    private int mWidth;
-    private int mHeight;
+public class Spritesheet {
+    protected BufferedImage mSpriteSheet = null;
+    protected BufferedImage[][] mSpriteArray;
+    protected int mUCoord;
+    protected int mVCoord;
+    protected int mWidth;
+    protected int mHeight;
 
     // ------------------------------------------------------------------------
     /*! Constructor
     *
     *   Constructs an Sprite from the filename
     */ //----------------------------------------------------------------------
-    public Sprite(String file) {
-        u = SIZE;
-        v = SIZE;
+    public Spritesheet(String file) {
+        mVCoord = mUCoord = 32;
         mSpriteSheet = LoadSprite(file);
-        mWidth = mSpriteSheet.getWidth() / u;
-        mHeight = mSpriteSheet.getHeight() / v;
+        mWidth = mSpriteSheet.getWidth() / mUCoord;
+        mHeight = mSpriteSheet.getHeight() / mVCoord;
         LoadSpriteArray();
     }
 
@@ -44,13 +40,13 @@ public class Sprite {
     *
     *   Consntructs an sprite from the filename, the width, and the height
     */ //----------------------------------------------------------------------
-    public Sprite(String file, int w, int h) {
-        u = w;
-        v = h;
+    public Spritesheet(String file, int w, int h) {
+        mUCoord = w;
+        mVCoord = h;
 
         mSpriteSheet = LoadSprite(file);
-        mWidth = mSpriteSheet.getWidth() / u;
-        mHeight = mSpriteSheet.getHeight() / v; 
+        mWidth = mSpriteSheet.getWidth() / mUCoord;
+        mHeight = mSpriteSheet.getHeight() / mVCoord; 
         LoadSpriteArray();
     }
 
@@ -60,8 +56,8 @@ public class Sprite {
     *   Sets the size of a Sprite
     */ //----------------------------------------------------------------------
     public void SetSize(int width, int height) {
-        SetWidth(width);
-        SetHeight(height);
+        mUCoord = width;
+        mVCoord = height;
     }
 
     // ------------------------------------------------------------------------
@@ -70,7 +66,7 @@ public class Sprite {
     *   Sets the Width of an sprite
     */ //----------------------------------------------------------------------
     public void SetWidth(int i) {
-        u = i;
+        mUCoord = i;
     }
 
     // ------------------------------------------------------------------------
@@ -79,7 +75,7 @@ public class Sprite {
     *   Sets the Height of an Sprite
     */ //----------------------------------------------------------------------
     public void SetHeight(int h) {
-        v = h;
+        mVCoord = h;
     }
 
     // ------------------------------------------------------------------------
@@ -88,7 +84,7 @@ public class Sprite {
     *   Returns the width of an sprite
     */ //----------------------------------------------------------------------
     public int GetWidth() {
-        return u;
+        return mUCoord;
     }
 
     // ------------------------------------------------------------------------
@@ -97,7 +93,7 @@ public class Sprite {
     *   Returns the height in pixels
     */ //----------------------------------------------------------------------
     public int getHeight() {
-        return v;
+        return mVCoord;
     }
 
     // ------------------------------------------------------------------------
@@ -105,7 +101,7 @@ public class Sprite {
     *
     *   Loads an sprite from the fisk and uploads it as a bufferedimage
     */ //----------------------------------------------------------------------
-    private BufferedImage LoadSprite(String file) {
+    protected BufferedImage LoadSprite(String file) {
         BufferedImage sprite = null;
 
         //Add a try/catch clause, as it might fail to get the resource in question
@@ -126,11 +122,9 @@ public class Sprite {
     private void LoadSpriteArray() {
         mSpriteArray = new BufferedImage[mWidth][mHeight];
 
-        for(int x = 0; x < mWidth; x++) {
-            for(int y = 0; y < mHeight; y++) {
+        for(int x = 0; x < mWidth; x++)
+            for(int y = 0; y < mHeight; y++)
                 mSpriteArray[x][y]  = GetSprite(x, y);
-            }
-        }
     }
 
     // ------------------------------------------------------------------------
@@ -148,7 +142,7 @@ public class Sprite {
     *   Given an UV coordinate, returns the sprite located at a point in the spritesheet
     */ //----------------------------------------------------------------------
     public BufferedImage GetSprite(int x, int y) {
-        return mSpriteSheet.getSubimage(x * u, y * v, u, v);
+        return mSpriteSheet.getSubimage(x * mUCoord, y * mVCoord, mUCoord, mVCoord);
     }
 
     // ------------------------------------------------------------------------
@@ -186,28 +180,6 @@ public class Sprite {
                 g.drawImage(img.get(i), (int)x, (int)y, width, height, null);
             }
 
-            x += xOffset;
-            y += yOffset;
-        }
-    }
-
-    // ------------------------------------------------------------------------
-    /*! Draw Array
-    *
-    *   Draws text
-    */ //----------------------------------------------------------------------
-    public static void DrawArray(Graphics2D g, Font f, String word, Vector2D pos, int width, int height, int xOffset, int yOffset) {
-        float x = pos.x;
-        float y = pos.y;
-
-        //For every letter of the word, draw the sprites separately
-        for(int i = 0; i < word.length(); i++) {
-
-            //If it's not a white space
-            if(word.charAt(i) != 32) {
-                g.drawImage(f.GetFont(word.charAt(i)), (int)x, (int)y, width, height, null);
-            }
-        
             x += xOffset;
             y += yOffset;
         }

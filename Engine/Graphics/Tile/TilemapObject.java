@@ -12,13 +12,13 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import Engine.Graphics.Sprite;
+import Engine.Graphics.Spritesheet;
 
 public class TilemapObject {
 
     public static HashMap<String, Tileblock> mBlocks;
 
-    public TilemapObject(String data, Sprite sprite, int width , int height, int tilewidth, int tileheight, int tilecolumns) {
+    public TilemapObject(String data, Spritesheet sprite, int width , int height, int tilewidth, int tileheight, int tilecolumns) {
         Tileblock temp;
         mBlocks = new HashMap<>();
 

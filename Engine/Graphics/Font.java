@@ -8,41 +8,27 @@
 
 package Engine.Graphics;
 
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import Engine.Math.Vector2D;
 
-import javax.imageio.ImageIO;
-
-public class Font {
-    private BufferedImage mFontSheet;
-    private BufferedImage[][] mSpriteArray;
-    private int mUcoord;
-    private int mVcoord;
-    private int mGlyphX;
-    private int mGlyphY;
-
+public class Font extends Spritesheet {
     // ------------------------------------------------------------------------
     /*! Constructor
     *
     *   Constructs an Sprite from the filename
     */ //----------------------------------------------------------------------
     public Font(String file) {
-        mVcoord = mUcoord = 32;
-        mFontSheet = LoadFont(file);
-        LoadSpriteArray();
+        super(file);
     }
 
     // ------------------------------------------------------------------------
-    /*! Constructor
+    /*! ConstructormU
     *
     *   Consntructs an sprite from the filename, the width, and the height
     */ //----------------------------------------------------------------------
     public Font(String file, int w, int h) {
-        mUcoord = w;
-        mVcoord = h;
-        mFontSheet = LoadFont(file);
-        mGlyphX = mFontSheet.getWidth() / mUcoord;
-        mGlyphY = mFontSheet.getHeight() / mVcoord; 
-        LoadSpriteArray();
+        super(file, w, h);
     }
 
     // ------------------------------------------------------------------------
@@ -51,8 +37,8 @@ public class Font {
     *   Sets the size of a Sprite
     */ //----------------------------------------------------------------------
     public void SetBearing(int width, int height) {
-        mUcoord = width;
-        mVcoord = height;
+        mUCoord = width;
+        mVCoord = height;
     }
 
     // ------------------------------------------------------------------------
@@ -61,7 +47,7 @@ public class Font {
     *   Sets the Width of an sprite
     */ //----------------------------------------------------------------------
     public void SetWidth(int i) {
-        mUcoord = i;
+        mUCoord = i;
     }
 
     // ------------------------------------------------------------------------
@@ -70,7 +56,7 @@ public class Font {
     *   Sets the Height of an Sprite
     */ //----------------------------------------------------------------------
     public void SetHeight(int h) {
-        mVcoord = h;
+        mVCoord = h;
     }
 
     // ------------------------------------------------------------------------
@@ -79,7 +65,7 @@ public class Font {
     *   Returns the width of an sprite
     */ //----------------------------------------------------------------------
     public int GetWidth() {
-        return mUcoord;
+        return mUCoord;
     }
 
     // ------------------------------------------------------------------------
@@ -88,42 +74,7 @@ public class Font {
     *   Returns the height in pixels
     */ //----------------------------------------------------------------------
     public int getHeight() {
-        return mVcoord;
-    }
-
-    // ------------------------------------------------------------------------
-    /*! Load Sprite
-    *
-    *   Loads an sprite from the fisk and uploads it as a bufferedimage
-    */ //----------------------------------------------------------------------
-    private BufferedImage LoadFont(String file) {
-        BufferedImage sprite = null;
-
-        //Add a try/catch clause, as it might fail to get the resource in question
-        try {
-            sprite = ImageIO.read(getClass().getClassLoader().getResourceAsStream(file));
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-
-        return sprite;
-    }
-
-    // ------------------------------------------------------------------------
-    /*! Load Sprite Array
-    *
-    *   Given a Sprite Sheet, loads every individual sprites in an array
-    */ //----------------------------------------------------------------------
-    private void LoadSpriteArray() {
-        mSpriteArray = new BufferedImage[mGlyphX][mGlyphY];
-
-        //For all the horizontal alignment
-        for(int x = 0; x < mGlyphX; x++)
-
-            //For all the vertical alignment
-            for(int y = 0; y < mGlyphY; y++)
-                mSpriteArray[x][y]  = GetLetter(x, y);
-
+        return mVCoord;
     }
 
     // ------------------------------------------------------------------------
@@ -132,7 +83,7 @@ public class Font {
     *   Returns the Sprite Sheet, as an Image
     */ //----------------------------------------------------------------------
     public BufferedImage GetFontSheet() {
-        return mFontSheet;
+        return mSpriteSheet;
     }
 
     // ------------------------------------------------------------------------
@@ -141,7 +92,7 @@ public class Font {
     *   Given an UV coordinate, returns the sprite located at a point in the spritesheet
     */ //----------------------------------------------------------------------
     public BufferedImage GetLetter(int x, int y) {
-        return mFontSheet.getSubimage(x * mUcoord, y * mVcoord, mUcoord, mVcoord);
+        return mSpriteSheet.getSubimage(x * mUCoord, y * mVCoord, mUCoord, mVCoord);
     }
 
     // ------------------------------------------------------------------------
@@ -152,10 +103,7 @@ public class Font {
     public BufferedImage GetFont(char c) {
         final int value = c - (int)'A';
 
-        int x = value % mGlyphX;
-        int y  = value / mGlyphX;
-
-        return GetLetter(x, y);
+        return GetLetter(value % mWidth, value / mWidth);
     }
 
     // ------------------------------------------------------------------------
@@ -165,5 +113,26 @@ public class Font {
     */ //----------------------------------------------------------------------
     public BufferedImage[][] GetSpriteArray2D() {
         return mSpriteArray;
+    }
+
+    // ------------------------------------------------------------------------
+    /*! Draw Array
+    *
+    *   Draws text
+    */ //----------------------------------------------------------------------
+    public void Render(Graphics2D g, String word, Vector2D pos, int width, int height, int xOffset, int yOffset) {
+        float x = pos.x;
+        float y = pos.y;
+
+        //For every letter of the word, draw the sprites separately
+        for(int i = 0; i < word.length(); i++) {
+
+            //If it's not a white space
+            if(word.charAt(i) != 32)
+                g.drawImage(GetFont(word.charAt(i)), (int)x, (int)y, width, height, null);
+        
+            x += xOffset;
+            y += yOffset;
+        }
     }
 }
