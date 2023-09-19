@@ -2,15 +2,15 @@
 //	Vector2D.java
 //	Legend Of Zelda
 //
-//	Created by Diego Revilla on 14¡5/09/2023
+//	Created by Diego Revilla on 15/09/2023
 //	Copyright Deusto © 2023. All Rights reserved
 //
 
 package Engine.Math;
 
-public class Vector2D {
-    public float x;
-    public float y;
+public class Vector2D<T> {
+    public T x;
+    public T y;
 
     // ------------------------------------------------------------------------
     /*! Constructor
@@ -18,7 +18,6 @@ public class Vector2D {
     *   Initializes the values to 0
     */ //----------------------------------------------------------------------
     public Vector2D() {
-        x = y = 0;
     }
 
     // ------------------------------------------------------------------------
@@ -26,7 +25,7 @@ public class Vector2D {
     *
     *   Initializes the values to the given values
     */ //----------------------------------------------------------------------
-    public Vector2D(float x, float y) {
+    public Vector2D(T x, T y) {
         this.x = x;
         this.y = y;
     }
@@ -36,8 +35,8 @@ public class Vector2D {
     *
     *   Copies another vector
     */ //----------------------------------------------------------------------
-    public Vector2D(Vector2D rhs) {
-         new Vector2D(rhs.x, rhs.y);
+    public Vector2D(Vector2D<T> rhs) {
+         new Vector2D<T>(rhs.x, rhs.y);
     } 
 
     // ------------------------------------------------------------------------

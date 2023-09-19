@@ -168,7 +168,7 @@ public class Spritesheet {
     *
     *   Draws an entire array of images
     */ //----------------------------------------------------------------------
-    public static void DrawArray(Graphics2D g, ArrayList<BufferedImage> img, Vector2D pos, int width, int height, int xOffset, int yOffset) {
+    public static void DrawArray(Graphics2D g, ArrayList<BufferedImage> img, Vector2D<Float> pos, int width, int height, int xOffset, int yOffset) {
         float x = pos.x;
         float y = pos.y;
 

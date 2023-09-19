@@ -19,7 +19,7 @@ import Engine.Window.PresentBuffer;
 
 public class StateMachine {
     ArrayList<State> mStates;
-    public static Vector2D mCoordinates; 
+    public static Vector2D<Integer> mCoordinates; 
 
     // ------------------------------------------------------------------------
     /*! Constructor
@@ -27,7 +27,7 @@ public class StateMachine {
     *   Adds some basic states
     */ //----------------------------------------------------------------------
     public StateMachine() {
-        mCoordinates = new Vector2D(PresentBuffer.mWidth, PresentBuffer.mHeight);
+        mCoordinates = new Vector2D<Integer>(PresentBuffer.mWidth, PresentBuffer.mHeight);
 
         mStates = new ArrayList<State>();
         mStates.add(new PlayState(this));

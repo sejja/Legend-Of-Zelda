@@ -22,7 +22,7 @@ public abstract class Entity implements Base {
     *
     *   Returns the Position of the actor
     */ //----------------------------------------------------------------------
-    public Vector2D GetPosition() {
+    public Vector2D<Float> GetPosition() {
         return mTransform.mPosition;
     }
 
@@ -31,7 +31,7 @@ public abstract class Entity implements Base {
     *
     *   Sets the position of the actor
     */ //----------------------------------------------------------------------
-    public void SetPosition(Vector2D p) {
+    public void SetPosition(Vector2D<Float> p) {
         mTransform.mPosition = p;
     }
 
@@ -40,7 +40,7 @@ public abstract class Entity implements Base {
     *
     *   Returns the Position of the actor
     */ //----------------------------------------------------------------------
-    public Vector2D GetScale() {
+    public Vector2D<Float> GetScale() {
         return mTransform.mScale;
     }
 
@@ -49,7 +49,7 @@ public abstract class Entity implements Base {
     *
     *   Sets the position of the actor
     */ //----------------------------------------------------------------------
-    public void SetScale(Vector2D p) {
+    public void SetScale(Vector2D<Float> p) {
         mTransform.mScale = p;
     }
     
@@ -61,7 +61,7 @@ public abstract class Entity implements Base {
     protected Entity() {
         mName = "No name";
         mTransform = new Transform();
-        mTransform.mScale = new Vector2D(1, 1);
+        mTransform.mScale = new Vector2D<Float>(1.f, 1.f);
     }
 
     // ------------------------------------------------------------------------

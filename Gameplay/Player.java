@@ -26,7 +26,7 @@ public class Player extends Actor {
     *
     *   Constructs a Player with a sprite, a position, and gives it a size
     */ //----------------------------------------------------------------------
-    public Player(Spritesheet sprite, Vector2D position, Vector2D size) {
+    public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size) {
         super(position);
         SetScale(size);
         mAnimation = AddComponent(new AnimationMachine(this, sprite));
@@ -82,7 +82,7 @@ public class Player extends Actor {
     *   Moves the sprite on a certain direction
     */ //----------------------------------------------------------------------
     public void Move() {
-        Vector2D pos = GetPosition();
+        Vector2D<Float> pos = GetPosition();
 
         if(up) {
             pos.y += 1;

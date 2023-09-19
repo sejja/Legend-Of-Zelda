@@ -120,9 +120,9 @@ public class Font extends Spritesheet {
     *
     *   Draws text
     */ //----------------------------------------------------------------------
-    public void Render(Graphics2D g, String word, Vector2D pos, int width, int height, int xOffset, int yOffset) {
-        float x = pos.x;
-        float y = pos.y;
+    public void Render(Graphics2D g, String word, Vector2D<Float> pos, int width, int height, int xOffset, int yOffset) {
+        float x = (float)pos.x;
+        float y = (float)pos.y;
 
         //For every letter of the word, draw the sprites separately
         for(int i = 0; i < word.length(); i++) {

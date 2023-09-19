@@ -9,6 +9,6 @@
 package Engine.Math;
 
 public class Transform {
-    public Vector2D mPosition;
-    public Vector2D mScale;
+    public Vector2D<Float> mPosition;
+    public Vector2D<Float> mScale;
 }

@@ -42,7 +42,7 @@ public abstract class Actor extends Entity {
     *
     *   Checks the input, and sets directions
     */ //----------------------------------------------------------------------
-    public Actor(Vector2D position) {
+    public Actor(Vector2D<Float> position) {
         super();
         SetPosition(position);
         mComponents = new ArrayList<>();
@@ -53,7 +53,7 @@ public abstract class Actor extends Entity {
     *
     *   Checks the input, and sets directions with a name
     */ //----------------------------------------------------------------------
-    public Actor(String name, Vector2D position) {
+    public Actor(String name, Vector2D<Float> position) {
         super(name);
         SetPosition(position);
     }
@@ -81,7 +81,7 @@ public abstract class Actor extends Entity {
     *
     *   Sets the Size of the Actor
     */ //----------------------------------------------------------------------
-    public void SetScale(Vector2D vec) {
+    public void SetScale(Vector2D<Float> vec) {
         super.SetScale(vec);
     }
 }

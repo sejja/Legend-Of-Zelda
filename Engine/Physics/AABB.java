@@ -11,7 +11,7 @@ package Engine.Physics;
 import Engine.Math.Vector2D;
 
 public class AABB {
-    private Vector2D mPosition;
+    private Vector2D<Float> mPosition;
     private float mWidth;
     private float mHeight;
     private float mRadius;
@@ -22,7 +22,7 @@ public class AABB {
     *
     *   Constructs an AABB with a position, a width and a height
     */ //----------------------------------------------------------------------
-    public AABB(Vector2D pos, int w, int h) {
+    public AABB(Vector2D<Float> pos, int w, int h) {
         mPosition = pos;
         mWidth = w;
         mHeight = h;
@@ -34,7 +34,7 @@ public class AABB {
     *
     *   Constructs an AABB with a position and a radius
     */ //----------------------------------------------------------------------
-    public AABB(Vector2D pos, int r) {
+    public AABB(Vector2D<Float> pos, int r) {
         mPosition = pos;
         mSize = r;
         mRadius = r;
@@ -45,7 +45,7 @@ public class AABB {
     *
     *   Returns the position
     */ //----------------------------------------------------------------------
-    public Vector2D GetPosition() {
+    public Vector2D<Float> GetPosition() {
         return mPosition;
     }
 
@@ -81,7 +81,7 @@ public class AABB {
     *
     *   Sets the box, as with a position, a width and a height
     */ //----------------------------------------------------------------------
-    public void SetBox(Vector2D pos, int w, int h) {
+    public void SetBox(Vector2D<Float> pos, int w, int h) {
         mPosition = pos;
         mWidth = w;
         mHeight = h;
@@ -92,7 +92,7 @@ public class AABB {
     *
     *   CCreates a circle, with a position and a radius
     */ //----------------------------------------------------------------------
-    public void SetCircle(Vector2D pos, int r) {
+    public void SetCircle(Vector2D<Float> pos, int r) {
         mPosition = pos;
         mRadius = r;
         mSize = r;

@@ -51,7 +51,7 @@ public final class AnimationMachine extends Component implements Renderable {
 
     // ------------------------------------------------------------------------
     /*! Set Sprite
-    *
+    *GraphicsPipeline
     *   Sets the Sprite that we are going to animate
     */ //----------------------------------------------------------------------
     public void SetAnimationSprite(Spritesheet sp) {
@@ -95,7 +95,7 @@ public final class AnimationMachine extends Component implements Renderable {
     */ //----------------------------------------------------------------------
     @Override
     public void Render(Graphics2D g) {
-        g.drawImage(mAnimation.GetCurrentFrame(), (int)GetParent().GetPosition().x, (int)GetParent().GetPosition().y, (int)GetParent().GetScale().x, (int)GetParent().GetScale().y, null);
+        g.drawImage(mAnimation.GetCurrentFrame(), (int)(float)GetParent().GetPosition().x, (int)(float)GetParent().GetPosition().y, (int)(float)GetParent().GetScale().x, (int)(float)GetParent().GetScale().y, null);
     }
     
 }
