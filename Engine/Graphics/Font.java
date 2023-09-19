@@ -13,13 +13,12 @@ import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
 public class Font {
-    private BufferedImage mFontSheet = null;
+    private BufferedImage mFontSheet;
     private BufferedImage[][] mSpriteArray;
-    private final int SIZE = 32;
-    public int u;
-    public int v;
-    private int mXBearing;
-    private int mYBearing;
+    private int mUcoord;
+    private int mVcoord;
+    private int mGlyphX;
+    private int mGlyphY;
 
     // ------------------------------------------------------------------------
     /*! Constructor
@@ -27,9 +26,7 @@ public class Font {
     *   Constructs an Sprite from the filename
     */ //----------------------------------------------------------------------
     public Font(String file) {
-        u = SIZE;
-        v = SIZE;
-        
+        mVcoord = mUcoord = 32;
         mFontSheet = LoadFont(file);
         LoadSpriteArray();
     }
@@ -40,12 +37,11 @@ public class Font {
     *   Consntructs an sprite from the filename, the width, and the height
     */ //----------------------------------------------------------------------
     public Font(String file, int w, int h) {
-        u = w;
-        v = h;
-
+        mUcoord = w;
+        mVcoord = h;
         mFontSheet = LoadFont(file);
-        mXBearing = mFontSheet.getWidth() / u;
-        mYBearing = mFontSheet.getHeight() / v; 
+        mGlyphX = mFontSheet.getWidth() / mUcoord;
+        mGlyphY = mFontSheet.getHeight() / mVcoord; 
         LoadSpriteArray();
     }
 
@@ -55,8 +51,8 @@ public class Font {
     *   Sets the size of a Sprite
     */ //----------------------------------------------------------------------
     public void SetBearing(int width, int height) {
-        SetWidth(width);
-        SetHeight(height);
+        mUcoord = width;
+        mVcoord = height;
     }
 
     // ------------------------------------------------------------------------
@@ -65,7 +61,7 @@ public class Font {
     *   Sets the Width of an sprite
     */ //----------------------------------------------------------------------
     public void SetWidth(int i) {
-        u = i;
+        mUcoord = i;
     }
 
     // ------------------------------------------------------------------------
@@ -74,7 +70,7 @@ public class Font {
     *   Sets the Height of an Sprite
     */ //----------------------------------------------------------------------
     public void SetHeight(int h) {
-        v = h;
+        mVcoord = h;
     }
 
     // ------------------------------------------------------------------------
@@ -83,7 +79,7 @@ public class Font {
     *   Returns the width of an sprite
     */ //----------------------------------------------------------------------
     public int GetWidth() {
-        return u;
+        return mUcoord;
     }
 
     // ------------------------------------------------------------------------
@@ -92,7 +88,7 @@ public class Font {
     *   Returns the height in pixels
     */ //----------------------------------------------------------------------
     public int getHeight() {
-        return v;
+        return mVcoord;
     }
 
     // ------------------------------------------------------------------------
@@ -119,16 +115,15 @@ public class Font {
     *   Given a Sprite Sheet, loads every individual sprites in an array
     */ //----------------------------------------------------------------------
     private void LoadSpriteArray() {
-        mSpriteArray = new BufferedImage[mXBearing][mYBearing];
+        mSpriteArray = new BufferedImage[mGlyphX][mGlyphY];
 
         //For all the horizontal alignment
-        for(int x = 0; x < mXBearing; x++) {
+        for(int x = 0; x < mGlyphX; x++)
 
             //For all the vertical alignment
-            for(int y = 0; y < mYBearing; y++) {
+            for(int y = 0; y < mGlyphY; y++)
                 mSpriteArray[x][y]  = GetLetter(x, y);
-            }
-        }
+
     }
 
     // ------------------------------------------------------------------------
@@ -146,7 +141,7 @@ public class Font {
     *   Given an UV coordinate, returns the sprite located at a point in the spritesheet
     */ //----------------------------------------------------------------------
     public BufferedImage GetLetter(int x, int y) {
-        return mFontSheet.getSubimage(x * u, y * v, u, v);
+        return mFontSheet.getSubimage(x * mUcoord, y * mVcoord, mUcoord, mVcoord);
     }
 
     // ------------------------------------------------------------------------
@@ -155,21 +150,12 @@ public class Font {
     *   Returns the image of the letter from the font itself. It crops a subimage
     */ //----------------------------------------------------------------------
     public BufferedImage GetFont(char c) {
-        int value = c - 65;
+        final int value = c - (int)'A';
 
-        int x = value % mXBearing;
-        int y  = value / mXBearing;
+        int x = value % mGlyphX;
+        int y  = value / mGlyphX;
 
         return GetLetter(x, y);
-    }
-
-    // ------------------------------------------------------------------------
-    /*! Get Sorite Array
-    *
-    *   Returns all the sprite array, as a one-dimensional array
-    */ //----------------------------------------------------------------------
-    public BufferedImage[] GetSpriteArray(int i) {
-        return mSpriteArray[i];
     }
 
     // ------------------------------------------------------------------------

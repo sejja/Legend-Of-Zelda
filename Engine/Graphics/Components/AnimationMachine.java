@@ -75,7 +75,7 @@ public final class AnimationMachine extends Component implements Renderable {
     */ //----------------------------------------------------------------------
     @Override
     public void Update() {
-        mAnimation.update();
+        mAnimation.Update();
     }
 
     // ------------------------------------------------------------------------
