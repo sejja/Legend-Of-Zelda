@@ -12,11 +12,9 @@ import java.util.ArrayList;
 
 import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
-import Engine.Physics.AABB;
 
 public abstract class Actor extends Entity {
     private ArrayList<Component> mComponents;
-    protected AABB mBounds;
 
     // ------------------------------------------------------------------------
     /*! Add Component
@@ -48,7 +46,6 @@ public abstract class Actor extends Entity {
         super();
         SetPosition(position);
         mComponents = new ArrayList<>();
-        mBounds = new AABB(GetPosition(), 1, 1);
     }
 
     // ------------------------------------------------------------------------
@@ -59,7 +56,6 @@ public abstract class Actor extends Entity {
     public Actor(String name, Vector2D position) {
         super(name);
         SetPosition(position);
-        mBounds = new AABB(GetPosition(), 1, 1);
     }
 
     // ------------------------------------------------------------------------
@@ -87,16 +83,5 @@ public abstract class Actor extends Entity {
     */ //----------------------------------------------------------------------
     public void SetScale(Vector2D vec) {
         super.SetScale(vec);
-        mBounds.SetHeight(vec.x);
-        mBounds.SetWidth(vec.y);
-    }
-
-    // ------------------------------------------------------------------------
-    /*! Get Bounds
-    *
-    *   Returns the bounding box with the collisions
-    */ //----------------------------------------------------------------------
-    public AABB GetBounds() {
-        return mBounds;
     }
 }
