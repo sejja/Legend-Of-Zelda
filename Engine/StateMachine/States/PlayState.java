@@ -36,7 +36,7 @@ public class PlayState extends State {
     */ //----------------------------------------------------------------------
     public PlayState(StateMachine superm) {
         super(superm);
-        //mTilemap = new TileManager("TiledProject/Test.xml");
+        mTilemap = new TileManager("Content/TiledProject/StressTest.tmx");
         mFont = new Font("Content/Fonts/ZeldaFont.png", 16, 16);
         mPlayer = new Player(new Spritesheet("Content/Animations/Link.png"), new Vector2D<Float>(300.f, 300.f), new Vector2D<Float>(100.f, 100.f));
         mPos = new Vector2D<Float>(300.f, 600.f);
@@ -68,6 +68,7 @@ public class PlayState extends State {
     */ //----------------------------------------------------------------------
     @Override
     public void Render(Graphics2D g) {
+        mTilemap.Render(g);
         GraphicsPipeline.GetGraphicsPipeline().Render(g);
         mFont.Render(g, "THE LEGEND OF ANDONI", new Vector2D<Float>(100.f, 100.f), 32, 32, 56, 0);
     }

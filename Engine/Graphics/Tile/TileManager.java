@@ -69,19 +69,31 @@ public class TileManager {
             Document doc = db.parse(new File(getClass().getClassLoader().getResource(path).toURI()));
         
             doc.getDocumentElement().normalize();
-            NodeList list = doc.getElementsByTagName("tileset");
+            NodeList list = doc.getElementsByTagName("map");
+            NodeList tilesetnode = doc.getElementsByTagName("tileset");
             Node node = list.item(0);
             Element element = (Element) node;
+            Element elementnode = (Element) tilesetnode.item(0);
 
-            imagepath = element.getAttribute("name");
-            tilewidth = Integer.parseInt(element.getAttribute("tilewidth"));
-            tileheight = Integer.parseInt(element.getAttribute("tileheight"));
-            tilecount = Integer.parseInt(element.getAttribute("tilecount"));
-            tilecolumns = Integer.parseInt(element.getAttribute("columns"));
+            Document aux = db.parse(new File(getClass().getClassLoader().getResource("Content/TiledProject/" + elementnode.getAttribute("source")).toURI()));
+            aux.getDocumentElement().normalize();
+            NodeList tilesetdata = aux.getElementsByTagName("tileset");
+            NodeList imagedata = aux.getElementsByTagName("image");
+            Node node2 = tilesetdata.item(0);
+            Element element2 = (Element) node2;
+            Node node3 = imagedata.item(0);
+            Element element3 = (Element) node3;
 
-            list = doc.getElementsByTagName("layers");
+            imagepath = element3.getAttribute("source");
+            tilewidth = Integer.parseInt(element2.getAttribute("tilewidth"));
+            tileheight = Integer.parseInt(element2.getAttribute("tileheight"));
+            tilecount = Integer.parseInt(element2.getAttribute("tilecount"));
+            tilecolumns = Integer.parseInt(element2.getAttribute("columns"));
+
             layers = list.getLength();
-            sprite = new Spritesheet("Tiles/" + imagepath + ".png", tilewidth, tileheight);
+            list = doc.getElementsByTagName("layer");
+            layers = 3;
+            sprite = new Spritesheet("Content/Tiles/" + imagepath, tilewidth, tileheight);
         
             //For each layer, get the width and height.
             for(int i = 0; i < layers; i++) {
@@ -89,8 +101,8 @@ public class TileManager {
                 element = (Element) node;
 
                 if(i <= 0) {
-                    width = Integer.parseInt(element.getAttribute("width"));
-                    height = Integer.parseInt(element.getAttribute("height"));
+                    width = Integer.parseInt("50"); //Oh yeah, so saucy
+                    height = Integer.parseInt("50");
                 }
 
                 data[i] = element.getElementsByTagName("data").item(0).getTextContent();
@@ -104,7 +116,8 @@ public class TileManager {
             }
         
         } catch(Exception e) {
-
+            System.out.println(e.toString());
+            e.printStackTrace();
         }
     }
 

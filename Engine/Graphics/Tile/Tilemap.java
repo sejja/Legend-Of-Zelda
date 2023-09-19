@@ -8,6 +8,8 @@
 
 package Engine.Graphics.Tile;
 
-public class Tilemap {
-    
+import java.awt.Graphics2D;
+
+public abstract class Tilemap {
+    public abstract void Render(Graphics2D g);
 }

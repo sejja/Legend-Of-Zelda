@@ -8,6 +8,24 @@
 
 package Engine.Graphics.Tile;
 
-public class Normblock {
-    
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+
+import Engine.Math.Vector2D;
+import Engine.Physics.AABB;
+
+public class Normblock extends Block {
+
+    public Normblock(BufferedImage img, Vector2D<Integer> position, int w, int h) {
+        super(img, position, w, h);
+    }
+
+    @Override
+    public boolean Update(AABB p) {
+       return false;
+    }
+
+    public void Render(Graphics2D g) {
+        super.Render(g);
+    }
 }
