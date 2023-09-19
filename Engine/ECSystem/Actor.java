@@ -9,31 +9,43 @@
 package Engine.ECSystem;
 
 import java.awt.Graphics2D;
+import java.util.ArrayList;
 
 import Engine.Graphics.Animation;
 import Engine.Graphics.Sprite;
+import Engine.Graphics.Components.Renderable;
 import Engine.Input.InputManager;
+import Engine.Math.Transform;
 import Engine.Math.Vector2D;
 import Engine.Physics.AABB;
 
 public abstract class Actor extends Entity {
-    protected Sprite mSprite;
-    protected Vector2D mPosition;
-    protected int mSize;
+    private ArrayList<Component> mComponents;
     protected AABB mBounds;
-    protected Animation mAnimation;
 
     // ------------------------------------------------------------------------
-    /*! Conversion Constructor
+    /*! Custom Constructor
     *
     *   Checks the input, and sets directions
     */ //----------------------------------------------------------------------
     public Actor(Sprite sprite, Vector2D position) {
-        mSprite = sprite;
-        mPosition = position;
-        mSize = 1;
-        mBounds = new AABB(mPosition, 1, 1);
-        mAnimation = new Animation();
+        super();
+        mTransform = new Transform();
+        mTransform.mPosition = position;
+        mTransform.mScale = new Vector2D(1, 1);
+        mBounds = new AABB(mTransform.mPosition, 1, 1);
+    }
+
+    // ------------------------------------------------------------------------
+    /*! Custom Constructor
+    *
+    *   Checks the input, and sets directions with a name
+    */ //----------------------------------------------------------------------
+    public Actor(Sprite sprite, Vector2D position, String name) {
+        super(name);
+        mTransform.mPosition = position;
+        mTransform.mScale = new Vector2D(1, 1);
+        mBounds = new AABB(mTransform.mPosition, 1, 1);
     }
 
     // ------------------------------------------------------------------------
@@ -43,19 +55,12 @@ public abstract class Actor extends Entity {
     */ //----------------------------------------------------------------------
     public void Update() {
         Animate();
-        mAnimation.update();
+
+        for(Component x : mComponents)
+            x.Update();
     }
 
     public abstract void Animate();
-
-    // ------------------------------------------------------------------------
-    /*! Render
-    *
-    *   Renderiza la imagen de la animación
-    */ //----------------------------------------------------------------------
-    public void Render(Graphics2D g) {
-        g.drawImage(mAnimation.GetCurrentFrame(), (int)mPosition.x, (int)mPosition.y, mSize, mSize, null);
-    }
 
     // ------------------------------------------------------------------------
     /*! Input
@@ -78,10 +83,10 @@ public abstract class Actor extends Entity {
     *
     *   Sets the Size of the Actor
     */ //----------------------------------------------------------------------
-    public void SetSize(int i) {
-        mSize = i;
-        mBounds.SetHeight(i);
-        mBounds.SetWidth(i);
+    public void SetScale(Vector2D vec) {
+        mTransform.mScale = vec;
+        mBounds.SetHeight(vec.x);
+        mBounds.SetWidth(vec.y);
     }
 
     // ------------------------------------------------------------------------
