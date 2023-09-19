@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import Engine.ECSystem.Actor;
 import Engine.Graphics.Animation;
 import Engine.Graphics.Sprite;
+import Engine.Graphics.Components.AnimationMachine;
 import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
 
@@ -19,44 +20,45 @@ public class Player extends Actor {
     protected boolean right = true;
     protected boolean left = false;
     protected int mCurrentAnimation;
+    protected AnimationMachine mAnimation;
     // ------------------------------------------------------------------------
     /*! Conversion Constructor
     *
     *   Constructs a Player with a sprite, a position, and gives it a size
     */ //----------------------------------------------------------------------
     public Player(Sprite sprite, Vector2D position, Vector2D size) {
-        super(sprite, position);
+        super(position);
         SetScale(size);
+        mAnimation = AddComponent(new AnimationMachine(this, sprite));
         SetAnimation(RIGHT, sprite.GetSpriteArray(RIGHT), 10);
     }
 
     public void SetAnimation(int i, BufferedImage[] frames, int delay) {
         mCurrentAnimation = i;
-        mAnimation.SetFrames(frames);
-        mAnimation.SetDelay(delay);
+        mAnimation.GetAnimation().SetFrames(frames);
+        mAnimation.GetAnimation().SetDelay(delay);
     }
 
     public Animation GetAnimation() {
-        return mAnimation;
+        return mAnimation.GetAnimation();
     }
 
-    @Override
     public void Animate() {
         if(up) {
-            if(mCurrentAnimation != UP || mAnimation.GetDelay() == -1) {
-                SetAnimation(UP, mSprite.GetSpriteArray(UP), 5);
+            if(mCurrentAnimation != UP || mAnimation.GetAnimation().GetDelay() == -1) {
+                SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), 5);
             }
         } else if(down) {
-            if(mCurrentAnimation != DOWN || mAnimation.GetDelay() == -1) {
-                SetAnimation(DOWN, mSprite.GetSpriteArray(DOWN), 5);
+            if(mCurrentAnimation != DOWN || mAnimation.GetAnimation().GetDelay() == -1) {
+                SetAnimation(DOWN, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN), 5);
             }
         } else if(right) {
-            if(mCurrentAnimation != RIGHT || mAnimation.GetDelay() == -1) {
-                SetAnimation(RIGHT, mSprite.GetSpriteArray(RIGHT), 5);
+            if(mCurrentAnimation != RIGHT || mAnimation.GetAnimation().GetDelay() == -1) {
+                SetAnimation(RIGHT, mAnimation.GetSpriteSheet().GetSpriteArray(RIGHT), 5);
             }
         } else {
-            if(mCurrentAnimation != LEFT || mAnimation.GetDelay() == -1) {
-                SetAnimation(LEFT, mSprite.GetSpriteArray(LEFT), 5);
+            if(mCurrentAnimation != LEFT || mAnimation.GetAnimation().GetDelay() == -1) {
+                SetAnimation(LEFT, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT), 5);
             }
         }
     }
@@ -70,7 +72,8 @@ public class Player extends Actor {
     public void Update() {
         super.Update();
         Move();
-        mAnimation.SetDelay(50);
+        Animate();
+        mAnimation.GetAnimation().SetDelay(50);
     }
 
     // ------------------------------------------------------------------------

@@ -13,11 +13,11 @@
             "scaleInEditor": 1
         },
         "Test.xml": {
-            "scale": 2,
+            "scale": 1.5,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 271,
-                "y": 263
+                "x": 333.33333333333326,
+                "y": 401.33333333333326
             }
         }
     },

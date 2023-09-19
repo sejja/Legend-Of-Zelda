@@ -13,11 +13,28 @@ public class AnimationMachine extends Component implements Renderable {
     protected Sprite mSprite;
     protected Animation mAnimation;
 
-    AnimationMachine(Entity parent, Sprite sprite) {
+    public AnimationMachine(Entity parent, Sprite sprite) {
         super(parent);
         mSprite = sprite;
         mAnimation = new Animation();
         GraphicsPipeline.GetGraphicsPipeline().AddRenderable(this);
+    }
+
+    public Animation GetAnimation() {
+        return mAnimation;
+    }
+
+    public Sprite GetSpriteSheet() {
+        return mSprite;
+    }
+
+    // ------------------------------------------------------------------------
+    /*! Set Sprite
+    *
+    *   Sets the Sprite that we are going to animate
+    */ //----------------------------------------------------------------------
+    public void SetAnimationSprite(Sprite sp) {
+        mSprite = sp;
     }
 
     @Override
@@ -32,7 +49,7 @@ public class AnimationMachine extends Component implements Renderable {
 
     @Override
     public void ShutDown() {
-        GraphicsPipeline.GetGraphicsPipeline().AddRenderable(this);
+        GraphicsPipeline.GetGraphicsPipeline().RemoveRenderable(this);
     }
 
     @Override

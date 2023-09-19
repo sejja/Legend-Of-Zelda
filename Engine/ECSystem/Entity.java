@@ -8,8 +8,6 @@
 
 package Engine.ECSystem;
 
-import java.awt.Graphics2D;
-
 import Engine.Math.Transform;
 import Engine.Math.Vector2D;
 
@@ -18,7 +16,6 @@ public abstract class Entity implements Base {
     private Transform mTransform;
     
     public abstract void Update();
-    public abstract void Render(Graphics2D g);
 
     // ------------------------------------------------------------------------
     /*! Get Position
@@ -63,6 +60,8 @@ public abstract class Entity implements Base {
     */ //----------------------------------------------------------------------
     protected Entity() {
         mName = "No name";
+        mTransform = new Transform();
+        mTransform.mScale = new Vector2D(1, 1);
     }
 
     // ------------------------------------------------------------------------

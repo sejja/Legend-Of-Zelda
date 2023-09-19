@@ -8,14 +8,9 @@
 
 package Engine.ECSystem;
 
-import java.awt.Graphics2D;
 import java.util.ArrayList;
 
-import Engine.Graphics.Animation;
-import Engine.Graphics.Sprite;
-import Engine.Graphics.Components.Renderable;
 import Engine.Input.InputManager;
-import Engine.Math.Transform;
 import Engine.Math.Vector2D;
 import Engine.Physics.AABB;
 
@@ -24,16 +19,36 @@ public abstract class Actor extends Entity {
     protected AABB mBounds;
 
     // ------------------------------------------------------------------------
+    /*! Add Component
+    *
+    *   Adds a Component to the actor
+    */ //----------------------------------------------------------------------
+    public <T extends Component> T AddComponent(T c) {
+        c.Init();
+        mComponents.add(c);
+        return (T) c;
+    }
+
+    // ------------------------------------------------------------------------
+    /*! Remove Component
+    *
+    *   Removes a Component from the Actor
+    */ //----------------------------------------------------------------------
+    public void RemoveComponent(Component comp) {
+        mComponents.remove(comp);
+        comp.ShutDown();
+    }
+
+    // ------------------------------------------------------------------------
     /*! Custom Constructor
     *
     *   Checks the input, and sets directions
     */ //----------------------------------------------------------------------
-    public Actor(Sprite sprite, Vector2D position) {
+    public Actor(Vector2D position) {
         super();
-        mTransform = new Transform();
-        mTransform.mPosition = position;
-        mTransform.mScale = new Vector2D(1, 1);
-        mBounds = new AABB(mTransform.mPosition, 1, 1);
+        SetPosition(position);
+        mComponents = new ArrayList<>();
+        mBounds = new AABB(GetPosition(), 1, 1);
     }
 
     // ------------------------------------------------------------------------
@@ -41,11 +56,10 @@ public abstract class Actor extends Entity {
     *
     *   Checks the input, and sets directions with a name
     */ //----------------------------------------------------------------------
-    public Actor(Sprite sprite, Vector2D position, String name) {
+    public Actor(String name, Vector2D position) {
         super(name);
-        mTransform.mPosition = position;
-        mTransform.mScale = new Vector2D(1, 1);
-        mBounds = new AABB(mTransform.mPosition, 1, 1);
+        SetPosition(position);
+        mBounds = new AABB(GetPosition(), 1, 1);
     }
 
     // ------------------------------------------------------------------------
@@ -54,13 +68,10 @@ public abstract class Actor extends Entity {
     *   Updates the Animation
     */ //----------------------------------------------------------------------
     public void Update() {
-        Animate();
-
+        //Update every component
         for(Component x : mComponents)
             x.Update();
     }
-
-    public abstract void Animate();
 
     // ------------------------------------------------------------------------
     /*! Input
@@ -70,21 +81,12 @@ public abstract class Actor extends Entity {
     public void Input(InputManager input) {}
 
     // ------------------------------------------------------------------------
-    /*! Set Sprite
-    *
-    *   Sets the Sprite that we are going to animate
-    */ //----------------------------------------------------------------------
-    public void SetAnimationSprite(Sprite sp) {
-        mSprite = sp;
-    }
-
-    // ------------------------------------------------------------------------
     /*! Set Size
     *
     *   Sets the Size of the Actor
     */ //----------------------------------------------------------------------
     public void SetScale(Vector2D vec) {
-        mTransform.mScale = vec;
+        super.SetScale(vec);
         mBounds.SetHeight(vec.x);
         mBounds.SetWidth(vec.y);
     }

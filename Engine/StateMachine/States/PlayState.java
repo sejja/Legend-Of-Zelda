@@ -13,6 +13,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 
 import Engine.Graphics.Font;
+import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Sprite;
 import Engine.Graphics.Tile.TileManager;
 import Engine.Input.InputManager;
@@ -68,8 +69,8 @@ public class PlayState extends State {
     */ //----------------------------------------------------------------------
     @Override
     public void Render(Graphics2D g) {
+        GraphicsPipeline.GetGraphicsPipeline().Render(g);
         Sprite.DrawArray((Graphics2D) g, mFont, "THE LEGEND OF ANDONI", new Vector2D(100, 100), 32, 32, 56, 0);
         //Sprite.DrawArray((Graphics2D) g, mFont, "Un dialogo de Zelda", mPos, 32, 32, 16, 0); 
-        mPlayer.Render(g);
     }
 }
