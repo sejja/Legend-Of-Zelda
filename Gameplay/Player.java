@@ -74,8 +74,15 @@ public class Player extends Actor {
         //---------------------------------------------------------------------
 
         mAnimation = AddComponent(new AnimationMachine(this, sprite));
-        SetAnimation(LEFT, sprite.GetSpriteArray(LEFT), delay);
+        SetAnimation(RIGHT, sprite.GetSpriteArray(RIGHT), delay);
 
+        implementsActions();
+    }
+
+    /* This function only implements actionlisteners
+     * 
+     */
+    private void implementsActions (){ //Esto es una mierda hay que mejorarlo en cuando se pueda
         InputManager.SubscribePressed(KeyEvent.VK_W, new InputFunction() {
             @Override
             public void Execute() {
@@ -83,9 +90,9 @@ public class Player extends Actor {
                 down = false;
                 left = false;
                 right = false;
+                setVelocity(1);
              }
         });
-
         InputManager.SubscribePressed(KeyEvent.VK_S, new InputFunction() {
             @Override
             public void Execute() {
@@ -93,9 +100,9 @@ public class Player extends Actor {
                 down = true;
                 left = false;
                 right = false;
+                setVelocity(1);
             }
         });
-
         InputManager.SubscribePressed(KeyEvent.VK_A, new InputFunction() {
             @Override
             public void Execute() {
@@ -103,9 +110,9 @@ public class Player extends Actor {
                 down = false;
                 left = true;
                 right = false;
+                setVelocity(1);
             } 
         });
-
         InputManager.SubscribePressed(KeyEvent.VK_D, new InputFunction() {
             @Override
             public void Execute() {
@@ -113,6 +120,48 @@ public class Player extends Actor {
                 down = false;
                 left = false;
                 right = true;
+                setVelocity(1);
+            }
+        });
+
+        InputManager.SubscribeReleased(KeyEvent.VK_W, new InputFunction() {
+            @Override
+            public void Execute() {
+                up = true;
+                down = false;
+                left = false;
+                right = false;
+                setVelocity(0);
+             }
+        });
+        InputManager.SubscribeReleased(KeyEvent.VK_S, new InputFunction() {
+            @Override
+            public void Execute() {
+                up = false;
+                down = true;
+                left = false;
+                right = false;
+                setVelocity(0);
+            }
+        });
+        InputManager.SubscribeReleased(KeyEvent.VK_A, new InputFunction() {
+            @Override
+            public void Execute() {
+               up = false;
+                down = false;
+                left = true;
+                right = false;
+                setVelocity(0);
+            } 
+        });
+        InputManager.SubscribeReleased(KeyEvent.VK_D, new InputFunction() {
+            @Override
+            public void Execute() {
+                up = false;
+                down = false;
+                left = false;
+                right = true;
+                setVelocity(0);
             }
         });
     }
@@ -176,7 +225,7 @@ public class Player extends Actor {
     */ //----------------------------------------------------------------------
     public void Move() {
         Vector2D<Float> pos = GetPosition();
-        //System.out.println(pos.toString());
+        //System.out.println(directionToString());
         if(up) {
             pos.y -= velocity;
         }
@@ -213,8 +262,7 @@ public class Player extends Actor {
     /* Info. functions
      * 
      */
-    @Override
-    public String toString() {
+    public String directionToString() {
         return "Player [up=" + up + ", down=" + down + ", right=" + right + ", left=" + left + ", mCurrentAnimation="
                 + mCurrentAnimation + "]";
     }
