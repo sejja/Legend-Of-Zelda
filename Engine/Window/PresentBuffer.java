@@ -8,11 +8,15 @@
 
 package Engine.Window;
 
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-
 import javax.swing.JPanel;
+
+import Engine.Input.InputManager;
+import Engine.StateMachine.StateMachine;
 
 public class PresentBuffer extends JPanel implements Runnable {
     public static int mWidth;
@@ -21,6 +25,8 @@ public class PresentBuffer extends JPanel implements Runnable {
     private BufferedImage mFrameBuffer;
     private Graphics2D mGFX;
     private boolean mRunning;
+    private InputManager mInputManager;
+    private StateMachine mStateManager;
 
     // ------------------------------------------------------------------------
     /*! Constructor
@@ -30,6 +36,7 @@ public class PresentBuffer extends JPanel implements Runnable {
     public PresentBuffer(int width, int height) {
         mWidth = width;
         mHeight = height;
+        mStateManager = new StateMachine();
         setPreferredSize(new Dimension(width, height));
         setFocusable(true);
         requestFocus();
@@ -59,33 +66,50 @@ public class PresentBuffer extends JPanel implements Runnable {
         mRunning = true;
         mFrameBuffer = new BufferedImage(mWidth, mHeight, BufferedImage.TYPE_INT_ARGB);
         mGFX = (Graphics2D)mFrameBuffer.getGraphics();
+        mInputManager = new InputManager(this);
     }
 
     // ------------------------------------------------------------------------
     /*! Update
     *
-    *   EMPTY FUNCTION
+    *   Updates the game
     */ //----------------------------------------------------------------------
     public void Update() {
-        
+        mStateManager.Update();
     }
 
     // ------------------------------------------------------------------------
     /*! Render
     *
-    *   EMPTY FUNCTION
+    *   Renders the game
     */ //----------------------------------------------------------------------
     public void Render() {
-
+        //If there is a valid graphics
+        if(mGFX != null) {
+            mGFX.setColor(Color.black);
+            mGFX.fillRect(0, 0, mWidth, mHeight);
+            mStateManager.Render(mGFX);
+        }
     }
 
     // ------------------------------------------------------------------------
     /*! Present
     *
-    *   EMPTY FUNCTION
+    *   Presents the game
     */ //----------------------------------------------------------------------
     public void Present() {
+        Graphics d2g = (Graphics) getGraphics();
+        d2g.drawImage(mFrameBuffer, 0, 0, mWidth, mHeight, null);
+        d2g.dispose();
+    }
 
+    // ------------------------------------------------------------------------
+    /*! Input
+    *
+    *   EMPTY FUNCTION
+    */ //----------------------------------------------------------------------
+    public void Input(Engine.Input.InputManager inputmgr) {
+        mStateManager.Input(inputmgr);
     }
 
     // ------------------------------------------------------------------------
@@ -96,11 +120,34 @@ public class PresentBuffer extends JPanel implements Runnable {
     public void run() {
         Init();
 
+        final double FPS = 60.f;
+        final double TBU = 1000000000 / FPS;
+
+        double lastRenderTime;
+
         //While the window is present
         while(mRunning) {
+            long framestart_time = System.nanoTime();
+            Input(mInputManager);
             Update();
             Render();
             Present();
+            lastRenderTime = System.nanoTime();
+
+            //If we have time to sleep until the next frame, sleep
+            while(framestart_time - lastRenderTime < TBU) {
+                Thread.yield();
+
+                //Sleeping the tread is not safe, add a try/catch
+                try {
+                    Thread.sleep(10);
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
+
+                framestart_time = System.nanoTime();
+            }
         }
     }
 }
+    
