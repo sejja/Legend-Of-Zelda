@@ -67,12 +67,12 @@ public class FontComponent extends Component implements Renderable {
     }
 
     @Override
-    public void Render(Graphics2D g) {
+    public void Render(Graphics2D g, Vector2D<Float> camerapos) {
         final float posx = GetParent().GetPosition().x + mOffset.mPosition.x;
         final float posy = GetParent().GetPosition().y + mOffset.mPosition.y;
         final float scax = GetParent().GetScale().x * mOffset.mScale.x;
         final float scay = GetParent().GetScale().y * mOffset.mScale.y;
-        mFont.Render(g, mString, new Vector2D<>(posx, posy), (int)scax, (int)scay, mGlyph.x, mGlyph.y);
+        mFont.Render(g, mString, new Vector2D<>(posx - camerapos.x, posy - camerapos.y), (int)scax, (int)scay, mGlyph.x, mGlyph.y);
     }
 
     @Override

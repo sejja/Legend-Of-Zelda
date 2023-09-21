@@ -19,8 +19,8 @@ public class FontObject extends ECObject implements Renderable {
     }
 
     @Override
-    public void Render(Graphics2D g) {
-        mFont.Render(g, mString, new Vector2D<>(GetPosition().x, GetPosition().y), (int)(float)GetScale().x, (int)(float)GetScale().y, 56, 0);
+    public void Render(Graphics2D g, Vector2D<Float> camerapos) {
+        mFont.Render(g, mString, new Vector2D<>(GetPosition().x - camerapos.x, GetPosition().y - camerapos.y), (int)(float)GetScale().x, (int)(float)GetScale().y, 56, 0);
     }
 
     protected void finalize() throws Throwable {  

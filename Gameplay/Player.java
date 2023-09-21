@@ -8,6 +8,7 @@ import Engine.ECSystem.Types.Actor;
 import Engine.Graphics.Animation;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.AnimationMachine;
+import Engine.Graphics.Components.CameraComponent;
 import Engine.Graphics.Components.FontComponent;
 import Engine.Input.InputFunction;
 import Engine.Input.InputManager;
@@ -25,6 +26,7 @@ public class Player extends Actor {
     protected int mCurrentAnimation;
     protected AnimationMachine mAnimation;
     protected FontComponent mFont;
+    protected CameraComponent mCamera;
     // ------------------------------------------------------------------------
     /*! Conversion Constructor
     *
@@ -38,6 +40,9 @@ public class Player extends Actor {
         mFont.SetString("Un link parlante");
         mFont.SetScale(new Vector2D<>(0.2f, 0.2f));
         mFont.SetGlyph(new Vector2D<>(32, 0));
+        
+        mCamera = AddComponent(new CameraComponent(this));
+        mCamera.Bind();        
         SetAnimation(RIGHT, sprite.GetSpriteArray(RIGHT), 10);
 
         InputManager.SubscribePressed(KeyEvent.VK_UP, new InputFunction() {
@@ -133,19 +138,19 @@ public class Player extends Actor {
         Vector2D<Float> pos = GetPosition();
 
         if(up) {
-            pos.y += 1;
+            pos.y += 5;
         }
 
         if(down) {
-            pos.y -= 1;
+            pos.y -= 5;
         }
 
         if(left) {
-            pos.x -= 1;
+            pos.x -= 5;
         }
 
         if(right) {
-            pos.x += 1;
+            pos.x += 5;
         }
 
         SetPosition(pos);

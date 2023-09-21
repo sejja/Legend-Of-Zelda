@@ -22,7 +22,7 @@ public class BoxCollider extends Component {
     */ //----------------------------------------------------------------------
     protected BoxCollider(Actor parent) {
         super(parent);
-        mBounds = new AABB(parent.GetPosition(), 1, 1);
+        mBounds = new AABB(parent.GetPosition(), parent.GetScale());
     }
 
     // ------------------------------------------------------------------------

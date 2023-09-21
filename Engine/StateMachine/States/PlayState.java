@@ -22,6 +22,8 @@ import Engine.StateMachine.StateMachine;
 import Gameplay.Player;
 
 public class PlayState extends State {
+
+    public static Vector2D<Float> map;
     // ------------------------------------------------------------------------
     /*! Constructor
     *
@@ -29,11 +31,12 @@ public class PlayState extends State {
     */ //----------------------------------------------------------------------
     public PlayState(StateMachine superm) {
         super(superm);
-        ObjectManager.GetObjectManager().AddEntity(new TileManager("Content/TiledProject/StressTest.tmx"));
+        map = new Vector2D<>();
+        ObjectManager.GetObjectManager().AddEntity(new TileManager("Content/TiledProject/TestRoom.tmx"));
         FontObject mFont = (FontObject)ObjectManager.GetObjectManager().AddEntity(new FontObject("Content/Fonts/ZeldaFont.png", "THE LEGEND OF ANDONI"));
         mFont.SetPosition(new Vector2D<>(100.f, 100.f));
         mFont.SetScale(new Vector2D<>(32.f, 32.f));
-        ObjectManager.GetObjectManager().AddEntity(new Player(new Spritesheet("Content/Animations/Link.png"), new Vector2D<Float>(300.f, 300.f), new Vector2D<Float>(100.f, 100.f)));
+        ObjectManager.GetObjectManager().AddEntity(new Player(new Spritesheet("Content/Animations/Link.png"), new Vector2D<Float>(0.f, 0.f), new Vector2D<Float>(100.f, 100.f)));
     }
 
     // ------------------------------------------------------------------------
