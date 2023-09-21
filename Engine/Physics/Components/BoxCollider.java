@@ -8,8 +8,8 @@
 
 package Engine.Physics.Components;
 
-import Engine.ECSystem.Actor;
-import Engine.ECSystem.Component;
+import Engine.ECSystem.Types.Actor;
+import Engine.ECSystem.Types.Component;
 import Engine.Physics.AABB;
 
 public class BoxCollider extends Component {

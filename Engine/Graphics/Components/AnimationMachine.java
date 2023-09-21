@@ -10,8 +10,8 @@ package Engine.Graphics.Components;
 
 import java.awt.Graphics2D;
 
-import Engine.ECSystem.Component;
-import Engine.ECSystem.Actor;
+import Engine.ECSystem.Types.Actor;
+import Engine.ECSystem.Types.Component;
 import Engine.Graphics.Animation;
 import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Spritesheet;

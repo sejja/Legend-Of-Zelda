@@ -4,10 +4,11 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 
-import Engine.ECSystem.Actor;
+import Engine.ECSystem.Types.Actor;
 import Engine.Graphics.Animation;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.AnimationMachine;
+import Engine.Graphics.Components.FontComponent;
 import Engine.Input.InputFunction;
 import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
@@ -23,6 +24,7 @@ public class Player extends Actor {
     protected boolean left = false;
     protected int mCurrentAnimation;
     protected AnimationMachine mAnimation;
+    protected FontComponent mFont;
     // ------------------------------------------------------------------------
     /*! Conversion Constructor
     *
@@ -32,6 +34,10 @@ public class Player extends Actor {
         super(position);
         SetScale(size);
         mAnimation = AddComponent(new AnimationMachine(this, sprite));
+        mFont = AddComponent(new FontComponent(this, "Content/Fonts/ZeldaFont.png"));
+        mFont.SetString("Un link parlante");
+        mFont.SetScale(new Vector2D<>(0.2f, 0.2f));
+        mFont.SetGlyph(new Vector2D<>(32, 0));
         SetAnimation(RIGHT, sprite.GetSpriteArray(RIGHT), 10);
 
         InputManager.SubscribePressed(KeyEvent.VK_UP, new InputFunction() {
