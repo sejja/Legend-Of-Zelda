@@ -3,6 +3,7 @@ package Gameplay;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import Engine.ECSystem.Actor;
 import Engine.Graphics.Animation;
@@ -13,17 +14,25 @@ import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
 
 public class Player extends Actor {
-    private final int UP = 0;
-    private final int DOWN = 1;
-    private final int RIGHT = 2;
-    private final int LEFT = 3;
+    private final int RIGHT = 0;
+    private final int LEFT = 1;
+    private final int DOWN = 2;
+    private final int UP = 3;
     protected boolean up = false;
     protected boolean down = false;
-    protected boolean right = true;
+    protected boolean right = false;
     protected boolean left = false;
     protected int mCurrentAnimation;
     protected AnimationMachine mAnimation;
-    // ------------------------------------------------------------------------
+
+    private boolean arc;
+    private boolean lighter;
+    private boolean bomb;
+    
+    protected AtomicInteger healthPoints = new AtomicInteger(10);
+    final private  int damage = 2;
+
+
     /*! Conversion Constructor
     *
     *   Constructs a Player with a sprite, a position, and gives it a size
@@ -31,10 +40,15 @@ public class Player extends Actor {
     public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size) {
         super(position);
         SetScale(size);
-        mAnimation = AddComponent(new AnimationMachine(this, sprite));
-        SetAnimation(RIGHT, sprite.GetSpriteArray(RIGHT), 10);
 
-        InputManager.SubscribePressed(KeyEvent.VK_UP, new InputFunction() {
+        //Lets transpose the Sprite Matrix
+        sprite.setmSpriteArray(transposeMatrix(sprite.GetSpriteArray2D()));
+        //---------------------------------------------------------------------
+
+        mAnimation = AddComponent(new AnimationMachine(this, sprite));
+        SetAnimation(LEFT, sprite.GetSpriteArray(RIGHT), 50);
+
+        InputManager.SubscribePressed(KeyEvent.VK_W, new InputFunction() {
             @Override
             public void Execute() {
                 up = true;
@@ -44,7 +58,7 @@ public class Player extends Actor {
              }
         });
 
-        InputManager.SubscribePressed(KeyEvent.VK_DOWN, new InputFunction() {
+        InputManager.SubscribePressed(KeyEvent.VK_S, new InputFunction() {
             @Override
             public void Execute() {
                 up = false;
@@ -54,7 +68,7 @@ public class Player extends Actor {
             }
         });
 
-        InputManager.SubscribePressed(KeyEvent.VK_LEFT, new InputFunction() {
+        InputManager.SubscribePressed(KeyEvent.VK_A, new InputFunction() {
             @Override
             public void Execute() {
                up = false;
@@ -64,7 +78,7 @@ public class Player extends Actor {
             } 
         });
 
-        InputManager.SubscribePressed(KeyEvent.VK_RIGHT, new InputFunction() {
+        InputManager.SubscribePressed(KeyEvent.VK_D, new InputFunction() {
             @Override
             public void Execute() {
                 up = false;
@@ -125,13 +139,13 @@ public class Player extends Actor {
     */ //----------------------------------------------------------------------
     public void Move() {
         Vector2D<Float> pos = GetPosition();
-
+        System.out.println(pos.toString());
         if(up) {
-            pos.y += 1;
+            pos.y -= 1;
         }
 
         if(down) {
-            pos.y -= 1;
+            pos.y += 1;
         }
 
         if(left) {
@@ -143,5 +157,17 @@ public class Player extends Actor {
         }
 
         SetPosition(pos);
-    }    
+    }
+    // ------------------------------------------------------------------------
+    /*! Transpose
+    *
+    *   ret -> transposed BufferedImage 2D Matrix
+    */ //----------------------------------------------------------------------
+    private BufferedImage[][] transposeMatrix(BufferedImage [][] m){
+        BufferedImage[][] temp = new BufferedImage[m[0].length][m.length];
+        for (int i = 0; i < m.length; i++)
+            for (int j = 0; j < m[0].length; j++)
+                temp[j][i] = m[i][j];
+        return temp;
+    }
 }
