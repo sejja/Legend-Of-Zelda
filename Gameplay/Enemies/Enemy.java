@@ -15,9 +15,9 @@ public class Enemy extends Actor{
     private final int DOWN = 1;
     private final int RIGHT = 2;
     private final int LEFT = 3;
-    protected boolean up = false;
+    protected boolean up = true;
     protected boolean down = false;
-    protected boolean right = true;
+    protected boolean right = false;
     protected boolean left = false;
     protected boolean chase = false;
     protected int mCurrentAnimation;
@@ -33,7 +33,7 @@ public class Enemy extends Actor{
         super(position);
         SetScale(size);
         mAnimation = AddComponent(new AnimationMachine(this, sprite));
-        SetAnimation(RIGHT, sprite.GetSpriteArray(RIGHT), 10);
+        SetAnimation(UP, sprite.GetSpriteArray(UP), 5);
     }
 
     public void SetAnimation(int i, BufferedImage[] frames, int delay) {

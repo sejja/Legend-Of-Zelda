@@ -21,11 +21,13 @@ import Engine.Math.Vector2D;
 import Engine.StateMachine.State;
 import Engine.StateMachine.StateMachine;
 import Gameplay.Player;
+import Gameplay.Enemies.*;
 
 public class PlayState extends State {
 
     private Font mFont;
     private Player mPlayer;
+    private Enemy mEnemy;
     private Vector2D<Float> mPos;
     private TileManager mTilemap;
 
@@ -40,6 +42,8 @@ public class PlayState extends State {
         mFont = new Font("Content/Fonts/ZeldaFont.png", 16, 16);
         mPlayer = new Player(new Spritesheet("Content/Animations/Link.png"), new Vector2D<Float>(300.f, 300.f), new Vector2D<Float>(100.f, 100.f));
         mPos = new Vector2D<Float>(300.f, 600.f);
+        Spritesheet esprite = new Spritesheet("Content/Animations/gknight.png",16,28);
+        mEnemy = new Enemy(esprite, new Vector2D<Float>(300.f, 300.f), new Vector2D<Float>(50.f, 100.f));
     }
 
     // ------------------------------------------------------------------------
@@ -50,6 +54,8 @@ public class PlayState extends State {
     @Override
     public void Update() {
         mPlayer.Update();
+        mEnemy.Update();
+
     }
 
     // ------------------------------------------------------------------------
