@@ -3,6 +3,7 @@ package Gameplay;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.util.ResourceBundle.Control;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import Engine.ECSystem.Actor;
@@ -36,13 +37,14 @@ public class Player extends Actor {
     private boolean down = false;
     private boolean right = false;
     private boolean left = false;
+    private boolean attack = false;
     //----------------------------------------------------------------------
 
     /* Animation
      */
     private int mCurrentAnimation;
     protected AnimationMachine mAnimation;
-    final private int delay = 10; //This is the delay of the all animations
+    final private int delay = 3; //This is the delay of the all animations
     //----------------------------------------------------------------------
 
     /*  Enable skills
@@ -60,6 +62,7 @@ public class Player extends Actor {
     private int velocity = 0;
     //----------------------------------------------------------------------
 
+    private ThreadPlayer controls;
 
     /*! Conversion Constructor
     *
@@ -76,6 +79,9 @@ public class Player extends Actor {
         mAnimation = AddComponent(new AnimationMachine(this, sprite));
         SetAnimation(RIGHT, sprite.GetSpriteArray(RIGHT), delay);
 
+        controls = new ThreadPlayer(this);
+        controls.start();
+
         implementsActions();
     }
 
@@ -83,45 +89,30 @@ public class Player extends Actor {
      * 
      */
     private void implementsActions (){ //Esto es una mierda hay que mejorarlo en cuando se pueda
+        
         InputManager.SubscribePressed(KeyEvent.VK_W, new InputFunction() {
             @Override
             public void Execute() {
-                up = true;
-                down = false;
-                left = false;
-                right = false;
-                setVelocity(1);
+                activateThread(UP);
              }
         });
         InputManager.SubscribePressed(KeyEvent.VK_S, new InputFunction() {
             @Override
             public void Execute() {
-                up = false;
-                down = true;
-                left = false;
-                right = false;
-                setVelocity(1);
-            }
+                activateThread(DOWN);
+             }
         });
         InputManager.SubscribePressed(KeyEvent.VK_A, new InputFunction() {
             @Override
             public void Execute() {
-               up = false;
-                down = false;
-                left = true;
-                right = false;
-                setVelocity(1);
-            } 
+                activateThread(LEFT);
+             }
         });
         InputManager.SubscribePressed(KeyEvent.VK_D, new InputFunction() {
             @Override
             public void Execute() {
-                up = false;
-                down = false;
-                left = false;
-                right = true;
-                setVelocity(1);
-            }
+                activateThread(RIGHT);
+             }
         });
 
         InputManager.SubscribeReleased(KeyEvent.VK_W, new InputFunction() {
@@ -177,32 +168,43 @@ public class Player extends Actor {
     }
 
     public void Animate() {
-        if(up) {
+        if (!attack){
+            if(up) {
             if(mCurrentAnimation != UP || mAnimation.GetAnimation().GetDelay() == -1) {
                 SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), delay);
             }
-        } else if(down) {
-            if(mCurrentAnimation != DOWN || mAnimation.GetAnimation().GetDelay() == -1) {
-                SetAnimation(DOWN, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN), delay);
+            } else if(down) {
+                if(mCurrentAnimation != DOWN || mAnimation.GetAnimation().GetDelay() == -1) {
+                    SetAnimation(DOWN, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN), delay);
+                }
+            } else if(right) {
+                if(mCurrentAnimation != RIGHT || mAnimation.GetAnimation().GetDelay() == -1) {
+                    SetAnimation(RIGHT, mAnimation.GetSpriteSheet().GetSpriteArray(RIGHT), delay);
+                }
+            } else if(left){
+                if(mCurrentAnimation != LEFT || mAnimation.GetAnimation().GetDelay() == -1) {
+                    SetAnimation(LEFT, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT), delay);
+                }
             }
-        } else if(right) {
-            if(mCurrentAnimation != RIGHT || mAnimation.GetAnimation().GetDelay() == -1) {
-                SetAnimation(RIGHT, mAnimation.GetSpriteSheet().GetSpriteArray(RIGHT), delay);
+        }else{
+            if(up) {
+            if(mCurrentAnimation != UP+5 || mAnimation.GetAnimation().GetDelay() == -1) {
+                SetAnimation(UP+5, mAnimation.GetSpriteSheet().GetSpriteArray(UP+5), delay);
             }
-        } else {
-            if(mCurrentAnimation != LEFT || mAnimation.GetAnimation().GetDelay() == -1) {
-                SetAnimation(LEFT, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT), delay);
+            } else if(down) {
+                if(mCurrentAnimation != DOWN+5 || mAnimation.GetAnimation().GetDelay() == -1) {
+                    SetAnimation(DOWN+5, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN+5), delay);
+                }
+            } else if(right) {
+                if(mCurrentAnimation != RIGHT+5 || mAnimation.GetAnimation().GetDelay() == -1) {
+                    SetAnimation(RIGHT+5, mAnimation.GetSpriteSheet().GetSpriteArray(RIGHT+5), delay);
+                }
+            } else if(left){
+                if(mCurrentAnimation != LEFT+5 || mAnimation.GetAnimation().GetDelay() == -1) {
+                    SetAnimation(LEFT+5, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT+5), delay);
+                }
             }
         }
-        //Attack animation set
-        /* 
-        InputManager.SubscribePressed(KeyEvent.VK_K, new InputFunction() {
-            @Override
-            public void Execute() {
-                SetAnimation(LEFT+5, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT+5), delay);
-            }
-        });
-        */
     }
     // ------------------------------------------------------------------------
 
@@ -258,15 +260,24 @@ public class Player extends Actor {
         return temp;
     }
     // ------------------------------------------------------------------------
-
+    
     /* Info. functions
      * 
      */
     public String directionToString() {
         return "Player [up=" + up + ", down=" + down + ", right=" + right + ", left=" + left + ", mCurrentAnimation="
-                + mCurrentAnimation + "]";
+                + mCurrentAnimation + "]" + "Thread isAlive :" + controls.isAlive();
     }
     //------------------------------------------------------------------------
+
+    public void activateThread(int i){
+        System.out.println(controls.execute);
+        if (!controls.execute){
+            controls.setAction(i);
+            controls.execute = true;
+            System.out.println(directionToString());
+        }
+    }
 
     /* Getters
      * 
@@ -311,6 +322,21 @@ public class Player extends Actor {
     }
     public void setVelocity(int velocity) {
         this.velocity = velocity;
+    }
+    public void setUp(boolean up) {
+        this.up = up;
+    }
+    public void setDown(boolean down) {
+        this.down = down;
+    }
+    public void setRight(boolean right) {
+        this.right = right;
+    }
+    public void setLeft(boolean left) {
+        this.left = left;
+    }
+    public void setAttack(boolean attack) {
+        this.attack = attack;
     }
     //------------------------------------------------------------------------
 }
