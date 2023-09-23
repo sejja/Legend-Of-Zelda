@@ -150,6 +150,23 @@ public class Player extends Actor {
                 attack = false;
             }
         });
+
+        InputManager.SubscribePressed(KeyEvent.VK_J, new InputFunction() {
+            @Override
+            public void Execute() {
+                setVelocity(0);
+                stop = true;
+                attack = true;
+            }
+        });
+        InputManager.SubscribeReleased(KeyEvent.VK_J, new InputFunction() {
+            @Override
+            public void Execute() {
+                setVelocity(0);
+                stop = true;
+                attack = false;
+            }
+        });
     }
 
     public void SetAnimation(int i, BufferedImage[] frames, int delay) {
@@ -163,8 +180,7 @@ public class Player extends Actor {
     }
 
     public void Animate() {
-        setSetopAnimation();
-    /*
+        System.out.println("stop = " + stop + " | " + "attack = " + attack);
         if (stop)
         {
             if (attack)
@@ -173,21 +189,20 @@ public class Player extends Actor {
             }
             else
             {
-                //System.out.println("ce para");;
-                System.out.println(mAnimatioT0String());
+                //System.out.println(mAnimatioT0String());
                 setSetopAnimation();
             }
         }
         else
         {
-            if(!attack){
-                setRunAnimation();
-            }
-            {
+            if(attack){
+                
                 setSetopAnimation();
             }
+            {
+                setRunAnimation();
+            }
         }
-    */
     }
     
     // ------------------------------------------------------------------------
@@ -260,7 +275,7 @@ public class Player extends Actor {
                 + mCurrentAnimation + ", stop=" + stop + ", attack =" + attack + "]" ;
     }
     public String mAnimatioT0String(){
-        return ("My current animation: " + mAnimation.GetSpriteSheet());
+        return ("My current animation: " + mCurrentAnimation);
     }
     //------------------------------------------------------------------------
 
@@ -303,7 +318,7 @@ public class Player extends Actor {
         }
         stop = false; 
         attack = false;
-        //System.out.println(directionToString());
+        System.out.println(directionToString());
     }
 
     /* Getters
@@ -364,39 +379,39 @@ public class Player extends Actor {
     }
     public void setSetopAnimation(){
                 if(up) {
-                if(mCurrentAnimation != UP+6 || mAnimation.GetAnimation().GetDelay() == -1) {
-                    SetAnimation(UP+6, mAnimation.GetSpriteSheet().GetSpriteArray(UP+6), delay);
+                if(mCurrentAnimation != UP+9 || mAnimation.GetAnimation().GetDelay() == -1) {
+                    SetAnimation(UP+9, mAnimation.GetSpriteSheet().GetSpriteArray(UP+9), delay);
                 }
                 } else if(down) {
-                    if(mCurrentAnimation != DOWN+6 || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(DOWN+6, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN+6), delay);
+                    if(mCurrentAnimation != DOWN+9 || mAnimation.GetAnimation().GetDelay() == -1) {
+                        SetAnimation(DOWN+9, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN+9), delay);
                     }
                 } else if(right) {
-                    if(mCurrentAnimation != RIGHT+6 || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(RIGHT+6, mAnimation.GetSpriteSheet().GetSpriteArray(RIGHT+6), delay);
+                    if(mCurrentAnimation != RIGHT+9 || mAnimation.GetAnimation().GetDelay() == -1) {
+                        SetAnimation(RIGHT+9, mAnimation.GetSpriteSheet().GetSpriteArray(RIGHT+9), delay);
                     }
                 } else if(left){
-                    if(mCurrentAnimation != LEFT+6 || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(LEFT+6, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT+6), delay);
+                    if(mCurrentAnimation != LEFT+9|| mAnimation.GetAnimation().GetDelay() == -1) {
+                        SetAnimation(LEFT+9, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT+9), delay);
                     }
                 }
     }
     public void setAttackAnimation(){
                 if(up) {
                 if(mCurrentAnimation != UP+5 || mAnimation.GetAnimation().GetDelay() == -1) {
-                    SetAnimation(UP+5, mAnimation.GetSpriteSheet().GetSpriteArray(UP+5), delay);
+                    SetAnimation(UP+5, mAnimation.GetSpriteSheet().GetSpriteArray(UP+5), delay-2);
                 }
                 } else if(down) {
                     if(mCurrentAnimation != DOWN+5 || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(DOWN+5, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN+5), delay);
+                        SetAnimation(DOWN+5, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN+5), delay-2);
                     }
                 } else if(right) {
                     if(mCurrentAnimation != RIGHT+5 || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(RIGHT+5, mAnimation.GetSpriteSheet().GetSpriteArray(RIGHT+5), delay);
+                        SetAnimation(RIGHT+5, mAnimation.GetSpriteSheet().GetSpriteArray(RIGHT+5), delay-2);
                     }
                 } else if(left){
                     if(mCurrentAnimation != LEFT+5 || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(LEFT+5, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT+5), delay);
+                        SetAnimation(LEFT+5, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT+5), delay-2);
                     }
                 }
     }
