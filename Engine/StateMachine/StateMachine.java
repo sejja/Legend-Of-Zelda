@@ -19,6 +19,7 @@ import Engine.Window.PresentBuffer;
 
 public class StateMachine {
     ArrayList<State> mStates;
+
     public static Vector2D<Integer> mCoordinates; 
 
     // ------------------------------------------------------------------------
