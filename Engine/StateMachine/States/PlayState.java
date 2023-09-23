@@ -11,6 +11,7 @@ package Engine.StateMachine.States;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.util.ArrayList;
 
 import Engine.Graphics.Font;
 import Engine.Graphics.GraphicsPipeline;
@@ -43,7 +44,8 @@ public class PlayState extends State {
         mPlayer = new Player(new Spritesheet("Content/Animations/Link.png"), new Vector2D<Float>(300.f, 300.f), new Vector2D<Float>(100.f, 100.f));
         mPos = new Vector2D<Float>(300.f, 600.f);
         Spritesheet esprite = new Spritesheet("Content/Animations/gknight.png",16,28);
-        mEnemy = new Enemy(esprite, new Vector2D<Float>(300.f, 300.f), new Vector2D<Float>(50.f, 100.f));
+        ArrayList<Enemy> mEnemies = new ArrayList<Enemy>();
+        mEnemy = new Enemy(esprite, new Vector2D<Float>(300.f, 300.f), new Vector2D<Float>(50.f, 100.f), mPlayer);
     }
 
     // ------------------------------------------------------------------------
@@ -54,7 +56,7 @@ public class PlayState extends State {
     @Override
     public void Update() {
         mPlayer.Update();
-        mEnemy.Update();
+        mEnemy.Update(mPlayer.GetPosition());
 
     }
 
