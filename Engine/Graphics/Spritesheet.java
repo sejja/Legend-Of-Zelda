@@ -121,10 +121,14 @@ public class Spritesheet {
     */ //----------------------------------------------------------------------
     private void LoadSpriteArray() {
         mSpriteArray = new BufferedImage[mWidth][mHeight];
-
-        for(int x = 0; x < mWidth; x++)
-            for(int y = 0; y < mHeight; y++)
+        int x;
+        for(x = 0; x < mWidth; x++){
+            int y;
+            for(y = 0; y < mHeight; y++){
                 mSpriteArray[x][y]  = GetSprite(x, y);
+                //System.out.println("x: " + x + "|" + "y: " + y );
+            }
+        }
     }
 
     // ------------------------------------------------------------------------
@@ -184,4 +188,10 @@ public class Spritesheet {
             y += yOffset;
         }
     }
+
+        
+    public void setmSpriteArray(BufferedImage[][] mSpriteArray) {
+        this.mSpriteArray = mSpriteArray;
+    }
+
 }
