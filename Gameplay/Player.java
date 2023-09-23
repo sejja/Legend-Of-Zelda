@@ -56,7 +56,13 @@ public class Player extends Actor {
     private boolean haveLighter;
     private boolean HaveBomb;
     //----------------------------------------------------------------------
-    
+
+    /* CoolDowns
+     */
+    private static int attack_cooldown = 8;
+    private static int attack_counter = 0;
+    //----------------------------------------------------------------------
+
     /* Player Stats
      * 
      */
@@ -65,7 +71,7 @@ public class Player extends Actor {
     private int velocity = 0;
     //----------------------------------------------------------------------
 
-    //private ThreadPlayer controls;
+    //Methods______________________________________________________________________________________________________________________________________________________________________________
 
     /*! Conversion Constructor
     *
@@ -87,6 +93,7 @@ public class Player extends Actor {
 
         implementsActions();
     }
+    // ------------------------------------------------------------------------
 
     /* This function only implements actionlisteners
      * 
@@ -180,7 +187,7 @@ public class Player extends Actor {
     }
 
     public void Animate() {
-        System.out.println("stop = " + stop + " | " + "attack = " + attack);
+        //System.out.println("stop = " + stop + " | " + "attack = " + attack);
         if (stop)
         {
             if (attack)
@@ -204,7 +211,6 @@ public class Player extends Actor {
             }
         }
     }
-    
     // ------------------------------------------------------------------------
 
     /*! Update
@@ -212,9 +218,27 @@ public class Player extends Actor {
     *   Adds Behavior to the Player
     */ //----------------------------------------------------------------------
     @Override
-    public void Update() {
+    public void Update() {  //Falta hacer que link termine un ataque completo antes de emoezar otro
         super.Update();
         Move();
+        /*
+        if (attack){
+            if(attack_counter == 0){
+                Animate();
+            }
+            attack_counter++;
+            System.out.println(attack_counter);
+            if (attack_counter == attack_cooldown){
+                System.out.println("Ha terminado");
+                attack = false;
+                attack_counter=0;
+            }
+        }
+        else
+        {
+            Animate();
+        }
+        */
         Animate();
         mAnimation.GetAnimation().SetDelay(delay);
     }
