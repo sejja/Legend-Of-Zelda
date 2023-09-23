@@ -41,8 +41,8 @@ public class PlayState extends State {
         super(superm);
         mTilemap = new TileManager("Content/TiledProject/StressTest.tmx");
         mFont = new Font("Content/Fonts/ZeldaFont.png", 16, 16);
-        mPlayer = new Player(new Spritesheet("Content/Animations/Link.png"), new Vector2D<Float>(300.f, 300.f), new Vector2D<Float>(100.f, 100.f));
-        mNpc = new Npc("Aelarion", new Spritesheet("Content/Animations/NPC.png"), new Vector2D<Float>(100.f, 100.f), "En un mundo muy lejano");
+        mPlayer = new Player(new Spritesheet("Content/Animations/Link.png"), new Vector2D<Float>(500.f, 500.f), new Vector2D<Float>(100.f, 100.f));
+        mNpc = new Npc("Aelarion", new Spritesheet("Content/Animations/NPC1.png"), new Vector2D<Float>(300.f, 300.f), "En un mundo muy lejano", new Vector2D<Float>(1000.f, 1000.f)) ;
         mPos = new Vector2D<Float>(300.f, 600.f);
     }
 
@@ -54,6 +54,7 @@ public class PlayState extends State {
     @Override
     public void Update() {
         mPlayer.Update();
+        mNpc.Update();
     }
 
     // ------------------------------------------------------------------------

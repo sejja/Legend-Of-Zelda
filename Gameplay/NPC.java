@@ -22,12 +22,11 @@ public class Npc extends Actor {
     *
     *   Constructs a NPC with a name, a sprite, a position, a dialog and gives it a size
     */ //----------------------------------------------------------------------
-    public Npc(String name, Spritesheet sprite, Vector2D<Float> position, String dialogue) {
-    
+    public Npc(String name, Spritesheet sprite, Vector2D<Float> position, String dialogue, Vector2D<Float> size) {
         super(position);
+        SetScale(size);
         this.name = name;
         this.dialogue = dialogue;
-
         sprite.setmSpriteArray(transposeMatrix(sprite.GetSpriteArray2D()));
         
     }
@@ -37,10 +36,7 @@ public class Npc extends Actor {
     *       ret     -> Transposed BufferedImage 2D Matrix
     */ //----------------------------------------------------------------------
     private BufferedImage[][] transposeMatrix(BufferedImage [][] m){
-        BufferedImage[][] temp = new BufferedImage[m[0].length][m.length];
-        for (int i = 0; i < m.length; i++)
-            for (int j = 0; j < m[0].length; j++)
-                temp[j][i] = m[i][j];
+        BufferedImage[][] temp = new BufferedImage[1][1];
         return temp;
     }
     // ------------------------------------------------------------------------
