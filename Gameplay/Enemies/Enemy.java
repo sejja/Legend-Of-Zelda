@@ -1,31 +1,42 @@
 package Gameplay.Enemies;
 
 import java.awt.image.BufferedImage;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import Engine.ECSystem.Actor;
 import Engine.Graphics.Animation;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.AnimationMachine;
 import Engine.Math.Vector2D;
+import Engine.Physics.AABB;
+import Engine.Physics.Components.BoxCollider;
 import Gameplay.Player;
 
 public class Enemy extends Actor{
+    //directions
     private final int UP = 0;
     private final int DOWN = 2;
     private final int RIGHT = 1;
     private final int LEFT = 3;
 
+    //directions
     protected boolean up = true;
     protected boolean down = false;
     protected boolean right = false;
     protected boolean left = false;
+
+    //player detected
     protected boolean chase = false;
 
+    //stats
+    protected AtomicInteger healthPoints = new AtomicInteger(2);
     float speed = 2;
     Vector2D ndir = new Vector2D(0f,0f);
-    
+
+    // Components
     protected int mCurrentAnimation;
     protected AnimationMachine mAnimation;
+    protected BoxCollider mCollision;
     
     
     // ------------------------------------------------------------------------
@@ -43,6 +54,9 @@ public class Enemy extends Actor{
         // ADD ANIMATION COMPONENT
         mAnimation = AddComponent(new AnimationMachine(this, sprite));
         SetAnimation(UP, sprite.GetSpriteArray(UP), 2);
+
+        //Collision
+        mCollision = AddComponent(new BoxCollider(this));
 
     }
 
@@ -165,10 +179,21 @@ public class Enemy extends Actor{
         super.Update();
         CalculateMovement(playerPos);
         GetDirection(ndir);
+        Collides(playerPos);
         Move();
         Animate();
         mAnimation.GetAnimation().SetDelay(20);
         System.out.println(playerPos.x + " " + playerPos.y);
+    }
+    // ------------------------------------------------------------------------
+    /*! Collides
+    *
+    *   Checks if the Enemy collides with the player
+    */ //----------------------------------------------------------------------
+    public void Collides(Vector2D<Float> playerPos) {
+        AABB dir = mCollision.GetBounds();
+        AABB player = new AABB(playerPos, 32, 32);
+
     }
 
     public void CalculateMovement(Vector2D<Float> playerPos) {
@@ -183,7 +208,9 @@ public class Enemy extends Actor{
     */ //----------------------------------------------------------------------
     public void Move() {
         Vector2D<Float> pos = GetPosition();
-
+        if(chase){
+            speed = 3;
+        }
         pos.x += (float)ndir.x * speed;
         pos.y += (float)ndir.y * speed;
 

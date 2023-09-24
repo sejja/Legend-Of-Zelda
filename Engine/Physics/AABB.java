@@ -9,6 +9,7 @@
 package Engine.Physics;
 
 import Engine.Math.Vector2D;
+import size.x;
 
 public class AABB {
     private Vector2D<Float> mPosition;
@@ -34,10 +35,10 @@ public class AABB {
     *
     *   Constructs an AABB with a position and a radius
     */ //----------------------------------------------------------------------
-    public AABB(Vector2D<Float> pos, int r) {
+    public AABB(Vector2D<Float> pos, x y) {
         mPosition = pos;
-        mSize = r;
-        mRadius = r;
+        mSize = y;
+        mRadius = y;
     }
 
     // ------------------------------------------------------------------------

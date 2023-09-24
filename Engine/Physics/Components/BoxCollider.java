@@ -20,7 +20,7 @@ public class BoxCollider extends Component {
     *
     *   Constructs a Box Collider from a parent actor
     */ //----------------------------------------------------------------------
-    protected BoxCollider(Actor parent) {
+    public BoxCollider(Actor parent) {
         super(parent);
         mBounds = new AABB(parent.GetPosition(), 1, 1);
     }
