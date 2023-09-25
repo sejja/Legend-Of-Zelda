@@ -15,6 +15,9 @@ import Engine.Math.Vector2D;
 
 public class CameraComponent extends Component {
 
+    private float widthLimit = 0;
+    private float heightLimit = 0;
+
     public CameraComponent(Actor parent) {
         super(parent);
     }
@@ -29,6 +32,10 @@ public class CameraComponent extends Component {
 
     public void Bind() {
         GraphicsPipeline.GetGraphicsPipeline().BindCamera(this);
+    }
+
+    public void SetLimits(float width, float height) {
+        
     }
 
     public Vector2D<Float> GetCoordinates() {
