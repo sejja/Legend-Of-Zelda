@@ -33,7 +33,7 @@ public class Enemy extends Actor{
     *
     *   Constructs a Player with a sprite, a position, and gives it a size
     */ //----------------------------------------------------------------------
-    public Enemy(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size, Player player) {
+    public Enemy(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size) {
         super(position);
         SetScale(size);
 
