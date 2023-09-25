@@ -35,6 +35,7 @@ public class Npc extends Engine.ECSystem.Types.Actor {
     *
     *   Constructs a NPC with a name, a sprite, a position, a dialog and gives it a size
     */ //----------------------------------------------------------------------
+
     public Npc(String nameNPC, Spritesheet sprite, Vector2D<Float> position, String dialogue, Vector2D<Float> size) {
         super(position);
         this.name = nameNPC;
@@ -48,7 +49,6 @@ public class Npc extends Engine.ECSystem.Types.Actor {
     *       ret     -> Transposed BufferedImage 2D Matrix
     */ //----------------------------------------------------------------------
     private BufferedImage[][] transposeMatrix(BufferedImage [][] m){
-       // BufferedImage[][] temp = new BufferedImage[1][1];
         BufferedImage[][] temp = new BufferedImage[m[0].length][m.length]; //Modificar este +8 para casos generales 
         for (int i = 0; i < m.length; i++){
             for (int j = 0; j < m[0].length; j++){
@@ -90,8 +90,8 @@ public class Npc extends Engine.ECSystem.Types.Actor {
 
     public void Update() {
         super.Update();
-        mAnimation.GetAnimation().SetDelay(-1);
-        mAnimation.GetAnimation().SetFrame(0);
+//        mAnimation.GetAnimation().SetDelay(-1);
+//        mAnimation.GetAnimation().SetFrame(0);
     }
 
     public String getDialogue() {
