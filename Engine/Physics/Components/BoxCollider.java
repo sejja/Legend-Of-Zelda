@@ -8,8 +8,8 @@
 
 package Engine.Physics.Components;
 
-import Engine.ECSystem.Actor;
-import Engine.ECSystem.Component;
+import Engine.ECSystem.Types.Actor;
+import Engine.ECSystem.Types.Component;
 import Engine.Physics.AABB;
 
 public class BoxCollider extends Component {
@@ -22,7 +22,7 @@ public class BoxCollider extends Component {
     */ //----------------------------------------------------------------------
     public BoxCollider(Actor parent) {
         super(parent);
-        mBounds = new AABB(parent.GetPosition(), 1, 1);
+        mBounds = new AABB(parent.GetPosition(), parent.GetScale());
     }
 
     // ------------------------------------------------------------------------

@@ -10,12 +10,17 @@ package Engine.Graphics;
 
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+import java.util.Vector;
 
+import Engine.Graphics.Components.CameraComponent;
 import Engine.Graphics.Components.Renderable;
+import Engine.Math.Vector2D;
 
 public class GraphicsPipeline {
     private ArrayList<Renderable> mRenderables;
     static private GraphicsPipeline sPipe = new GraphicsPipeline();
+    private CameraComponent mCamera;
+    private Vector2D<Integer> mDimensions;
 
     // ------------------------------------------------------------------------
     /*! Get Graphics Pipeline
@@ -26,6 +31,14 @@ public class GraphicsPipeline {
         return sPipe;
     }
 
+    public void SetDimensions(Vector2D<Integer> dim) {
+        mDimensions = dim;
+    }
+
+    public Vector2D<Integer> GetDimensions() {
+        return mDimensions;
+    }
+
     // ------------------------------------------------------------------------
     /*! Default constructor
     *
@@ -33,6 +46,11 @@ public class GraphicsPipeline {
     */ //----------------------------------------------------------------------
     private GraphicsPipeline() {
         mRenderables = new ArrayList<>();
+        mCamera = null;
+    }
+
+    public void BindCamera(CameraComponent c) {
+        mCamera = c;
     }
 
     // ------------------------------------------------------------------------
@@ -52,7 +70,7 @@ public class GraphicsPipeline {
     public void Render(Graphics2D g) {
         //Renderable
         for(Renderable x : mRenderables)
-            x.Render(g);
+            x.Render(g, mCamera == null ? new Vector2D<Float>() : mCamera.GetCoordinates());
     }
 
     // ------------------------------------------------------------------------

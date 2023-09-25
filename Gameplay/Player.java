@@ -6,10 +6,12 @@ import java.awt.image.BufferedImage;
 import java.util.ResourceBundle.Control;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import Engine.ECSystem.Actor;
+import Engine.ECSystem.Types.Actor;
 import Engine.Graphics.Animation;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.AnimationMachine;
+import Engine.Graphics.Components.CameraComponent;
+import Engine.Graphics.Components.FontComponent;
 import Engine.Input.InputFunction;
 import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
@@ -67,6 +69,7 @@ public class Player extends Actor {
      * 
      */
     protected AtomicInteger healthPoints = new AtomicInteger(10);
+    private CameraComponent mCamera;
     final private  int damage = 2;
     private int velocity = 0;
     //----------------------------------------------------------------------
@@ -86,12 +89,15 @@ public class Player extends Actor {
         //---------------------------------------------------------------------
 
         mAnimation = AddComponent(new AnimationMachine(this, sprite));
+        mCamera = AddComponent(new CameraComponent(this));
+        mCamera.Bind();
         SetAnimation(RIGHT, sprite.GetSpriteArray(RIGHT), delay);
 
         //controls = new ThreadPlayer(this);
         //controls.start();
 
         implementsActions();
+        SetName("Player");
     }
     // ------------------------------------------------------------------------
 

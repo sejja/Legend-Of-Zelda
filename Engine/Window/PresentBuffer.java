@@ -15,7 +15,9 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import javax.swing.JPanel;
 
+import Engine.Graphics.GraphicsPipeline;
 import Engine.Input.InputManager;
+import Engine.Math.Vector2D;
 import Engine.StateMachine.StateMachine;
 
 public class PresentBuffer extends JPanel implements Runnable {
@@ -76,6 +78,10 @@ public class PresentBuffer extends JPanel implements Runnable {
     */ //----------------------------------------------------------------------
     public void Update() {
         mStateManager.Update();
+        Vector2D<Integer> temp = new Vector2D<>();
+        temp.x = getBounds().width;
+        temp.y = getBounds().height;
+        GraphicsPipeline.GetGraphicsPipeline().SetDimensions(temp);
     }
 
     // ------------------------------------------------------------------------

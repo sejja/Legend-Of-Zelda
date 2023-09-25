@@ -10,6 +10,8 @@ package Engine.Graphics.Components;
 
 import java.awt.Graphics2D;
 
+import Engine.Math.Vector2D;
+
 public interface Renderable {
-    public void Render(Graphics2D g);
+    public void Render(Graphics2D g, Vector2D<Float> camerapos);
 }

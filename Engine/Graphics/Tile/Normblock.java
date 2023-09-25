@@ -25,7 +25,7 @@ public class Normblock extends Block {
        return false;
     }
 
-    public void Render(Graphics2D g) {
-        super.Render(g);
+    public void Render(Graphics2D g, Vector2D<Float> camerapos) {
+        super.Render(g, camerapos);
     }
 }
