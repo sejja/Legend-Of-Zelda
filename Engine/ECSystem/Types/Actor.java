@@ -6,7 +6,7 @@
 //	Copyright Deusto © 2023. All Rights reserved
 //
 
-package Engine.ECSystem;
+package Engine.ECSystem.Types;
 
 import java.util.ArrayList;
 

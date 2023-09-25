@@ -30,7 +30,7 @@ public abstract class Block {
 
     public abstract boolean Update(AABB p);
 
-    public void Render(Graphics2D g) {
-        g.drawImage(mImg, (int)(float)mPosition.x, (int)(float)mPosition.y, mWidth, mHeight, null);
+    public void Render(Graphics2D g, Vector2D<Float> camerapos) {
+        g.drawImage(mImg, (int)(float)mPosition.x - (int)(float)camerapos.x, (int)(float)mPosition.y - (int)(float)camerapos.y, mWidth, mHeight, null);
     }
 }

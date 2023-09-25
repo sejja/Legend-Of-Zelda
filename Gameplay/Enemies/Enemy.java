@@ -2,14 +2,13 @@ package Gameplay.Enemies;
 
 import java.awt.image.BufferedImage;
 
-import Engine.ECSystem.Actor;
 import Engine.Graphics.Animation;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.AnimationMachine;
 import Engine.Math.Vector2D;
 import Gameplay.Player;
 
-public class Enemy extends Actor{
+public class Enemy extends Engine.ECSystem.Types.Actor {
     private final int UP = 0;
     private final int DOWN = 2;
     private final int RIGHT = 1;

@@ -21,9 +21,13 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import Engine.ECSystem.Types.ECObject;
+import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Spritesheet;
+import Engine.Graphics.Components.Renderable;
+import Engine.Math.Vector2D;
 
-public class TileManager {
+public class TileManager extends ECObject implements Renderable {
     public static ArrayList<Tilemap>  mLayers;
 
     // ------------------------------------------------------------------------
@@ -33,6 +37,7 @@ public class TileManager {
     */ //----------------------------------------------------------------------
     public TileManager() {
         mLayers = new ArrayList<>();
+        GraphicsPipeline.GetGraphicsPipeline().AddRenderable(this);
     }
 
     // ------------------------------------------------------------------------
@@ -43,6 +48,7 @@ public class TileManager {
     public TileManager(String path) {
         mLayers = new ArrayList<>();
         AddTileMap(path, 64, 64);
+        GraphicsPipeline.GetGraphicsPipeline().AddRenderable(this);
     }
 
     // ------------------------------------------------------------------------
@@ -121,9 +127,9 @@ public class TileManager {
         }
     }
 
-    public void Render(Graphics2D g) {
+    public void Render(Graphics2D g, Vector2D<Float> camerapos) {
         for(int i= 0; i < mLayers.size(); i++) {
-            mLayers.get(i).Render(g);
+            mLayers.get(i).Render(g, camerapos);
         }
     }
 }

@@ -40,9 +40,9 @@ public class TilemapObject extends Tilemap {
         }
     }
 
-    public void Render(Graphics2D g) {
+    public void Render(Graphics2D g, Vector2D<Float> camerapos) {
         for(Block block : mBlocks.values()) {
-            block.Render(g); 
+            block.Render(g, camerapos); 
         }
     }
 }

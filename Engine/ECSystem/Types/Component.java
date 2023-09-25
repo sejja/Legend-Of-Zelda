@@ -6,7 +6,7 @@
 //	Copyright Deusto © 2023. All Rights reserved
 //
 
-package Engine.ECSystem;
+package Engine.ECSystem.Types;
 
 public abstract class Component implements Base {
     private Actor mParent;
