@@ -2,6 +2,7 @@ package Gameplay.Enemies;
 
 import java.awt.image.BufferedImage;
 
+import Engine.ECSystem.ObjectManager;
 import Engine.Graphics.Animation;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.AnimationMachine;
@@ -21,28 +22,29 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
     protected boolean chase = false;
 
     float speed = 2;
-    Vector2D ndir = new Vector2D(0f,0f);
+    protected Vector2D ndir = new Vector2D(0f,0f);
     
     protected int mCurrentAnimation;
     protected AnimationMachine mAnimation;
     
+    static int idx = 0;
     
     // ------------------------------------------------------------------------
     /*! Conversion Constructor
     *
-    *   Constructs a Player with a sprite, a position, and gives it a size
+    *   Constructs an Enemy with a sprite, a position, and gives it a size
     */ //----------------------------------------------------------------------
-    public Enemy(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size) {
+    public Enemy(Spritesheet originalsprite, Vector2D<Float> position, Vector2D<Float> size) {
         super(position);
         SetScale(size);
-
+        Spritesheet sprite=new Spritesheet(originalsprite, "Content/Animations/gknight.png");
         // TRANSPOSE SPRITE MATRIX
         sprite.setmSpriteArray(transposeMatrix(sprite.GetSpriteArray2D()));
-
         // ADD ANIMATION COMPONENT
         mAnimation = AddComponent(new AnimationMachine(this, sprite));
         SetAnimation(UP, sprite.GetSpriteArray(UP), 2);
-
+        SetName("Enemy " + idx);
+        idx++;
     }
 
     public void SetAnimation(int i, BufferedImage[] frames, int delay) {
@@ -56,8 +58,10 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
     }
 
     // ------------------------------------------------------------------------
-    /*! Utility Function for Transposing a Matrix
-    ------------------------------------------------------------------------*/
+    /*! transposeMatrix
+    *
+    *   Utility Function for Transposing a Matrix
+    */ //----------------------------------------------------------------------
     private BufferedImage[][] transposeMatrix(BufferedImage [][] m){
         BufferedImage[][] temp = new BufferedImage[m[0].length + 4][m.length];
         for (int i = 0; i < m.length; i++){
@@ -72,9 +76,12 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
         }
         return temp;
     }
+
     // ------------------------------------------------------------------------
-    /*! Utility Function for Normalizing a Vector
-    ------------------------------------------------------------------------*/
+    /*! Normalize
+    *
+    *   Utility Function for Normalizing a Vector
+    */ //----------------------------------------------------------------------
     public Vector2D<Float> Normalize(Vector2D<Float> vector) {
         float magnitude = (float) Math.sqrt(vector.x * vector.x + vector.y * vector.y);
         if (magnitude > 0) {
@@ -83,9 +90,12 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
             return new Vector2D<Float>(0f, 0f);
         }
     }
+
     // ------------------------------------------------------------------------
-    /*! Utility Function for Getting the Direction of a Vector
-    ------------------------------------------------------------------------*/
+    /*! GetDirection
+    *
+    *   Utility Function for Getting the Direction of a Vector
+    */ //----------------------------------------------------------------------
     public void GetDirection(Vector2D<Float> vector) {
         if (Math.abs(vector.x) > Math.abs(vector.y)) {
             if (vector.x > 0) {
@@ -114,7 +124,11 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
         }
     }
 
-
+    // ------------------------------------------------------------------------
+    /*! Animate
+    *
+    *   Adds the needed animation to the Enemy
+    */ //----------------------------------------------------------------------
     public void Animate() {
         if(chase){
             if(up) {
@@ -141,7 +155,7 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
                 }
             } else if(down) {
                 if(mCurrentAnimation != DOWN || mAnimation.GetAnimation().GetDelay() == -1) {
-                    SetAnimation(DOWN, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN), 2);
+                   SetAnimation(DOWN, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN), 2);
                 }
             } else if(right) {
                 if(mCurrentAnimation != RIGHT || mAnimation.GetAnimation().GetDelay() == -1) {
@@ -160,21 +174,28 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
     *
     *   Adds Behavior to the Enemy
     */ //----------------------------------------------------------------------
-    public void Update(Vector2D<Float> playerPos) {
+    public void Update() {
         super.Update();
-        CalculateMovement(playerPos);
+        Vector2D<Float> ppos = ObjectManager.GetObjectManager().GetObjectByName("Player").GetPosition();
+        CalculateMovement(ppos);
         GetDirection(ndir);
         Move();
         Animate();
         mAnimation.GetAnimation().SetDelay(20);
-        System.out.println(playerPos.x + " " + playerPos.y);
+        System.out.println(ppos.x + " " + ppos.y + " " + ndir+ " " );
     }
 
+    // ------------------------------------------------------------------------
+    /*! CalculateMovement
+    *
+    *   Calculates the movement of the Enemy
+    */ //----------------------------------------------------------------------
     public void CalculateMovement(Vector2D<Float> playerPos) {
         Vector2D<Float> pos = GetPosition();
         Vector2D<Float> dir = new Vector2D<Float>((float)playerPos.x - pos.x, (float)playerPos.y - pos.y);
         ndir=Normalize(dir);
     }
+
     // ------------------------------------------------------------------------
     /*! Move
     *

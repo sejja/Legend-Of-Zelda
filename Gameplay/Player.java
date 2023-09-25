@@ -97,6 +97,7 @@ public class Player extends Actor {
         //controls.start();
 
         implementsActions();
+        SetName("Player");
     }
     // ------------------------------------------------------------------------
 

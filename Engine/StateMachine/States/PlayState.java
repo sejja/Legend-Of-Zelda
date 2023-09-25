@@ -28,6 +28,8 @@ public class PlayState extends State {
     private FontObject mFont;
     private Player mPlayer;
     private Enemy mEnemy;
+    private Enemy mEnemy2;
+    private Enemy mEnemy3;
     private Vector2D<Float> mPos;
     private TileManager mTilemap;
 
@@ -45,8 +47,9 @@ public class PlayState extends State {
         mPlayer = (Player)ObjectManager.GetObjectManager().AddEntity(new Player(new Spritesheet("Content/Animations/Link.png"), new Vector2D<Float>(300.f, 300.f), new Vector2D<Float>(100.f, 100.f)));
         mPos = new Vector2D<Float>(300.f, 600.f);
         Spritesheet esprite = new Spritesheet("Content/Animations/gknight.png",16,28);
-        ArrayList<Enemy> mEnemies = new ArrayList<Enemy>();
-        mEnemy = new Enemy(esprite, new Vector2D<Float>(300.f, 300.f), new Vector2D<Float>(50.f, 100.f));
+        mEnemy = (Enemy)ObjectManager.GetObjectManager().AddEntity(new Enemy(esprite, new Vector2D<Float>(300.f, 300.f), new Vector2D<Float>(50.f, 100.f)));
+        mEnemy2 = (Enemy)ObjectManager.GetObjectManager().AddEntity(new Enemy(esprite, new Vector2D<Float>(600.f, 600.f), new Vector2D<Float>(50.f, 100.f)));
+        mEnemy3 = (Enemy)ObjectManager.GetObjectManager().AddEntity(new Enemy(esprite, new Vector2D<Float>(900.f, 900.f), new Vector2D<Float>(50.f, 100.f)));
     }
 
     // ------------------------------------------------------------------------
@@ -57,7 +60,12 @@ public class PlayState extends State {
     @Override
     public void Update() {
         ObjectManager.GetObjectManager().Update();
-        mEnemy.Update(mPlayer.GetPosition());
+
+        //La cosa sería tener una función asi: ObjectManager.GetEntity("Player"), para luego hacer player.GetPosition()
+
+        //LA COSA ES QUE CUANDO HAYA MAS ENEMIGOS SERIA ALGO EN PLAN 
+        //for(int i = 0; i < mEnemies.size(); i++){
+        //  mEnemies.get(i).Update(mPlayer.GetPosition());
     }
 
     // ------------------------------------------------------------------------
