@@ -25,10 +25,10 @@ import Engine.Math.Vector2D;
 
 
 public class Npc extends Engine.ECSystem.Types.Actor {
-    private static final Font FontObject = null;
     private String name = "";
     private String dialogue;
     protected Graphics2D window;
+    private AnimationMachine mAnimation;
 
 
         /*! Conversion Constructor
@@ -39,7 +39,8 @@ public class Npc extends Engine.ECSystem.Types.Actor {
         super(position);
         this.name = nameNPC;
         this.dialogue = dialogue;
-        sprite.setmSpriteArray(transposeMatrix(sprite.GetSpriteArray2D()));
+        mAnimation = AddComponent(new AnimationMachine(this, sprite));
+
     }
 
         /*! Transpose
@@ -87,15 +88,10 @@ public class Npc extends Engine.ECSystem.Types.Actor {
 
     }
 
-    public void draw(Graphics2D window) {
-        this.window = window;
-        drawDialogueScreen();
-    }
-
     public void Update() {
         super.Update();
-        
-        
+        mAnimation.GetAnimation().SetDelay(-1);
+        mAnimation.GetAnimation().SetFrame(0);
     }
 
     public String getDialogue() {
