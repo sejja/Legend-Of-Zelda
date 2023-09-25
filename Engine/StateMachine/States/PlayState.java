@@ -36,17 +36,16 @@ public class PlayState extends State {
     *
     *   Just assigns the statemachine child
     */ //----------------------------------------------------------------------
-    public PlayState(StateMachine superm) {
-        super(superm);
-        mTilemap = new TileManager("Content/TiledProject/StressTest.tmx");
+    public PlayState() {
+        mTilemap = new TileManager("Content/TiledProject/TestRoom.tmx");
         mFont =(FontObject)ObjectManager.GetObjectManager().AddEntity(new FontObject("Content/Fonts/ZeldaFont.png", "THE LEGEND OF ANDONI"));
         mFont.SetPosition(new Vector2D<>(100.f, 100.f));
         mFont.SetScale(new Vector2D<>(32.f, 32.f));
-        mPlayer = (Player)ObjectManager.GetObjectManager().AddEntity(new Player(new Spritesheet("Content/Animations/Link.png"), new Vector2D<Float>(300.f, 300.f), new Vector2D<Float>(100.f, 100.f)));
+        mPlayer = (Player)ObjectManager.GetObjectManager().AddEntity(new Player(new Spritesheet("Content/Animations/Link.png"), new Vector2D<Float>(700.f, 400.f), new Vector2D<Float>(100.f, 100.f)));
         mPos = new Vector2D<Float>(300.f, 600.f);
         Spritesheet esprite = new Spritesheet("Content/Animations/gknight.png",16,28);
         ArrayList<Enemy> mEnemies = new ArrayList<Enemy>();
-        mEnemy = (Enemy)ObjectManager.GetObjectManager().AddEntity(new Enemy(esprite, new Vector2D<Float>(300.f, 300.f), new Vector2D<Float>(50.f, 100.f), mPlayer));
+        mEnemy = (Enemy)ObjectManager.GetObjectManager().AddEntity(new Enemy(esprite, new Vector2D<Float>(450.f, 300.f), new Vector2D<Float>(50.f, 100.f), mPlayer));
     }
 
     // ------------------------------------------------------------------------
