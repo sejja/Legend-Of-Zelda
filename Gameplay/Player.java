@@ -19,7 +19,7 @@ import Engine.Math.Vector2D;
 public class Player extends Actor {
     
     /*  Animation types
-        The difference betwwen the direction and attack is 5
+        The difference between the direction and attack is 5
      */
     private final int RIGHT = 0;
     private final int LEFT = 1;
@@ -347,7 +347,6 @@ public class Player extends Actor {
         }
         stop = false; 
         attack = false;
-        System.out.println(directionToString());
     }
 
     /* Getters
