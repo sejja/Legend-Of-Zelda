@@ -56,6 +56,7 @@ public abstract class Actor extends Entity {
     public Actor(String name, Vector2D<Float> position) {
         super(name);
         SetPosition(position);
+        mComponents = new ArrayList<>();
     }
 
     // ------------------------------------------------------------------------
