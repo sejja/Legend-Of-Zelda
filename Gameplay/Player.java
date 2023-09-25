@@ -15,6 +15,7 @@ import Engine.Graphics.Components.FontComponent;
 import Engine.Input.InputFunction;
 import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
+import Engine.Physics.Components.BoxCollider;
 
 public class Player extends Actor {
     
@@ -70,6 +71,7 @@ public class Player extends Actor {
      */
     protected AtomicInteger healthPoints = new AtomicInteger(10);
     private CameraComponent mCamera;
+    protected BoxCollider mCollider;
     final private  int damage = 2;
     private int velocity = 0;
     //----------------------------------------------------------------------
@@ -97,6 +99,8 @@ public class Player extends Actor {
         //controls.start();
 
         implementsActions();
+
+        mCollider = (BoxCollider)AddComponent(new BoxCollider(this));
     }
     // ------------------------------------------------------------------------
 
@@ -223,7 +227,7 @@ public class Player extends Actor {
     *   Adds Behavior to the Player
     */ //----------------------------------------------------------------------
     @Override
-    public void Update() {  //Falta hacer que link termine un ataque completo antes de emoezar otro
+    public void Update() {  //Falta hacer que link termine un ataque completo antes de emoezar otro 
         super.Update();
         Move();
         /*
@@ -257,18 +261,31 @@ public class Player extends Actor {
         Vector2D<Float> pos = GetPosition();
         //System.out.println(directionToString());
         if(up) {
-            pos.y -= velocity;
+            if(mCollider.GetBounds().collisionTile(0, -velocity))
+                System.out.println("Colliding");
+            else
+                pos.y -= velocity;
         }
 
         if(down) {
-            pos.y += velocity;
+            if(mCollider.GetBounds().collisionTile(0, velocity))
+                System.out.println("Colliding");
+            else
+                pos.y += velocity;
         }
 
         if(left) {
-            pos.x -= velocity;
+            if(mCollider.GetBounds().collisionTile(-velocity, 0))
+                System.out.println("Colliding");
+            else
+                pos.x -= velocity;
         }
 
         if(right) {
+            if(mCollider.GetBounds().collisionTile(velocity, 0))
+                System.out.println("Colliding");
+            else
+                pos.x += velocity;
             pos.x += velocity;
         }
 

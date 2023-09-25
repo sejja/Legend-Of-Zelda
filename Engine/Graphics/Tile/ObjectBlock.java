@@ -22,7 +22,7 @@ public class ObjectBlock extends Block {
 
     @Override
     public boolean Update(AABB p) {
-        return false;
+        return true;
     }
 
     public void Render(Graphics2D g, Vector2D<Float> camerapos) {

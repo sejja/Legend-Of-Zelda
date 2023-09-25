@@ -8,6 +8,7 @@
 
 package Engine.Physics;
 
+import Engine.Graphics.Tile.TilemapObject;
 import Engine.Math.Vector2D;
 
 public class AABB {
@@ -107,5 +108,18 @@ public class AABB {
         return (Math.pow(mPosition.x - Math.max(box.mPosition.x + box.GetWidth() / 2, Math.min(mPosition.x, box.mPosition.x)), 2) 
             + Math.pow(mPosition.y - Math.max(box.mPosition.y + box.GetHeight() / 2,  Math.min(mPosition.y, box.mPosition.y)), 2))
             < Math.pow(Math.max(mSize.x, mSize.y) / Math.sqrt(2), 2);
+    }
+
+    public boolean collisionTile(float ax, float ay) {
+        for(int c = 0; c < 4; c++) {
+            int xt = (int)((mPosition.x + ax) + (c % 2) * mSize.x / 2) / 64;
+            int yt = (int)((mPosition.y + ay) + (int)(c / 2) * mSize.y) / 64;
+
+            if(TilemapObject.mBlocks.containsKey(String.valueOf(xt) + ", " + String.valueOf(yt))) {
+                return TilemapObject.mBlocks.get(String.valueOf(xt) + ", " + String.valueOf(yt)).Update(this);
+            }
+        }
+
+        return false;
     }
 }

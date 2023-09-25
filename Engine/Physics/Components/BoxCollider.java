@@ -8,11 +8,17 @@
 
 package Engine.Physics.Components;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
+
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Component;
+import Engine.Graphics.GraphicsPipeline;
+import Engine.Graphics.Components.Renderable;
+import Engine.Math.Vector2D;
 import Engine.Physics.AABB;
 
-public class BoxCollider extends Component {
+public class BoxCollider extends Component implements Renderable{
     private AABB mBounds;
 
     // ------------------------------------------------------------------------
@@ -20,7 +26,7 @@ public class BoxCollider extends Component {
     *
     *   Constructs a Box Collider from a parent actor
     */ //----------------------------------------------------------------------
-    protected BoxCollider(Actor parent) {
+    public BoxCollider(Actor parent) {
         super(parent);
         mBounds = new AABB(parent.GetPosition(), parent.GetScale());
     }
@@ -32,7 +38,7 @@ public class BoxCollider extends Component {
     */ //----------------------------------------------------------------------
     @Override
     public void Init() {
-        
+        GraphicsPipeline.GetGraphicsPipeline().AddRenderable(this);
     }
 
     // ------------------------------------------------------------------------
@@ -53,7 +59,7 @@ public class BoxCollider extends Component {
     */ //----------------------------------------------------------------------
     @Override
     public void ShutDown() {
-        
+        GraphicsPipeline.GetGraphicsPipeline().RemoveRenderable(this);
     }
 
     // ------------------------------------------------------------------------
@@ -63,5 +69,11 @@ public class BoxCollider extends Component {
     */ //----------------------------------------------------------------------
     public AABB GetBounds() {
         return mBounds;
+    }
+
+    @Override
+    public void Render(Graphics2D g, Vector2D<Float> camerapos) {
+       g.setColor(Color.blue);
+       g.drawRect((int)(float)(mBounds.GetPosition().x - camerapos.x), (int)(float)(mBounds.GetPosition().y - camerapos.y), (int)mBounds.GetWidth() / 2, (int)mBounds.GetHeight());
     }
 }

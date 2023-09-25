@@ -22,7 +22,11 @@ public class HoleBlock extends Block {
 
     @Override
     public boolean Update(AABB p) {
-        return false;
+        if(p.GetPosition().x < mPosition.x) return false;
+        if(p.GetPosition().y < mPosition.y) return false;
+        if(mWidth + mPosition.x < p.GetWidth() / 2) return false;
+        if(mHeight + mPosition.y < p.GetHeight() / 2) return false;
+        return true;
     }
 
     public void Render(Graphics2D g, Vector2D<Float> camerapos) {
