@@ -43,7 +43,7 @@ public class Npc extends Engine.ECSystem.Types.Actor {
         this.name = nameNPC;
         this.dialogue = dialogue;
         mAnimation = AddComponent(new SpriteComponent(this, sprite));
-
+        SetScale(new Vector2D<>(100.f, 100.f));
     }
 
         /*! Transpose
