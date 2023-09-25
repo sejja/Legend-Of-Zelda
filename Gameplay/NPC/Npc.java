@@ -27,7 +27,7 @@ import Engine.Math.Vector2D;
 
 
 public class Npc extends Engine.ECSystem.Types.Actor {
-    private String name = "";
+    private String name;
     private String dialogue;
     protected Graphics2D window;
     private SpriteComponent mAnimation;
@@ -43,7 +43,7 @@ public class Npc extends Engine.ECSystem.Types.Actor {
         this.name = nameNPC;
         this.dialogue = dialogue;
         mAnimation = AddComponent(new SpriteComponent(this, sprite));
-        SetScale(new Vector2D<>(100.f, 100.f));
+        SetScale(size);
     }
 
         /*! Transpose
@@ -51,7 +51,7 @@ public class Npc extends Engine.ECSystem.Types.Actor {
     *       ret     -> Transposed BufferedImage 2D Matrix
     */ //----------------------------------------------------------------------
     private BufferedImage[][] transposeMatrix(BufferedImage [][] m){
-        BufferedImage[][] temp = new BufferedImage[m[0].length][m.length]; //Modificar este +8 para casos generales 
+        BufferedImage[][] temp = new BufferedImage[m[0].length][m.length];
         for (int i = 0; i < m.length; i++){
             for (int j = 0; j < m[0].length; j++){
                 temp[j][i] = m[i][j];
@@ -90,10 +90,9 @@ public class Npc extends Engine.ECSystem.Types.Actor {
 
     }
 
-    public void Update() {
+    public void Update(Vector2D<Float> playerPosition) {
         super.Update();
-//        mAnimation.GetAnimation().SetDelay(-1);
-//        mAnimation.GetAnimation().SetFrame(0);
+        
     }
 
     public String getDialogue() {

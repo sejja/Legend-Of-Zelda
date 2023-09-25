@@ -36,7 +36,7 @@ public final class SpriteComponent extends Component implements Renderable {
     *
     *   Returns the spritesheet that we are using for animating
     */ //----------------------------------------------------------------------
-    public Spritesheet GetSprite() {
+    public Sprite GetSprite() {
         return mSprite;
     }
 
