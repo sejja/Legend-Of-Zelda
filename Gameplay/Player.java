@@ -3,6 +3,8 @@ package Gameplay;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.util.ResourceBundle.Control;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import Engine.ECSystem.Types.Actor;
 import Engine.Graphics.Animation;
@@ -15,19 +17,65 @@ import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
 
 public class Player extends Actor {
-    private final int UP = 0;
-    private final int DOWN = 1;
-    private final int RIGHT = 2;
-    private final int LEFT = 3;
-    protected boolean up = false;
-    protected boolean down = false;
-    protected boolean right = true;
-    protected boolean left = false;
-    protected int mCurrentAnimation;
+    
+    /*  Animation types
+        The difference between the direction and attack is 5
+     */
+    private final int RIGHT = 0;
+    private final int LEFT = 1;
+    private final int DOWN = 2;
+    private final int UP = 3;
+
+    private final int FALL = 4;
+
+    private final int ATTACK_RIGHT  = 5;
+    private final int ATTACK_LEFT  = 6;
+    private final int ATTACK_DOWN  = 7;
+    private final int ATTACK_UP  = 8;
+    //----------------------------------------------------------------------
+
+    /*  Movement Boolean
+        Used to confirm the direction
+     */
+    private boolean up = false;
+    private boolean down = false;
+    private boolean right = true;
+    private boolean left = false;
+    private boolean attack = false;
+    private boolean stop = true;
+    //----------------------------------------------------------------------
+
+    /* Animation
+     */
+    private int mCurrentAnimation;
     protected AnimationMachine mAnimation;
-    protected FontComponent mFont;
-    protected CameraComponent mCamera;
-    // ------------------------------------------------------------------------
+    final private int delay = 3; //This is the delay of the all animations
+    //----------------------------------------------------------------------
+
+    /*  Enable skills
+     */
+    private boolean haveArc;
+    private boolean haveLighter;
+    private boolean HaveBomb;
+    //----------------------------------------------------------------------
+
+    /* CoolDowns
+     */
+    private static int attack_cooldown = 8;
+    private static int attack_counter = 0;
+    //----------------------------------------------------------------------
+
+    /* Player Stats
+     * 
+     */
+    protected AtomicInteger healthPoints = new AtomicInteger(10);
+    private CameraComponent mCamera;
+    final private  int damage = 2;
+    private int velocity = 0;
+    //----------------------------------------------------------------------
+
+    //Methods______________________________________________________________________________________________________________________________________________________________________________
+
     /*! Conversion Constructor
     *
     *   Constructs a Player with a sprite, a position, and gives it a size
@@ -35,53 +83,100 @@ public class Player extends Actor {
     public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size) {
         super(position);
         SetScale(size);
-        mAnimation = AddComponent(new AnimationMachine(this, sprite));
-        mFont = AddComponent(new FontComponent(this, "Content/Fonts/ZeldaFont.png"));
-        mFont.SetString("Un link parlante");
-        mFont.SetScale(new Vector2D<>(0.2f, 0.2f));
-        mFont.SetGlyph(new Vector2D<>(32, 0));
-        
-        mCamera = AddComponent(new CameraComponent(this));
-        mCamera.Bind();        
-        SetAnimation(RIGHT, sprite.GetSpriteArray(RIGHT), 10);
 
-        InputManager.SubscribePressed(KeyEvent.VK_UP, new InputFunction() {
+        //Lets transpose the Sprite Matrix
+        sprite.setmSpriteArray(transposeMatrix(sprite.GetSpriteArray2D()));
+        //---------------------------------------------------------------------
+
+        mAnimation = AddComponent(new AnimationMachine(this, sprite));
+        mCamera = AddComponent(new CameraComponent(this));
+        mCamera.Bind();
+        SetAnimation(RIGHT, sprite.GetSpriteArray(RIGHT), delay);
+
+        //controls = new ThreadPlayer(this);
+        //controls.start();
+
+        implementsActions();
+    }
+    // ------------------------------------------------------------------------
+
+    /* This function only implements actionlisteners
+     * 
+     */
+    private void implementsActions (){ //Esto es una mierda hay que mejorarlo en cuando se pueda
+        
+        InputManager.SubscribePressed(KeyEvent.VK_W, new InputFunction() {
             @Override
             public void Execute() {
-                up = true;
-                down = false;
-                left = false;
-                right = false;
+                activateAction(UP);
+             }
+        });
+        InputManager.SubscribePressed(KeyEvent.VK_S, new InputFunction() {
+            @Override
+            public void Execute() {
+                activateAction(DOWN);
+             }
+        });
+        InputManager.SubscribePressed(KeyEvent.VK_A, new InputFunction() {
+            @Override
+            public void Execute() {
+                activateAction(LEFT);
+             }
+        });
+        InputManager.SubscribePressed(KeyEvent.VK_D, new InputFunction() {
+            @Override
+            public void Execute() {
+                activateAction(RIGHT);
              }
         });
 
-        InputManager.SubscribePressed(KeyEvent.VK_DOWN, new InputFunction() {
+        InputManager.SubscribeReleased(KeyEvent.VK_W, new InputFunction() {
             @Override
             public void Execute() {
-                up = false;
-                down = true;
-                left = false;
-                right = false;
+                setVelocity(0);
+                stop = true;
+                attack = false;
+             }
+        });
+        InputManager.SubscribeReleased(KeyEvent.VK_S, new InputFunction() {
+            @Override
+            public void Execute() {
+                setVelocity(0);
+                stop = true;
+                attack = false;
+            }
+        });
+        InputManager.SubscribeReleased(KeyEvent.VK_A, new InputFunction() {
+            @Override
+            public void Execute() {
+                setVelocity(0);
+                stop = true;
+                attack = false;
+            } 
+        });
+        InputManager.SubscribeReleased(KeyEvent.VK_D, new InputFunction() {
+            @Override
+            public void Execute() {
+                setVelocity(0);
+                stop = true;
+                attack = false;
             }
         });
 
-        InputManager.SubscribePressed(KeyEvent.VK_LEFT, new InputFunction() {
+        InputManager.SubscribePressed(KeyEvent.VK_J, new InputFunction() {
             @Override
             public void Execute() {
-               up = false;
-                down = false;
-                left = true;
-                right = false;
-            } 
+                setVelocity(0);
+                stop = true;
+                attack = true;
+            }
         });
-
-        InputManager.SubscribePressed(KeyEvent.VK_RIGHT, new InputFunction() {
+        InputManager.SubscribeReleased(KeyEvent.VK_J, new InputFunction() {
             @Override
             public void Execute() {
-                up = false;
-                down = false;
-                left = false;
-                right = true;
+                setVelocity(0);
+                stop = true;
+                attack = false;
             }
         });
     }
@@ -97,62 +192,275 @@ public class Player extends Actor {
     }
 
     public void Animate() {
-        if(up) {
-            if(mCurrentAnimation != UP || mAnimation.GetAnimation().GetDelay() == -1) {
-                SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), 5);
+        //System.out.println("stop = " + stop + " | " + "attack = " + attack);
+        if (stop)
+        {
+            if (attack)
+            {
+                setAttackAnimation();
             }
-        } else if(down) {
-            if(mCurrentAnimation != DOWN || mAnimation.GetAnimation().GetDelay() == -1) {
-                SetAnimation(DOWN, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN), 5);
+            else
+            {
+                //System.out.println(mAnimatioT0String());
+                setSetopAnimation();
             }
-        } else if(right) {
-            if(mCurrentAnimation != RIGHT || mAnimation.GetAnimation().GetDelay() == -1) {
-                SetAnimation(RIGHT, mAnimation.GetSpriteSheet().GetSpriteArray(RIGHT), 5);
+        }
+        else
+        {
+            if(attack){
+                
+                setSetopAnimation();
             }
-        } else {
-            if(mCurrentAnimation != LEFT || mAnimation.GetAnimation().GetDelay() == -1) {
-                SetAnimation(LEFT, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT), 5);
+            {
+                setRunAnimation();
             }
         }
     }
-
     // ------------------------------------------------------------------------
+
     /*! Update
     *
     *   Adds Behavior to the Player
     */ //----------------------------------------------------------------------
     @Override
-    public void Update() {
+    public void Update() {  //Falta hacer que link termine un ataque completo antes de emoezar otro
         super.Update();
         Move();
+        /*
+        if (attack){
+            if(attack_counter == 0){
+                Animate();
+            }
+            attack_counter++;
+            System.out.println(attack_counter);
+            if (attack_counter == attack_cooldown){
+                System.out.println("Ha terminado");
+                attack = false;
+                attack_counter=0;
+            }
+        }
+        else
+        {
+            Animate();
+        }
+        */
         Animate();
-        mAnimation.GetAnimation().SetDelay(50);
+        mAnimation.GetAnimation().SetDelay(delay);
     }
-
     // ------------------------------------------------------------------------
+
     /*! Move
     *
     *   Moves the sprite on a certain direction
     */ //----------------------------------------------------------------------
     public void Move() {
         Vector2D<Float> pos = GetPosition();
-
+        //System.out.println(directionToString());
         if(up) {
-            pos.y += 5;
+            pos.y -= velocity;
         }
 
         if(down) {
-            pos.y -= 5;
+            pos.y += velocity;
         }
 
         if(left) {
-            pos.x -= 5;
+            pos.x -= velocity;
         }
 
         if(right) {
-            pos.x += 5;
+            pos.x += velocity;
         }
 
         SetPosition(pos);
-    }    
+    }
+    // ------------------------------------------------------------------------
+
+    /*! Transpose
+    *       @Param  -> BufferedImage 2D Matrix
+    *       ret     -> Transposed BufferedImage 2D Matrix
+    */ //----------------------------------------------------------------------
+    private BufferedImage[][] transposeMatrix(BufferedImage [][] m){
+        BufferedImage[][] temp = new BufferedImage[m[0].length + 4][m.length];
+        for (int i = 0; i < m.length; i++){
+            for (int j = 0; j < m[0].length; j++){
+                temp[j][i] = m[i][j];
+            }
+        }
+        for (int i = 0; i < 4; i++){
+            for (int j = 0;  j < temp[0].length; j++){
+                temp[m[0].length+i][j] = temp[i][0];
+            }
+        }
+        return temp;
+    }
+    // ------------------------------------------------------------------------
+    
+    /* Info. functions
+     * 
+     */
+    public String directionToString() {
+        return "Player [up=" + up + ", down=" + down + ", right=" + right + ", left=" + left + ", mCurrentAnimation="
+                + mCurrentAnimation + ", stop=" + stop + ", attack =" + attack + "]" ;
+    }
+    public String mAnimatioT0String(){
+        return ("My current animation: " + mCurrentAnimation);
+    }
+    //------------------------------------------------------------------------
+
+    public void activateAction(int action){
+        final int default_velocity = 5;
+        if (action < 4){
+            switch(action){
+                case(0):
+                    setUp(false);
+                    setDown(false);
+                    setLeft(false);
+                    setRight(true);
+                    setVelocity(default_velocity);
+                    break;
+                case(1):
+                    setUp(false);
+                    setDown(false);
+                    setLeft(true);
+                    setRight(false);
+                    setVelocity(default_velocity);
+                    break;
+                case(2):
+                    setUp(false);
+                    setDown(true);
+                    setLeft(false);
+                    setRight(false);
+                    setVelocity(default_velocity);
+                    break;
+                case(3):
+                    setUp(true);
+                    setDown(false);
+                    setLeft(false);
+                    setRight(false);
+                    setVelocity(default_velocity);
+                    break;
+            }
+        }else if (action >= 5 && action <= 8){
+            setVelocity(0);
+            setAttack(true);
+        }
+        stop = false; 
+        attack = false;
+    }
+
+    /* Getters
+     * 
+     */
+    public boolean isUp() {
+        return up;
+    }
+    public boolean isDown() {
+        return down;
+    }
+    public boolean isRight() {
+        return right;
+    }
+    public boolean isLeft() {
+        return left;
+    }
+    public int getDelay() {
+        return delay;
+    }
+    public boolean isHaveArc() {
+        return haveArc;
+    }
+    public boolean isHaveLighter() {
+        return haveLighter;
+    }
+    public boolean isHaveBomb() {
+        return HaveBomb;
+    }
+    public int getVelocity() {
+        return velocity;
+    }
+    //------------------------------------------------------------------------
+
+    /* Setters
+     * 
+     */
+    public void setHealthPoints(AtomicInteger healthPoints) {
+        this.healthPoints = healthPoints;
+    }
+    public void setVelocity(int velocity) {
+        this.velocity = velocity;
+    }
+    public void setUp(boolean up) {
+        this.up = up;
+    }
+    public void setDown(boolean down) {
+        this.down = down;
+    }
+    public void setRight(boolean right) {
+        this.right = right;
+    }
+    public void setLeft(boolean left) {
+        this.left = left;
+    }
+    public void setAttack(boolean attack) {
+        this.attack = attack;
+    }
+    public void setSetopAnimation(){
+                if(up) {
+                if(mCurrentAnimation != UP+9 || mAnimation.GetAnimation().GetDelay() == -1) {
+                    SetAnimation(UP+9, mAnimation.GetSpriteSheet().GetSpriteArray(UP+9), delay);
+                }
+                } else if(down) {
+                    if(mCurrentAnimation != DOWN+9 || mAnimation.GetAnimation().GetDelay() == -1) {
+                        SetAnimation(DOWN+9, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN+9), delay);
+                    }
+                } else if(right) {
+                    if(mCurrentAnimation != RIGHT+9 || mAnimation.GetAnimation().GetDelay() == -1) {
+                        SetAnimation(RIGHT+9, mAnimation.GetSpriteSheet().GetSpriteArray(RIGHT+9), delay);
+                    }
+                } else if(left){
+                    if(mCurrentAnimation != LEFT+9|| mAnimation.GetAnimation().GetDelay() == -1) {
+                        SetAnimation(LEFT+9, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT+9), delay);
+                    }
+                }
+    }
+    public void setAttackAnimation(){
+                if(up) {
+                if(mCurrentAnimation != UP+5 || mAnimation.GetAnimation().GetDelay() == -1) {
+                    SetAnimation(UP+5, mAnimation.GetSpriteSheet().GetSpriteArray(UP+5), delay-2);
+                }
+                } else if(down) {
+                    if(mCurrentAnimation != DOWN+5 || mAnimation.GetAnimation().GetDelay() == -1) {
+                        SetAnimation(DOWN+5, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN+5), delay-2);
+                    }
+                } else if(right) {
+                    if(mCurrentAnimation != RIGHT+5 || mAnimation.GetAnimation().GetDelay() == -1) {
+                        SetAnimation(RIGHT+5, mAnimation.GetSpriteSheet().GetSpriteArray(RIGHT+5), delay-2);
+                    }
+                } else if(left){
+                    if(mCurrentAnimation != LEFT+5 || mAnimation.GetAnimation().GetDelay() == -1) {
+                        SetAnimation(LEFT+5, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT+5), delay-2);
+                    }
+                }
+    }
+    public void setRunAnimation(){
+                if(up) {
+                if(mCurrentAnimation != UP || mAnimation.GetAnimation().GetDelay() == -1) {
+                    SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), delay);
+                }
+                } else if(down) {
+                    if(mCurrentAnimation != DOWN || mAnimation.GetAnimation().GetDelay() == -1) {
+                        SetAnimation(DOWN, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN), delay);
+                    }
+                } else if(right) {
+                    if(mCurrentAnimation != RIGHT || mAnimation.GetAnimation().GetDelay() == -1) {
+                        SetAnimation(RIGHT, mAnimation.GetSpriteSheet().GetSpriteArray(RIGHT), delay);
+                    }
+                } else if(left){
+                    if(mCurrentAnimation != LEFT || mAnimation.GetAnimation().GetDelay() == -1) {
+                        SetAnimation(LEFT, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT), delay);
+                    }
+                }
+    }
+    //------------------------------------------------------------------------
 }
