@@ -210,6 +210,7 @@ public class Player extends Actor {
     }
 
     public void Animate() {
+        System.out.println(actionToString());
         if (stop)
         {
             if (attack)
@@ -218,7 +219,14 @@ public class Player extends Actor {
             }
             else
             {
-                setAnimation(Action.STOP);
+                if (bow)
+                {
+                    setAnimation(Action.BOW);
+                }
+                else
+                {
+                    setAnimation(Action.STOP);
+                }
             }
         }
         else
@@ -231,6 +239,7 @@ public class Player extends Actor {
                 if(bow)
                 {
                     setAnimation(Action.BOW);
+                    //System.out.println(mAnimatioT0String());
                 }
                 else
                 {
@@ -238,7 +247,6 @@ public class Player extends Actor {
                 }
             }
         }
-        //System.out.println(mAnimatioT0String());
     }
     // ------------------------------------------------------------------------
 
@@ -327,10 +335,12 @@ public class Player extends Actor {
         }
     }
     private void setBowAnimaitonSet(BufferedImage[][] temp, int size){
-        Spritesheet Bow = new Spritesheet("Content\\Animations\\LinkArco.png", 3, 4);
-        BufferedImage[][] animation = Bow.GetSpriteArray2D();
+        Spritesheet Bow = new Spritesheet("Content\\Animations\\LinkArco.png", 28, 29);
+        BufferedImage[][] animation = transposeMatrix(Bow.GetSpriteArray2D());
+        System.out.println(animation.length + "|" + animation[0].length);
         for (int i = 0; i < 4; i++){
             for (int j = 0; j < 8; j++ ){
+                System.out.println("i = " + i + " | j =" + j );
                 if (j >= 3)
                 {
                     temp[size+4+i][j] = animation[i][2];
@@ -348,8 +358,10 @@ public class Player extends Actor {
      * 
      */
     public String directionToString() {
-        return "Player [up=" + up + ", down=" + down + ", right=" + right + ", left=" + left + ", mCurrentAnimation="
-                + mCurrentAnimation + ", stop=" + stop + ", attack =" + attack + "]" ;
+        return "Player [up=" + up + ", down=" + down + ", right=" + right + ", left=" + left;
+    }
+    public String actionToString(){
+        return("mCurrentAnimation=" +mCurrentAnimation + ", stop=" + stop + ", attack =" + attack  + ", bow = " + bow);
     }
     public String mAnimatioT0String(){
         return ("My current animation: " + mCurrentAnimation);
