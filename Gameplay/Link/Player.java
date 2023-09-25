@@ -1,6 +1,8 @@
 package Gameplay.Link;
 
 import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ResourceBundle.Control;
@@ -335,7 +337,7 @@ public class Player extends Actor {
         }
     }
     private void setBowAnimaitonSet(BufferedImage[][] temp, int size){
-        Spritesheet Bow = new Spritesheet("Content\\Animations\\LinkArco.png", 28, 29);
+        Spritesheet Bow = new Spritesheet("Content\\Animations\\LinkArco.png", 30, 30);
         BufferedImage[][] animation = transposeMatrix(Bow.GetSpriteArray2D());
         System.out.println(animation.length + "|" + animation[0].length);
         for (int i = 0; i < 4; i++){
@@ -343,15 +345,25 @@ public class Player extends Actor {
                 System.out.println("i = " + i + " | j =" + j );
                 if (j >= 3)
                 {
+                    //BufferedImage image = resize(animation[i][2], temp[0][0].getWidth(), temp[0][0].getHeight());
                     temp[size+4+i][j] = animation[i][2];
                 }
                 else
                 {
+                    //BufferedImage image = resize(animation[i][j], temp[0][0].getWidth(), temp[0][0].getHeight());
                     temp[size+4+i][j] = animation[i][j];
                 }
             }
         }
     }
+    public static BufferedImage resize(BufferedImage img, int newW, int newH) {  
+        Image tmp = img.getScaledInstance(newW, newH, Image.SCALE_SMOOTH);
+        BufferedImage dimg = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = dimg.createGraphics();
+        g2d.drawImage(tmp, 0, 0, null);
+        g2d.dispose();
+        return dimg;
+    }  
     // ------------------------------------------------------------------------
     
     /* Info. functions
