@@ -10,11 +10,12 @@ package Engine.Graphics.Components;
 
 import java.awt.Graphics2D;
 
-import Engine.ECSystem.Component;
-import Engine.ECSystem.Actor;
+import Engine.ECSystem.Types.Actor;
+import Engine.ECSystem.Types.Component;
 import Engine.Graphics.Animation;
 import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Spritesheet;
+import Engine.Math.Vector2D;
 
 public final class AnimationMachine extends Component implements Renderable {
     private Spritesheet mSprite;
@@ -94,8 +95,8 @@ public final class AnimationMachine extends Component implements Renderable {
     *   Renders the animation
     */ //----------------------------------------------------------------------
     @Override
-    public void Render(Graphics2D g) {
-        g.drawImage(mAnimation.GetCurrentFrame(), (int)(float)GetParent().GetPosition().x, (int)(float)GetParent().GetPosition().y, (int)(float)GetParent().GetScale().x, (int)(float)GetParent().GetScale().y, null);
+    public void Render(Graphics2D g, Vector2D<Float> camerapos) {
+        g.drawImage(mAnimation.GetCurrentFrame(), (int)(float)GetParent().GetPosition().x - (int)(float)camerapos.x, (int)(float)GetParent().GetPosition().y - (int)(float)camerapos.y, (int)(float)GetParent().GetScale().x, (int)(float)GetParent().GetScale().y, null);
     }
     
 }

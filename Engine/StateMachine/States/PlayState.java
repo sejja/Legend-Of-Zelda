@@ -8,13 +8,12 @@
 
 package Engine.StateMachine.States;
 
-import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 
-import Engine.Graphics.Font;
+import Engine.ECSystem.ObjectManager;
 import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Spritesheet;
+import Engine.Graphics.Objects.FontObject;
 import Engine.Graphics.Tile.TileManager;
 import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
@@ -24,11 +23,7 @@ import Gameplay.Player;
 
 public class PlayState extends State {
 
-    private Font mFont;
-    private Player mPlayer;
-    private Vector2D<Float> mPos;
-    private TileManager mTilemap;
-
+    public static Vector2D<Float> map;
     // ------------------------------------------------------------------------
     /*! Constructor
     *
@@ -36,10 +31,12 @@ public class PlayState extends State {
     */ //----------------------------------------------------------------------
     public PlayState(StateMachine superm) {
         super(superm);
-        mTilemap = new TileManager("Content/TiledProject/StressTest.tmx");
-        mFont = new Font("Content/Fonts/ZeldaFont.png", 16, 16);
-        mPlayer = new Player(new Spritesheet("Content/Animations/Link.png"), new Vector2D<Float>(300.f, 300.f), new Vector2D<Float>(100.f, 100.f));
-        mPos = new Vector2D<Float>(300.f, 600.f);
+        map = new Vector2D<>();
+        ObjectManager.GetObjectManager().AddEntity(new TileManager("Content/TiledProject/TestRoom.tmx"));
+        FontObject mFont = (FontObject)ObjectManager.GetObjectManager().AddEntity(new FontObject("Content/Fonts/ZeldaFont.png", "THE LEGEND OF ANDONI"));
+        mFont.SetPosition(new Vector2D<>(100.f, 100.f));
+        mFont.SetScale(new Vector2D<>(32.f, 32.f));
+        ObjectManager.GetObjectManager().AddEntity(new Player(new Spritesheet("Content/Animations/Link.png"), new Vector2D<Float>(0.f, 0.f), new Vector2D<Float>(100.f, 100.f)));
     }
 
     // ------------------------------------------------------------------------
@@ -49,7 +46,7 @@ public class PlayState extends State {
     */ //----------------------------------------------------------------------
     @Override
     public void Update() {
-        mPlayer.Update();
+        ObjectManager.GetObjectManager().Update();
     }
 
     // ------------------------------------------------------------------------
@@ -68,8 +65,6 @@ public class PlayState extends State {
     */ //----------------------------------------------------------------------
     @Override
     public void Render(Graphics2D g) {
-        mTilemap.Render(g);
         GraphicsPipeline.GetGraphicsPipeline().Render(g);
-        mFont.Render(g, "THE LEGEND OF ANDONI", new Vector2D<Float>(100.f, 100.f), 32, 32, 56, 0);
     }
 }

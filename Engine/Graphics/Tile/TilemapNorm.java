@@ -33,9 +33,9 @@ public class TilemapNorm extends Tilemap {
         }
     }
 
-    public void Render(Graphics2D g) {
+    public void Render(Graphics2D g, Vector2D<Float> camerapos) {
         for(int i = 0; i < mBlocks.size(); i++) {
-            mBlocks.get(i).Render(g);
+            mBlocks.get(i).Render(g, camerapos);
         }
     }
 }

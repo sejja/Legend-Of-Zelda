@@ -10,7 +10,7 @@ package Engine.Window;
 
 import javax.swing.JFrame;
 
-public class Window extends JFrame{
+public class Window extends JFrame {
     // ------------------------------------------------------------------------
     /*! Constructor
     *
