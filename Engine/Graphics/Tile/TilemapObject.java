@@ -9,7 +9,6 @@
 package Engine.Graphics.Tile;
 
 import java.awt.Graphics2D;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import Engine.Graphics.Spritesheet;
