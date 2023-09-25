@@ -188,7 +188,7 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
         Vector2D<Float> ppos = ObjectManager.GetObjectManager().GetObjectByName("Player").GetPosition();
         CalculateMovement(ppos);
         GetDirection(ndir);
-        Collides(playerPos);
+        Collides(ppos);
         Move();
         Animate();
         mAnimation.GetAnimation().SetDelay(20);
@@ -200,8 +200,6 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
     *   Checks if the Enemy collides with the player
     */ //----------------------------------------------------------------------
     public void Collides(Vector2D<Float> playerPos) {
-        AABB dir = mCollision.GetBounds();
-        AABB player = new AABB(playerPos, 32, 32);
 
     }
 
