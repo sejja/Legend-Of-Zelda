@@ -32,7 +32,7 @@ public class PlayState extends State {
     public PlayState(StateMachine superm) {
         super(superm);
         map = new Vector2D<>();
-        ObjectManager.GetObjectManager().AddEntity(new TileManager("Content/TiledProject/TestRoom.tmx"));
+        ObjectManager.GetObjectManager().AddEntity(new TileManager("Content/TiledProject/StressTest.tmx"));
         FontObject mFont = (FontObject)ObjectManager.GetObjectManager().AddEntity(new FontObject("Content/Fonts/ZeldaFont.png", "THE LEGEND OF ANDONI"));
         mFont.SetPosition(new Vector2D<>(100.f, 100.f));
         mFont.SetScale(new Vector2D<>(32.f, 32.f));

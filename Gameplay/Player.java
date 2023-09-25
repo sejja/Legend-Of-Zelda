@@ -49,7 +49,6 @@ public class Player extends Actor {
      */
     private int mCurrentAnimation;
     protected AnimationMachine mAnimation;
-<<<<<<< HEAD
     final private int delay = 3; //This is the delay of the all animations
     //----------------------------------------------------------------------
 
@@ -70,17 +69,13 @@ public class Player extends Actor {
      * 
      */
     protected AtomicInteger healthPoints = new AtomicInteger(10);
+    private CameraComponent mCamera;
     final private  int damage = 2;
     private int velocity = 0;
     //----------------------------------------------------------------------
 
     //Methods______________________________________________________________________________________________________________________________________________________________________________
 
-=======
-    protected FontComponent mFont;
-    protected CameraComponent mCamera;
-    // ------------------------------------------------------------------------
->>>>>>> 6c5e6a54907405c710d122938da3a2e707020d84
     /*! Conversion Constructor
     *
     *   Constructs a Player with a sprite, a position, and gives it a size
@@ -88,24 +83,14 @@ public class Player extends Actor {
     public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size) {
         super(position);
         SetScale(size);
-<<<<<<< HEAD
-=======
-        mAnimation = AddComponent(new AnimationMachine(this, sprite));
-        mFont = AddComponent(new FontComponent(this, "Content/Fonts/ZeldaFont.png"));
-        mFont.SetString("Un link parlante");
-        mFont.SetScale(new Vector2D<>(0.2f, 0.2f));
-        mFont.SetGlyph(new Vector2D<>(32, 0));
-        
-        mCamera = AddComponent(new CameraComponent(this));
-        mCamera.Bind();        
-        SetAnimation(RIGHT, sprite.GetSpriteArray(RIGHT), 10);
->>>>>>> 6c5e6a54907405c710d122938da3a2e707020d84
 
         //Lets transpose the Sprite Matrix
         sprite.setmSpriteArray(transposeMatrix(sprite.GetSpriteArray2D()));
         //---------------------------------------------------------------------
 
         mAnimation = AddComponent(new AnimationMachine(this, sprite));
+        mCamera = AddComponent(new CameraComponent(this));
+        mCamera.Bind();
         SetAnimation(RIGHT, sprite.GetSpriteArray(RIGHT), delay);
 
         //controls = new ThreadPlayer(this);
@@ -272,7 +257,6 @@ public class Player extends Actor {
         Vector2D<Float> pos = GetPosition();
         //System.out.println(directionToString());
         if(up) {
-<<<<<<< HEAD
             pos.y -= velocity;
         }
 
@@ -286,21 +270,6 @@ public class Player extends Actor {
 
         if(right) {
             pos.x += velocity;
-=======
-            pos.y += 5;
-        }
-
-        if(down) {
-            pos.y -= 5;
-        }
-
-        if(left) {
-            pos.x -= 5;
-        }
-
-        if(right) {
-            pos.x += 5;
->>>>>>> 6c5e6a54907405c710d122938da3a2e707020d84
         }
 
         SetPosition(pos);
