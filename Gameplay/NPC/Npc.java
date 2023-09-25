@@ -13,9 +13,11 @@ import javax.swing.JLabel;
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
 import Engine.Graphics.Animation;
+import Engine.Graphics.Sprite;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.AnimationMachine;
 import Engine.Graphics.Components.CameraComponent;
+import Engine.Graphics.Components.SpriteComponent;
 import Engine.Graphics.Objects.FontObject;
 import Engine.Graphics.Tile.TileManager;
 import Engine.Graphics.Tile.Tilemap;
@@ -28,7 +30,7 @@ public class Npc extends Engine.ECSystem.Types.Actor {
     private String name = "";
     private String dialogue;
     protected Graphics2D window;
-    private AnimationMachine mAnimation;
+    private SpriteComponent mAnimation;
 
 
         /*! Conversion Constructor
@@ -36,11 +38,11 @@ public class Npc extends Engine.ECSystem.Types.Actor {
     *   Constructs a NPC with a name, a sprite, a position, a dialog and gives it a size
     */ //----------------------------------------------------------------------
 
-    public Npc(String nameNPC, Spritesheet sprite, Vector2D<Float> position, String dialogue, Vector2D<Float> size) {
+    public Npc(String nameNPC, Sprite sprite, Vector2D<Float> position, String dialogue, Vector2D<Float> size) {
         super(position);
         this.name = nameNPC;
         this.dialogue = dialogue;
-        mAnimation = AddComponent(new AnimationMachine(this, sprite));
+        mAnimation = AddComponent(new SpriteComponent(this, sprite));
 
     }
 

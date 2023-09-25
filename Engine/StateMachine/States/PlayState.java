@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 import Engine.ECSystem.ObjectManager;
 import Engine.Graphics.GraphicsPipeline;
+import Engine.Graphics.Sprite;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Objects.FontObject;
 import Engine.Graphics.Tile.TileManager;
@@ -45,7 +46,7 @@ public class PlayState extends State {
         mFont.SetScale(new Vector2D<>(32.f, 32.f));
         mPlayer = (Player)ObjectManager.GetObjectManager().AddEntity(new Player(new Spritesheet("Content/Animations/Link.png"), new Vector2D<Float>(700.f, 400.f), new Vector2D<Float>(100.f, 100.f)));
         mPos = new Vector2D<Float>(300.f, 600.f);
-        mNpc = (Npc)ObjectManager.GetObjectManager().AddEntity(new Npc("Aelarion", new Spritesheet("Content/Animations/NPC.png", 1,1), new Vector2D<Float>(300.f, 300.f), "En un mundo muy lejano", new Vector2D<Float>(100.f, 100.f)) );
+        mNpc = (Npc)ObjectManager.GetObjectManager().AddEntity(new Npc("Aelarion", new Sprite("Content/Animations/NPC.png"), new Vector2D<Float>(300.f, 300.f), "En un mundo muy lejano", new Vector2D<Float>(100.f, 100.f)) );
         Spritesheet esprite = new Spritesheet("Content/Animations/gknight.png",16,28);
         ArrayList<Enemy> mEnemies = new ArrayList<Enemy>();
         mEnemy = (Enemy)ObjectManager.GetObjectManager().AddEntity(new Enemy(esprite, new Vector2D<Float>(450.f, 300.f), new Vector2D<Float>(50.f, 100.f), mPlayer));
