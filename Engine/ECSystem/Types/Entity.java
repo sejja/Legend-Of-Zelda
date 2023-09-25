@@ -6,8 +6,9 @@
 //	Copyright Deusto © 2023. All Rights reserved
 //
 
-package Engine.ECSystem;
+package Engine.ECSystem.Types;
 
+import Engine.ECSystem.ObjectManager;
 import Engine.Math.Transform;
 import Engine.Math.Vector2D;
 

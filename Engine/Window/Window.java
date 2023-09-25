@@ -10,7 +10,7 @@ package Engine.Window;
 
 import javax.swing.JFrame;
 
-public class Window extends JFrame{
+public class Window extends JFrame {
     // ------------------------------------------------------------------------
     /*! Constructor
     *
@@ -20,6 +20,7 @@ public class Window extends JFrame{
         setTitle("The Legend Of Zelda");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setContentPane(new PresentBuffer(1280, 720));
+        setResizable(false);
         pack();
         setLocationRelativeTo(null);
         setVisible(true);

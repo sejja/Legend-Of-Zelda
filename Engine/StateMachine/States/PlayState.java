@@ -8,13 +8,13 @@
 
 package Engine.StateMachine.States;
 
-import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.util.ArrayList;
 
-import Engine.Graphics.Font;
+import Engine.ECSystem.ObjectManager;
 import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Spritesheet;
+import Engine.Graphics.Objects.FontObject;
 import Engine.Graphics.Tile.TileManager;
 import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
@@ -22,13 +22,15 @@ import Engine.StateMachine.State;
 import Engine.StateMachine.StateMachine;
 
 import Gameplay.Npc;
-import Gameplay.Player;
+import Gameplay.Enemies.*;
+import Gameplay.Link.Player;
 
 public class PlayState extends State {
 
-    private Font mFont;
+    private FontObject mFont;
     private Player mPlayer;
     private Npc mNpc;
+    private Enemy mEnemy;
     private Vector2D<Float> mPos;
     private TileManager mTilemap;
 
@@ -37,13 +39,17 @@ public class PlayState extends State {
     *
     *   Just assigns the statemachine child
     */ //----------------------------------------------------------------------
-    public PlayState(StateMachine superm) {
-        super(superm);
-        mTilemap = new TileManager("Content/TiledProject/StressTest.tmx");
-        mFont = new Font("Content/Fonts/ZeldaFont.png", 16, 16);
-        mPlayer = new Player(new Spritesheet("Content/Animations/Link.png"), new Vector2D<Float>(500.f, 500.f), new Vector2D<Float>(100.f, 100.f));
-        mNpc = new Npc("Aelarion", new Spritesheet("Content/Animations/NPC1.png"), new Vector2D<Float>(300.f, 300.f), "En un mundo muy lejano", new Vector2D<Float>(1000.f, 1000.f)) ;
+    public PlayState() {
+        mTilemap = new TileManager("Content/TiledProject/TestRoom.tmx");
+        mFont =(FontObject)ObjectManager.GetObjectManager().AddEntity(new FontObject("Content/Fonts/ZeldaFont.png", "THE LEGEND OF ANDONI"));
+        mFont.SetPosition(new Vector2D<>(100.f, 100.f));
+        mFont.SetScale(new Vector2D<>(32.f, 32.f));
+        mPlayer = (Player)ObjectManager.GetObjectManager().AddEntity(new Player(new Spritesheet("Content/Animations/Link.png"), new Vector2D<Float>(700.f, 400.f), new Vector2D<Float>(100.f, 100.f)));
         mPos = new Vector2D<Float>(300.f, 600.f);
+        mNpc = new Npc("Aelarion", new Spritesheet("Content/Animations/NPC1.png"), new Vector2D<Float>(300.f, 300.f), "En un mundo muy lejano", new Vector2D<Float>(1000.f, 1000.f)) ;
+        Spritesheet esprite = new Spritesheet("Content/Animations/gknight.png",16,28);
+        ArrayList<Enemy> mEnemies = new ArrayList<Enemy>();
+        mEnemy = (Enemy)ObjectManager.GetObjectManager().AddEntity(new Enemy(esprite, new Vector2D<Float>(450.f, 300.f), new Vector2D<Float>(50.f, 100.f), mPlayer));
     }
 
     // ------------------------------------------------------------------------
@@ -53,7 +59,8 @@ public class PlayState extends State {
     */ //----------------------------------------------------------------------
     @Override
     public void Update() {
-        mPlayer.Update();
+        ObjectManager.GetObjectManager().Update();
+        mEnemy.Update(mPlayer.GetPosition());
         mNpc.Update();
     }
 
@@ -73,8 +80,6 @@ public class PlayState extends State {
     */ //----------------------------------------------------------------------
     @Override
     public void Render(Graphics2D g) {
-        mTilemap.Render(g);
         GraphicsPipeline.GetGraphicsPipeline().Render(g);
-        mFont.Render(g, "THE LEGEND OF ANDONI", new Vector2D<Float>(100.f, 100.f), 32, 32, 56, 0);
     }
 }

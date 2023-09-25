@@ -25,9 +25,9 @@ public class HoleBlock extends Block {
         return false;
     }
 
-    public void Render(Graphics2D g) {
-        super.Render(g);
+    public void Render(Graphics2D g, Vector2D<Float> camerapos) {
+        super.Render(g, camerapos);
         g.setColor(Color.green);
-        g.drawRect((int)(float)mPosition.x, (int)(float)mPosition.y, mWidth, mHeight);
+        g.drawRect((int)(float)mPosition.x - (int)(float)camerapos.x, (int)(float)mPosition.y - (int)(float)camerapos.y, mWidth, mHeight);
     } 
 }
