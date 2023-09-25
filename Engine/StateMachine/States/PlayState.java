@@ -20,8 +20,8 @@ import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
 import Engine.StateMachine.State;
 import Engine.StateMachine.StateMachine;
-import Gameplay.Player;
 import Gameplay.Enemies.*;
+import Gameplay.Link.Player;
 
 public class PlayState extends State {
 

@@ -1,4 +1,4 @@
-package Gameplay;
+package Gameplay.Link;
 import java.lang.Thread;
 
 import Engine.Input.InputFunction;

@@ -6,7 +6,7 @@ import Engine.Graphics.Animation;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.AnimationMachine;
 import Engine.Math.Vector2D;
-import Gameplay.Player;
+import Gameplay.Link.Player;
 
 public class Enemy extends Engine.ECSystem.Types.Actor {
     private final int UP = 0;
@@ -167,7 +167,7 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
         Move();
         Animate();
         mAnimation.GetAnimation().SetDelay(20);
-        System.out.println(playerPos.x + " " + playerPos.y);
+        //System.out.println(playerPos.x + " " + playerPos.y);
     }
 
     public void CalculateMovement(Vector2D<Float> playerPos) {
