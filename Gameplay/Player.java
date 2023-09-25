@@ -12,6 +12,7 @@ import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.AnimationMachine;
 import Engine.Graphics.Components.CameraComponent;
 import Engine.Graphics.Components.FontComponent;
+import Engine.Graphics.Components.ZeldaCameraComponent;
 import Engine.Input.InputFunction;
 import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
@@ -70,7 +71,7 @@ public class Player extends Actor {
      * 
      */
     protected AtomicInteger healthPoints = new AtomicInteger(10);
-    private CameraComponent mCamera;
+    private ZeldaCameraComponent mCamera;
     protected BoxCollider mCollider;
     final private  int damage = 2;
     private int velocity = 0;
@@ -91,8 +92,9 @@ public class Player extends Actor {
         //---------------------------------------------------------------------
 
         mAnimation = AddComponent(new AnimationMachine(this, sprite));
-        mCamera = AddComponent(new CameraComponent(this));
+        mCamera = AddComponent(new ZeldaCameraComponent(this));
         mCamera.Bind();
+        mCamera.SetBounds(new Vector2D<>(800.f, 600.f), new Vector2D<>(75 * 32.f, 75 * 32.f));
         SetAnimation(RIGHT, sprite.GetSpriteArray(RIGHT), delay);
 
         //controls = new ThreadPlayer(this);

@@ -24,6 +24,7 @@ import org.w3c.dom.NodeList;
 import Engine.ECSystem.Types.ECObject;
 import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Spritesheet;
+import Engine.Graphics.Components.CameraComponent;
 import Engine.Graphics.Components.Renderable;
 import Engine.Math.Vector2D;
 
@@ -123,7 +124,7 @@ public class TileManager extends ECObject implements Renderable {
         }
     }
 
-    public void Render(Graphics2D g, Vector2D<Float> camerapos) {
+    public void Render(Graphics2D g, CameraComponent camerapos) {
         for(int i= 0; i < mLayers.size(); i++) {
             mLayers.get(i).Render(g, camerapos);
         }

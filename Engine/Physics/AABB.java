@@ -86,7 +86,7 @@ public class AABB {
     *   Returns wether two boxes collide or not
     */ //----------------------------------------------------------------------
     public boolean Collides(AABB box) {
-        final float halfxsize = mSize.x / 2;
+        /*final float halfxsize = mSize.x / 2;
         final float halfysize = mSize.y / 2;
 
         //If they overlap on the X axis
@@ -96,6 +96,13 @@ public class AABB {
             if(Math.abs(((mPosition.y) + halfysize) - ((box.mPosition.x) + halfysize)) < halfysize + (box.mSize.x / 2))
                 return true;
 
+        return false;*/
+
+        if(mPosition.x < box.mPosition.x + box.mSize.x &&
+            mPosition.x + mSize.x > box.mPosition.x &&
+            mPosition.y < box.mPosition.y + box.mSize.y &&
+            mPosition.y + mSize.y > box.mPosition.y)
+                return true;
         return false;
     }
 
@@ -115,8 +122,8 @@ public class AABB {
             int xt = (int)((mPosition.x + ax) + (c % 2) * mSize.x / 2) / 64;
             int yt = (int)((mPosition.y + ay) + (int)(c / 2) * mSize.y) / 64;
 
-            if(TilemapObject.mBlocks.containsKey(String.valueOf(xt) + ", " + String.valueOf(yt))) {
-                return TilemapObject.mBlocks.get(String.valueOf(xt) + ", " + String.valueOf(yt)).Update(this);
+            if(TilemapObject.GetBlockAt(xt, yt) != null) {
+                return TilemapObject.GetBlockAt(xt, yt).Update(this);
             }
         }
 

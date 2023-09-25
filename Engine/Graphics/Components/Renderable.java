@@ -13,5 +13,5 @@ import java.awt.Graphics2D;
 import Engine.Math.Vector2D;
 
 public interface Renderable {
-    public void Render(Graphics2D g, Vector2D<Float> camerapos);
+    public void Render(Graphics2D g, CameraComponent camerapos);
 }

@@ -27,7 +27,7 @@ public class ObjectBlock extends Block {
 
     public void Render(Graphics2D g, Vector2D<Float> camerapos) {
         super.Render(g, camerapos);
-        g.setColor(Color.white);
-        g.drawRect((int)(float)mPosition.x - (int)(float)camerapos.x, (int)(float)mPosition.y - (int)(float)camerapos.y, mWidth, mHeight);
+        //g.setColor(Color.white);
+        //g.drawRect((int)(float)mPosition.x - (int)(float)camerapos.x, (int)(float)mPosition.y - (int)(float)camerapos.y, mWidth, mHeight);
     }  
 }

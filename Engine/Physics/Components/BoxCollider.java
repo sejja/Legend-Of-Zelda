@@ -18,7 +18,7 @@ import Engine.Graphics.Components.Renderable;
 import Engine.Math.Vector2D;
 import Engine.Physics.AABB;
 
-public class BoxCollider extends Component implements Renderable{
+public class BoxCollider extends Component {//implements Renderable{
     private AABB mBounds;
 
     // ------------------------------------------------------------------------
@@ -38,7 +38,7 @@ public class BoxCollider extends Component implements Renderable{
     */ //----------------------------------------------------------------------
     @Override
     public void Init() {
-        GraphicsPipeline.GetGraphicsPipeline().AddRenderable(this);
+        //GraphicsPipeline.GetGraphicsPipeline().AddRenderable(this);
     }
 
     // ------------------------------------------------------------------------
@@ -59,7 +59,7 @@ public class BoxCollider extends Component implements Renderable{
     */ //----------------------------------------------------------------------
     @Override
     public void ShutDown() {
-        GraphicsPipeline.GetGraphicsPipeline().RemoveRenderable(this);
+        //GraphicsPipeline.GetGraphicsPipeline().RemoveRenderable(this);
     }
 
     // ------------------------------------------------------------------------
@@ -71,9 +71,9 @@ public class BoxCollider extends Component implements Renderable{
         return mBounds;
     }
 
-    @Override
-    public void Render(Graphics2D g, Vector2D<Float> camerapos) {
-       g.setColor(Color.blue);
-       g.drawRect((int)(float)(mBounds.GetPosition().x - camerapos.x), (int)(float)(mBounds.GetPosition().y - camerapos.y), (int)mBounds.GetWidth() / 2, (int)mBounds.GetHeight());
-    }
+    //@Override
+    //public void Render(Graphics2D g, Vector2D<Float> camerapos) {
+    //   g.setColor(Color.blue);
+    //   g.drawRect((int)(float)(mBounds.GetPosition().x - camerapos.x), (int)(float)(mBounds.GetPosition().y - camerapos.y), (int)mBounds.GetWidth() / 2, (int)mBounds.GetHeight());
+    //}
 }
