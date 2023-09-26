@@ -15,8 +15,8 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 public abstract class Block {
-    protected int mWidth;
-    protected int mHeight;
+    protected static int mWidth;
+    protected static int mHeight;
 
     protected BufferedImage mImg;
     protected Vector2D<Integer> mPosition;
@@ -32,5 +32,13 @@ public abstract class Block {
 
     public void Render(Graphics2D g, Vector2D<Float> camerapos) {
         g.drawImage(mImg, (int)(float)mPosition.x - (int)(float)camerapos.x, (int)(float)mPosition.y - (int)(float)camerapos.y, mWidth, mHeight, null);
+    }
+
+    public static int getWidth() {
+        return mWidth;
+    }
+
+    public static int getHeight() {
+        return mHeight;
     }
 }
