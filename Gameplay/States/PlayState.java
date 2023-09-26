@@ -9,6 +9,7 @@
 package Gameplay.States;
 
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 import Engine.ECSystem.ObjectManager;
@@ -16,6 +17,7 @@ import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Objects.FontObject;
 import Engine.Graphics.Tile.TileManager;
+import Engine.Input.InputFunction;
 import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
 import Engine.StateMachine.State;
@@ -30,6 +32,7 @@ public class PlayState extends State {
     private Enemy mEnemy;
     private Vector2D<Float> mPos;
     private TileManager mTilemap;
+    private boolean mPause = false;
 
     // ------------------------------------------------------------------------
     /*! Constructor
@@ -46,6 +49,13 @@ public class PlayState extends State {
         Spritesheet esprite = new Spritesheet("Content/Animations/gknight.png",16,28);
         ArrayList<Enemy> mEnemies = new ArrayList<Enemy>();
         mEnemy = (Enemy)ObjectManager.GetObjectManager().AddEntity(new Enemy(esprite, new Vector2D<Float>(450.f, 300.f), new Vector2D<Float>(50.f, 100.f), mPlayer));
+    
+        InputManager.SubscribePressed(KeyEvent.VK_P, new InputFunction() {
+            @Override
+            public void Execute() {
+                mPause = !mPause;
+             }
+        });
     }
 
     // ------------------------------------------------------------------------
@@ -55,8 +65,10 @@ public class PlayState extends State {
     */ //----------------------------------------------------------------------
     @Override
     public void Update() {
-        ObjectManager.GetObjectManager().Update();
-        mEnemy.Update(mPlayer.GetPosition());
+        if(!mPause) {
+            ObjectManager.GetObjectManager().Update();
+            mEnemy.Update(mPlayer.GetPosition());
+        }
     }
 
     // ------------------------------------------------------------------------
