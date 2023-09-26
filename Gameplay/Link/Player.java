@@ -218,6 +218,7 @@ public class Player extends Actor {
         //System.out.println(actionToString());
         if (stop)
         {
+            setMovement(Action.STOP);
             if (attack)
             {
                 setMovement(Action.ATTACK);
@@ -238,11 +239,13 @@ public class Player extends Actor {
         {
             if(attack){
                 setMovement(Action.STOP);
+                setMovement(Action.ATTACK);
             }
             else
             {
                 if(bow)
                 {
+                    setMovement(Action.STOP);
                     setMovement(Action.BOW);
                     //System.out.println(mAnimatioT0String());
                 }
