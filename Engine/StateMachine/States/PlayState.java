@@ -28,6 +28,7 @@ import Gameplay.NPC.Npc;
 public class PlayState extends State {
 
     private FontObject mFont;
+    private FontObject mFont2;
     private Player mPlayer;
     private Npc mNpc;
     private Enemy mEnemy;
@@ -41,7 +42,7 @@ public class PlayState extends State {
     */ //----------------------------------------------------------------------
     public PlayState() {
         mTilemap = new TileManager("Content/TiledProject/TestRoom.tmx");
-        mFont =(FontObject)ObjectManager.GetObjectManager().AddEntity(new FontObject("Content/Fonts/ZeldaFont.png", "THE LEGEND OF ANDONI"));
+        mFont =(FontObject)ObjectManager.GetObjectManager().AddEntity(new FontObject("Content/Fonts/ZeldaFont.png", "THE LEGEND OF ANDONI", 56));
         mFont.SetPosition(new Vector2D<>(100.f, 100.f));
         mFont.SetScale(new Vector2D<>(32.f, 32.f));
         mPlayer = (Player)ObjectManager.GetObjectManager().AddEntity(new Player(new Spritesheet("Content/Animations/Link.png"), new Vector2D<Float>(700.f, 400.f), new Vector2D<Float>(100.f, 100.f)));
@@ -50,6 +51,10 @@ public class PlayState extends State {
         Spritesheet esprite = new Spritesheet("Content/Animations/gknight.png",16,28);
         ArrayList<Enemy> mEnemies = new ArrayList<Enemy>();
         mEnemy = (Enemy)ObjectManager.GetObjectManager().AddEntity(new Enemy(esprite, new Vector2D<Float>(450.f, 300.f), new Vector2D<Float>(50.f, 100.f), mPlayer));
+        mFont2 =(FontObject)ObjectManager.GetObjectManager().AddEntity(new FontObject("Content/Fonts/ZeldaFont.png", "En un mundo muy lejano", 10));
+        mFont2.SetPosition(new Vector2D<>(1415.f, 800.f));
+        mFont2.SetScale(new Vector2D<>(25.f, 25.f));
+
     }
 
     // ------------------------------------------------------------------------
