@@ -20,7 +20,7 @@ import Engine.Graphics.Spritesheet;
 import Engine.Math.Vector2D;
 
 public final class AnimationMachine extends Component implements Renderable {
-
+    private BufferedImage[] must_end_frames;
     private BufferedImage[] previus_frames;
     private Spritesheet mSprite;
     private Animation mAnimation;
@@ -63,14 +63,24 @@ public final class AnimationMachine extends Component implements Renderable {
     public void SetAnimationSprite(Spritesheet sp) {
         mSprite = sp;
     }
-    public void SetFrames(BufferedImage[] frames){
-        /* This function will save a whole animation set when must_complete is true and it won`t save the next frames
+    public void SetFrames(BufferedImage[] frames){ 
+        /* If must_complete is true, them the input frame must be a must_end kind of animation
          * 
          */
-        if (must_complete){
+        if (must_complete && must_end_frames == null)
+        {
             previus_frames = mAnimation.GetFrames();
-        }else{
-            mAnimation.SetFrames(frames);
+            must_end_frames = frames;
+            mAnimation.SetFrames(must_end_frames);
+        }
+        else if (must_complete && must_end_frames != null)
+        {   
+            // It continues with the same frame
+            return;
+        }
+        else
+        {
+             mAnimation.SetFrames(frames);
         }
     }
     // ------------------------------------------------------------------------
@@ -91,8 +101,9 @@ public final class AnimationMachine extends Component implements Renderable {
     @Override
     public void Update() {
         if (mAnimation.Update() && must_complete){
-            must_complete = false;
             mAnimation.SetFrames(previus_frames);
+            must_complete = false;
+            must_end_frames = null;
         }
     }
 

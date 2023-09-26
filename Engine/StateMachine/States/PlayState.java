@@ -56,7 +56,7 @@ public class PlayState extends State {
     @Override
     public void Update() {
         ObjectManager.GetObjectManager().Update();
-        mEnemy.Update(mPlayer.GetPosition());
+        //mEnemy.Update(mPlayer.GetPosition());
     }
 
     // ------------------------------------------------------------------------

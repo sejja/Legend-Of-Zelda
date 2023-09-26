@@ -204,11 +204,9 @@ public class Player extends Actor {
     }
 
     public void SetAnimation(int i, BufferedImage[] frames, int delay) {
-        System.out.println(i);
+        //System.out.println(i);
         mCurrentAnimation = i;
-        if(!mAnimation.getMust_Complete()){
-            mAnimation.SetFrames(frames);
-        }
+        mAnimation.SetFrames(frames);
         mAnimation.GetAnimation().SetDelay(delay);
     }
 
@@ -467,6 +465,9 @@ public class Player extends Actor {
         this.attack = attack;
     }
     private void setMovement(Action type){
+        if (type == Action.ATTACK || type == Action.BOW){
+            mAnimation.setMust_Complete();
+        }
         int i = type.getID();
                 if(up) {
                 if(mCurrentAnimation != UP+i || mAnimation.GetAnimation().GetDelay() == -1) {
@@ -485,9 +486,6 @@ public class Player extends Actor {
                         SetAnimation(LEFT+i, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT+i), delay);
                     }
                 }
-        if (type == Action.ATTACK || type == Action.BOW){
-            mAnimation.setMust_Complete();
-        }
     }
     //------------------------------------------------------------------------
 }

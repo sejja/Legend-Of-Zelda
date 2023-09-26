@@ -82,7 +82,8 @@ public class Animation {
 
     // ------------------------------------------------------------------------
     /*! Update
-    *
+    *       true -> ended Full Animation
+    *       false -> not ended
     *   Updates the animation, switching the rendered sprite if necessary
     */ //----------------------------------------------------------------------
     public boolean Update() {
