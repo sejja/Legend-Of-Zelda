@@ -115,7 +115,6 @@ public class PresentBuffer extends JPanel implements Runnable {
     *   EMPTY FUNCTION
     */ //----------------------------------------------------------------------
     public void Input(Engine.Input.InputManager inputmgr) {
-        mStateManager.Input(inputmgr);
     }
 
     // ------------------------------------------------------------------------

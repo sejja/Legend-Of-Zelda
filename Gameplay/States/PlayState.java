@@ -6,7 +6,7 @@
 //	Copyright Deusto © 2023. All Rights reserved
 //
 
-package Engine.StateMachine.States;
+package Gameplay.States;
 
 import java.awt.Graphics2D;
 import java.util.ArrayList;
@@ -57,15 +57,6 @@ public class PlayState extends State {
     public void Update() {
         ObjectManager.GetObjectManager().Update();
         mEnemy.Update(mPlayer.GetPosition());
-    }
-
-    // ------------------------------------------------------------------------
-    /*! Input
-    *
-    *   EMPTY FUNCTION
-    */ //----------------------------------------------------------------------
-    @Override
-    public void Input(InputManager inputmanager) {
     }
 
     // ------------------------------------------------------------------------
