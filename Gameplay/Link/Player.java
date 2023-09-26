@@ -204,8 +204,11 @@ public class Player extends Actor {
     }
 
     public void SetAnimation(int i, BufferedImage[] frames, int delay) {
+        System.out.println(i);
         mCurrentAnimation = i;
-        mAnimation.GetAnimation().SetFrames(frames);
+        if(!mAnimation.getMust_Complete()){
+            mAnimation.SetFrames(frames);
+        }
         mAnimation.GetAnimation().SetDelay(delay);
     }
 
@@ -214,40 +217,40 @@ public class Player extends Actor {
     }
 
     public void Animate() {
-        System.out.println(actionToString());
+        //System.out.println(actionToString());
         if (stop)
         {
             if (attack)
             {
-                setAnimation(Action.ATTACK);
+                setMovement(Action.ATTACK);
             }
             else
             {
                 if (bow)
                 {
-                    setAnimation(Action.BOW);
+                    setMovement(Action.BOW);
                 }
                 else
                 {
-                    setAnimation(Action.STOP);
+                    setMovement(Action.STOP);
                 }
             }
         }
         else
         {
             if(attack){
-                setAnimation(Action.STOP);
+                setMovement(Action.STOP);
             }
             else
             {
                 if(bow)
                 {
-                    setAnimation(Action.BOW);
+                    setMovement(Action.BOW);
                     //System.out.println(mAnimatioT0String());
                 }
                 else
                 {
-                    setAnimation(Action.RUN);
+                    setMovement(Action.RUN);
                 }
             }
         }
@@ -323,10 +326,10 @@ public class Player extends Actor {
     private void setBowAnimaitonSet(BufferedImage[][] temp, int size){
         Spritesheet Bow = new Spritesheet("Content/Animations/LinkArco.png", 30, 30);
         BufferedImage[][] animation = transposeMatrix(Bow.GetSpriteArray2D());
-        System.out.println(animation.length + "|" + animation[0].length);
+        //System.out.println(animation.length + "|" + animation[0].length);
         for (int i = 0; i < 4; i++){
             for (int j = 0; j < 8; j++ ){
-                System.out.println("i = " + i + " | j =" + j );
+                //System.out.println("i = " + i + " | j =" + j );
                 if (j >= 3)
                 {
                     //BufferedImage image = resize(animation[i][2], temp[0][0].getWidth(), temp[0][0].getHeight());
@@ -463,7 +466,7 @@ public class Player extends Actor {
     public void setAttack(boolean attack) {
         this.attack = attack;
     }
-    private void setAnimation(Action type){
+    private void setMovement(Action type){
         int i = type.getID();
                 if(up) {
                 if(mCurrentAnimation != UP+i || mAnimation.GetAnimation().GetDelay() == -1) {
@@ -482,6 +485,9 @@ public class Player extends Actor {
                         SetAnimation(LEFT+i, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT+i), delay);
                     }
                 }
+        if (type == Action.ATTACK || type == Action.BOW){
+            mAnimation.setMust_Complete();
+        }
     }
     //------------------------------------------------------------------------
 }

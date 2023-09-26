@@ -9,6 +9,8 @@
 package Engine.Graphics.Components;
 
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.util.HashMap;
 
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Component;
@@ -18,8 +20,11 @@ import Engine.Graphics.Spritesheet;
 import Engine.Math.Vector2D;
 
 public final class AnimationMachine extends Component implements Renderable {
+
+    private BufferedImage[] previus_frames;
     private Spritesheet mSprite;
     private Animation mAnimation;
+    private boolean must_complete = false;
 
     // ------------------------------------------------------------------------
     /*! Animation Machine
@@ -58,7 +63,16 @@ public final class AnimationMachine extends Component implements Renderable {
     public void SetAnimationSprite(Spritesheet sp) {
         mSprite = sp;
     }
-
+    public void SetFrames(BufferedImage[] frames){
+        /* This function will save a whole animation set when must_complete is true and it won`t save the next frames
+         * 
+         */
+        if (must_complete){
+            previus_frames = mAnimation.GetFrames();
+        }else{
+            mAnimation.SetFrames(frames);
+        }
+    }
     // ------------------------------------------------------------------------
     /*! Init
     *
@@ -76,7 +90,10 @@ public final class AnimationMachine extends Component implements Renderable {
     */ //----------------------------------------------------------------------
     @Override
     public void Update() {
-        mAnimation.Update();
+        if (mAnimation.Update() && must_complete){
+            must_complete = false;
+            mAnimation.SetFrames(previus_frames);
+        }
     }
 
     // ------------------------------------------------------------------------
@@ -99,4 +116,10 @@ public final class AnimationMachine extends Component implements Renderable {
         g.drawImage(mAnimation.GetCurrentFrame(), (int)(float)GetParent().GetPosition().x - (int)(float)camerapos.x, (int)(float)GetParent().GetPosition().y - (int)(float)camerapos.y, (int)(float)GetParent().GetScale().x, (int)(float)GetParent().GetScale().y, null);
     }
     
+    public void setMust_Complete(){
+        must_complete = true;
+    }
+    public boolean getMust_Complete(){
+        return must_complete;
+    }
 }
