@@ -321,7 +321,6 @@ public class Player extends Actor {
         }
     }
     private void setBowAnimaitonSet(BufferedImage[][] temp, int size){
-        Spritesheet Bow = new Spritesheet("Content\\Animations\\LinkArco.png", 30, 30);
         BufferedImage[][] animation = transposeMatrix(Bow.GetSpriteArray2D());
         System.out.println(animation.length + "|" + animation[0].length);
         for (int i = 0; i < 4; i++){
