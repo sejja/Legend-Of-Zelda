@@ -14,11 +14,12 @@ import java.awt.Graphics2D;
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Component;
 import Engine.Graphics.GraphicsPipeline;
+import Engine.Graphics.Components.CameraComponent;
 import Engine.Graphics.Components.Renderable;
 import Engine.Math.Vector2D;
 import Engine.Physics.AABB;
 
-public class BoxCollider extends Component {//implements Renderable{
+public class BoxCollider extends Component implements Renderable{
     private AABB mBounds;
 
     // ------------------------------------------------------------------------
@@ -32,13 +33,23 @@ public class BoxCollider extends Component {//implements Renderable{
     }
 
     // ------------------------------------------------------------------------
+    /*! Conversion Constructor
+    *
+    *   Constructs a Box Collider from a parent actor and a scale
+    */ //----------------------------------------------------------------------
+    public BoxCollider(Actor parent, Vector2D<Float> scale) {
+        super(parent);
+        mBounds = new AABB(parent.GetPosition(), scale);
+    }
+
+    // ------------------------------------------------------------------------
     /*! Init
     *
     *   EMPTY FUNCTION
     */ //----------------------------------------------------------------------
     @Override
     public void Init() {
-        //GraphicsPipeline.GetGraphicsPipeline().AddRenderable(this);
+        GraphicsPipeline.GetGraphicsPipeline().AddRenderable(this);
     }
 
     // ------------------------------------------------------------------------
@@ -59,7 +70,7 @@ public class BoxCollider extends Component {//implements Renderable{
     */ //----------------------------------------------------------------------
     @Override
     public void ShutDown() {
-        //GraphicsPipeline.GetGraphicsPipeline().RemoveRenderable(this);
+        GraphicsPipeline.GetGraphicsPipeline().RemoveRenderable(this);
     }
 
     // ------------------------------------------------------------------------
@@ -71,9 +82,10 @@ public class BoxCollider extends Component {//implements Renderable{
         return mBounds;
     }
 
-    //@Override
-    //public void Render(Graphics2D g, Vector2D<Float> camerapos) {
-    //   g.setColor(Color.blue);
-    //   g.drawRect((int)(float)(mBounds.GetPosition().x - camerapos.x), (int)(float)(mBounds.GetPosition().y - camerapos.y), (int)mBounds.GetWidth() / 2, (int)mBounds.GetHeight());
-    //}
+    @Override
+    public void Render(Graphics2D g, CameraComponent camerapos) {
+        var campos = camerapos.GetCoordinates();
+       g.setColor(Color.blue);
+       g.drawRect((int)(float)(mBounds.GetPosition().x - campos.x), (int)(float)(mBounds.GetPosition().y - campos.y), (int)mBounds.GetWidth() / 2, (int)mBounds.GetHeight());
+    }
 }

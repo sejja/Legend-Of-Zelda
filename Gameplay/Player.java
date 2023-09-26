@@ -101,6 +101,7 @@ public class Player extends Actor {
         //controls.start();
 
         implementsActions();
+        this.SetName("Player");
 
         mCollider = (BoxCollider)AddComponent(new BoxCollider(this));
     }

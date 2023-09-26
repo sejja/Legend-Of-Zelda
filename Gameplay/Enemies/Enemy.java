@@ -51,6 +51,9 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
         sprite.setmSpriteArray(transposeMatrix(sprite.GetSpriteArray2D()));
         // ADD ANIMATION COMPONENT
         mAnimation = AddComponent(new AnimationMachine(this, sprite));
+        // ADD COLLIDER COMPONENT
+        mCollision = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<Float>(100.f,200.f));
+
         SetAnimation(UP, sprite.GetSpriteArray(UP), 2);
         SetName("Enemy " + idx);
         idx++;
