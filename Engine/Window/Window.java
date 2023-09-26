@@ -19,6 +19,7 @@ public class Window extends JFrame {
     public Window() {
         setTitle("The Legend Of Zelda");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setIgnoreRepaint(true);
         setContentPane(new PresentBuffer(1280, 720));
         setResizable(false);
         pack();

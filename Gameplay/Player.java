@@ -12,9 +12,11 @@ import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.AnimationMachine;
 import Engine.Graphics.Components.CameraComponent;
 import Engine.Graphics.Components.FontComponent;
+import Engine.Graphics.Components.ZeldaCameraComponent;
 import Engine.Input.InputFunction;
 import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
+import Engine.Physics.Components.BoxCollider;
 
 public class Player extends Actor {
     
@@ -69,7 +71,8 @@ public class Player extends Actor {
      * 
      */
     protected AtomicInteger healthPoints = new AtomicInteger(10);
-    private CameraComponent mCamera;
+    private ZeldaCameraComponent mCamera;
+    protected BoxCollider mCollider;
     final private  int damage = 2;
     private int velocity = 0;
     //----------------------------------------------------------------------
@@ -89,15 +92,17 @@ public class Player extends Actor {
         //---------------------------------------------------------------------
 
         mAnimation = AddComponent(new AnimationMachine(this, sprite));
-        mCamera = AddComponent(new CameraComponent(this));
+        mCamera = AddComponent(new ZeldaCameraComponent(this));
         mCamera.Bind();
+        mCamera.SetBounds(new Vector2D<>(800.f, 600.f), new Vector2D<>(75 * 32.f, 75 * 32.f));
         SetAnimation(RIGHT, sprite.GetSpriteArray(RIGHT), delay);
 
         //controls = new ThreadPlayer(this);
         //controls.start();
 
         implementsActions();
-        SetName("Player");
+
+        mCollider = (BoxCollider)AddComponent(new BoxCollider(this));
     }
     // ------------------------------------------------------------------------
 
@@ -224,7 +229,7 @@ public class Player extends Actor {
     *   Adds Behavior to the Player
     */ //----------------------------------------------------------------------
     @Override
-    public void Update() {  //Falta hacer que link termine un ataque completo antes de emoezar otro
+    public void Update() {  //Falta hacer que link termine un ataque completo antes de emoezar otro 
         super.Update();
         Move();
         /*
@@ -258,18 +263,31 @@ public class Player extends Actor {
         Vector2D<Float> pos = GetPosition();
         //System.out.println(directionToString());
         if(up) {
-            pos.y -= velocity;
+            if(mCollider.GetBounds().collisionTile(0, -velocity))
+                System.out.println("Colliding");
+            else
+                pos.y -= velocity;
         }
 
         if(down) {
-            pos.y += velocity;
+            if(mCollider.GetBounds().collisionTile(0, velocity))
+                System.out.println("Colliding");
+            else
+                pos.y += velocity;
         }
 
         if(left) {
-            pos.x -= velocity;
+            if(mCollider.GetBounds().collisionTile(-velocity, 0))
+                System.out.println("Colliding");
+            else
+                pos.x -= velocity;
         }
 
         if(right) {
+            if(mCollider.GetBounds().collisionTile(velocity, 0))
+                System.out.println("Colliding");
+            else
+                pos.x += velocity;
             pos.x += velocity;
         }
 
