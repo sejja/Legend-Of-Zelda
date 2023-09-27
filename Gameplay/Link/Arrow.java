@@ -27,7 +27,6 @@ public class Arrow extends Entity{
 
     @Override
     public void Update() {
-        
         throw new UnsupportedOperationException("Unimplemented method 'Update'");
     }
     

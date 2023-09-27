@@ -62,6 +62,8 @@ public class Player extends Actor {
      */
     private static int attack_cooldown = 8;
     private static int attack_counter = 0;
+    private static int nArrows = 10;
+    private static int nbombs = 10;
     //----------------------------------------------------------------------
 
     /* Player Stats
@@ -260,24 +262,6 @@ public class Player extends Actor {
     public void Update() {  //Falta hacer que link termine un ataque completo antes de emoezar otro
         super.Update();
         Move();
-        /*
-        if (attack){
-            if(attack_counter == 0){
-                Animate();
-            }
-            attack_counter++;
-            System.out.println(attack_counter);
-            if (attack_counter == attack_cooldown){
-                System.out.println("Ha terminado");
-                attack = false;
-                attack_counter=0;
-            }
-        }
-        else
-        {
-            Animate();
-        }
-        */
         Animate();
         mAnimation.GetAnimation().SetDelay(delay);
     }
