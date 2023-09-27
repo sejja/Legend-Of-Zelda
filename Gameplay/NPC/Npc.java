@@ -13,6 +13,7 @@ import javax.swing.JLabel;
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
 import Engine.Graphics.Animation;
+import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Sprite;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.AnimationMachine;
@@ -92,6 +93,10 @@ public class Npc extends Engine.ECSystem.Types.Actor {
 
     public void Update(Vector2D<Float> playerPosition) {
         super.Update();
+        boolean isContact = false;
+        if(isContact) {
+            GraphicsPipeline.GetGraphicsPipeline().AddRenderable(DialogueWindow.getDialgueWindow());
+        }
         
     }
 

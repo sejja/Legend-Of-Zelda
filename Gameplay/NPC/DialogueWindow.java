@@ -21,10 +21,12 @@ import Engine.Window.Window;
 public class DialogueWindow extends Component implements Renderable{
 
     private static String dialogue;
+    private static DialogueWindow g;
 
     protected DialogueWindow(Actor parent, Graphics2D g) {
         super(parent);
         //TODO Auto-generated constructor stub
+        this.g = this;
     }
 
     @Override
@@ -76,5 +78,7 @@ public class DialogueWindow extends Component implements Renderable{
 
     }
     
-    
+    public static DialogueWindow getDialgueWindow(){
+        return g;
+    }
 }
