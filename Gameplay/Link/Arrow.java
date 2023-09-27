@@ -30,14 +30,15 @@ public class Arrow extends Actor{
 
     public Arrow(Player Link){
         super(Link.GetPosition());
-        this.animationMachine = AddComponent(new AnimationMachine(this ,new Spritesheet("Content/Animations/Arrow.png", 40 , 40)));
+        this.animationMachine = AddComponent(new AnimationMachine(this ,new Spritesheet("Content/Animations/Arrow.png", 52 , 40))); //52, 40
         allAnimation = animationMachine.GetSpriteSheet().GetSpriteArray2D();
 
-        //System.out.println(allAnimation[0].length);
+        System.out.println(allAnimation.length);
 
         direction = Link.getDirection();
         SetPosition(new Vector2D<Float>(Link.GetPosition().x, Link.GetPosition().y));
         animationMachine.GetAnimation().SetDelay(1);
+        Animate();
     }
     public void Move(){
         Vector2D<Float> pos = GetPosition();
@@ -51,7 +52,8 @@ public class Arrow extends Actor{
     }
     @Override
     public void Update() {
-        System.out.println(GetPosition());
+        //System.out.println("patata");
+        //System.out.println(GetPosition());
         Move();
         Animate();
     }
