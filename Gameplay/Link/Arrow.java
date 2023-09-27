@@ -24,16 +24,20 @@ public class Arrow extends Entity{
     BufferedImage[][] allAnimation;
     final private int damage = 2;
     private AnimationMachine animationMachine;
-    final private int speed = 18;
+    final private int speed = 1;
     final private int range = 200;
-
     private DIRECTION direction;
 
     public Arrow(Player Link){
-        this.animationMachine = new AnimationMachine(Link, new Spritesheet("Content/Animations/Arrow.png"));
+        super();
+        this.animationMachine = new AnimationMachine(this ,new Spritesheet("Content/Animations/Arrow.png", 40 , 40));
         allAnimation = animationMachine.GetSpriteSheet().GetSpriteArray2D();
+
+        //System.out.println(allAnimation[0].length);
+
         direction = Link.getDirection();
-        SetPosition(Link.GetPosition());
+        SetPosition(new Vector2D<Float>(Link.GetPosition().x, Link.GetPosition().y));
+        animationMachine.GetAnimation().SetDelay(1);
     }
     public void Move(){
         Vector2D<Float> pos = GetPosition();
@@ -47,9 +51,17 @@ public class Arrow extends Entity{
     }
     @Override
     public void Update() {
-        System.out.println("patata");
+        System.out.println(GetPosition());
+        Move();
+        Animate();
     }
     public void Animate(){
-        
+        switch(direction)
+        {
+            case UP: animationMachine.SetFrames(allAnimation[3]) ;return;
+            case DOWN: animationMachine.SetFrames(allAnimation[2]) ;return;
+            case LEFT: animationMachine.SetFrames(allAnimation[1]) ;return;
+            case RIGHT: animationMachine.SetFrames(allAnimation[0]) ;return;
+        }
     }
 }

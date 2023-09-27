@@ -13,6 +13,7 @@ import java.awt.image.BufferedImage;
 
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Component;
+import Engine.ECSystem.Types.Entity;
 import Engine.Graphics.Animation;
 import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Spritesheet;
@@ -40,7 +41,7 @@ public final class AnimationMachine extends Component implements Renderable {
     *
     *   Creates an Animation Machine with a parent and a sprite
     */ //----------------------------------------------------------------------
-    public AnimationMachine(Actor parent, Spritesheet sprite) {
+    public AnimationMachine(Entity parent, Spritesheet sprite) {
         super(parent);
         mSprite = sprite;
         mAnimation = new Animation();
