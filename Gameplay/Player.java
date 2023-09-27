@@ -263,30 +263,22 @@ public class Player extends Actor {
         Vector2D<Float> pos = GetPosition();
         //System.out.println(directionToString());
         if(up) {
-            if(mCollider.GetBounds().collisionTile(0, -velocity))
-                System.out.println("Colliding");
-            else
+            if(!mCollider.GetBounds().collisionTile(0, -velocity))
                 pos.y -= velocity;
         }
 
         if(down) {
-            if(mCollider.GetBounds().collisionTile(0, velocity))
-                System.out.println("Colliding");
-            else
+            if(!mCollider.GetBounds().collisionTile(0, velocity))
                 pos.y += velocity;
         }
 
         if(left) {
-            if(mCollider.GetBounds().collisionTile(-velocity, 0))
-                System.out.println("Colliding");
-            else
+            if(!mCollider.GetBounds().collisionTile(-velocity, 0))
                 pos.x -= velocity;
         }
 
         if(right) {
-            if(mCollider.GetBounds().collisionTile(velocity, 0))
-                System.out.println("Colliding");
-            else
+            if(!mCollider.GetBounds().collisionTile(velocity, 0))
                 pos.x += velocity;
             pos.x += velocity;
         }

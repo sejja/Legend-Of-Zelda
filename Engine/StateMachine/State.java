@@ -14,5 +14,4 @@ import Engine.Input.InputManager;
 
 public abstract class State {
     public abstract void Update();
-    public abstract void Render(Graphics2D g);
 }

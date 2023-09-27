@@ -70,14 +70,4 @@ public class PlayState extends State {
             mEnemy.Update(mPlayer.GetPosition());
         }
     }
-
-    // ------------------------------------------------------------------------
-    /*! Render
-    *
-    *   Renders onto the screen
-    */ //----------------------------------------------------------------------
-    @Override
-    public void Render(Graphics2D g) {
-        GraphicsPipeline.GetGraphicsPipeline().Render(g);
-    }
 }

@@ -54,15 +54,4 @@ public class StateMachine {
     public void Add(State state) {
         mStates.add(state);
     }
-
-    // ------------------------------------------------------------------------
-    /*! Render
-    *
-    *   Calls the Render method on every sub-state
-    */ //----------------------------------------------------------------------
-    public void Render(Graphics2D grphics) {
-        //Iterate through every state
-        for(State x : mStates)
-            x.Render(grphics);
-    }
 }
