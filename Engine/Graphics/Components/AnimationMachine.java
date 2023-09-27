@@ -41,7 +41,7 @@ public final class AnimationMachine extends Component implements Renderable {
     *
     *   Creates an Animation Machine with a parent and a sprite
     */ //----------------------------------------------------------------------
-    public AnimationMachine(Entity parent, Spritesheet sprite) {
+    public AnimationMachine(Actor parent, Spritesheet sprite) {
         super(parent);
         mSprite = sprite;
         mAnimation = new Animation();

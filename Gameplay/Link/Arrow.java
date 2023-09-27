@@ -19,7 +19,7 @@ import Engine.Input.InputFunction;
 import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
 
-public class Arrow extends Entity{
+public class Arrow extends Actor{
 
     BufferedImage[][] allAnimation;
     final private int damage = 2;
@@ -29,8 +29,8 @@ public class Arrow extends Entity{
     private DIRECTION direction;
 
     public Arrow(Player Link){
-        super();
-        this.animationMachine = new AnimationMachine(this ,new Spritesheet("Content/Animations/Arrow.png", 40 , 40));
+        super(Link.GetPosition());
+        this.animationMachine = AddComponent(new AnimationMachine(this ,new Spritesheet("Content/Animations/Arrow.png", 40 , 40)));
         allAnimation = animationMachine.GetSpriteSheet().GetSpriteArray2D();
 
         //System.out.println(allAnimation[0].length);

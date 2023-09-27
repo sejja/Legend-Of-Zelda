@@ -9,14 +9,14 @@
 package Engine.ECSystem.Types;
 
 public abstract class Component implements Base {
-    private Entity mParent;
+    private Actor mParent;
 
     // ------------------------------------------------------------------------
     /*! Conversion Constructor
     *
     *   Constructs a Component with a parent
     */ //----------------------------------------------------------------------
-    protected Component(Entity parent) {
+    protected Component(Actor parent) {
         mParent = parent;
     }
 
