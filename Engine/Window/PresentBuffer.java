@@ -12,6 +12,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import javax.swing.JPanel;
 
@@ -27,7 +28,6 @@ public class PresentBuffer extends JPanel implements Runnable {
     private BufferedImage mFrameBuffer;
     private Graphics2D mGFX;
     private boolean mRunning;
-    private InputManager mInputManager;
     private StateMachine mStateManager;
 
     // ------------------------------------------------------------------------
@@ -38,7 +38,6 @@ public class PresentBuffer extends JPanel implements Runnable {
     public PresentBuffer(int width, int height) {
         mWidth = width;
         mHeight = height;
-        mStateManager = new StateMachine();
         setPreferredSize(new Dimension(width, height));
         setFocusable(true);
         requestFocus();
@@ -53,10 +52,8 @@ public class PresentBuffer extends JPanel implements Runnable {
         super.addNotify();
 
         //If we had no runing thread
-        if(mLogicThread == null) {
-            mLogicThread = new Thread(this, "LogicThread");   
-            mLogicThread.start();
-        }
+        if(mLogicThread == null)
+            (mLogicThread = new Thread(this, "LogicThread")).start();   ;
     }
 
     // ------------------------------------------------------------------------
@@ -66,9 +63,10 @@ public class PresentBuffer extends JPanel implements Runnable {
     */ //----------------------------------------------------------------------
     public void Init() {
         mRunning = true;
+        mStateManager = new StateMachine();
         mFrameBuffer = new BufferedImage(mWidth, mHeight, BufferedImage.TYPE_INT_ARGB);
         mGFX = (Graphics2D)mFrameBuffer.getGraphics();
-        mInputManager = new InputManager(this);
+        new InputManager(this);
     }
 
     // ------------------------------------------------------------------------
@@ -77,11 +75,9 @@ public class PresentBuffer extends JPanel implements Runnable {
     *   Updates the game
     */ //----------------------------------------------------------------------
     public void Update() {
+        final Rectangle rect = getBounds();
         mStateManager.Update();
-        Vector2D<Integer> temp = new Vector2D<>();
-        temp.x = getBounds().width;
-        temp.y = getBounds().height;
-        GraphicsPipeline.GetGraphicsPipeline().SetDimensions(temp);
+        GraphicsPipeline.GetGraphicsPipeline().SetDimensions(new Vector2D<>(rect.width, rect.height));
     }
 
     // ------------------------------------------------------------------------
@@ -90,12 +86,9 @@ public class PresentBuffer extends JPanel implements Runnable {
     *   Renders the game
     */ //----------------------------------------------------------------------
     public void Render() {
-        //If there is a valid graphics
-        if(mGFX != null) {
-            mGFX.setColor(Color.black);
-            mGFX.fillRect(0, 0, mWidth, mHeight);
-            mStateManager.Render(mGFX);
-        }
+        mGFX.setColor(Color.black);
+        mGFX.fillRect(0, 0, mWidth, mHeight);
+        mStateManager.Render(mGFX);
     }
 
     // ------------------------------------------------------------------------
@@ -104,17 +97,9 @@ public class PresentBuffer extends JPanel implements Runnable {
     *   Presents the game
     */ //----------------------------------------------------------------------
     public void Present() {
-        Graphics d2g = (Graphics) getGraphics();
+        final Graphics d2g = (Graphics) getGraphics();
         d2g.drawImage(mFrameBuffer, 0, 0, mWidth, mHeight, null);
         d2g.dispose();
-    }
-
-    // ------------------------------------------------------------------------
-    /*! Input
-    *
-    *   EMPTY FUNCTION
-    */ //----------------------------------------------------------------------
-    public void Input(Engine.Input.InputManager inputmgr) {
     }
 
     // ------------------------------------------------------------------------
@@ -128,29 +113,21 @@ public class PresentBuffer extends JPanel implements Runnable {
         final double FPS = 60.f;
         final double TBU = 1000000000 / FPS;
 
-        double lastRenderTime;
-
         //While the window is present
-        while(mRunning) {
-            long framestart_time = System.nanoTime();
-            Input(mInputManager);
+        for(long frametime = System.nanoTime(); mRunning; frametime = System.nanoTime()) {
             Update();
             Render();
             Present();
-            lastRenderTime = System.nanoTime();
+            final long lastRenderTime = System.nanoTime();
 
             //If we have time to sleep until the next frame, sleep
-            while(framestart_time - lastRenderTime < TBU) {
-                Thread.yield();
-
+            for(Thread.yield(); frametime - lastRenderTime < TBU; frametime = System.nanoTime()) {
                 //Sleeping the tread is not safe, add a try/catch
                 try {
-                    Thread.sleep(10);
+                    Thread.sleep(((long)TBU - (frametime - lastRenderTime)) / 1000000);
                 } catch(Exception e) {
                     e.printStackTrace();
                 }
-
-                framestart_time = System.nanoTime();
             }
         }
     }
