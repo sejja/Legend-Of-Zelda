@@ -6,11 +6,13 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
 import Engine.Graphics.Animation;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.AnimationMachine;
 import Engine.Graphics.Components.CameraComponent;
+import Engine.Graphics.Components.FontComponent;
 import Engine.Input.InputFunction;
 import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
@@ -208,9 +210,8 @@ public class Player extends Actor {
 
     public void Animate() {
         //System.out.println(actionToString());
-        if (mAnimation.getMust_Complete()){
-            return;
-        }
+        if (mAnimation.getMust_Complete()){return;} //Early return, if it is a animation thats has to be complete, do not animaate
+
 
         if (stop)
         {
@@ -262,8 +263,15 @@ public class Player extends Actor {
     @Override
     public void Update() {  //Falta hacer que link termine un ataque completo antes de emoezar otro
         super.Update();
-        if (!mAnimation.getMust_Complete()){
+        if (!mAnimation.getMust_Complete())
+        {
             Move();
+        }
+        else if (nArrows != 0 && mAnimation.finised_Animation && bow)
+        {
+            shootArrow();
+            bow = false;
+            mAnimation.finised_Animation = false;
         }
         Animate();
         mAnimation.GetAnimation().SetDelay(delay);
@@ -388,38 +396,21 @@ public class Player extends Actor {
     /* Getters
      * 
      */
-    public int getDelay() {
-        return delay;
-    }
-    public boolean isHaveArc() {
-        return haveArc;
-    }
-    public boolean isHaveLighter() {
-        return haveLighter;
-    }
-    public boolean isHaveBomb() {
-        return HaveBomb;
-    }
-    public int getVelocity() {
-        return velocity;
-    }
-    public int Attack(){
-        return (this.damage);
-    }
+    public int getDelay() {return delay;}
+    public boolean isHaveArc() {return haveArc;}
+    public boolean isHaveLighter() {return haveLighter;}
+    public boolean isHaveBomb() {return HaveBomb;}
+    public int getVelocity() {return velocity;}
+    public int Attack(){return (this.damage);}
+    public DIRECTION getDirection(){return this.direction;}
     //------------------------------------------------------------------------
 
     /* Setters
      * 
      */
-    public void setHealthPoints(AtomicInteger healthPoints) {
-        this.healthPoints = healthPoints;
-    }
-    public void setVelocity(int velocity) {
-        this.velocity = velocity;
-    }
-    public void setAttack(boolean attack) {
-        this.attack = attack;
-    }
+    public void setHealthPoints(AtomicInteger healthPoints) {this.healthPoints = healthPoints;}
+    public void setVelocity(int velocity) {this.velocity = velocity;}
+    public void setAttack(boolean attack) {this.attack = attack;}
     private void setMovement(Action type){
         if (type == Action.ATTACK || type == Action.BOW){
             mAnimation.setMust_Complete();
@@ -447,6 +438,10 @@ public class Player extends Actor {
                 }
                 return;
         }
+    }
+    private void shootArrow(){
+        ObjectManager.GetObjectManager().AddEntity(new Arrow(this));
+        System.out.println("dispara");
     }
     //------------------------------------------------------------------------
 }

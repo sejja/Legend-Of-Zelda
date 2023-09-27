@@ -16,6 +16,7 @@ public class ThreadPlayer extends Thread {
     public void setAction (int i){
         this.action = i;
     }
+
     @Override
     public void run (){
         /*

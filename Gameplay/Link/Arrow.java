@@ -5,6 +5,7 @@ import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.nio.file.LinkOption;
 import java.util.ResourceBundle.Control;
 import java.util.concurrent.atomic.AtomicInteger;
 import Engine.ECSystem.Types.Actor;
@@ -20,28 +21,35 @@ import Engine.Math.Vector2D;
 
 public class Arrow extends Entity{
 
+    BufferedImage[][] allAnimation;
     final private int damage = 2;
     private AnimationMachine animationMachine;
     final private int speed = 18;
     final private int range = 200;
 
-    boolean up = false;
-    boolean left = false;
-    boolean right = true;
-    boolean down = false;
+    private DIRECTION direction;
 
-    public Arrow(Actor Link){
+    public Arrow(Player Link){
         this.animationMachine = new AnimationMachine(Link, new Spritesheet("Content/Animations/Arrow.png"));
+        allAnimation = animationMachine.GetSpriteSheet().GetSpriteArray2D();
+        direction = Link.getDirection();
         SetPosition(Link.GetPosition());
     }
     public void Move(){
-        Vector2D<Float> position = GetPosition();
+        Vector2D<Float> pos = GetPosition();
+        switch (direction){
+            case UP:pos.y -= speed;return;
+            case DOWN:pos.y += speed;return;
+            case LEFT:pos.x -= speed;return;
+            case RIGHT:pos.x += speed;return;
+        }
+        SetPosition(pos);
     }
     @Override
     public void Update() {
-        throw new UnsupportedOperationException("Unimplemented method 'Update'");
+        System.out.println("patata");
     }
     public void Animate(){
-
+        
     }
 }

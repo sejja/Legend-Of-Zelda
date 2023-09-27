@@ -33,6 +33,7 @@ public final class AnimationMachine extends Component implements Renderable {
     private boolean must_complete = false;
     private BufferedImage[] must_end_frames;
     private BufferedImage[] previus_frames;
+    public boolean finised_Animation = false;
 
     // ------------------------------------------------------------------------
     /*! Animation Machine
@@ -120,6 +121,7 @@ public final class AnimationMachine extends Component implements Renderable {
             must_complete = false;
             must_end_frames = null;
             previus_frames = null;
+            finised_Animation = true;
         }
     }
 

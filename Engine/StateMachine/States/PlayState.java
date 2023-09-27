@@ -30,7 +30,6 @@ public class PlayState extends State {
     private Enemy mEnemy;
     private Vector2D<Float> mPos;
     private TileManager mTilemap;
-
     // ------------------------------------------------------------------------
     /*! Constructor
     *
