@@ -10,7 +10,6 @@ package Engine.Graphics.Components;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.util.HashMap;
 
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Component;
@@ -83,20 +82,17 @@ public final class AnimationMachine extends Component implements Renderable {
         //System.out.println(must_complete);
         if (must_complete && must_end_frames == null)
         {
-            System.out.println("Setting must complete animation");
             previus_frames = mAnimation.GetFrames();
             must_end_frames = frames;
             mAnimation.SetFrames(must_end_frames);
         }
         else if (must_complete && must_end_frames != null)
         {   
-            // It continues with the same frame
             System.out.println("Continue must complete animation");
             return;
         }
         else
         {
-            System.out.println("Cambiando normal");
             must_complete = false;
             mAnimation.SetFrames(frames);
         }

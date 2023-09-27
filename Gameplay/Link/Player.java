@@ -11,7 +11,6 @@ import Engine.Graphics.Animation;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.AnimationMachine;
 import Engine.Graphics.Components.CameraComponent;
-import Engine.Graphics.Components.FontComponent;
 import Engine.Input.InputFunction;
 import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
@@ -56,8 +55,6 @@ public class Player extends Actor {
 
     /* CoolDowns
      */
-    private static int attack_cooldown = 8;
-    private static int attack_counter = 0;
     private static int nArrows = 10;
     private static int nbombs = 10;
     //----------------------------------------------------------------------
