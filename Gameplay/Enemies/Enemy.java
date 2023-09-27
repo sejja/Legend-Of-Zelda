@@ -33,12 +33,15 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
     //player detected
     protected boolean chase = false;
 
-    //Destination tile
+    //Pathfinding variables
+    protected Pair finalDestination;
+    protected Pair currentDestination;
+
 
 
     //stats
     protected AtomicInteger healthPoints = new AtomicInteger(2);
-    float speed = 2;
+    protected float speed = 3;
     protected Vector2D ndir = new Vector2D(0f,0f);
     
     protected int mCurrentAnimation;
@@ -217,9 +220,9 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
         Block srcBlock = TilemapObject.GetBlockAt((int)Math.round(this.GetPosition().x/divisior), (int)Math.round(this.GetPosition().y)/divisior);
         Block destBlock = TilemapObject.GetBlockAt((int)Math.round(playerPos.x)/divisior, (int)Math.round(playerPos.y)/divisior);
         Pair src = new Pair((int)Math.round(this.GetPosition().x/divisior), (int)Math.round(this.GetPosition().y)/divisior);
-        Pair dest = new Pair((int)Math.round(playerPos.x)/divisior, (int)Math.round(playerPos.y)/divisior);
+        finalDestination = new Pair((int)Math.round(playerPos.x)/divisior, (int)Math.round(playerPos.y)/divisior);
 
-        return mPathfinding.aStarSearch(src, dest);
+        return mPathfinding.aStarSearch(src, finalDestination);
 
     }
 
@@ -238,36 +241,45 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
     // ------------------------------------------------------------------------
     /*! Move
     *
-    *   Moves the sprite on a certain direction
+    *   Calculates and sets the movement of the Enemy with the A* search
     */ //----------------------------------------------------------------------
     public void Move(Stack<Pair> path) {
+        int suma =0;
         Vector2D<Float> pos = GetPosition();
+        Vector2D<Float> ppos = ObjectManager.GetObjectManager().GetObjectByName("Player").GetPosition();
         if(chase){
             speed = 3;
         }
         if(!path.isEmpty()){
             path.pop();
-            Pair p= path.peek();
-            float xlowerBound = p.getFirst()*64 - 3;
-            float xupperBound = p.getFirst()*64 + 3;
-            float ylowerBound = p.getSecond()*64 - 3;
-            float yupperBound = p.getSecond()*64 + 3;
-            if((((xlowerBound <= pos.x) && (pos.x <= xupperBound)) && ((ylowerBound <= pos.y) && (pos.y <= yupperBound)))){
+            currentDestination=path.peek();
+
+            // Margin of error for the movement
+            float xlowerBound = currentDestination.getFirst()*64 - 3;
+            float xupperBound = currentDestination.getFirst()*64 + 3;
+            float ylowerBound = currentDestination.getSecond()*64 - 3;
+            float yupperBound = currentDestination.getSecond()*64 + 3;
+
+            //If currentDestination reached, pop next destination
+            if(((((xlowerBound <= pos.x+suma) && (pos.x+suma <= xupperBound)) && ((ylowerBound <= pos.y+suma) && (pos.y+suma <= yupperBound)))) && (currentDestination != finalDestination)){
                 path.pop();
                 if(!path.isEmpty()){
-                    p = path.peek();
+                    currentDestination = path.peek();
                 }
-                ndir = Normalize(new Vector2D<Float>((float)p.getFirst()*64 - pos.x, (float)p.getSecond()*64 - pos.y));
+                ndir = Normalize(new Vector2D<Float>((float)currentDestination.getFirst()*64+suma - pos.x, (float)currentDestination.getSecond()*64+suma - pos.y));
                 pos.x += (float)ndir.x * speed;
                 pos.y += (float)ndir.y * speed;
             }else{
-                ndir = Normalize(new Vector2D<Float>((float)p.getFirst()*64 - pos.x, (float)p.getSecond()*64 - pos.y));
+                ndir = Normalize(new Vector2D<Float>((float)currentDestination.getFirst()*64+suma - pos.x, (float)currentDestination.getSecond()*64+suma - pos.y));
                 pos.x += (float)ndir.x * speed;
                 pos.y += (float)ndir.y * speed;
             }
+        //If finalDestination reached, chase player directly
+        }else if((int)currentDestination.getFirst() == (int)finalDestination.getFirst() && (int)currentDestination.getSecond() == (int)finalDestination.getSecond()){
+                MovementVector(ppos);
+                pos.x += (float)ndir.x * speed;
+                pos.y += (float)ndir.y * speed;
         }
-        
-        
 
         SetPosition(pos);
     }  

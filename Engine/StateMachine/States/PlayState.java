@@ -48,6 +48,8 @@ public class PlayState extends State {
         Spritesheet esprite = new Spritesheet("Content/Animations/gknight.png",16,28);
         ArrayList<Enemy> mEnemies = new ArrayList<Enemy>();
         mEnemy = (Enemy)ObjectManager.GetObjectManager().AddEntity(new Enemy(esprite, new Vector2D<Float>(450.f, 300.f), new Vector2D<Float>(50.f, 100.f)));
+        mEnemy2 = (Enemy)ObjectManager.GetObjectManager().AddEntity(new Enemy(esprite, new Vector2D<Float>(500.f, 500.f), new Vector2D<Float>(50.f, 100.f)));
+        mEnemy3 = (Enemy)ObjectManager.GetObjectManager().AddEntity(new Enemy(esprite, new Vector2D<Float>(900.f, 900.f), new Vector2D<Float>(50.f, 100.f)));
     }
 
     // ------------------------------------------------------------------------
