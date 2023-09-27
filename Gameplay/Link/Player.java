@@ -12,7 +12,6 @@ import Engine.Graphics.Animation;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.AnimationMachine;
 import Engine.Graphics.Components.CameraComponent;
-import Engine.Graphics.Components.FontComponent;
 import Engine.Input.InputFunction;
 import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
@@ -68,6 +67,7 @@ public class Player extends Actor {
     private CameraComponent mCamera;
     final private  int damage = 2;
     private int velocity = 0;
+    final int default_velocity = 10;
     //----------------------------------------------------------------------
 
     //Methods______________________________________________________________________________________________________________________________________________________________________________
@@ -366,7 +366,6 @@ public class Player extends Actor {
     //------------------------------------------------------------------------
 
     public void activateAction(int action){
-        final int default_velocity = 5;
         if (action < 4){
             switch(action){
                 case(0):
@@ -441,7 +440,7 @@ public class Player extends Actor {
     }
     private void shootArrow(){
         ObjectManager.GetObjectManager().AddEntity(new Arrow(this));
-        System.out.println("dispara");
+        System.out.println("Flechipolla");
     }
     //------------------------------------------------------------------------
 }
