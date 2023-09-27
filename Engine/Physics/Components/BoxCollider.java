@@ -59,8 +59,8 @@ public class BoxCollider extends Component implements Renderable{
     */ //----------------------------------------------------------------------
     @Override
     public void Update() {
-        mBounds.SetHeight(GetParent().GetScale().x);
-        mBounds.SetWidth(GetParent().GetScale().y);
+        mBounds.SetHeight(this.GetBounds().GetWidth());
+        mBounds.SetWidth(this.GetBounds().GetHeight());
     }
 
     // ------------------------------------------------------------------------

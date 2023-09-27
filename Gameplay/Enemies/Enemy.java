@@ -2,15 +2,18 @@ package Gameplay.Enemies;
 
 import java.awt.image.BufferedImage;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicStampedReference;
 
 import Engine.ECSystem.ObjectManager;
 import Engine.Graphics.Animation;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.AnimationMachine;
+import Engine.Graphics.Tile.*;
 import Engine.Math.Vector2D;
 import Engine.Physics.AABB;
 import Engine.Physics.Components.BoxCollider;
 import Gameplay.Player;
+import Gameplay.Enemies.Search.*;
 
 public class Enemy extends Engine.ECSystem.Types.Actor {
     private final int UP = 0;
@@ -35,6 +38,7 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
     protected int mCurrentAnimation;
     protected AnimationMachine mAnimation;
     protected BoxCollider mCollision;
+    protected AStarSearch mPathfinding;
     
     static int idx = 0;
     
@@ -52,7 +56,7 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
         // ADD ANIMATION COMPONENT
         mAnimation = AddComponent(new AnimationMachine(this, sprite));
         // ADD COLLIDER COMPONENT
-        mCollision = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<Float>(100.f,200.f));
+        mCollision = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<Float>(100.f,200.f)));
 
         SetAnimation(UP, sprite.GetSpriteArray(UP), 2);
         SetName("Enemy " + idx);
@@ -109,6 +113,7 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
     *   Utility Function for Getting the Direction of a Vector
     */ //----------------------------------------------------------------------
     public void GetDirection(Vector2D<Float> vector) {
+
         if (Math.abs(vector.x) > Math.abs(vector.y)) {
             if (vector.x > 0) {
                 setUp(false);
@@ -191,18 +196,27 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
         Vector2D<Float> ppos = ObjectManager.GetObjectManager().GetObjectByName("Player").GetPosition();
         CalculateMovement(ppos);
         GetDirection(ndir);
-        Collides(ppos);
+        Vision(ppos);
         Move();
         Animate();
         mAnimation.GetAnimation().SetDelay(20);
         System.out.println(ppos.x + " " + ppos.y + " " + ndir+ " " );
     }
     // ------------------------------------------------------------------------
-    /*! Collides
+    /*! Vision
     *
-    *   Checks if the Enemy collides with the player
+    *   Checks if the Enemy can chase player
     */ //----------------------------------------------------------------------
-    public void Collides(Vector2D<Float> playerPos) {
+    public void Vision(Vector2D<Float> playerPos) {
+        mPathfinding = new AStarSearch();
+        int divisior = 64;
+        Block srcBlock = TilemapObject.GetBlockAt((int)Math.round(this.GetPosition().x/divisior), (int)Math.round(this.GetPosition().y)/divisior);
+        Block destBlock = TilemapObject.GetBlockAt((int)Math.round(playerPos.x)/divisior, (int)Math.round(playerPos.y)/divisior);
+        Pair src = new Pair((int)Math.round(this.GetPosition().x/divisior), (int)Math.round(this.GetPosition().y)/divisior);
+        Pair dest = new Pair((int)Math.round(playerPos.x)/divisior, (int)Math.round(playerPos.y)/divisior);
+        mPathfinding.aStarSearch(src, dest);
+
+
 
     }
 
