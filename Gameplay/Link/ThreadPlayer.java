@@ -18,6 +18,7 @@ public class ThreadPlayer extends Thread {
     }
     @Override
     public void run (){
+        /*
         while (!kill){
             if(execute){
                 if (action < 4){
@@ -58,5 +59,6 @@ public class ThreadPlayer extends Thread {
                 execute = false;
             }
         }
+        */
     }
 }

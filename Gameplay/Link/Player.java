@@ -35,10 +35,8 @@ public class Player extends Actor {
     /*  Movement Boolean
         Used to confirm the direction
      */
-    private boolean up = false;
-    private boolean down = false;
-    private boolean right = true;
-    private boolean left = false;
+    //private boolean up = false;
+    public DIRECTION direction;
     private boolean attack = false;
     private boolean stop = true;
     private boolean bow = false;
@@ -84,11 +82,10 @@ public class Player extends Actor {
     public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size) {
         super(position);
         SetScale(size);
-
+        this.direction = DIRECTION.RIGHT;
         //Lets transpose the Sprite Matrix
         sprite.setmSpriteArray(completeAnimationSet(sprite.GetSpriteArray2D()));
         //---------------------------------------------------------------------
-
         mAnimation = AddComponent(new AnimationMachine(this, sprite));
         mCamera = AddComponent(new CameraComponent(this));
         mCamera.Bind();
@@ -255,6 +252,7 @@ public class Player extends Actor {
                 }
             }
         }
+        System.out.println(mAnimatioT0String());
     }
     // ------------------------------------------------------------------------
 
@@ -265,7 +263,9 @@ public class Player extends Actor {
     @Override
     public void Update() {  //Falta hacer que link termine un ataque completo antes de emoezar otro
         super.Update();
-        Move();
+        if (!mAnimation.getMust_Complete()){
+            Move();
+        }
         Animate();
         mAnimation.GetAnimation().SetDelay(delay);
     }
@@ -278,22 +278,12 @@ public class Player extends Actor {
     public void Move() {
         Vector2D<Float> pos = GetPosition();
         //System.out.println(directionToString());
-        if(up) {
-            pos.y -= velocity;
+        switch (direction){
+            case UP:pos.y -= velocity;return;
+            case DOWN:pos.y += velocity;return;
+            case LEFT:pos.x -= velocity;return;
+            case RIGHT:pos.x += velocity;return;
         }
-
-        if(down) {
-            pos.y += velocity;
-        }
-
-        if(left) {
-            pos.x -= velocity;
-        }
-
-        if(right) {
-            pos.x += velocity;
-        }
-
         SetPosition(pos);
     }
     // ------------------------------------------------------------------------
@@ -358,7 +348,7 @@ public class Player extends Actor {
      * 
      */
     public String directionToString() {
-        return "Player [up=" + up + ", down=" + down + ", right=" + right + ", left=" + left;
+        return "Player direction = " + direction;
     }
     public String actionToString(){
         return("mCurrentAnimation=" +mCurrentAnimation + ", stop=" + stop + ", attack =" + attack  + ", bow = " + bow);
@@ -373,31 +363,19 @@ public class Player extends Actor {
         if (action < 4){
             switch(action){
                 case(0):
-                    setUp(false);
-                    setDown(false);
-                    setLeft(false);
-                    setRight(true);
+                    this.direction = DIRECTION.RIGHT;
                     setVelocity(default_velocity);
                     break;
                 case(1):
-                    setUp(false);
-                    setDown(false);
-                    setLeft(true);
-                    setRight(false);
+                    this.direction = DIRECTION.LEFT;
                     setVelocity(default_velocity);
                     break;
                 case(2):
-                    setUp(false);
-                    setDown(true);
-                    setLeft(false);
-                    setRight(false);
+                    this.direction = DIRECTION.DOWN;
                     setVelocity(default_velocity);
                     break;
                 case(3):
-                    setUp(true);
-                    setDown(false);
-                    setLeft(false);
-                    setRight(false);
+                    this.direction = DIRECTION.UP;
                     setVelocity(default_velocity);
                     break;
             }
@@ -411,18 +389,6 @@ public class Player extends Actor {
     /* Getters
      * 
      */
-    public boolean isUp() {
-        return up;
-    }
-    public boolean isDown() {
-        return down;
-    }
-    public boolean isRight() {
-        return right;
-    }
-    public boolean isLeft() {
-        return left;
-    }
     public int getDelay() {
         return delay;
     }
@@ -439,7 +405,7 @@ public class Player extends Actor {
         return velocity;
     }
     public int Attack(){
-        return this.damage;
+        return (this.damage);
     }
     //------------------------------------------------------------------------
 
@@ -452,18 +418,6 @@ public class Player extends Actor {
     public void setVelocity(int velocity) {
         this.velocity = velocity;
     }
-    public void setUp(boolean up) {
-        this.up = up;
-    }
-    public void setDown(boolean down) {
-        this.down = down;
-    }
-    public void setRight(boolean right) {
-        this.right = right;
-    }
-    public void setLeft(boolean left) {
-        this.left = left;
-    }
     public void setAttack(boolean attack) {
         this.attack = attack;
     }
@@ -472,23 +426,28 @@ public class Player extends Actor {
             mAnimation.setMust_Complete();
         }
         int i = type.getID();
-                if(up) {
+        switch(direction){
+            case UP:
                 if(mCurrentAnimation != UP+i || mAnimation.GetAnimation().GetDelay() == -1) {
                     SetAnimation(UP+i, mAnimation.GetSpriteSheet().GetSpriteArray(UP+i), delay);
                 }
-                } else if(down) {
-                    if(mCurrentAnimation != DOWN+i || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(DOWN+i, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN+i), delay);
-                    }
-                } else if(right) {
-                    if(mCurrentAnimation != RIGHT+i || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(RIGHT+i, mAnimation.GetSpriteSheet().GetSpriteArray(RIGHT+i), delay);
-                    }
-                } else if(left){
-                    if(mCurrentAnimation != LEFT+i|| mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(LEFT+i, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT+i), delay);
-                    }
+                return;
+            case DOWN:
+                if(mCurrentAnimation != DOWN+i || mAnimation.GetAnimation().GetDelay() == -1) {
+                    SetAnimation(DOWN+i, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN+i), delay);
                 }
+                return;
+            case RIGHT:
+                if(mCurrentAnimation != RIGHT+i || mAnimation.GetAnimation().GetDelay() == -1) {
+                    SetAnimation(RIGHT+i, mAnimation.GetSpriteSheet().GetSpriteArray(RIGHT+i), delay);
+                }
+                return;
+            case LEFT:
+                if(mCurrentAnimation != LEFT+i|| mAnimation.GetAnimation().GetDelay() == -1) {
+                    SetAnimation(LEFT+i, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT+i), delay);
+                }
+                return;
+        }
     }
     //------------------------------------------------------------------------
 }

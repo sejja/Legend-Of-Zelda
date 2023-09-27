@@ -25,9 +25,23 @@ public class Arrow extends Entity{
     final private int speed = 18;
     final private int range = 200;
 
+    boolean up = false;
+    boolean left = false;
+    boolean right = true;
+    boolean down = false;
+
+    public Arrow(Actor Link){
+        this.animationMachine = new AnimationMachine(Link, new Spritesheet("Content/Animations/Arrow.png"));
+        SetPosition(Link.GetPosition());
+    }
+    public void Move(){
+        Vector2D<Float> position = GetPosition();
+    }
     @Override
     public void Update() {
         throw new UnsupportedOperationException("Unimplemented method 'Update'");
     }
-    
+    public void Animate(){
+
+    }
 }

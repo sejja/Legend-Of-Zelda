@@ -113,10 +113,13 @@ public final class AnimationMachine extends Component implements Renderable {
     */ //----------------------------------------------------------------------
     @Override
     public void Update() {
+        //System.out.println(must_complete);
         if (mAnimation.Update() && must_complete){
             mAnimation.SetFrames(previus_frames);
             must_complete = false;
             must_end_frames = null;
+            previus_frames = null;
+            Update();
         }
     }
 
