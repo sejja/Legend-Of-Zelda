@@ -25,7 +25,7 @@ public final class AnimationMachine extends Component implements Renderable {
     private Animation mAnimation;
 
     /* Must end variables
-     * These variables has a purpose of make posible to block a special kind of animation
+     * These variables have a purpose of make posible to block a special kind of animation
      * must_complete is a variable thats has to be changed externally using setMust_Complete
      * Reasons:
      *          -> Externally code will be more clean because each setAnimation in each actor has to consider if it must be ended
@@ -75,7 +75,7 @@ public final class AnimationMachine extends Component implements Renderable {
     }
     /* SetFrames
      *  @Param BufferedImage[] frames <- This is the input frame
-     *                                   If must_complete is true, them the input frame must be a must_end kind of animation
+     *                                   If must_complete is true, then the input frame must be a must_end kind of animation
      *  if the input is a must_end kind of animation it will savbe a input frame in must_end_variable, the previus frame in previus_frame and set the input as the current frame
      *  if the current frame is a must_end one it will do nothing
      *  if the input is not a must ended one or the must ended animation has end it will set the input to the actual frame (before set it, in update(), it will be the previus animation)
