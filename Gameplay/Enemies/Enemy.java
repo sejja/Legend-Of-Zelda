@@ -1,6 +1,9 @@
 package Gameplay.Enemies;
 
 import java.awt.image.BufferedImage;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Stack;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicStampedReference;
 
@@ -29,6 +32,9 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
 
     //player detected
     protected boolean chase = false;
+
+    //Destination tile
+
 
     //stats
     protected AtomicInteger healthPoints = new AtomicInteger(2);
@@ -194,55 +200,74 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
     public void Update() {
         super.Update();
         Vector2D<Float> ppos = ObjectManager.GetObjectManager().GetObjectByName("Player").GetPosition();
-        CalculateMovement(ppos);
         GetDirection(ndir);
-        Vision(ppos);
-        Move();
+        Move(Pathfinding(ppos));
         Animate();
         mAnimation.GetAnimation().SetDelay(20);
-        System.out.println(ppos.x + " " + ppos.y + " " + ndir+ " " );
+        //System.out.println(ppos.x + " " + ppos.y + " " + ndir+ " " );
     }
     // ------------------------------------------------------------------------
-    /*! Vision
+    /*! Pathfinding
     *
     *   Checks if the Enemy can chase player
     */ //----------------------------------------------------------------------
-    public void Vision(Vector2D<Float> playerPos) {
+    public Stack<Pair> Pathfinding(Vector2D<Float> playerPos) {
         mPathfinding = new AStarSearch();
         int divisior = 64;
         Block srcBlock = TilemapObject.GetBlockAt((int)Math.round(this.GetPosition().x/divisior), (int)Math.round(this.GetPosition().y)/divisior);
         Block destBlock = TilemapObject.GetBlockAt((int)Math.round(playerPos.x)/divisior, (int)Math.round(playerPos.y)/divisior);
         Pair src = new Pair((int)Math.round(this.GetPosition().x/divisior), (int)Math.round(this.GetPosition().y)/divisior);
         Pair dest = new Pair((int)Math.round(playerPos.x)/divisior, (int)Math.round(playerPos.y)/divisior);
-        mPathfinding.aStarSearch(src, dest);
 
-
+        return mPathfinding.aStarSearch(src, dest);
 
     }
 
     // ------------------------------------------------------------------------
-    /*! CalculateMovement
+    /*! MovementVector
     *
     *   Calculates the movement of the Enemy
     */ //----------------------------------------------------------------------
-    public void CalculateMovement(Vector2D<Float> playerPos) {
+    public void MovementVector(Vector2D<Float> playerPos) {
         Vector2D<Float> pos = GetPosition();
         Vector2D<Float> dir = new Vector2D<Float>((float)playerPos.x - pos.x, (float)playerPos.y - pos.y);
         ndir=Normalize(dir);
     }
+
 
     // ------------------------------------------------------------------------
     /*! Move
     *
     *   Moves the sprite on a certain direction
     */ //----------------------------------------------------------------------
-    public void Move() {
+    public void Move(Stack<Pair> path) {
         Vector2D<Float> pos = GetPosition();
         if(chase){
             speed = 3;
         }
-        pos.x += (float)ndir.x * speed;
-        pos.y += (float)ndir.y * speed;
+        if(!path.isEmpty()){
+            path.pop();
+            Pair p= path.peek();
+            float xlowerBound = p.getFirst()*64 - 3;
+            float xupperBound = p.getFirst()*64 + 3;
+            float ylowerBound = p.getSecond()*64 - 3;
+            float yupperBound = p.getSecond()*64 + 3;
+            if((((xlowerBound <= pos.x) && (pos.x <= xupperBound)) && ((ylowerBound <= pos.y) && (pos.y <= yupperBound)))){
+                path.pop();
+                if(!path.isEmpty()){
+                    p = path.peek();
+                }
+                ndir = Normalize(new Vector2D<Float>((float)p.getFirst()*64 - pos.x, (float)p.getSecond()*64 - pos.y));
+                pos.x += (float)ndir.x * speed;
+                pos.y += (float)ndir.y * speed;
+            }else{
+                ndir = Normalize(new Vector2D<Float>((float)p.getFirst()*64 - pos.x, (float)p.getSecond()*64 - pos.y));
+                pos.x += (float)ndir.x * speed;
+                pos.y += (float)ndir.y * speed;
+            }
+        }
+        
+        
 
         SetPosition(pos);
     }  

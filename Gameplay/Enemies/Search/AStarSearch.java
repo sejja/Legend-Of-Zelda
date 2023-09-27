@@ -10,6 +10,7 @@ import Engine.Graphics.Tile.*;
 
 
 public class AStarSearch implements Renderable {
+    Stack<Pair> Path = new Stack<>();
     static final int COL = 50;
     static final int ROW = 50;
     private Stack<Pair> mPath = new Stack<>();
@@ -49,11 +50,11 @@ public class AStarSearch implements Renderable {
         // Returns true if the cell is not blocked else false
         if (isValid(Column, Row)){
             Block block = TilemapObject.GetBlockAt(Column, Row);
-            System.out.println(Column + " " + Row);
+            //System.out.println(Column + " " + Row);
             if(block instanceof HoleBlock || block instanceof ObjectBlock) return false;
             return true;
         }else{
-            System.out.println(Column + " " + Row);
+            //System.out.println(Column + " " + Row);
             return false;
         }
 
@@ -74,25 +75,25 @@ public class AStarSearch implements Renderable {
     // A Function to find the shortest path between
     // a given source cell to a destination cell according
     // to A* Search Algorithm
-    public void aStarSearch( Pair src, Pair dest) {
+    public Stack<Pair> aStarSearch( Pair src, Pair dest) {
         if (!isValid(src.first, src.second)) {
             System.out.println("Source is invalid");
-            return;
+            return Path;
         }
 
         if (!isValid(dest.first, dest.second)) {
             System.out.println("Destination is invalid");
-            return;
+            return Path;
         }
 
         if (!isUnBlocked( src.first, src.second) || !isUnBlocked( dest.first, dest.second)) {
             System.out.println("Source or the destination is blocked");
-            return;
+            return Path;
         }
 
         if (isDestination(src.first, src.second, dest)) {
             System.out.println("We are already at the destination");
-            return;
+            return Path;
         }
 
         boolean[][] closedList = new boolean[COL][ROW];
@@ -149,7 +150,7 @@ public class AStarSearch implements Renderable {
                     System.out.println("The destination cell is found");
                     tracePath(cellDetails, dest);
                     foundDest = true;
-                    return;
+                    return Path;
                 } else if (!closedList[i - 1][j] && isUnBlocked( i - 1, j)) {
                     gNew = cellDetails[i][j].g + 1.0;
                     hNew = calculateHValue(i - 1, j, dest);
@@ -173,7 +174,7 @@ public class AStarSearch implements Renderable {
                     System.out.println("The destination cell is found");
                     tracePath(cellDetails, dest);
                     foundDest = true;
-                    return;
+                    return Path;
                 } else if (!closedList[i + 1][j] && isUnBlocked( i + 1, j)) {
                     gNew = cellDetails[i][j].g + 1.0;
                     hNew = calculateHValue(i + 1, j, dest);
@@ -197,7 +198,7 @@ public class AStarSearch implements Renderable {
                     System.out.println("The destination cell is found");
                     tracePath(cellDetails, dest);
                     foundDest = true;
-                    return;
+                    return Path;
                 } else if (!closedList[i][j + 1] && isUnBlocked( i, j + 1)) {
                     gNew = cellDetails[i][j].g + 1.0;
                     hNew = calculateHValue(i, j + 1, dest);
@@ -221,7 +222,7 @@ public class AStarSearch implements Renderable {
                     System.out.println("The destination cell is found");
                     tracePath(cellDetails, dest);
                     foundDest = true;
-                    return;
+                    return Path;
                 } else if (!closedList[i][j - 1] && isUnBlocked( i, j - 1)) {
                     gNew = cellDetails[i][j].g + 1.0;
                     hNew = calculateHValue(i, j - 1, dest);
@@ -238,14 +239,14 @@ public class AStarSearch implements Renderable {
             }
 
             // 5th Successor (North-East)
-            if (isValid(i - 1, j + 1) && (isUnBlocked( i - 1, j) || isUnBlocked( i, j + 1))) {
+            if (isValid(i - 1, j + 1) && (isUnBlocked( i - 1, j) && isUnBlocked( i, j + 1))) {
                 if (isDestination(i - 1, j + 1, dest)) {
                     cellDetails[i - 1][j + 1].parent_i = i;
                     cellDetails[i - 1][j + 1].parent_j = j;
                     System.out.println("The destination cell is found");
                     tracePath(cellDetails, dest);
                     foundDest = true;
-                    return;
+                    return Path;
                 } else if (!closedList[i - 1][j + 1] && isUnBlocked( i - 1, j + 1)) {
                     gNew = cellDetails[i][j].g + 1.414;
                     hNew = calculateHValue(i - 1, j + 1, dest);
@@ -262,14 +263,14 @@ public class AStarSearch implements Renderable {
             }
 
             // 6th Successor (North-West)
-            if (isValid(i - 1, j - 1) && (isUnBlocked( i - 1, j) || isUnBlocked( i, j - 1))) {
+            if (isValid(i - 1, j - 1) && (isUnBlocked( i - 1, j) && isUnBlocked( i, j - 1))) {
                 if (isDestination(i - 1, j - 1, dest)) {
                     cellDetails[i - 1][j - 1].parent_i = i;
                     cellDetails[i - 1][j - 1].parent_j = j;
                     System.out.println("The destination cell is found");
                     tracePath(cellDetails, dest);
                     foundDest = true;
-                    return;
+                    return Path;
                 } else if (!closedList[i - 1][j - 1] && isUnBlocked( i - 1, j - 1)) {
                     gNew = cellDetails[i][j].g + 1.414;
                     hNew = calculateHValue(i - 1, j - 1, dest);
@@ -286,14 +287,14 @@ public class AStarSearch implements Renderable {
             }
 
             // 7th Successor (South-East)
-            if (isValid(i + 1, j + 1) && (isUnBlocked( i + 1, j) || isUnBlocked( i, j + 1))) {
+            if (isValid(i + 1, j + 1) && (isUnBlocked( i + 1, j) && isUnBlocked( i, j + 1))) {
                 if (isDestination(i + 1, j + 1, dest)) {
                     cellDetails[i + 1][j + 1].parent_i = i;
                     cellDetails[i + 1][j + 1].parent_j = j;
                     System.out.println("The destination cell is found");
                     tracePath(cellDetails, dest);
                     foundDest = true;
-                    return;
+                    return Path;
                 } else if (!closedList[i + 1][j + 1] && isUnBlocked( i + 1, j + 1)) {
                     gNew = cellDetails[i][j].g + 1.414;
                     hNew = calculateHValue(i + 1, j + 1, dest);
@@ -310,14 +311,14 @@ public class AStarSearch implements Renderable {
             }
 
             // 8th Successor (South-West)
-            if (isValid(i + 1, j - 1) && (isUnBlocked( i + 1, j) || isUnBlocked( i, j - 1))) {
+            if (isValid(i + 1, j - 1) && (isUnBlocked( i + 1, j) && isUnBlocked( i, j - 1))) {
                 if (isDestination(i + 1, j - 1, dest)) {
                     cellDetails[i + 1][j - 1].parent_i = i;
                     cellDetails[i + 1][j - 1].parent_j = j;
                     System.out.println("The destination cell is found");
                     tracePath(cellDetails, dest);
                     foundDest = true;
-                    return;
+                    return Path;
                 } else if (!closedList[i + 1][j - 1] && isUnBlocked( i + 1, j - 1)) {
                     gNew = cellDetails[i][j].g + 1.414;
                     hNew = calculateHValue(i + 1, j - 1, dest);
@@ -337,16 +338,15 @@ public class AStarSearch implements Renderable {
         // When no destination cell is found and the open list is empty, then no path exists.
         if (!foundDest)
             System.out.println("Failed to find the destination cell");
-        return;
+        return Path;
     }
 
     // A utility function to trace the path from the source to the destination.
     void tracePath(cell cellDetails[][], Pair dest) {
-        System.out.println("\nThe Path is ");
         int Column = dest.first;
         int Row = dest.second;
 
-        Stack<Pair> Path = new Stack<Pair>();
+        Path = new Stack<Pair>();
 
         while (!(cellDetails[Column][Row].parent_i == Column && cellDetails[Column][Row].parent_j == Row)) {
             Path.push(new Pair(Column, Row));
@@ -373,7 +373,7 @@ public class AStarSearch implements Renderable {
 
         while (!stack.isEmpty()) {
             Pair p = stack.pop();
-            g.drawRect(p.first * 64 - (int)(float)camcoord.x, p.second * 64 - (int)(float)camcoord.y, 50, 50);
+            g.drawRect(p.first * 64 - (int)(float)camcoord.x, p.second * 64 - (int)(float)camcoord.y, 64, 64);
         }
     }
 
