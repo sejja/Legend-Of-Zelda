@@ -1,61 +1,73 @@
 package Gameplay.Link;
 
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.RenderingHints;
-import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
-import java.nio.file.LinkOption;
-import java.util.ResourceBundle.Control;
-import java.util.concurrent.atomic.AtomicInteger;
+import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
-import Engine.ECSystem.Types.Entity;
-import Engine.Graphics.Animation;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.AnimationMachine;
-import Engine.Graphics.Components.CameraComponent;
-import Engine.Graphics.Components.FontComponent;
-import Engine.Input.InputFunction;
-import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
 
 public class Arrow extends Actor{
 
     BufferedImage[][] allAnimation;
+    
     final private int damage = 2;
     private AnimationMachine animationMachine;
-    final private int speed = 1;
-    final private int range = 200;
+    final private int speed = 18;
+    final private float range = 350;
+    private Float distance = 0f;
     private DIRECTION direction;
 
     public Arrow(Player Link){
         super(Link.GetPosition());
-        this.animationMachine = AddComponent(new AnimationMachine(this ,new Spritesheet("Content/Animations/Arrow.png", 52 , 40))); //52, 40
+        this.animationMachine = AddComponent(new AnimationMachine(this ,new Spritesheet("Content/Animations/Arrow.png", 44 , 40))); //52, 40
         allAnimation = animationMachine.GetSpriteSheet().GetSpriteArray2D();
 
-        System.out.println(allAnimation.length);
+        //System.out.println(allAnimation.length);
+        //System.out.println(allAnimation[0].length);
 
         direction = Link.getDirection();
-        SetPosition(new Vector2D<Float>(Link.GetPosition().x, Link.GetPosition().y));
+        SetPosition(new Vector2D<Float>(Link.GetPosition().x + 28, Link.GetPosition().y + 45)); //Magic numbers because of the hitbox waiting to be fixed
+        SetScale( new Vector2D<Float>(44f,40f));
         animationMachine.GetAnimation().SetDelay(1);
         Animate();
     }
     public void Move(){
         Vector2D<Float> pos = GetPosition();
+        Float currentPosition;
         switch (direction){
-            case UP:pos.y -= speed;return;
-            case DOWN:pos.y += speed;return;
-            case LEFT:pos.x -= speed;return;
-            case RIGHT:pos.x += speed;return;
+            case UP:
+                currentPosition = pos.y;
+                pos.y -= speed;
+                distance += Math.abs(currentPosition - pos.y);
+                return;
+            case DOWN:
+                currentPosition = pos.y;
+                pos.y += speed;
+                distance += Math.abs(currentPosition - pos.y);
+                return;
+            case LEFT:
+                currentPosition = pos.x;
+                pos.x -= speed;
+                distance += Math.abs(currentPosition - pos.x);
+                return;
+            case RIGHT:
+                currentPosition = pos.x;
+                pos.x += speed;
+                distance += Math.abs(currentPosition - pos.x);
+                return;
         }
         SetPosition(pos);
     }
     @Override
     public void Update() {
-        //System.out.println("patata");
-        //System.out.println(GetPosition());
         Move();
-        Animate();
+        if (!(distance >= range)){
+            Animate();
+        }else{
+            animationMachine.SetFrames(allAnimation[4]);
+            ObjectManager.GetObjectManager().RemoveEntity(this);
+        }
     }
     public void Animate(){
         switch(direction)

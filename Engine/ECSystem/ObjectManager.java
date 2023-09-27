@@ -30,8 +30,10 @@ public class ObjectManager {
     }
 
     public void Update() {
-        for(Entity x : mAliveEntities)
+        for(Entity x : mAliveEntities){
+            //System.out.println(mAliveEntities.size());;
             x.Update();
+        }
 
         for(Entity x : mDeadEntities)
             mAliveEntities.remove(x);
