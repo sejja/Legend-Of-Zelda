@@ -80,8 +80,10 @@ public final class AnimationMachine extends Component implements Renderable {
      *  if the input is not a must ended one or the must ended animation has end it will set the input to the actual frame (before set it, in update(), it will be the previus animation)
      */
     public void SetFrames(BufferedImage[] frames){ 
+        //System.out.println(must_complete);
         if (must_complete && must_end_frames == null)
         {
+            System.out.println("Setting must complete animation");
             previus_frames = mAnimation.GetFrames();
             must_end_frames = frames;
             mAnimation.SetFrames(must_end_frames);
@@ -89,11 +91,14 @@ public final class AnimationMachine extends Component implements Renderable {
         else if (must_complete && must_end_frames != null)
         {   
             // It continues with the same frame
+            System.out.println("Continue must complete animation");
             return;
         }
         else
         {
-             mAnimation.SetFrames(frames);
+            System.out.println("Cambiando normal");
+            must_complete = false;
+            mAnimation.SetFrames(frames);
         }
     }
     // ------------------------------------------------------------------------
@@ -119,7 +124,6 @@ public final class AnimationMachine extends Component implements Renderable {
             must_complete = false;
             must_end_frames = null;
             previus_frames = null;
-            Update();
         }
     }
 

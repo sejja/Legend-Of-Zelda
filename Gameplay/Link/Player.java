@@ -2,10 +2,8 @@ package Gameplay.Link;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
-import java.util.ResourceBundle.Control;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import Engine.ECSystem.Types.Actor;
@@ -213,6 +211,10 @@ public class Player extends Actor {
 
     public void Animate() {
         //System.out.println(actionToString());
+        if (mAnimation.getMust_Complete()){
+            return;
+        }
+
         if (stop)
         {
             setMovement(Action.STOP);
@@ -252,7 +254,7 @@ public class Player extends Actor {
                 }
             }
         }
-        System.out.println(mAnimatioT0String());
+        //System.out.println(mAnimatioT0String());
     }
     // ------------------------------------------------------------------------
 
