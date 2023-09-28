@@ -530,16 +530,16 @@ public class Player extends Actor {
     /* Spawn a Arrow object
      *  !this function it is called in Update() not in keylistener
      */
-    private void shootArrow(){
+    private void shootArrow(){ //Tiene que dar al enemigo
         nArrows--;
         if(nArrows == 0){
             System.out.println("0 Arrows in quiver");
         }
         ObjectManager.GetObjectManager().AddEntity(new Arrow(this));
     }
-    private void dead(){
-        this.mAnimation.setMust_Complete();
-        this.mAnimation.SetFrames(mAnimation.GetSpriteSheet().GetSpriteArray(4));
+    private void dead(){ //falta hacer que link se muera y termine el juego
+        //this.mAnimation.setMust_Complete();
+        //this.mAnimation.SetFrames(mAnimation.GetSpriteSheet().GetSpriteArray(4));
         System.out.println("Ha muerto");
     }
     //------------------------------------------------------------------------
