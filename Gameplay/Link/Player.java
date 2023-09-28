@@ -57,6 +57,7 @@ public class Player extends Actor {
     private boolean haveArc;
     private boolean haveLighter;
     private boolean HaveBomb;
+    protected boolean able_to_takeDamage=true;
     //----------------------------------------------------------------------
 
     /* CoolDowns
@@ -201,10 +202,23 @@ public class Player extends Actor {
                 bow =false;
             }
         });
+
+        InputManager.SubscribePressed(KeyEvent.VK_M, new InputFunction() {
+            @Override
+            public void Execute() {
+                SetScale(new Vector2D<>(1f, 1f));
+            }
+        });
+
+        InputManager.SubscribeReleased(KeyEvent.VK_M, new InputFunction() {
+            @Override
+            public void Execute() {
+                SetScale(new Vector2D<Float>(100f, 100f));
+            }
+        });
     }
 
     public void SetAnimation(int i, BufferedImage[] frames, int delay) {
-        //System.out.println(i);
         mCurrentAnimation = i;
         mAnimation.SetFrames(frames);
         mAnimation.GetAnimation().SetDelay(delay);
@@ -269,6 +283,7 @@ public class Player extends Actor {
     @Override
     public void Update() {  //Falta hacer que link termine un ataque completo antes de emoezar otro 
         super.Update();
+
         if (!mAnimation.getMust_Complete())
         {
             Move();
@@ -279,8 +294,12 @@ public class Player extends Actor {
             bow = false;
             mAnimation.finised_Animation = false;
         }
+
         Animate();
-        takeDamage();
+
+        if(able_to_takeDamage){
+            takeDamage();
+        }
         mAnimation.GetAnimation().SetDelay(delay);
     }
     // ------------------------------------------------------------------------
@@ -390,7 +409,7 @@ public class Player extends Actor {
         attack = false;
     }
 
-    private void takeDamage(){
+    private void takeDamage(){ //Looking for enemies to take damage
         System.out.println("Vida = " + healthPoints);
         ArrayList<Entity> allEntities = ObjectManager.GetObjectManager().getmAliveEntities();
         for (int i = 0; i < allEntities.size(); i++){
@@ -414,6 +433,7 @@ public class Player extends Actor {
     public int getVelocity() {return velocity;}
     public int Attack(){return (this.damage);}
     public DIRECTION getDirection(){return this.direction;}
+    public boolean isAble_to_takeDamage() {return able_to_takeDamage;}
     //------------------------------------------------------------------------
 
     /* Setters
@@ -421,11 +441,19 @@ public class Player extends Actor {
      */
     public void setDamage(int healthPoints) {
         this.healthPoints -= healthPoints;
-        if(this.healthPoints == 0){dead();}
+        this.setAble_to_takeDamage(false);
+        if(this.healthPoints <= 0){dead();}
+        else{
+            ThreadInmortal thread = new ThreadInmortal(this);
+            thread.start();
+            System.out.println("Comienza hilo");
+        }
 
     }
     public void setVelocity(int velocity) {this.velocity = velocity;}
     public void setAttack(boolean attack) {this.attack = attack;}
+    public void setAble_to_takeDamage(boolean able_to_takeDamage) {this.able_to_takeDamage = able_to_takeDamage;}
+
     private void setMovement(Action type){
 
         if (type == Action.ATTACK || type == Action.BOW){ //Activate must-end sequence
@@ -456,6 +484,7 @@ public class Player extends Actor {
                 return;
         }
     }
+    
     //------------------------------------------------------------------------
 
     /* Spawn a Arrow object
