@@ -51,6 +51,22 @@ public class Spritesheet {
     }
 
     // ------------------------------------------------------------------------
+    /*! Constructor
+    *
+    *   Constructs a copy of an sprite
+    */ //----------------------------------------------------------------------
+    public Spritesheet(Spritesheet original, String path) {
+        mUCoord = original.mUCoord;
+        mVCoord = original.mVCoord;
+        mWidth = original.mWidth;
+        mHeight = original.mHeight;
+
+        mSpriteSheet = new Spritesheet(path, mUCoord, mVCoord).GetSpriteSheet();
+        LoadSpriteArray();
+    }
+
+
+    // ------------------------------------------------------------------------
     /*! Set Size
     *
     *   Sets the size of a Sprite

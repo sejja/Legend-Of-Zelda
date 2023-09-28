@@ -10,8 +10,9 @@ package Engine.Graphics.Tile;
 
 import java.awt.Graphics2D;
 
+import Engine.Graphics.Components.CameraComponent;
 import Engine.Math.Vector2D;
 
 public abstract class Tilemap {
-    public abstract void Render(Graphics2D g, Vector2D<Float> camerapos);
+    public abstract void Render(Graphics2D g, CameraComponent camerapos);
 }

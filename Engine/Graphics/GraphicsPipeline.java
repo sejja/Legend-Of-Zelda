@@ -70,7 +70,7 @@ public class GraphicsPipeline {
     public void Render(Graphics2D g) {
         //Renderable
         for(Renderable x : mRenderables)
-            x.Render(g, mCamera == null ? new Vector2D<Float>() : mCamera.GetCoordinates());
+            x.Render(g, mCamera);
     }
 
     // ------------------------------------------------------------------------

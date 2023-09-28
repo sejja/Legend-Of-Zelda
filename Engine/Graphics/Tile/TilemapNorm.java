@@ -12,14 +12,16 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 import Engine.Graphics.Spritesheet;
+import Engine.Graphics.Components.CameraComponent;
 import Engine.Math.Vector2D;
+import Engine.Physics.AABB;
 
 public class TilemapNorm extends Tilemap {
 
-    private ArrayList<Block> mBlocks;
+    private Block[] mBlocks;
 
     public TilemapNorm(String data, Spritesheet sprite, int width , int height, int tilewidth, int tileheight, int tilecolumns) {
-        mBlocks = new ArrayList<>();
+        mBlocks = new Block[width * height];
 
         String[] block = data.split(",");
 
@@ -28,14 +30,17 @@ public class TilemapNorm extends Tilemap {
 
             if(temp != 0) {
 
-                mBlocks.add(new Normblock(sprite.GetSprite((int) ((temp - 1) % tilecolumns), (int) ((temp - 1) / tilecolumns)), new Vector2D<Integer>((int) (i % width) * tilewidth, (int) (i / height) * tileheight), tilewidth, tileheight));
+                mBlocks[i] = new Normblock(sprite.GetSprite((int) ((temp - 1) % tilecolumns), (int) ((temp - 1) / tilecolumns)), new Vector2D<Integer>((int) (i % width) * tilewidth, (int) (i / height) * tileheight), tilewidth, tileheight);
             }
         }
     }
 
-    public void Render(Graphics2D g, Vector2D<Float> camerapos) {
-        for(int i = 0; i < mBlocks.size(); i++) {
-            mBlocks.get(i).Render(g, camerapos);
+    public void Render(Graphics2D g, CameraComponent camerapos) {
+        Vector2D<Float> camcoord = camerapos.GetCoordinates();
+
+        for(int i = 0; i < mBlocks.length; i++) {
+            if(mBlocks[i] != null && camerapos.OnBounds(new AABB(new Vector2D<>((float)mBlocks[i].mPosition.x, (float)mBlocks[i].mPosition.y), new Vector2D<>((float)mBlocks[i].mWidth, (float)mBlocks[i].mHeight))))
+                mBlocks[i].Render(g, camcoord);
         }
     }
 }

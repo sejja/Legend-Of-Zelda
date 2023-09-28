@@ -16,6 +16,7 @@ import Engine.Graphics.Font;
 import Engine.Graphics.GraphicsPipeline;
 import Engine.Math.Transform;
 import Engine.Math.Vector2D;
+import Engine.Physics.AABB;
 
 public class FontComponent extends Component implements Renderable {
     private static final int Vector2D = 0;
@@ -67,12 +68,15 @@ public class FontComponent extends Component implements Renderable {
     }
 
     @Override
-    public void Render(Graphics2D g, Vector2D<Float> camerapos) {
+    public void Render(Graphics2D g, CameraComponent camerapos) {
         final float posx = GetParent().GetPosition().x + mOffset.mPosition.x;
         final float posy = GetParent().GetPosition().y + mOffset.mPosition.y;
         final float scax = GetParent().GetScale().x * mOffset.mScale.x;
         final float scay = GetParent().GetScale().y * mOffset.mScale.y;
-        mFont.Render(g, mString, new Vector2D<>(posx - camerapos.x, posy - camerapos.y), (int)scax, (int)scay, mGlyph.x, mGlyph.y);
+        Vector2D<Float> camcoord = camerapos.GetCoordinates();
+
+        if(camerapos.OnBounds(new AABB(GetParent().GetPosition(), GetParent().GetScale())))
+            mFont.Render(g, mString, new Vector2D<>(posx - camcoord.x, posy - camcoord.y), (int)scax, (int)scay, mGlyph.x, mGlyph.y);
     }
 
     @Override

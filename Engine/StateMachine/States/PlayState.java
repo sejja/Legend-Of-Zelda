@@ -29,6 +29,8 @@ public class PlayState extends State {
     private FontObject mFont;
     private Player mPlayer;
     private Enemy mEnemy;
+    private Enemy mEnemy2;
+    private Enemy mEnemy3;
     private Vector2D<Float> mPos;
     private TileManager mTilemap;
     // ------------------------------------------------------------------------
@@ -38,16 +40,16 @@ public class PlayState extends State {
     */ //----------------------------------------------------------------------
     public PlayState() {
         mTilemap = new TileManager("Content/TiledProject/TestRoom.tmx");
-        mFont =(FontObject)ObjectManager.GetObjectManager().AddEntity(new FontObject("Content/Fonts/ZeldaFont.png", "THE LEGEND OF ANDONI"));
+        mFont =(FontObject)ObjectManager.GetObjectManager().AddEntity(new FontObject("Content/Fonts/ZeldaFont.png", "THE LEGEND OF ZELDA"));
         mFont.SetPosition(new Vector2D<>(100.f, 100.f));
         mFont.SetScale(new Vector2D<>(32.f, 32.f));
         mPlayer = (Player)ObjectManager.GetObjectManager().AddEntity(new Player(new Spritesheet("Content/Animations/Link.png"), new Vector2D<Float>(700.f, 400.f), new Vector2D<Float>(100.f, 100.f)));
         mPos = new Vector2D<Float>(300.f, 600.f);
         Spritesheet esprite = new Spritesheet("Content/Animations/gknight.png",16,28);
         ArrayList<Enemy> mEnemies = new ArrayList<Enemy>();
-        mEnemy = (Enemy)ObjectManager.GetObjectManager().AddEntity(new Enemy(esprite, new Vector2D<Float>(450.f, 300.f), new Vector2D<Float>(50.f, 100.f), mPlayer));
-
-        //Arrow arrow = (Arrow)ObjectManager.GetObjectManager().AddEntity(new Arrow(mPlayer));
+        mEnemy = (Enemy)ObjectManager.GetObjectManager().AddEntity(new Enemy(esprite, new Vector2D<Float>(450.f, 300.f), new Vector2D<Float>(50.f, 100.f)));
+        mEnemy2 = (Enemy)ObjectManager.GetObjectManager().AddEntity(new Enemy(esprite, new Vector2D<Float>(500.f, 500.f), new Vector2D<Float>(50.f, 100.f)));
+        mEnemy3 = (Enemy)ObjectManager.GetObjectManager().AddEntity(new Enemy(esprite, new Vector2D<Float>(900.f, 900.f), new Vector2D<Float>(50.f, 100.f)));
     }
 
     // ------------------------------------------------------------------------
@@ -58,7 +60,12 @@ public class PlayState extends State {
     @Override
     public void Update() {
         ObjectManager.GetObjectManager().Update();
-        //mEnemy.Update(mPlayer.GetPosition());
+
+        //La cosa sería tener una función asi: ObjectManager.GetEntity("Player"), para luego hacer player.GetPosition()
+
+        //LA COSA ES QUE CUANDO HAYA MAS ENEMIGOS SERIA ALGO EN PLAN 
+        //for(int i = 0; i < mEnemies.size(); i++){
+        //  mEnemies.get(i).Update(mPlayer.GetPosition());
     }
 
     // ------------------------------------------------------------------------
