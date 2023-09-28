@@ -30,10 +30,13 @@ public class PlayState extends State {
     private FontObject mFont;
     private FontObject mFont2;
     private Player mPlayer;
-    private Npc mNpc;
+    private Npc mNpc1;
+    private Npc mNpc2;
+    private ArrayList<Npc> mNpcArrayList = new ArrayList<Npc>();
     private Enemy mEnemy;
     private Vector2D<Float> mPos;
     private TileManager mTilemap;
+    private ArrayList<String> dialogueArrayList = new ArrayList<String>();
 
     // ------------------------------------------------------------------------
     /*! Constructor
@@ -41,13 +44,18 @@ public class PlayState extends State {
     *   Just assigns the statemachine child
     */ //----------------------------------------------------------------------
     public PlayState() {
+        dialogueArrayList.add("En un mundo muy lejano] vivia una princesa que buscaba a su \nprincipe] y para logralo] llamo a todos los principes del reino \nademas deberas vuscar todos los artefactos de las piedras para \necuperar el poder de hyrule");
+        dialogueArrayList.add("Eee");
         mTilemap = new TileManager("Content/TiledProject/TestRoom.tmx");
         mFont =(FontObject)ObjectManager.GetObjectManager().AddEntity(new FontObject("Content/Fonts/ZeldaFont.png", "THE LEGEND OF ANDONI", 56));
         mFont.SetPosition(new Vector2D<>(100.f, 100.f));
         mFont.SetScale(new Vector2D<>(32.f, 32.f));
         mPlayer = (Player)ObjectManager.GetObjectManager().AddEntity(new Player(new Spritesheet("Content/Animations/Link.png"), new Vector2D<Float>(700.f, 400.f), new Vector2D<Float>(100.f, 100.f)));
         mPos = new Vector2D<Float>(300.f, 600.f);
-        mNpc = (Npc)ObjectManager.GetObjectManager().AddEntity(new Npc("Aelarion", new Sprite("Content/Animations/NPC1.png"), new Vector2D<Float>(1415.f, 725.f), "En un mundo muy lejano] vivia una princesa que buscaba a su \nprincipe] y para logralo] llamo a todos lso principes del mundo", new Vector2D<Float>(50.f, 62.f)) );
+        mNpc1 = (Npc)ObjectManager.GetObjectManager().AddEntity(new Npc("Aelarion", new Sprite("Content/Animations/NPC1.png"), new Vector2D<Float>(1415.f, 725.f), dialogueArrayList, new Vector2D<Float>(50.f, 62.f)) );
+        mNpc2 = (Npc)ObjectManager.GetObjectManager().AddEntity(new Npc("Juan", new Sprite("Content/Animations/NPC1.png"), new Vector2D<Float>(1200f, 725.f), dialogueArrayList, new Vector2D<Float>(50.f, 62.f)) );
+        mNpcArrayList.add(mNpc1);
+        mNpcArrayList.add(mNpc2);
         Spritesheet esprite = new Spritesheet("Content/Animations/gknight.png",16,28);
         ArrayList<Enemy> mEnemies = new ArrayList<Enemy>();
         mEnemy = (Enemy)ObjectManager.GetObjectManager().AddEntity(new Enemy(esprite, new Vector2D<Float>(450.f, 300.f), new Vector2D<Float>(50.f, 100.f), mPlayer));
@@ -62,7 +70,9 @@ public class PlayState extends State {
     public void Update() {
         ObjectManager.GetObjectManager().Update();
         mEnemy.Update(mPlayer.GetPosition());
-        mNpc.Update(mPlayer.GetPosition());
+        for(int i=0; i<mNpcArrayList.size();i++){
+            mNpcArrayList.get(i).Update(mPlayer.GetPosition());
+        }
     }
 
     // ------------------------------------------------------------------------

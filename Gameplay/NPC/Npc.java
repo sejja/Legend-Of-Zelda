@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.JLabel;
@@ -32,6 +33,8 @@ public class Npc extends Engine.ECSystem.Types.Actor {
     private static String dialogue;
     protected Graphics2D window;
     private SpriteComponent mAnimation;
+    static ArrayList<String> mdialogueArrayList;
+    private ArrayList<Npc> npcArrayList = new ArrayList<Npc>();
 
 
         /*! Conversion Constructor
@@ -39,43 +42,35 @@ public class Npc extends Engine.ECSystem.Types.Actor {
     *   Constructs a NPC with a name, a sprite, a position, a dialog and gives it a size
     */ //----------------------------------------------------------------------
 
-    public Npc(String nameNPC, Sprite sprite, Vector2D<Float> position, String dialogue, Vector2D<Float> size) {
+    public Npc(String nameNPC, Sprite sprite, Vector2D<Float> position, ArrayList<String> dialogueArrayList, Vector2D<Float> size) {
         super(position);
         this.name = nameNPC;
-        this.dialogue = dialogue;
+        //this.dialogue = dialogue;
         mAnimation = AddComponent(new SpriteComponent(this, sprite));
         SetScale(size);
+        this.mdialogueArrayList = dialogueArrayList;
+        npcArrayList.add(this);
     }
 
         /*! Transpose
     *       @Param  -> BufferedImage 2D Matrix
     *       ret     -> Transposed BufferedImage 2D Matrix
     */ //----------------------------------------------------------------------
-    private BufferedImage[][] transposeMatrix(BufferedImage [][] m){
-        BufferedImage[][] temp = new BufferedImage[m[0].length][m.length];
-        for (int i = 0; i < m.length; i++){
-            for (int j = 0; j < m[0].length; j++){
-                temp[j][i] = m[i][j];
-            }
-        }
-        return temp;
-    }
-    // ------------------------------------------------------------------------
-
+    
     boolean isContact = true;
 
     public void Update(Vector2D<Float> playerPosition) {
         super.Update();
         if(isContact) {
-            AddComponent(new DialogueWindow(this));    
+            AddComponent(new DialogueWindow(this, npcArrayList.get(0)));    
             isContact = false;
         }
     }
 
-    public static String getDialogue() {
-        return dialogue;
+    public static ArrayList<String> getDialoguesArrayList() {
+        return mdialogueArrayList;
     }
-    public void setDialogue(String dialogue){
+    public void setdialogue(String dialogue){
         this.dialogue = dialogue;
     }
 }
