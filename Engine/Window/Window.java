@@ -12,22 +12,26 @@ import javax.swing.JFrame;
 
 public class Window extends JFrame {
     private GameLoop mGameLoop;
+    
     // ------------------------------------------------------------------------
     /*! Constructor
     *
     *   Creates a Window, with a Presenter Buffer on it
     */ //----------------------------------------------------------------------
     public Window() {
+        final PresentBuffer buffer = new PresentBuffer(1280, 720);
+        mGameLoop = new GameLoop(buffer);
+        
         setTitle("The Legend Of Zelda");
+        setUndecorated(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setIgnoreRepaint(true);
-        PresentBuffer buffer = new PresentBuffer(1280, 720);
-        mGameLoop = new GameLoop(buffer);
         setContentPane(buffer);
         setResizable(false);
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
+        setAutoRequestFocus(true);
         mGameLoop.start();
     }
 }
