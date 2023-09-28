@@ -29,7 +29,7 @@ import Engine.Math.Vector2D;
 
 public class Npc extends Engine.ECSystem.Types.Actor {
     private String name;
-    private String dialogue;
+    private static String dialogue;
     protected Graphics2D window;
     private SpriteComponent mAnimation;
 
@@ -62,35 +62,6 @@ public class Npc extends Engine.ECSystem.Types.Actor {
     }
     // ------------------------------------------------------------------------
 
-    public void drawDialogueScreen() {
-
-        //Window
-        int x = 100;
-        int y = 100;
-        int width = 500;
-        int height = 400;
-
-        drawSubWindow(x,y,width,height);
-
-        window.setFont(window.getFont().deriveFont(Font.PLAIN, 40));
-        x += 100;
-        y += 100;
-        window.drawString(dialogue, x, y);
-    }
-
-    public void drawSubWindow(int x, int y, int width, int height) {
-        
-        Color c = new Color(0,0,0, 200);
-        window.setColor(c);
-        window.fillRoundRect(x, y, width, height, 35, 35);
-
-        c = new Color(255, 255, 255);
-        window.setColor(c);
-        window.setStroke(new BasicStroke(5));
-        window.drawRoundRect(x+5, y+5, width-10, height-10, 25, 25);
-
-    }
-
     boolean isContact = true;
 
     public void Update(Vector2D<Float> playerPosition) {
@@ -99,10 +70,9 @@ public class Npc extends Engine.ECSystem.Types.Actor {
             AddComponent(new DialogueWindow(this));    
             isContact = false;
         }
-        
     }
 
-    public String getDialogue() {
+    public static String getDialogue() {
         return dialogue;
     }
     public void setDialogue(String dialogue){

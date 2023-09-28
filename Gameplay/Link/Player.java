@@ -212,7 +212,6 @@ public class Player extends Actor {
     }
 
     public void Animate() {
-        System.out.println(actionToString());
         if (stop)
         {
             if (attack)

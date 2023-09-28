@@ -33,19 +33,20 @@ public class DialogueWindow extends Component implements Renderable{
     public void Render(Graphics2D g, Vector2D<Float> camerapos) {
         // TODO Auto-generated method stub
         //Window
-        int x = Block.getWidth()/2;
-        int y = Block.getHeight()/2;
+        int x = Block.getWidth()*2;
+        int y = Block.getHeight()*8;
         int width = 1280  - (Block.getWidth()*4);;
-        int height = Block.getWidth()*4;
+        int height = Block.getWidth()*3;
 
         Font mFont = new Font("Content/Fonts/ZeldaFont.png", 16, 16);
 
         drawSubWindow(x,y,width,height, g);
 
         //g.setFont(mFont);
-        x += 100;
-        y += 100;
-        g.drawString("hadoken", x, y);
+        x += 20;
+        y += 20;
+        mFont.Render(g, Npc.getDialogue(), new Vector2D<Float>((float)x, (float)y), 32, 32, 15, 0);;
+        //g.drawString("hadoken", x, y);
     }
 
     @Override
@@ -67,7 +68,7 @@ public class DialogueWindow extends Component implements Renderable{
 
     public static void drawSubWindow(int x, int y, int width, int height, Graphics2D g) {
         
-        Color c = new Color(0,0,0, 200);
+        Color c = new Color(0,0,0, 140);
         g.setColor(c);
         g.fillRoundRect(x, y, width, height, 35, 35);
 

@@ -51,10 +51,6 @@ public class PlayState extends State {
         Spritesheet esprite = new Spritesheet("Content/Animations/gknight.png",16,28);
         ArrayList<Enemy> mEnemies = new ArrayList<Enemy>();
         mEnemy = (Enemy)ObjectManager.GetObjectManager().AddEntity(new Enemy(esprite, new Vector2D<Float>(450.f, 300.f), new Vector2D<Float>(50.f, 100.f), mPlayer));
-        mFont2 =(FontObject)ObjectManager.GetObjectManager().AddEntity(new FontObject("Content/Fonts/ZeldaFont.png", "En un mundo muy lejano", 10));
-        mFont2.SetPosition(new Vector2D<>(1415.f, 800.f));
-        mFont2.SetScale(new Vector2D<>(25.f, 25.f));
-
     }
 
     // ------------------------------------------------------------------------
