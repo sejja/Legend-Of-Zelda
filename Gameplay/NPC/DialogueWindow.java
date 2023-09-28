@@ -45,7 +45,10 @@ public class DialogueWindow extends Component implements Renderable{
         //g.setFont(mFont);
         x += 20;
         y += 20;
-        mFont.Render(g, Npc.getDialogue(), new Vector2D<Float>((float)x, (float)y), 32, 32, 15, 0);;
+        for(String line: Npc.getDialogue().split("\n")){
+            mFont.Render(g, line, new Vector2D<Float>((float)x, (float)y), 32, 32, 15, 0);
+            y += 40;
+        }
         //g.drawString("hadoken", x, y);
     }
 
@@ -68,7 +71,7 @@ public class DialogueWindow extends Component implements Renderable{
 
     public static void drawSubWindow(int x, int y, int width, int height, Graphics2D g) {
         
-        Color c = new Color(0,0,0, 140);
+        Color c = new Color(0,0,0, 160);
         g.setColor(c);
         g.fillRoundRect(x, y, width, height, 35, 35);
 

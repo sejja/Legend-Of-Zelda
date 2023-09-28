@@ -47,7 +47,7 @@ public class PlayState extends State {
         mFont.SetScale(new Vector2D<>(32.f, 32.f));
         mPlayer = (Player)ObjectManager.GetObjectManager().AddEntity(new Player(new Spritesheet("Content/Animations/Link.png"), new Vector2D<Float>(700.f, 400.f), new Vector2D<Float>(100.f, 100.f)));
         mPos = new Vector2D<Float>(300.f, 600.f);
-        mNpc = (Npc)ObjectManager.GetObjectManager().AddEntity(new Npc("Aelarion", new Sprite("Content/Animations/NPC1.png"), new Vector2D<Float>(1415.f, 725.f), "En un mundo muy lejano", new Vector2D<Float>(50.f, 62.f)) );
+        mNpc = (Npc)ObjectManager.GetObjectManager().AddEntity(new Npc("Aelarion", new Sprite("Content/Animations/NPC1.png"), new Vector2D<Float>(1415.f, 725.f), "En un mundo muy lejano] vivia una princesa que buscaba a su \nprincipe] y para logralo] llamo a todos lso principes del mundo", new Vector2D<Float>(50.f, 62.f)) );
         Spritesheet esprite = new Spritesheet("Content/Animations/gknight.png",16,28);
         ArrayList<Enemy> mEnemies = new ArrayList<Enemy>();
         mEnemy = (Enemy)ObjectManager.GetObjectManager().AddEntity(new Enemy(esprite, new Vector2D<Float>(450.f, 300.f), new Vector2D<Float>(50.f, 100.f), mPlayer));
