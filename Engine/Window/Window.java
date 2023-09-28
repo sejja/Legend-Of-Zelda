@@ -23,7 +23,10 @@ public class Window extends JFrame {
         mGameLoop = new GameLoop(buffer);
         
         setTitle("The Legend Of Zelda");
-        setUndecorated(true);
+
+        //If we are on release mode, draw a fancy window
+        if(!java.lang.management.ManagementFactory.getRuntimeMXBean().getInputArguments().toString().contains("-agentlib:jdwp"))
+            setUndecorated(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setIgnoreRepaint(true);
         setContentPane(buffer);
