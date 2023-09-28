@@ -28,6 +28,7 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
     protected boolean down = false;
     protected boolean right = false;
     protected boolean left = false;
+    //public DIRECTION direction;
 
     //player detected
     protected boolean chase = false;
@@ -35,6 +36,8 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
     //Pathfinding variables
     protected Pair finalDestination;
     protected Pair currentDestination;
+    protected Stack<Pair> path;
+    protected AStarSearch Pathfinding = new AStarSearch();
 
 
 
@@ -42,12 +45,13 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
     protected AtomicInteger healthPoints = new AtomicInteger(2);
     protected float speed = 3;
     protected Vector2D ndir = new Vector2D(0f,0f);
-    
+
+    //components
     protected int mCurrentAnimation;
     protected AnimationMachine mAnimation;
     protected BoxCollider mCollision;
-    protected AStarSearch mPathfinding = new AStarSearch();
     
+    //ID
     static int idx = 0;
     
     // ------------------------------------------------------------------------
@@ -56,13 +60,17 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
     *   Constructs an Enemy with a sprite, a position, and gives it a size
     */ //----------------------------------------------------------------------
     public Enemy(Spritesheet originalsprite, Vector2D<Float> position, Vector2D<Float> size) {
+
         super(position);
         SetScale(size);
         Spritesheet sprite=new Spritesheet(originalsprite, "Content/Animations/gknight.png");
+
         // TRANSPOSE SPRITE MATRIX
         sprite.setmSpriteArray(transposeMatrix(sprite.GetSpriteArray2D()));
+
         // ADD ANIMATION COMPONENT
         mAnimation = AddComponent(new AnimationMachine(this, sprite));
+        
         // ADD COLLIDER COMPONENT
         mCollision = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<Float>(100.f,200.f)));
 
@@ -120,7 +128,7 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
     *
     *   Utility Function for Getting the Direction of a Vector
     */ //----------------------------------------------------------------------
-    public void GetDirection(Vector2D<Float> vector) {
+    public void GetDirection(Vector2D<Float> vector) { // hay que cambiar esto por direction
 
         if (Math.abs(vector.x) > Math.abs(vector.y)) {
             if (vector.x > 0) {
@@ -203,7 +211,8 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
         super.Update();
         Vector2D<Float> ppos = ObjectManager.GetObjectManager().GetObjectByName("Player").GetPosition();
         GetDirection(ndir);
-        Move(Pathfinding(ppos));
+        Pathfinding(ppos);
+        Move();
         Animate();
         mAnimation.GetAnimation().SetDelay(20);
         //System.out.println(ppos.x + " " + ppos.y + " " + ndir+ " " );
@@ -213,15 +222,14 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
     *
     *   Checks if the Enemy can chase player
     */ //----------------------------------------------------------------------
-    public Stack<Pair> Pathfinding(Vector2D<Float> playerPos) {
+    public void Pathfinding(Vector2D<Float> playerPos) {
         int divisior = 64;
         Vector2D pos = GetPosition();
         Block srcBlock = TilemapObject.GetBlockAt((int)Math.round((float)pos.x/divisior), (int)Math.round((float)pos.y)/divisior);
         Block destBlock = TilemapObject.GetBlockAt((int)Math.round(playerPos.x/divisior), (int)Math.round(playerPos.y/divisior));
         Pair src = new Pair((int)Math.round((float)pos.x/divisior), (int)Math.round((float)pos.y)/divisior);
         finalDestination = new Pair((int)Math.round(playerPos.x)/divisior, (int)Math.round(playerPos.y)/divisior);
-
-        return mPathfinding.aStarSearch(src, finalDestination);
+        path = Pathfinding.aStarSearch(src, finalDestination); 
 
     }
 
@@ -242,7 +250,7 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
     *
     *   Receives the movements in a stack and sets the movement of the Enemy with the A* search
     */ //----------------------------------------------------------------------
-    public void Move(Stack<Pair> path) {
+    public void Move() {
         int suma =0;
         Vector2D<Float> pos = GetPosition();
         Vector2D<Float> ppos = ObjectManager.GetObjectManager().GetObjectByName("Player").GetPosition();
