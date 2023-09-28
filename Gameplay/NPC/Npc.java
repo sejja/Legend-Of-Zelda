@@ -91,11 +91,13 @@ public class Npc extends Engine.ECSystem.Types.Actor {
 
     }
 
+    boolean isContact = true;
+
     public void Update(Vector2D<Float> playerPosition) {
         super.Update();
-        boolean isContact = false;
         if(isContact) {
-            GraphicsPipeline.GetGraphicsPipeline().AddRenderable(DialogueWindow.getDialgueWindow());
+            AddComponent(new DialogueWindow(this));    
+            isContact = false;
         }
         
     }

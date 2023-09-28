@@ -23,7 +23,7 @@ public class DialogueWindow extends Component implements Renderable{
     private static String dialogue;
     private static DialogueWindow g;
 
-    protected DialogueWindow(Actor parent, Graphics2D g) {
+    protected DialogueWindow(Actor parent) {
         super(parent);
         //TODO Auto-generated constructor stub
         this.g = this;
@@ -45,7 +45,7 @@ public class DialogueWindow extends Component implements Renderable{
         //g.setFont(mFont);
         x += 100;
         y += 100;
-        g.drawString(dialogue, x, y);
+        g.drawString("hadoken", x, y);
     }
 
     @Override
