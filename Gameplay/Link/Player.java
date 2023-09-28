@@ -13,6 +13,9 @@ import Engine.Graphics.Components.CameraComponent;
 import Engine.Input.InputFunction;
 import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
+import Engine.StateMachine.States.PlayState;
+import Gameplay.NPC.DialogueWindow;
+import Gameplay.NPC.Npc;
 
 public class Player extends Actor {
     
@@ -189,6 +192,42 @@ public class Player extends Actor {
                 bow =false;
             }
         });
+        InputManager.SubscribePressed(KeyEvent.VK_P, new InputFunction() {
+            @Override
+            public void Execute() {
+                if(PlayState.getGameState() == PlayState.getPlayState()){
+                    PlayState.setGameState(2);
+                }else if(PlayState.getGameState() == PlayState.getPauseState()){
+                    PlayState.setGameState(1);
+                }
+                }
+        });
+        InputManager.SubscribePressed(KeyEvent.VK_E, new InputFunction() {
+            @Override
+            public void Execute() {
+                if(DialogueWindow.getJ() + 1 <  Npc.getNpcArrayList().get(0).getDialoguesArrayList().size()){
+                    DialogueWindow.setSiguiente(true);
+                }
+                if(PlayState.getGameState() == PlayState.getPlayState()){
+                    if(DialogueWindow.getJ()  <= Npc.getNpcArrayList().get(0).getDialoguesArrayList().size() && DialogueWindow.getJ() != 0){
+                        Npc.setRemove(true);
+                        Npc.setInteract(true);
+                    }
+                    Npc.setInteract(true);
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                    PlayState.setGameState(2);
+                }else if(PlayState.getGameState() == PlayState.getPauseState()){
+                    PlayState.setGameState(1);
+                    Npc.setRemove(true);
+                }
+            }
+        });
+
     }
 
     public void SetAnimation(int i, BufferedImage[] frames, int delay) {

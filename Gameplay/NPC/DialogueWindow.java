@@ -19,16 +19,18 @@ import Engine.Math.Vector2D;
 import Engine.Window.PresentBuffer;
 import Engine.Window.Window;
 
-public class DialogueWindow extends Component implements Renderable, KeyListener{
+public class DialogueWindow extends Component implements Renderable{
 
     private static String dialogue;
     private static DialogueWindow g;
     private int y = 0;
     private int x = 0;
-    private int i = 0;
+    private static int i = 0;
+    private static int j = 0;
     private int yFinal;
     private int code;
     private Npc npc;
+    private static boolean siguiente = false;
 
     protected DialogueWindow(Actor parent, Npc npc) {
         super(parent);
@@ -55,17 +57,13 @@ public class DialogueWindow extends Component implements Renderable, KeyListener
         y += 20;
         yFinal = y;
 
-        for(String line: npc.getDialoguesArrayList().get(i).split("\n")){
+        for(String line: Npc.getNpcArrayList().get(0).getDialoguesArrayList().get(j).split("\n")){
             mFont.Render(g, line, new Vector2D<Float>((float)x, (float)y), 32, 32, 15, 0);
             y += 40;
         }
-        if(code == KeyEvent.VK_O) {
-            i++;
+        if(siguiente) {
+            j++;
         }
-
-
-
-
 /*
         InputManager.SubscribeReleased(KeyEvent.VK_O, new InputFunction() {
             @Override
@@ -114,23 +112,20 @@ public class DialogueWindow extends Component implements Renderable, KeyListener
         return g;
     }
 
-    @Override
-    public void keyTyped(KeyEvent e) {
-        // TODO Auto-generated method stub
-
+    public static void setI(int index){
+        i = index;
+    }
+    public int getI(){
+        return i;
+    }
+    public static int getJ(){
+        return j;
     }
 
-    @Override
-    public void keyPressed(KeyEvent e) {
-        // TODO Auto-generated method stub
-        code = e.getKeyCode();
-        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-    
+    public static void setJ(int index){
+        j = index;
     }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-        // TODO Auto-generated method stub
-    
+    public static void setSiguiente(boolean next){
+        siguiente = next;
     }
 }

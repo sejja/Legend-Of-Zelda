@@ -34,7 +34,7 @@ public class Npc extends Engine.ECSystem.Types.Actor {
     protected Graphics2D window;
     private SpriteComponent mAnimation;
     static ArrayList<String> mdialogueArrayList;
-    private ArrayList<Npc> npcArrayList = new ArrayList<Npc>();
+    private static ArrayList<Npc> npcArrayList = new ArrayList<Npc>();
 
 
         /*! Conversion Constructor
@@ -57,13 +57,18 @@ public class Npc extends Engine.ECSystem.Types.Actor {
     *       ret     -> Transposed BufferedImage 2D Matrix
     */ //----------------------------------------------------------------------
     
-    boolean isContact = true;
+    static boolean interact = false;
+    static boolean remove = false;
 
     public void Update(Vector2D<Float> playerPosition) {
+
         super.Update();
-        if(isContact) {
+        if(interact) {
             AddComponent(new DialogueWindow(this, npcArrayList.get(0)));    
-            isContact = false;
+            interact = false;
+        }else if(remove == true){
+            RemoveComponent(DialogueWindow.getDialgueWindow());
+            remove = false;
         }
     }
 
@@ -72,5 +77,14 @@ public class Npc extends Engine.ECSystem.Types.Actor {
     }
     public void setdialogue(String dialogue){
         this.dialogue = dialogue;
+    }
+    public static void setInteract(boolean interact1){
+        interact = interact1;
+    }
+    public static void setRemove(boolean remove1) {
+        remove = remove1;
+    }
+    public static ArrayList<Npc> getNpcArrayList() {
+        return npcArrayList;
     }
 }
