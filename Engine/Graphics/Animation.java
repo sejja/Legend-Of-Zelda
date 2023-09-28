@@ -8,6 +8,7 @@
 
 package Engine.Graphics;
 
+import java.awt.Frame;
 import java.awt.image.BufferedImage;
 
 public class Animation {
@@ -81,10 +82,11 @@ public class Animation {
 
     // ------------------------------------------------------------------------
     /*! Update
-    *
+    *       true -> ended Full Animation
+    *       false -> not ended
     *   Updates the animation, switching the rendered sprite if necessary
     */ //----------------------------------------------------------------------
-    public void Update() {
+    public boolean Update() {
         //If we have a positive delay
         if(mDelay > 0) {
             mCount++;
@@ -94,13 +96,15 @@ public class Animation {
                 mCurrentFrame++;
                 mCount = 0;
             }
-
+        
             //If we have looped through the whole animation
             if(mCurrentFrame == mMaxFrames) {
                 mCurrentFrame = 0;
                 mTimesPlayed++;
+                return true;
             }
         }
+        return false;
     }
 
     // ------------------------------------------------------------------------
@@ -120,7 +124,9 @@ public class Animation {
     public int GetFrame() {
         return mCurrentFrame;
     }
-
+    public BufferedImage[] GetFrames() {
+        return mFrames;
+    }
     // ------------------------------------------------------------------------
     /*! Get Frame Count
     *

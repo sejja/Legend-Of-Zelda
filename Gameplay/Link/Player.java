@@ -1,19 +1,15 @@
 package Gameplay.Link;
 
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
-import java.util.ResourceBundle.Control;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
 import Engine.Graphics.Animation;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.AnimationMachine;
 import Engine.Graphics.Components.CameraComponent;
-import Engine.Graphics.Components.FontComponent;
 import Engine.Input.InputFunction;
 import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
@@ -35,10 +31,8 @@ public class Player extends Actor {
     /*  Movement Boolean
         Used to confirm the direction
      */
-    private boolean up = false;
-    private boolean down = false;
-    private boolean right = true;
-    private boolean left = false;
+    //private boolean up = false;
+    public DIRECTION direction;
     private boolean attack = false;
     private boolean stop = true;
     private boolean bow = false;
@@ -60,8 +54,8 @@ public class Player extends Actor {
 
     /* CoolDowns
      */
-    private static int attack_cooldown = 8;
-    private static int attack_counter = 0;
+    private static int nArrows = 10;
+    private static int nbombs = 10;
     //----------------------------------------------------------------------
 
     /* Player Stats
@@ -71,6 +65,7 @@ public class Player extends Actor {
     private CameraComponent mCamera;
     final private  int damage = 2;
     private int velocity = 0;
+    final int default_velocity = 10;
     //----------------------------------------------------------------------
 
     //Methods______________________________________________________________________________________________________________________________________________________________________________
@@ -82,19 +77,14 @@ public class Player extends Actor {
     public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size) {
         super(position);
         SetScale(size);
-
+        this.direction = DIRECTION.RIGHT;
         //Lets transpose the Sprite Matrix
         sprite.setmSpriteArray(completeAnimationSet(sprite.GetSpriteArray2D()));
         //---------------------------------------------------------------------
-
         mAnimation = AddComponent(new AnimationMachine(this, sprite));
         mCamera = AddComponent(new CameraComponent(this));
         mCamera.Bind();
         SetAnimation(RIGHT, sprite.GetSpriteArray(RIGHT), delay);
-
-        //controls = new ThreadPlayer(this);
-        //controls.start();
-
         implementsActions();
     }
     // ------------------------------------------------------------------------
@@ -102,7 +92,7 @@ public class Player extends Actor {
     /* This function only implements actionlisteners
      * 
      */
-    private void implementsActions (){
+    private void implementsActions (){ // it can be coptimazed
         //RUN______________________________________________________________________________________________
         InputManager.SubscribePressed(KeyEvent.VK_W, new InputFunction() {
             @Override
@@ -202,8 +192,9 @@ public class Player extends Actor {
     }
 
     public void SetAnimation(int i, BufferedImage[] frames, int delay) {
+        //System.out.println(i);
         mCurrentAnimation = i;
-        mAnimation.GetAnimation().SetFrames(frames);
+        mAnimation.SetFrames(frames);
         mAnimation.GetAnimation().SetDelay(delay);
     }
 
@@ -212,42 +203,50 @@ public class Player extends Actor {
     }
 
     public void Animate() {
+        //System.out.println(actionToString());
+        if (mAnimation.getMust_Complete()){return;} //Early return, if it is a animation thats has to be complete, do not animaate
+
+
         if (stop)
         {
+            setMovement(Action.STOP);
             if (attack)
             {
-                setAnimation(Action.ATTACK);
+                setMovement(Action.ATTACK);
             }
             else
             {
                 if (bow)
                 {
-                    setAnimation(Action.BOW);
+                    setMovement(Action.BOW);
                 }
                 else
                 {
-                    setAnimation(Action.STOP);
+                    setMovement(Action.STOP);
                 }
             }
         }
         else
         {
             if(attack){
-                setAnimation(Action.STOP);
+                setMovement(Action.STOP);
+                setMovement(Action.ATTACK);
             }
             else
             {
                 if(bow)
                 {
-                    setAnimation(Action.BOW);
+                    setMovement(Action.STOP);
+                    setMovement(Action.BOW);
                     //System.out.println(mAnimatioT0String());
                 }
                 else
                 {
-                    setAnimation(Action.RUN);
+                    setMovement(Action.RUN);
                 }
             }
         }
+        //System.out.println(mAnimatioT0String());
     }
     // ------------------------------------------------------------------------
 
@@ -258,25 +257,16 @@ public class Player extends Actor {
     @Override
     public void Update() {  //Falta hacer que link termine un ataque completo antes de emoezar otro
         super.Update();
-        Move();
-        /*
-        if (attack){
-            if(attack_counter == 0){
-                Animate();
-            }
-            attack_counter++;
-            System.out.println(attack_counter);
-            if (attack_counter == attack_cooldown){
-                System.out.println("Ha terminado");
-                attack = false;
-                attack_counter=0;
-            }
-        }
-        else
+        if (!mAnimation.getMust_Complete())
         {
-            Animate();
+            Move();
         }
-        */
+        else if (nArrows != 0 && mAnimation.finised_Animation && bow) //Spawn Arrow
+        {
+            shootArrow();
+            bow = false;
+            mAnimation.finised_Animation = false;
+        }
         Animate();
         mAnimation.GetAnimation().SetDelay(delay);
     }
@@ -289,22 +279,12 @@ public class Player extends Actor {
     public void Move() {
         Vector2D<Float> pos = GetPosition();
         //System.out.println(directionToString());
-        if(up) {
-            pos.y -= velocity;
+        switch (direction){
+            case UP:pos.y -= velocity;return;
+            case DOWN:pos.y += velocity;return;
+            case LEFT:pos.x -= velocity;return;
+            case RIGHT:pos.x += velocity;return;
         }
-
-        if(down) {
-            pos.y += velocity;
-        }
-
-        if(left) {
-            pos.x -= velocity;
-        }
-
-        if(right) {
-            pos.x += velocity;
-        }
-
         SetPosition(pos);
     }
     // ------------------------------------------------------------------------
@@ -336,40 +316,30 @@ public class Player extends Actor {
         }
     }
     private void setBowAnimaitonSet(BufferedImage[][] temp, int size){
-        Spritesheet Bow = new Spritesheet("Content\\Animations\\LinkArco.png", 30, 30);
+        Spritesheet Bow = new Spritesheet("Content/Animations/LinkArco.png", 30, 30);
         BufferedImage[][] animation = transposeMatrix(Bow.GetSpriteArray2D());
-        System.out.println(animation.length + "|" + animation[0].length);
+        //System.out.println(animation.length + "|" + animation[0].length);
         for (int i = 0; i < 4; i++){
             for (int j = 0; j < 8; j++ ){
-                System.out.println("i = " + i + " | j =" + j );
+                //System.out.println("i = " + i + " | j =" + j );
                 if (j >= 3)
                 {
-                    //BufferedImage image = resize(animation[i][2], temp[0][0].getWidth(), temp[0][0].getHeight());
                     temp[size+4+i][j] = animation[i][2];
                 }
                 else
                 {
-                    //BufferedImage image = resize(animation[i][j], temp[0][0].getWidth(), temp[0][0].getHeight());
                     temp[size+4+i][j] = animation[i][j];
                 }
             }
         }
     }
-    public static BufferedImage resize(BufferedImage img, int newW, int newH) {  
-        Image tmp = img.getScaledInstance(newW, newH, Image.SCALE_SMOOTH);
-        BufferedImage dimg = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2d = dimg.createGraphics();
-        g2d.drawImage(tmp, 0, 0, null);
-        g2d.dispose();
-        return dimg;
-    }  
     // ------------------------------------------------------------------------
     
     /* Info. functions
      * 
      */
     public String directionToString() {
-        return "Player [up=" + up + ", down=" + down + ", right=" + right + ", left=" + left;
+        return "Player direction = " + direction;
     }
     public String actionToString(){
         return("mCurrentAnimation=" +mCurrentAnimation + ", stop=" + stop + ", attack =" + attack  + ", bow = " + bow);
@@ -380,35 +350,22 @@ public class Player extends Actor {
     //------------------------------------------------------------------------
 
     public void activateAction(int action){
-        final int default_velocity = 5;
         if (action < 4){
             switch(action){
                 case(0):
-                    setUp(false);
-                    setDown(false);
-                    setLeft(false);
-                    setRight(true);
+                    this.direction = DIRECTION.RIGHT;
                     setVelocity(default_velocity);
                     break;
                 case(1):
-                    setUp(false);
-                    setDown(false);
-                    setLeft(true);
-                    setRight(false);
+                    this.direction = DIRECTION.LEFT;
                     setVelocity(default_velocity);
                     break;
                 case(2):
-                    setUp(false);
-                    setDown(true);
-                    setLeft(false);
-                    setRight(false);
+                    this.direction = DIRECTION.DOWN;
                     setVelocity(default_velocity);
                     break;
                 case(3):
-                    setUp(true);
-                    setDown(false);
-                    setLeft(false);
-                    setRight(false);
+                    this.direction = DIRECTION.UP;
                     setVelocity(default_velocity);
                     break;
             }
@@ -422,81 +379,62 @@ public class Player extends Actor {
     /* Getters
      * 
      */
-    public boolean isUp() {
-        return up;
-    }
-    public boolean isDown() {
-        return down;
-    }
-    public boolean isRight() {
-        return right;
-    }
-    public boolean isLeft() {
-        return left;
-    }
-    public int getDelay() {
-        return delay;
-    }
-    public boolean isHaveArc() {
-        return haveArc;
-    }
-    public boolean isHaveLighter() {
-        return haveLighter;
-    }
-    public boolean isHaveBomb() {
-        return HaveBomb;
-    }
-    public int getVelocity() {
-        return velocity;
-    }
-    public int Attack(){
-        return this.damage;
-    }
+    public int getDelay() {return delay;}
+    public boolean isHaveArc() {return haveArc;}
+    public boolean isHaveLighter() {return haveLighter;}
+    public boolean isHaveBomb() {return HaveBomb;}
+    public int getVelocity() {return velocity;}
+    public int Attack(){return (this.damage);}
+    public DIRECTION getDirection(){return this.direction;}
     //------------------------------------------------------------------------
 
     /* Setters
      * 
      */
-    public void setHealthPoints(AtomicInteger healthPoints) {
-        this.healthPoints = healthPoints;
-    }
-    public void setVelocity(int velocity) {
-        this.velocity = velocity;
-    }
-    public void setUp(boolean up) {
-        this.up = up;
-    }
-    public void setDown(boolean down) {
-        this.down = down;
-    }
-    public void setRight(boolean right) {
-        this.right = right;
-    }
-    public void setLeft(boolean left) {
-        this.left = left;
-    }
-    public void setAttack(boolean attack) {
-        this.attack = attack;
-    }
-    private void setAnimation(Action type){
+    public void setHealthPoints(AtomicInteger healthPoints) {this.healthPoints = healthPoints;}
+    public void setVelocity(int velocity) {this.velocity = velocity;}
+    public void setAttack(boolean attack) {this.attack = attack;}
+    private void setMovement(Action type){
+
+        if (type == Action.ATTACK || type == Action.BOW){ //Activate must-end sequence
+            mAnimation.setMust_Complete();
+        }
+
         int i = type.getID();
-                if(up) {
+        switch(direction){
+            case UP:
                 if(mCurrentAnimation != UP+i || mAnimation.GetAnimation().GetDelay() == -1) {
                     SetAnimation(UP+i, mAnimation.GetSpriteSheet().GetSpriteArray(UP+i), delay);
                 }
-                } else if(down) {
-                    if(mCurrentAnimation != DOWN+i || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(DOWN+i, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN+i), delay);
-                    }
-                } else if(right) {
-                    if(mCurrentAnimation != RIGHT+i || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(RIGHT+i, mAnimation.GetSpriteSheet().GetSpriteArray(RIGHT+i), delay);
-                    }
-                } else if(left){
-                    if(mCurrentAnimation != LEFT+i|| mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(LEFT+i, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT+i), delay);
-                    }
+                return;
+            case DOWN:
+                if(mCurrentAnimation != DOWN+i || mAnimation.GetAnimation().GetDelay() == -1) {
+                    SetAnimation(DOWN+i, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN+i), delay);
                 }
+                return;
+            case RIGHT:
+                if(mCurrentAnimation != RIGHT+i || mAnimation.GetAnimation().GetDelay() == -1) {
+                    SetAnimation(RIGHT+i, mAnimation.GetSpriteSheet().GetSpriteArray(RIGHT+i), delay);
+                }
+                return;
+            case LEFT:
+                if(mCurrentAnimation != LEFT+i|| mAnimation.GetAnimation().GetDelay() == -1) {
+                    SetAnimation(LEFT+i, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT+i), delay);
+                }
+                return;
+        }
+    }
+    //------------------------------------------------------------------------
+
+    /* Spawn a Arrow object
+     *  !this function it is called in Update() not in keylistener
+     */
+    private void shootArrow(){
+        nArrows--;
+        if(nArrows == 0){
+            System.out.println("0 Arrows in quiver");
+        }
+        ObjectManager.GetObjectManager().AddEntity(new Arrow(this));
     }
     //------------------------------------------------------------------------
 }
