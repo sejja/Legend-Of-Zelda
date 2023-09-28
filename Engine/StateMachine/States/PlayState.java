@@ -21,6 +21,7 @@ import Engine.Math.Vector2D;
 import Engine.StateMachine.State;
 import Engine.StateMachine.StateMachine;
 import Gameplay.Enemies.*;
+import Gameplay.Link.Arrow;
 import Gameplay.Link.Player;
 
 public class PlayState extends State {
@@ -30,7 +31,6 @@ public class PlayState extends State {
     private Enemy mEnemy;
     private Vector2D<Float> mPos;
     private TileManager mTilemap;
-
     // ------------------------------------------------------------------------
     /*! Constructor
     *
@@ -46,6 +46,8 @@ public class PlayState extends State {
         Spritesheet esprite = new Spritesheet("Content/Animations/gknight.png",16,28);
         ArrayList<Enemy> mEnemies = new ArrayList<Enemy>();
         mEnemy = (Enemy)ObjectManager.GetObjectManager().AddEntity(new Enemy(esprite, new Vector2D<Float>(450.f, 300.f), new Vector2D<Float>(50.f, 100.f), mPlayer));
+
+        //Arrow arrow = (Arrow)ObjectManager.GetObjectManager().AddEntity(new Arrow(mPlayer));
     }
 
     // ------------------------------------------------------------------------
@@ -56,7 +58,7 @@ public class PlayState extends State {
     @Override
     public void Update() {
         ObjectManager.GetObjectManager().Update();
-        mEnemy.Update(mPlayer.GetPosition());
+        //mEnemy.Update(mPlayer.GetPosition());
     }
 
     // ------------------------------------------------------------------------
