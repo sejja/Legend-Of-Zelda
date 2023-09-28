@@ -49,4 +49,7 @@ public class ObjectManager {
         mAliveEntities.addAll(mNewEntities);
         mNewEntities.clear();
     }
+
+    public ArrayList<Entity> getmAliveEntities() {return mAliveEntities;}
+    
 }

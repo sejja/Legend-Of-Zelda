@@ -2,10 +2,14 @@ package Gameplay.Link;
 
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.lang.management.MonitorInfo;
+import java.security.AllPermission;
+import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
+import Engine.ECSystem.Types.Entity;
 import Engine.Graphics.Animation;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.AnimationMachine;
@@ -15,6 +19,7 @@ import Engine.Input.InputFunction;
 import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
 import Engine.Physics.Components.BoxCollider;
+import Gameplay.Enemies.Enemy;
 
 public class Player extends Actor {
     
@@ -52,6 +57,7 @@ public class Player extends Actor {
     private boolean haveArc;
     private boolean haveLighter;
     private boolean HaveBomb;
+    protected boolean able_to_takeDamage=true;
     //----------------------------------------------------------------------
 
     /* CoolDowns
@@ -63,7 +69,7 @@ public class Player extends Actor {
     /* Player Stats
      * 
      */
-    protected AtomicInteger healthPoints = new AtomicInteger(10);
+    protected int healthPoints = 10;
     private ZeldaCameraComponent mCamera;
     protected BoxCollider mCollider;
     final private  int damage = 2;
@@ -196,10 +202,23 @@ public class Player extends Actor {
                 bow =false;
             }
         });
+
+        InputManager.SubscribePressed(KeyEvent.VK_M, new InputFunction() {
+            @Override
+            public void Execute() {
+                SetScale(new Vector2D<>(1f, 1f));
+            }
+        });
+
+        InputManager.SubscribeReleased(KeyEvent.VK_M, new InputFunction() {
+            @Override
+            public void Execute() {
+                SetScale(new Vector2D<Float>(100f, 100f));
+            }
+        });
     }
 
     public void SetAnimation(int i, BufferedImage[] frames, int delay) {
-        //System.out.println(i);
         mCurrentAnimation = i;
         mAnimation.SetFrames(frames);
         mAnimation.GetAnimation().SetDelay(delay);
@@ -264,6 +283,7 @@ public class Player extends Actor {
     @Override
     public void Update() {  //Falta hacer que link termine un ataque completo antes de emoezar otro 
         super.Update();
+
         if (!mAnimation.getMust_Complete())
         {
             Move();
@@ -274,7 +294,12 @@ public class Player extends Actor {
             bow = false;
             mAnimation.finised_Animation = false;
         }
+
         Animate();
+
+        if(able_to_takeDamage){
+            takeDamage();
+        }
         mAnimation.GetAnimation().SetDelay(delay);
     }
     // ------------------------------------------------------------------------
@@ -383,6 +408,21 @@ public class Player extends Actor {
         stop = false; 
         attack = false;
     }
+
+    private void takeDamage(){ //Looking for enemies to take damage
+        System.out.println("Vida = " + healthPoints);
+        ArrayList<Entity> allEntities = ObjectManager.GetObjectManager().getmAliveEntities();
+        for (int i = 0; i < allEntities.size(); i++){
+            if (allEntities.get(i) instanceof Enemy){
+                Enemy enemy = (Enemy) allEntities.get(i);
+                Vector2D<Float> enemyPosition = enemy.GetPosition();
+                if (enemyPosition.getModuleDistance(this.GetPosition()) < this.GetScale().y/2){
+                    this.setDamage(enemy.getDamage());
+                }
+            }
+        }
+    }
+
     /* Getters
      * 
      */
@@ -393,14 +433,27 @@ public class Player extends Actor {
     public int getVelocity() {return velocity;}
     public int Attack(){return (this.damage);}
     public DIRECTION getDirection(){return this.direction;}
+    public boolean isAble_to_takeDamage() {return able_to_takeDamage;}
     //------------------------------------------------------------------------
 
     /* Setters
      * 
      */
-    public void setHealthPoints(AtomicInteger healthPoints) {this.healthPoints = healthPoints;}
+    public void setDamage(int healthPoints) {
+        this.healthPoints -= healthPoints;
+        this.setAble_to_takeDamage(false);
+        if(this.healthPoints <= 0){dead();}
+        else{
+            ThreadInmortal thread = new ThreadInmortal(this);
+            thread.start();
+            System.out.println("Comienza hilo");
+        }
+
+    }
     public void setVelocity(int velocity) {this.velocity = velocity;}
     public void setAttack(boolean attack) {this.attack = attack;}
+    public void setAble_to_takeDamage(boolean able_to_takeDamage) {this.able_to_takeDamage = able_to_takeDamage;}
+
     private void setMovement(Action type){
 
         if (type == Action.ATTACK || type == Action.BOW){ //Activate must-end sequence
@@ -431,6 +484,7 @@ public class Player extends Actor {
                 return;
         }
     }
+    
     //------------------------------------------------------------------------
 
     /* Spawn a Arrow object
@@ -442,6 +496,11 @@ public class Player extends Actor {
             System.out.println("0 Arrows in quiver");
         }
         ObjectManager.GetObjectManager().AddEntity(new Arrow(this));
+    }
+    private void dead(){
+        this.mAnimation.setMust_Complete();
+        this.mAnimation.SetFrames(mAnimation.GetSpriteSheet().GetSpriteArray(4));
+        System.out.println("Ha muerto");
     }
     //------------------------------------------------------------------------
 }
