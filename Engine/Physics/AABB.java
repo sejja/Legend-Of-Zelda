@@ -10,7 +10,6 @@ package Engine.Physics;
 
 import Engine.Graphics.Tile.TilemapObject;
 import Engine.Math.Vector2D;
-import size.x;
 
 public class AABB {
     private Vector2D<Float> mPosition;

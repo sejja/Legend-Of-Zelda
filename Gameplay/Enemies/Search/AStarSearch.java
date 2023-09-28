@@ -77,22 +77,22 @@ public class AStarSearch implements Renderable {
     // to A* Search Algorithm
     public Stack<Pair> aStarSearch( Pair src, Pair dest) {
         if (!isValid(src.first, src.second)) {
-            System.out.println("Source is invalid");
+            //System.out.println("Source is invalid");
             return Path;
         }
 
         if (!isValid(dest.first, dest.second)) {
-            System.out.println("Destination is invalid");
+            //System.out.println("Destination is invalid");
             return Path;
         }
 
         if (!isUnBlocked( src.first, src.second) || !isUnBlocked( dest.first, dest.second)) {
-            System.out.println("Source or the destination is blocked");
+            //System.out.println("Source or the destination is blocked");
             return Path;
         }
 
         if (isDestination(src.first, src.second, dest)) {
-            System.out.println("We are already at the destination");
+            //System.out.println("We are already at the destination");
             return Path;
         }
 
@@ -376,7 +376,6 @@ public class AStarSearch implements Renderable {
             g.drawRect(p.first * 64 - (int)(float)camcoord.x, p.second * 64 - (int)(float)camcoord.y, 64, 64);
         }
     }
-
     /*public static void main(String[] args) {
         int ][] = new int[][] {
             { 1, 0, 1, 1, 1, 1, 0, 1, 1, 1 },

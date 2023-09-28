@@ -6,6 +6,7 @@ import Engine.ECSystem.Types.Actor;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.AnimationMachine;
 import Engine.Math.Vector2D;
+import Engine.Physics.Components.BoxCollider;
 
 public class Arrow extends Actor{
 
@@ -17,6 +18,7 @@ public class Arrow extends Actor{
     final private float range = 350;
     private Float distance = 0f;
     private DIRECTION direction;
+    private BoxCollider boxCollider;
 
     public Arrow(Player Link){
         super(Link.GetPosition());
@@ -28,6 +30,7 @@ public class Arrow extends Actor{
         SetPosition(new Vector2D<Float>(Link.GetPosition().x + 28, Link.GetPosition().y + 45)); //Magic numbers because of the hitbox waiting to be fixed
         SetScale( new Vector2D<Float>(44f,40f));
         animationMachine.GetAnimation().SetDelay(1);
+        boxCollider = (BoxCollider)AddComponent(new BoxCollider(this));
         Animate();
     }
     public void Move(){

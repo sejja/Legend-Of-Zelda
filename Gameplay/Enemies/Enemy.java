@@ -15,7 +15,6 @@ import Engine.Graphics.Tile.*;
 import Engine.Math.Vector2D;
 import Engine.Physics.AABB;
 import Engine.Physics.Components.BoxCollider;
-import Gameplay.Player;
 import Gameplay.Enemies.Search.*;
 
 public class Enemy extends Engine.ECSystem.Types.Actor {
