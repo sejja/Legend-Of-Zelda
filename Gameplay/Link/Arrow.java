@@ -23,16 +23,15 @@ public class Arrow extends Actor{
         this.animationMachine = AddComponent(new AnimationMachine(this ,new Spritesheet("Content/Animations/Arrow.png", 44 , 40))); //52, 40
         allAnimation = animationMachine.GetSpriteSheet().GetSpriteArray2D();
 
-        //System.out.println(allAnimation.length);
-        //System.out.println(allAnimation[0].length);
-
         direction = Link.getDirection();
+
         SetPosition(new Vector2D<Float>(Link.GetPosition().x + 28, Link.GetPosition().y + 45)); //Magic numbers because of the hitbox waiting to be fixed
         SetScale( new Vector2D<Float>(44f,40f));
         animationMachine.GetAnimation().SetDelay(1);
         Animate();
     }
     public void Move(){
+        
         Vector2D<Float> pos = GetPosition();
         Float currentPosition;
         switch (direction){
@@ -64,7 +63,7 @@ public class Arrow extends Actor{
         Move();
         if (!(distance >= range)){
             Animate();
-        }else{
+        }else{ //Delete arrow
             animationMachine.SetFrames(allAnimation[4]);
             ObjectManager.GetObjectManager().RemoveEntity(this);
         }
@@ -78,4 +77,5 @@ public class Arrow extends Actor{
             case RIGHT: animationMachine.SetFrames(allAnimation[0]) ;return;
         }
     }
+    public int damage(){return damage;}
 }

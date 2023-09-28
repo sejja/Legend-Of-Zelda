@@ -1,7 +1,5 @@
 package Gameplay.Link;
 
-import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -87,10 +85,6 @@ public class Player extends Actor {
         mCamera = AddComponent(new CameraComponent(this));
         mCamera.Bind();
         SetAnimation(RIGHT, sprite.GetSpriteArray(RIGHT), delay);
-
-        //controls = new ThreadPlayer(this);
-        //controls.start();
-
         implementsActions();
     }
     // ------------------------------------------------------------------------
@@ -98,7 +92,7 @@ public class Player extends Actor {
     /* This function only implements actionlisteners
      * 
      */
-    private void implementsActions (){
+    private void implementsActions (){ // it can be coptimazed
         //RUN______________________________________________________________________________________________
         InputManager.SubscribePressed(KeyEvent.VK_W, new InputFunction() {
             @Override
@@ -267,7 +261,7 @@ public class Player extends Actor {
         {
             Move();
         }
-        else if (nArrows != 0 && mAnimation.finised_Animation && bow)
+        else if (nArrows != 0 && mAnimation.finised_Animation && bow) //Spawn Arrow
         {
             shootArrow();
             bow = false;
@@ -330,25 +324,15 @@ public class Player extends Actor {
                 //System.out.println("i = " + i + " | j =" + j );
                 if (j >= 3)
                 {
-                    //BufferedImage image = resize(animation[i][2], temp[0][0].getWidth(), temp[0][0].getHeight());
                     temp[size+4+i][j] = animation[i][2];
                 }
                 else
                 {
-                    //BufferedImage image = resize(animation[i][j], temp[0][0].getWidth(), temp[0][0].getHeight());
                     temp[size+4+i][j] = animation[i][j];
                 }
             }
         }
     }
-    public static BufferedImage resize(BufferedImage img, int newW, int newH) {  
-        Image tmp = img.getScaledInstance(newW, newH, Image.SCALE_SMOOTH);
-        BufferedImage dimg = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2d = dimg.createGraphics();
-        g2d.drawImage(tmp, 0, 0, null);
-        g2d.dispose();
-        return dimg;
-    }  
     // ------------------------------------------------------------------------
     
     /* Info. functions
@@ -411,9 +395,11 @@ public class Player extends Actor {
     public void setVelocity(int velocity) {this.velocity = velocity;}
     public void setAttack(boolean attack) {this.attack = attack;}
     private void setMovement(Action type){
-        if (type == Action.ATTACK || type == Action.BOW){
+
+        if (type == Action.ATTACK || type == Action.BOW){ //Activate must-end sequence
             mAnimation.setMust_Complete();
         }
+
         int i = type.getID();
         switch(direction){
             case UP:
@@ -438,9 +424,17 @@ public class Player extends Actor {
                 return;
         }
     }
+    //------------------------------------------------------------------------
+
+    /* Spawn a Arrow object
+     *  !this function it is called in Update() not in keylistener
+     */
     private void shootArrow(){
+        nArrows--;
+        if(nArrows == 0){
+            System.out.println("0 Arrows in quiver");
+        }
         ObjectManager.GetObjectManager().AddEntity(new Arrow(this));
-        System.out.println("Flechipolla");
     }
     //------------------------------------------------------------------------
 }
