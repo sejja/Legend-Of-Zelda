@@ -469,6 +469,8 @@ public class Player extends Actor {
         ObjectManager.GetObjectManager().AddEntity(new Arrow(this));
     }
     private void dead(){
+        this.mAnimation.setMust_Complete();
+        this.mAnimation.SetFrames(mAnimation.GetSpriteSheet().GetSpriteArray(4));
         System.out.println("Ha muerto");
     }
     //------------------------------------------------------------------------
