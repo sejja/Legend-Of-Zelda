@@ -10,6 +10,7 @@ import Engine.Graphics.Animation;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.AnimationMachine;
 import Engine.Graphics.Components.CameraComponent;
+import Engine.Graphics.Components.ZeldaCameraComponent;
 import Engine.Input.InputFunction;
 import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
