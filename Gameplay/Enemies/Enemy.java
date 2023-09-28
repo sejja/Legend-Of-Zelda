@@ -40,6 +40,8 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
 
     //stats
     protected AtomicInteger healthPoints = new AtomicInteger(2);
+    protected int damage = 1; //magic number, it has to be defined in a constructor
+
     protected float speed = 3;
     protected Vector2D ndir = new Vector2D(0f,0f);
     
@@ -298,5 +300,9 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
 
     private void setUp(boolean b) {
         this.up = b;
+    }
+    
+    public int getDamage() {
+        return damage;
     }  
 }

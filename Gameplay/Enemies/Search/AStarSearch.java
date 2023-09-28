@@ -147,7 +147,7 @@ public class AStarSearch implements Renderable {
                 if (isDestination(i - 1, j, dest)) {
                     cellDetails[i - 1][j].parent_i = i;
                     cellDetails[i - 1][j].parent_j = j;
-                    System.out.println("The destination cell is found");
+                    //System.out.println("The destination cell is found");
                     tracePath(cellDetails, dest);
                     foundDest = true;
                     return Path;
@@ -171,7 +171,7 @@ public class AStarSearch implements Renderable {
                 if (isDestination(i + 1, j, dest)) {
                     cellDetails[i + 1][j].parent_i = i;
                     cellDetails[i + 1][j].parent_j = j;
-                    System.out.println("The destination cell is found");
+                    //System.out.println("The destination cell is found");
                     tracePath(cellDetails, dest);
                     foundDest = true;
                     return Path;
@@ -195,7 +195,7 @@ public class AStarSearch implements Renderable {
                 if (isDestination(i, j + 1, dest)) {
                     cellDetails[i][j + 1].parent_i = i;
                     cellDetails[i][j + 1].parent_j = j;
-                    System.out.println("The destination cell is found");
+                    //System.out.println("The destination cell is found");
                     tracePath(cellDetails, dest);
                     foundDest = true;
                     return Path;
@@ -219,7 +219,7 @@ public class AStarSearch implements Renderable {
                 if (isDestination(i, j - 1, dest)) {
                     cellDetails[i][j - 1].parent_i = i;
                     cellDetails[i][j - 1].parent_j = j;
-                    System.out.println("The destination cell is found");
+                    //System.out.println("The destination cell is found");
                     tracePath(cellDetails, dest);
                     foundDest = true;
                     return Path;
@@ -243,7 +243,7 @@ public class AStarSearch implements Renderable {
                 if (isDestination(i - 1, j + 1, dest)) {
                     cellDetails[i - 1][j + 1].parent_i = i;
                     cellDetails[i - 1][j + 1].parent_j = j;
-                    System.out.println("The destination cell is found");
+                    //System.out.println("The destination cell is found");
                     tracePath(cellDetails, dest);
                     foundDest = true;
                     return Path;
@@ -267,7 +267,7 @@ public class AStarSearch implements Renderable {
                 if (isDestination(i - 1, j - 1, dest)) {
                     cellDetails[i - 1][j - 1].parent_i = i;
                     cellDetails[i - 1][j - 1].parent_j = j;
-                    System.out.println("The destination cell is found");
+                    //System.out.println("The destination cell is found");
                     tracePath(cellDetails, dest);
                     foundDest = true;
                     return Path;
@@ -291,7 +291,7 @@ public class AStarSearch implements Renderable {
                 if (isDestination(i + 1, j + 1, dest)) {
                     cellDetails[i + 1][j + 1].parent_i = i;
                     cellDetails[i + 1][j + 1].parent_j = j;
-                    System.out.println("The destination cell is found");
+                    //System.out.println("The destination cell is found");
                     tracePath(cellDetails, dest);
                     foundDest = true;
                     return Path;
@@ -315,7 +315,7 @@ public class AStarSearch implements Renderable {
                 if (isDestination(i + 1, j - 1, dest)) {
                     cellDetails[i + 1][j - 1].parent_i = i;
                     cellDetails[i + 1][j - 1].parent_j = j;
-                    System.out.println("The destination cell is found");
+                    //System.out.println("The destination cell is found");
                     tracePath(cellDetails, dest);
                     foundDest = true;
                     return Path;
@@ -336,8 +336,9 @@ public class AStarSearch implements Renderable {
         }
 
         // When no destination cell is found and the open list is empty, then no path exists.
-        if (!foundDest)
-            System.out.println("Failed to find the destination cell");
+        if (!foundDest){
+            //System.out.println("Failed to find the destination cell");
+        }
         return Path;
     }
 
@@ -376,6 +377,7 @@ public class AStarSearch implements Renderable {
             g.drawRect(p.first * 64 - (int)(float)camcoord.x, p.second * 64 - (int)(float)camcoord.y, 64, 64);
         }
     }
+
     /*public static void main(String[] args) {
         int ][] = new int[][] {
             { 1, 0, 1, 1, 1, 1, 0, 1, 1, 1 },
