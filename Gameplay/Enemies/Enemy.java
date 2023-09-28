@@ -295,7 +295,16 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
         }
 
         SetPosition(pos);
-    }  
+    } 
+    
+    public void KnockBack(Vector2D<Float> playerPos) {
+        Vector2D<Float> pos = GetPosition();
+        Vector2D<Float> dir = pos.getVectorToAnotherActor(playerPos);
+        ndir=Normalize(dir);
+        pos.x -= (float)ndir.x * 100;
+        pos.y -= (float)ndir.y * 100;
+        SetPosition(pos);
+    }
     
     private void setRight(boolean b) {
         this.right = b;

@@ -423,6 +423,7 @@ public class Player extends Actor {
                 Vector2D<Float> enemyPosition = enemy.GetPosition();
                 if (enemyPosition.getModuleDistance(this.GetPosition()) < this.GetScale().y/2){
                     this.setDamage(enemy.getDamage());
+                    enemy.KnockBack(this.GetPosition());
                 }
             }
         }
@@ -448,6 +449,7 @@ public class Player extends Actor {
                     if(direction == getAttackDirection(this.GetPosition().getVectorToAnotherActor(enemyPosition))){
                         System.out.println("Le da");
                         enemy.setHealthPoints(damage);
+                        enemy.KnockBack(this.GetPosition());
                     }
                 }
             }
@@ -467,7 +469,7 @@ public class Player extends Actor {
                 return DIRECTION.LEFT;
             }
         } else {
-            if (vector.y < 0) {
+            if (vector.y > 0) {
                 return DIRECTION.DOWN;
             } else {
                 return DIRECTION.UP;
