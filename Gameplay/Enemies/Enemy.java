@@ -47,7 +47,7 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
     protected int mCurrentAnimation;
     protected AnimationMachine mAnimation;
     protected BoxCollider mCollision;
-    protected AStarSearch mPathfinding;
+    protected AStarSearch mPathfinding = new AStarSearch();
     
     static int idx = 0;
     
@@ -215,11 +215,11 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
     *   Checks if the Enemy can chase player
     */ //----------------------------------------------------------------------
     public Stack<Pair> Pathfinding(Vector2D<Float> playerPos) {
-        mPathfinding = new AStarSearch();
         int divisior = 64;
-        Block srcBlock = TilemapObject.GetBlockAt((int)Math.round(this.GetPosition().x/divisior), (int)Math.round(this.GetPosition().y)/divisior);
-        Block destBlock = TilemapObject.GetBlockAt((int)Math.round(playerPos.x)/divisior, (int)Math.round(playerPos.y)/divisior);
-        Pair src = new Pair((int)Math.round(this.GetPosition().x/divisior), (int)Math.round(this.GetPosition().y)/divisior);
+        Vector2D pos = GetPosition();
+        Block srcBlock = TilemapObject.GetBlockAt((int)Math.round((float)pos.x/divisior), (int)Math.round((float)pos.y)/divisior);
+        Block destBlock = TilemapObject.GetBlockAt((int)Math.round(playerPos.x/divisior), (int)Math.round(playerPos.y/divisior));
+        Pair src = new Pair((int)Math.round((float)pos.x/divisior), (int)Math.round((float)pos.y)/divisior);
         finalDestination = new Pair((int)Math.round(playerPos.x)/divisior, (int)Math.round(playerPos.y)/divisior);
 
         return mPathfinding.aStarSearch(src, finalDestination);
@@ -241,7 +241,7 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
     // ------------------------------------------------------------------------
     /*! Move
     *
-    *   Calculates and sets the movement of the Enemy with the A* search
+    *   Receives the movements in a stack and sets the movement of the Enemy with the A* search
     */ //----------------------------------------------------------------------
     public void Move(Stack<Pair> path) {
         int suma =0;
@@ -252,8 +252,9 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
         }
         if(!path.isEmpty()){
             path.pop();
-            currentDestination=path.peek();
-
+            if(!path.isEmpty()){
+                currentDestination = path.peek();
+            }
             // Margin of error for the movement
             float xlowerBound = currentDestination.getFirst()*64 - 3;
             float xupperBound = currentDestination.getFirst()*64 + 3;
@@ -261,7 +262,7 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
             float yupperBound = currentDestination.getSecond()*64 + 3;
 
             //If currentDestination reached, pop next destination
-            if(((((xlowerBound <= pos.x+suma) && (pos.x+suma <= xupperBound)) && ((ylowerBound <= pos.y+suma) && (pos.y+suma <= yupperBound)))) && (currentDestination != finalDestination)){
+            if(((((xlowerBound <= pos.x+suma) && (pos.x+suma <= xupperBound)) && ((ylowerBound <= pos.y+suma) && (pos.y+suma <= yupperBound)))) && (currentDestination != finalDestination) && !path.isEmpty()){
                 path.pop();
                 if(!path.isEmpty()){
                     currentDestination = path.peek();
