@@ -16,6 +16,7 @@ import Engine.Math.Vector2D;
 import Engine.Physics.AABB;
 import Engine.Physics.Components.BoxCollider;
 import Gameplay.Enemies.Search.*;
+import Gameplay.Link.DirectionObject;
 
 public class Enemy extends Engine.ECSystem.Types.Actor {
     private final int UP = 0;
@@ -29,6 +30,7 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
     protected boolean right = false;
     protected boolean left = false;
     //public DIRECTION direction;
+    protected DirectionObject direction = new DirectionObject(up, left, right, down);
 
     //player detected
     protected boolean chase = false;
@@ -42,7 +44,7 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
 
 
     //stats
-    protected AtomicInteger healthPoints = new AtomicInteger(2);
+    protected int healthPoints = 2;
     protected int damage = 1; //magic number, it has to be defined in a constructor
 
     protected float speed = 3;
@@ -157,6 +159,7 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
                 setRight(false);
             }
         }
+        direction = new DirectionObject(up, left, right, down);
     }
 
     // ------------------------------------------------------------------------
@@ -313,4 +316,10 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
     public int getDamage() {
         return damage;
     }  
+
+    public void setHealthPoints(int damage){
+        this.healthPoints -= damage;
+        //______________________
+        //______________________
+    }
 }

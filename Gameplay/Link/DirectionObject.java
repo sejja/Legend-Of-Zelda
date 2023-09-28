@@ -21,7 +21,7 @@ public class DirectionObject {
         }
         else
         {
-            currentDirection = DIRECTION.LEFT;
+            currentDirection = DIRECTION.RIGHT;
         }
     }
 
@@ -43,7 +43,7 @@ public class DirectionObject {
         }
         else
         {
-            currentDirection = DIRECTION.LEFT;
+            currentDirection = DIRECTION.RIGHT;
         }
     }
 

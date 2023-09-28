@@ -293,6 +293,11 @@ public class Player extends Actor {
             shootArrow();
             bow = false;
             mAnimation.finised_Animation = false;
+        }else if (mAnimation.finised_Animation && attack){
+            //System.out.println("te rajo primo");
+            Attack();
+            attack = false;
+            mAnimation.finised_Animation = false;
         }
 
         Animate();
@@ -410,7 +415,7 @@ public class Player extends Actor {
     }
 
     private void takeDamage(){ //Looking for enemies to take damage
-        System.out.println("Vida = " + healthPoints);
+        //System.out.println("Vida = " + healthPoints);
         ArrayList<Entity> allEntities = ObjectManager.GetObjectManager().getmAliveEntities();
         for (int i = 0; i < allEntities.size(); i++){
             if (allEntities.get(i) instanceof Enemy){
@@ -431,9 +436,44 @@ public class Player extends Actor {
     public boolean isHaveLighter() {return haveLighter;}
     public boolean isHaveBomb() {return HaveBomb;}
     public int getVelocity() {return velocity;}
-    public int Attack(){return (this.damage);}
+
+
+    public int Attack(){ //Range of attack has to be determined -> Magic numbers
+        ArrayList<Entity> allEntities = ObjectManager.GetObjectManager().getmAliveEntities();
+        for (int i = 0; i < allEntities.size(); i++){
+            if (allEntities.get(i) instanceof Enemy){
+                Enemy enemy = (Enemy) allEntities.get(i);
+                Vector2D<Float> enemyPosition = enemy.GetPosition();
+                if (enemyPosition.getModuleDistance(this.GetPosition()) < this.GetScale().y/2+50){ //Each enemy thats can be attacked
+                    if(direction == getAttackDirection(this.GetPosition().getVectorToAnotherActor(enemyPosition))){
+                        System.out.println("Le da");
+                        enemy.setHealthPoints(damage);
+                    }
+                }
+            }
+        }
+        return 0;
+    }
+
+
     public DIRECTION getDirection(){return this.direction;}
     public boolean isAble_to_takeDamage() {return able_to_takeDamage;}
+
+    public DIRECTION getAttackDirection(Vector2D<Float> vector) { 
+        if (Math.abs(vector.x) > Math.abs(vector.y)) {
+            if (vector.x > 0) {
+                return DIRECTION.RIGHT;
+            } else {
+                return DIRECTION.LEFT;
+            }
+        } else {
+            if (vector.y < 0) {
+                return DIRECTION.DOWN;
+            } else {
+                return DIRECTION.UP;
+            }
+        }
+    }
     //------------------------------------------------------------------------
 
     /* Setters
