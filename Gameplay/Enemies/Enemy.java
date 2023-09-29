@@ -44,7 +44,7 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
 
 
     //stats
-    protected int healthPoints = 2;
+    protected int healthPoints = 4;
     protected int damage = 1; //magic number, it has to be defined in a constructor
 
     protected float speed = 3;
@@ -76,8 +76,7 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
         mAnimation = AddComponent(new AnimationMachine(this, sprite));
         
         // ADD COLLIDER COMPONENT
-        mCollision = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<Float>(100.f,200.f)));
-
+        mCollision = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<Float>(100f, 200f)));
         SetAnimation(UP, sprite.GetSpriteArray(UP), 2);
         SetName("Enemy " + idx);
         idx++;
@@ -227,13 +226,11 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
     *
     *   Checks if the Enemy can chase player
     */ //----------------------------------------------------------------------
-    public void Pathfinding(Vector2D<Float> playerPos) {
+    public void Pathfinding(Vector2D<Float> playerPos) { //Maagic numbers to change the start and ending of the pathfinding to the center of the enemy and the center of the player
         int divisior = 64;
         Vector2D pos = GetPosition();
-        Block srcBlock = TilemapObject.GetBlockAt((int)Math.round((float)pos.x/divisior), (int)Math.round((float)pos.y)/divisior);
-        Block destBlock = TilemapObject.GetBlockAt((int)Math.round(playerPos.x/divisior), (int)Math.round(playerPos.y/divisior));
-        Pair src = new Pair((int)Math.round((float)pos.x/divisior), (int)Math.round((float)pos.y)/divisior);
-        finalDestination = new Pair((int)Math.round(playerPos.x)/divisior, (int)Math.round(playerPos.y)/divisior);
+        Pair src = new Pair((int)Math.round(((float)pos.x + 16)/divisior), (int)Math.round(((float)pos.y+32)/divisior));
+        finalDestination = new Pair((int)Math.round((playerPos.x +16)/divisior), (int)Math.round((playerPos.y +16)/divisior));
         path = Pathfinding.aStarSearch(src, finalDestination); 
 
     }
@@ -301,8 +298,8 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
         Vector2D<Float> pos = GetPosition();
         Vector2D<Float> dir = pos.getVectorToAnotherActor(playerPos);
         ndir=Normalize(dir);
-        pos.x -= (float)ndir.x * 100;
-        pos.y -= (float)ndir.y * 100;
+        pos.x -= (float)ndir.x * 60;
+        pos.y -= (float)ndir.y * 60;
         SetPosition(pos);
     }
     
@@ -328,6 +325,10 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
 
     public void setHealthPoints(int damage){
         this.healthPoints -= damage;
+        if (healthPoints <= 0){
+            this.SetScale(new Vector2D<Float>(0f,0f));
+            ObjectManager.GetObjectManager().RemoveEntity(this);
+        }
         //______________________
         //______________________
     }

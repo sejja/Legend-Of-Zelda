@@ -11,19 +11,30 @@ package Engine.Window;
 import javax.swing.JFrame;
 
 public class Window extends JFrame {
+    private GameLoop mGameLoop;
+    
     // ------------------------------------------------------------------------
     /*! Constructor
     *
     *   Creates a Window, with a Presenter Buffer on it
     */ //----------------------------------------------------------------------
     public Window() {
+        final PresentBuffer buffer = new PresentBuffer(1280, 720);
+        mGameLoop = new GameLoop(buffer);
+        
         setTitle("The Legend Of Zelda");
+
+        //If we are on release mode, draw a fancy window
+        if(!java.lang.management.ManagementFactory.getRuntimeMXBean().getInputArguments().toString().contains("-agentlib:jdwp"))
+            setUndecorated(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setIgnoreRepaint(true);
-        setContentPane(new PresentBuffer(1280, 720));
+        setContentPane(buffer);
         setResizable(false);
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
+        setAutoRequestFocus(true);
+        mGameLoop.start();
     }
 }

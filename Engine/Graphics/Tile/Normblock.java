@@ -28,4 +28,9 @@ public class Normblock extends Block {
     public void Render(Graphics2D g, Vector2D<Float> camerapos) {
         super.Render(g, camerapos);
     }
+
+    @Override
+    public boolean IsInside(AABB p) {
+        return false;
+    }
 }

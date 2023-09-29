@@ -22,10 +22,6 @@ public class HoleBlock extends Block {
 
     @Override
     public boolean Update(AABB p) {
-        if(p.GetPosition().x < mPosition.x) return false;
-        if(p.GetPosition().y < mPosition.y) return false;
-        if(mWidth + mPosition.x < p.GetWidth() / 2) return false;
-        if(mHeight + mPosition.y < p.GetHeight() / 2) return false;
         return true;
     }
 
@@ -33,5 +29,15 @@ public class HoleBlock extends Block {
         super.Render(g, camerapos);
         //g.setColor(Color.green);
         //g.drawRect((int)(float)mPosition.x - (int)(float)camerapos.x, (int)(float)mPosition.y - (int)(float)camerapos.y, mWidth, mHeight);
+    }
+
+    @Override
+    public boolean IsInside(AABB p) {
+        if(p.GetPosition().x < mPosition.x) return false;
+        if(p.GetPosition().y < mPosition.y) return false;
+        if(mWidth + mPosition.x <  p.GetWidth() + p.GetPosition().x) return false;
+        if(mHeight + mPosition.y <  p.GetHeight() + p.GetPosition().y) return false;
+    
+        return true;
     } 
 }

@@ -19,7 +19,7 @@ import Engine.Input.InputFunction;
 import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
 import Engine.Physics.Components.BoxCollider;
-import Engine.StateMachine.States.PlayState;
+import Gameplay.States.PlayState;
 import Gameplay.Enemies.Enemy;
 import Gameplay.NPC.DialogueWindow;
 import Gameplay.NPC.Npc;
@@ -425,7 +425,7 @@ public class Player extends Actor {
         }
     }
     private void setBowAnimaitonSet(BufferedImage[][] temp, int size){
-        Spritesheet Bow = new Spritesheet("Content/Animations/LinkArco.png", 30, 30);
+        Spritesheet Bow = new Spritesheet("Content/Animations/Link/LinkArco.png", 30, 30);
         BufferedImage[][] animation = transposeMatrix(Bow.GetSpriteArray2D());
         //System.out.println(animation.length + "|" + animation[0].length);
         for (int i = 0; i < 4; i++){
@@ -509,45 +509,7 @@ public class Player extends Actor {
     public boolean isHaveLighter() {return haveLighter;}
     public boolean isHaveBomb() {return HaveBomb;}
     public int getVelocity() {return velocity;}
-
-
-    public int Attack(){ //Range of attack has to be determined -> Magic numbers
-        ArrayList<Entity> allEntities = ObjectManager.GetObjectManager().getmAliveEntities();
-        for (int i = 0; i < allEntities.size(); i++){
-            if (allEntities.get(i) instanceof Enemy){
-                Enemy enemy = (Enemy) allEntities.get(i);
-                Vector2D<Float> enemyPosition = enemy.GetPosition();
-                if (enemyPosition.getModuleDistance(this.GetPosition()) < this.GetScale().y/2+50){ //Each enemy thats can be attacked
-                    if(direction == getAttackDirection(this.GetPosition().getVectorToAnotherActor(enemyPosition))){
-                        System.out.println("Le da");
-                        enemy.setHealthPoints(damage);
-                        enemy.KnockBack(this.GetPosition());
-                    }
-                }
-            }
-        }
-        return 0;
-    }
-
-
     public DIRECTION getDirection(){return this.direction;}
-    public boolean isAble_to_takeDamage() {return able_to_takeDamage;}
-
-    public DIRECTION getAttackDirection(Vector2D<Float> vector) { 
-        if (Math.abs(vector.x) > Math.abs(vector.y)) {
-            if (vector.x > 0) {
-                return DIRECTION.RIGHT;
-            } else {
-                return DIRECTION.LEFT;
-            }
-        } else {
-            if (vector.y > 0) {
-                return DIRECTION.DOWN;
-            } else {
-                return DIRECTION.UP;
-            }
-        }
-    }
     //------------------------------------------------------------------------
 
     /* Setters
@@ -567,7 +529,6 @@ public class Player extends Actor {
     public void setVelocity(int velocity) {this.velocity = velocity;}
     public void setAttack(boolean attack) {this.attack = attack;}
     public void setAble_to_takeDamage(boolean able_to_takeDamage) {this.able_to_takeDamage = able_to_takeDamage;}
-
     private void setMovement(Action type){
 
         if (type == Action.ATTACK || type == Action.BOW){ //Activate must-end sequence
@@ -611,10 +572,56 @@ public class Player extends Actor {
         }
         ObjectManager.GetObjectManager().AddEntity(new Arrow(this));
     }
+
+    /*  This function is only called if Link has no healthpoints
+    *   
+    */
     private void dead(){ //falta hacer que link se muera y termine el juego
         //this.mAnimation.setMust_Complete();
         //this.mAnimation.SetFrames(mAnimation.GetSpriteSheet().GetSpriteArray(4));
         System.out.println("Ha muerto");
     }
     //------------------------------------------------------------------------
+    
+    /*  These functions are called when the acttack animation has finished
+     * 
+     */
+    public int Attack(){ //Range of attack has to be determined -> Magic numbers
+        /*  This function takes all de Entitys and if any of them is a instance of Enemys it has to ve consider hast potencial objetives to hit
+         *      It will calculate a vector to the player position to the enemy position
+         *          If the DIRECTION of the vector Player-Enemy and The DIRECTION of the player is the same
+         *             It will called a KnockBack() function of that enemy
+         */
+        ArrayList<Entity> allEntities = ObjectManager.GetObjectManager().getmAliveEntities();
+        for (int i = 0; i < allEntities.size(); i++){
+            if (allEntities.get(i) instanceof Enemy){
+                Enemy enemy = (Enemy) allEntities.get(i);
+                Vector2D<Float> enemyPosition = enemy.GetPosition();
+                if (enemyPosition.getModuleDistance(this.GetPosition()) < this.GetScale().y/2+50){ //Each enemy thats can be attacked
+                    if(direction == getAttackDirection(this.GetPosition().getVectorToAnotherActor(enemyPosition))){
+                        System.out.println("Le da");
+                        enemy.setHealthPoints(damage);
+                        enemy.KnockBack(this.GetPosition());
+                    }
+                }
+            }
+        }
+        return 0;
+    }
+    public boolean isAble_to_takeDamage() {return able_to_takeDamage;}
+    public DIRECTION getAttackDirection(Vector2D<Float> vector) { 
+        if (Math.abs(vector.x) > Math.abs(vector.y)) {
+            if (vector.x > 0) {
+                return DIRECTION.RIGHT;
+            } else {
+                return DIRECTION.LEFT;
+            }
+        } else {
+            if (vector.y > 0) {
+                return DIRECTION.DOWN;
+            } else {
+                return DIRECTION.UP;
+            }
+        }
+    }
 }
