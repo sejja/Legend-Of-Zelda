@@ -12,9 +12,9 @@ import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Component;
 import Engine.Graphics.GraphicsPipeline;
 import Engine.Math.Vector2D;
+import Engine.Physics.AABB;
 
 public class CameraComponent extends Component {
-
     public CameraComponent(Actor parent) {
         super(parent);
     }
@@ -31,6 +31,18 @@ public class CameraComponent extends Component {
         GraphicsPipeline.GetGraphicsPipeline().BindCamera(this);
     }
 
+    public void SetLimits(float width, float height) {
+        
+    }
+
+    public boolean OnBounds(AABB bounds) {
+        Vector2D<Float> pos = GetCoordinates();
+        Vector2D<Integer> camera = GraphicsPipeline.GetGraphicsPipeline().GetDimensions();
+
+        AABB parent = new AABB(pos, new Vector2D<>((float)(int)camera.x, (float)(int)camera.y));
+        return parent.Collides(bounds);
+    }
+
     public Vector2D<Float> GetCoordinates() {
         Vector2D<Float> pos = GetParent().GetPosition();
         Vector2D<Integer> camera = GraphicsPipeline.GetGraphicsPipeline().GetDimensions();
@@ -39,6 +51,10 @@ public class CameraComponent extends Component {
         temp.y = pos.y - camera.y / 2;
 
         return temp;
+    }
+
+    public Vector2D<Integer> GetDimensions() {
+        return GraphicsPipeline.GetGraphicsPipeline().GetDimensions();
     }
 
     @Override

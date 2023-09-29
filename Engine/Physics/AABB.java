@@ -8,6 +8,7 @@
 
 package Engine.Physics;
 
+import Engine.Graphics.Tile.TilemapObject;
 import Engine.Math.Vector2D;
 
 public class AABB {
@@ -85,7 +86,7 @@ public class AABB {
     *   Returns wether two boxes collide or not
     */ //----------------------------------------------------------------------
     public boolean Collides(AABB box) {
-        final float halfxsize = mSize.x / 2;
+        /*final float halfxsize = mSize.x / 2;
         final float halfysize = mSize.y / 2;
 
         //If they overlap on the X axis
@@ -95,6 +96,13 @@ public class AABB {
             if(Math.abs(((mPosition.y) + halfysize) - ((box.mPosition.x) + halfysize)) < halfysize + (box.mSize.x / 2))
                 return true;
 
+        return false;*/
+
+        if(mPosition.x < box.mPosition.x + box.mSize.x &&
+            mPosition.x + mSize.x > box.mPosition.x &&
+            mPosition.y < box.mPosition.y + box.mSize.y &&
+            mPosition.y + mSize.y > box.mPosition.y)
+                return true;
         return false;
     }
 
@@ -107,5 +115,18 @@ public class AABB {
         return (Math.pow(mPosition.x - Math.max(box.mPosition.x + box.GetWidth() / 2, Math.min(mPosition.x, box.mPosition.x)), 2) 
             + Math.pow(mPosition.y - Math.max(box.mPosition.y + box.GetHeight() / 2,  Math.min(mPosition.y, box.mPosition.y)), 2))
             < Math.pow(Math.max(mSize.x, mSize.y) / Math.sqrt(2), 2);
+    }
+
+    public boolean collisionTile(float ax, float ay) {
+        for(int c = 0; c < 4; c++) {
+            int xt = (int)((mPosition.x + ax) + (c % 2) * mSize.x / 2) / 64;
+            int yt = (int)((mPosition.y + ay) + (int)(c / 2) * mSize.y) / 64;
+
+            if(TilemapObject.GetBlockAt(xt, yt) != null) {
+                return TilemapObject.GetBlockAt(xt, yt).Update(this);
+            }
+        }
+
+        return false;
     }
 }

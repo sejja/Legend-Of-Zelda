@@ -14,6 +14,13 @@ public class ObjectManager {
         return sManager;
     }
 
+    public Entity GetObjectByName(String name) {
+        for(Entity x : mAliveEntities)
+            if(x.GetName().equals(name))
+                return x;
+        return null;
+    }
+
     private ObjectManager() {
         mAliveEntities = new ArrayList<>();
         mDeadEntities = new ArrayList<>();
@@ -42,4 +49,7 @@ public class ObjectManager {
         mAliveEntities.addAll(mNewEntities);
         mNewEntities.clear();
     }
+
+    public ArrayList<Entity> getmAliveEntities() {return mAliveEntities;}
+    
 }

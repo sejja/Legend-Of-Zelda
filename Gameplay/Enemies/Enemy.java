@@ -1,12 +1,22 @@
 package Gameplay.Enemies;
 
 import java.awt.image.BufferedImage;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Stack;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicStampedReference;
 
+import Engine.ECSystem.ObjectManager;
 import Engine.Graphics.Animation;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.AnimationMachine;
+import Engine.Graphics.Tile.*;
 import Engine.Math.Vector2D;
-import Gameplay.Link.Player;
+import Engine.Physics.AABB;
+import Engine.Physics.Components.BoxCollider;
+import Gameplay.Enemies.Search.*;
+import Gameplay.Link.DirectionObject;
 
 public class Enemy extends Engine.ECSystem.Types.Actor {
     private final int UP = 0;
@@ -14,35 +24,63 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
     private final int RIGHT = 1;
     private final int LEFT = 3;
 
+    //directions
     protected boolean up = true;
     protected boolean down = false;
     protected boolean right = false;
     protected boolean left = false;
+    //public DIRECTION direction;
+    protected DirectionObject direction = new DirectionObject(up, left, right, down);
+
+    //player detected
     protected boolean chase = false;
 
-    float speed = 2;
-    Vector2D ndir = new Vector2D(0f,0f);
-    
+    //Pathfinding variables
+    protected Pair finalDestination;
+    protected Pair currentDestination;
+    protected Stack<Pair> path;
+    protected AStarSearch Pathfinding = new AStarSearch();
+
+
+
+    //stats
+    protected int healthPoints = 2;
+    protected int damage = 1; //magic number, it has to be defined in a constructor
+
+    protected float speed = 3;
+    protected Vector2D ndir = new Vector2D(0f,0f);
+
+    //components
     protected int mCurrentAnimation;
     protected AnimationMachine mAnimation;
+    protected BoxCollider mCollision;
     
+    //ID
+    static int idx = 0;
     
     // ------------------------------------------------------------------------
     /*! Conversion Constructor
     *
-    *   Constructs a Player with a sprite, a position, and gives it a size
+    *   Constructs an Enemy with a sprite, a position, and gives it a size
     */ //----------------------------------------------------------------------
-    public Enemy(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size, Player player) {
+    public Enemy(Spritesheet originalsprite, Vector2D<Float> position, Vector2D<Float> size) {
+
         super(position);
         SetScale(size);
+        Spritesheet sprite=new Spritesheet(originalsprite, "Content/Animations/gknight.png");
 
         // TRANSPOSE SPRITE MATRIX
         sprite.setmSpriteArray(transposeMatrix(sprite.GetSpriteArray2D()));
 
         // ADD ANIMATION COMPONENT
         mAnimation = AddComponent(new AnimationMachine(this, sprite));
-        SetAnimation(UP, sprite.GetSpriteArray(UP), 2);
+        
+        // ADD COLLIDER COMPONENT
+        mCollision = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<Float>(100.f,200.f)));
 
+        SetAnimation(UP, sprite.GetSpriteArray(UP), 2);
+        SetName("Enemy " + idx);
+        idx++;
     }
 
     public void SetAnimation(int i, BufferedImage[] frames, int delay) {
@@ -56,8 +94,10 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
     }
 
     // ------------------------------------------------------------------------
-    /*! Utility Function for Transposing a Matrix
-    ------------------------------------------------------------------------*/
+    /*! transposeMatrix
+    *
+    *   Utility Function for Transposing a Matrix
+    */ //----------------------------------------------------------------------
     private BufferedImage[][] transposeMatrix(BufferedImage [][] m){
         BufferedImage[][] temp = new BufferedImage[m[0].length + 4][m.length];
         for (int i = 0; i < m.length; i++){
@@ -72,9 +112,12 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
         }
         return temp;
     }
+
     // ------------------------------------------------------------------------
-    /*! Utility Function for Normalizing a Vector
-    ------------------------------------------------------------------------*/
+    /*! Normalize
+    *
+    *   Utility Function for Normalizing a Vector
+    */ //----------------------------------------------------------------------
     public Vector2D<Float> Normalize(Vector2D<Float> vector) {
         float magnitude = (float) Math.sqrt(vector.x * vector.x + vector.y * vector.y);
         if (magnitude > 0) {
@@ -83,10 +126,14 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
             return new Vector2D<Float>(0f, 0f);
         }
     }
+
     // ------------------------------------------------------------------------
-    /*! Utility Function for Getting the Direction of a Vector
-    ------------------------------------------------------------------------*/
-    public void GetDirection(Vector2D<Float> vector) {
+    /*! GetDirection
+    *
+    *   Utility Function for Getting the Direction of a Vector
+    */ //----------------------------------------------------------------------
+    public void GetDirection(Vector2D<Float> vector) { // hay que cambiar esto por direction
+
         if (Math.abs(vector.x) > Math.abs(vector.y)) {
             if (vector.x > 0) {
                 setUp(false);
@@ -112,9 +159,14 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
                 setRight(false);
             }
         }
+        direction = new DirectionObject(up, left, right, down);
     }
 
-
+    // ------------------------------------------------------------------------
+    /*! Animate
+    *
+    *   Adds the needed animation to the Enemy
+    */ //----------------------------------------------------------------------
     public void Animate() {
         if(chase){
             if(up) {
@@ -141,7 +193,7 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
                 }
             } else if(down) {
                 if(mCurrentAnimation != DOWN || mAnimation.GetAnimation().GetDelay() == -1) {
-                    SetAnimation(DOWN, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN), 2);
+                   SetAnimation(DOWN, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN), 2);
                 }
             } else if(right) {
                 if(mCurrentAnimation != RIGHT || mAnimation.GetAnimation().GetDelay() == -1) {
@@ -160,34 +212,99 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
     *
     *   Adds Behavior to the Enemy
     */ //----------------------------------------------------------------------
-    public void Update(Vector2D<Float> playerPos) {
+    public void Update() {
         super.Update();
-        CalculateMovement(playerPos);
+        Vector2D<Float> ppos = ObjectManager.GetObjectManager().GetObjectByName("Player").GetPosition();
         GetDirection(ndir);
+        Pathfinding(ppos);
         Move();
         Animate();
         mAnimation.GetAnimation().SetDelay(20);
-        //System.out.println(playerPos.x + " " + playerPos.y);
+        //System.out.println(ppos.x + " " + ppos.y + " " + ndir+ " " );
+    }
+    // ------------------------------------------------------------------------
+    /*! Pathfinding
+    *
+    *   Checks if the Enemy can chase player
+    */ //----------------------------------------------------------------------
+    public void Pathfinding(Vector2D<Float> playerPos) {
+        int divisior = 64;
+        Vector2D pos = GetPosition();
+        Block srcBlock = TilemapObject.GetBlockAt((int)Math.round((float)pos.x/divisior), (int)Math.round((float)pos.y)/divisior);
+        Block destBlock = TilemapObject.GetBlockAt((int)Math.round(playerPos.x/divisior), (int)Math.round(playerPos.y/divisior));
+        Pair src = new Pair((int)Math.round((float)pos.x/divisior), (int)Math.round((float)pos.y)/divisior);
+        finalDestination = new Pair((int)Math.round(playerPos.x)/divisior, (int)Math.round(playerPos.y)/divisior);
+        path = Pathfinding.aStarSearch(src, finalDestination); 
+
     }
 
-    public void CalculateMovement(Vector2D<Float> playerPos) {
+    // ------------------------------------------------------------------------
+    /*! MovementVector
+    *
+    *   Calculates the movement of the Enemy
+    */ //----------------------------------------------------------------------
+    public void MovementVector(Vector2D<Float> playerPos) {
         Vector2D<Float> pos = GetPosition();
         Vector2D<Float> dir = new Vector2D<Float>((float)playerPos.x - pos.x, (float)playerPos.y - pos.y);
         ndir=Normalize(dir);
     }
+
+
     // ------------------------------------------------------------------------
     /*! Move
     *
-    *   Moves the sprite on a certain direction
+    *   Receives the movements in a stack and sets the movement of the Enemy with the A* search
     */ //----------------------------------------------------------------------
     public void Move() {
+        int suma =0;
         Vector2D<Float> pos = GetPosition();
+        Vector2D<Float> ppos = ObjectManager.GetObjectManager().GetObjectByName("Player").GetPosition();
+        if(chase){
+            speed = 3;
+        }
+        if(!path.isEmpty()){
+            path.pop();
+            if(!path.isEmpty()){
+                currentDestination = path.peek();
+            }
+            // Margin of error for the movement
+            float xlowerBound = currentDestination.getFirst()*64 - 3;
+            float xupperBound = currentDestination.getFirst()*64 + 3;
+            float ylowerBound = currentDestination.getSecond()*64 - 3;
+            float yupperBound = currentDestination.getSecond()*64 + 3;
 
-        pos.x += (float)ndir.x * speed;
-        pos.y += (float)ndir.y * speed;
+            //If currentDestination reached, pop next destination
+            if(((((xlowerBound <= pos.x+suma) && (pos.x+suma <= xupperBound)) && ((ylowerBound <= pos.y+suma) && (pos.y+suma <= yupperBound)))) && (currentDestination != finalDestination) && !path.isEmpty()){
+                path.pop();
+                if(!path.isEmpty()){
+                    currentDestination = path.peek();
+                }
+                ndir = Normalize(new Vector2D<Float>((float)currentDestination.getFirst()*64+suma - pos.x, (float)currentDestination.getSecond()*64+suma - pos.y));
+                pos.x += (float)ndir.x * speed;
+                pos.y += (float)ndir.y * speed;
+            }else{
+                ndir = Normalize(new Vector2D<Float>((float)currentDestination.getFirst()*64+suma - pos.x, (float)currentDestination.getSecond()*64+suma - pos.y));
+                pos.x += (float)ndir.x * speed;
+                pos.y += (float)ndir.y * speed;
+            }
+        //If finalDestination reached, chase player directly
+        }else if((int)currentDestination.getFirst() == (int)finalDestination.getFirst() && (int)currentDestination.getSecond() == (int)finalDestination.getSecond()){
+                MovementVector(ppos);
+                pos.x += (float)ndir.x * speed;
+                pos.y += (float)ndir.y * speed;
+        }
 
         SetPosition(pos);
-    }  
+    } 
+    
+    public void KnockBack(Vector2D<Float> playerPos) {
+        Vector2D<Float> pos = GetPosition();
+        Vector2D<Float> dir = pos.getVectorToAnotherActor(playerPos);
+        ndir=Normalize(dir);
+        pos.x -= (float)ndir.x * 100;
+        pos.y -= (float)ndir.y * 100;
+        SetPosition(pos);
+    }
     
     private void setRight(boolean b) {
         this.right = b;
@@ -203,5 +320,15 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
 
     private void setUp(boolean b) {
         this.up = b;
+    }
+    
+    public int getDamage() {
+        return damage;
     }  
+
+    public void setHealthPoints(int damage){
+        this.healthPoints -= damage;
+        //______________________
+        //______________________
+    }
 }

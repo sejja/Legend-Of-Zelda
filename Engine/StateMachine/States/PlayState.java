@@ -36,6 +36,8 @@ public class PlayState extends State {
     private Npc mNpc2;
     private ArrayList<Npc> mNpcArrayList = new ArrayList<Npc>();
     private Enemy mEnemy;
+    private Enemy mEnemy2;
+    private Enemy mEnemy3;
     private Vector2D<Float> mPos;
     private TileManager mTilemap;
     private ArrayList<String> dialogueArrayList = new ArrayList<String>();
@@ -66,9 +68,9 @@ public class PlayState extends State {
         mNpcArrayList.add(mNpc2);
         Spritesheet esprite = new Spritesheet("Content/Animations/gknight.png",16,28);
         ArrayList<Enemy> mEnemies = new ArrayList<Enemy>();
-        mEnemy = (Enemy)ObjectManager.GetObjectManager().AddEntity(new Enemy(esprite, new Vector2D<Float>(450.f, 300.f), new Vector2D<Float>(50.f, 100.f), mPlayer));
-
-        //Arrow arrow = (Arrow)ObjectManager.GetObjectManager().AddEntity(new Arrow(mPlayer));
+        mEnemy = (Enemy)ObjectManager.GetObjectManager().AddEntity(new Enemy(esprite, new Vector2D<Float>(450.f, 300.f), new Vector2D<Float>(50.f, 100.f)));
+        //mEnemy2 = (Enemy)ObjectManager.GetObjectManager().AddEntity(new Enemy(esprite, new Vector2D<Float>(500.f, 500.f), new Vector2D<Float>(50.f, 100.f)));
+        //mEnemy3 = (Enemy)ObjectManager.GetObjectManager().AddEntity(new Enemy(esprite, new Vector2D<Float>(900.f, 900.f), new Vector2D<Float>(50.f, 100.f)));
     }
 
     // ------------------------------------------------------------------------
@@ -80,7 +82,7 @@ public class PlayState extends State {
     public void Update() {
         if(gameState == playState){
             ObjectManager.GetObjectManager().Update();
-            mEnemy.Update(mPlayer.GetPosition());
+            mEnemy.Update();
             for(int i=0; i<mNpcArrayList.size();i++){
                 mNpcArrayList.get(i).Update(mPlayer.GetPosition());
             }

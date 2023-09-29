@@ -48,4 +48,16 @@ public class Vector2D<T> {
     public String toString() {
         return x + ", " + y;
     }
+
+    public Float getModuleDistance(Vector2D<Float> a){
+        Float xf = Math.abs((Float)this.x - a.x);
+        Float yf = Math.abs((Float)this.y - a.y);
+        return (Float)(float) Math.sqrt(Math.pow(xf,2) + Math.pow(yf, 2));
+    }
+
+    public Vector2D<Float> getVectorToAnotherActor(Vector2D<Float> enemyPosition){
+        Float xf = -((Float)this.x - enemyPosition.x);
+        Float yf = -((Float)this.y - enemyPosition.y);
+        return new Vector2D<>(xf, yf);
+    }
 }
