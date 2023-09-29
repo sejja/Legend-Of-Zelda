@@ -33,7 +33,7 @@ public class Npc extends Engine.ECSystem.Types.Actor {
     private static String dialogue;
     protected Graphics2D window;
     private SpriteComponent mAnimation;
-    static ArrayList<String> mdialogueArrayList;
+    private ArrayList<String> mdialogueArrayList;
     private static ArrayList<Npc> npcArrayList = new ArrayList<Npc>();
 
 
@@ -72,7 +72,7 @@ public class Npc extends Engine.ECSystem.Types.Actor {
         }
     }
 
-    public static ArrayList<String> getDialoguesArrayList() {
+    public ArrayList<String> getDialoguesArrayList() {
         return mdialogueArrayList;
     }
     public void setdialogue(String dialogue){
@@ -83,6 +83,9 @@ public class Npc extends Engine.ECSystem.Types.Actor {
     }
     public static void setRemove(boolean remove1) {
         remove = remove1;
+    }
+    public String getName() {
+        return name;
     }
     public static ArrayList<Npc> getNpcArrayList() {
         return npcArrayList;

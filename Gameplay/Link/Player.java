@@ -202,13 +202,45 @@ public class Player extends Actor {
                 }
                 }
         });
-        InputManager.SubscribePressed(KeyEvent.VK_E, new InputFunction() {
+       InputManager.SubscribePressed(KeyEvent.VK_E, new InputFunction() {
+            private boolean firstDialogue = false;
+            private boolean isFinished = false;
+
             @Override
             public void Execute() {
-                if(DialogueWindow.getJ() + 1 <  Npc.getNpcArrayList().get(0).getDialoguesArrayList().size()){
-                    DialogueWindow.setSiguiente(true);
+                if(DialogueWindow.getJ() + 1 >  Npc.getNpcArrayList().get(1).getDialoguesArrayList().size()-1 ) {
+                    isFinished = true;
+                    System.out.println(isFinished);
                 }
-                if(PlayState.getGameState() == PlayState.getPlayState()){
+                if (DialogueWindow.getJ() == 0 && firstDialogue == false){
+                    Npc.setInteract(true);
+                    try {Thread.sleep(100);
+                    } catch (InterruptedException e) {}
+                    Npc.setInteract(false);
+                    PlayState.setGameState(2);
+                    firstDialogue = true;
+                }  else if(isFinished){
+                    PlayState.setGameState(1);
+                    DialogueWindow.setSiguiente(false);
+                    Npc.setInteract(false);
+                    Npc.setRemove(true);
+                    DialogueWindow.setJ(0);
+                    isFinished = false;
+                    firstDialogue = false;
+                }
+                else if(DialogueWindow.getJ() + 1 <=  Npc.getNpcArrayList().get(1).getDialoguesArrayList().size() -1){
+                    Npc.setRemove(true);
+                    DialogueWindow.setJ(1);
+                    DialogueWindow.setSiguiente(true);
+                    Npc.setInteract(true);
+                    DialogueWindow.setSiguiente(false);
+                    try {Thread.sleep(100);} catch (InterruptedException e) {}
+                    Npc.setRemove(false);
+                    PlayState.setGameState(2);
+                    System.out.println(DialogueWindow.getJ());
+                }
+
+/*                if(PlayState.getGameState() == PlayState.getPlayState()){
                     if(DialogueWindow.getJ()  <= Npc.getNpcArrayList().get(0).getDialoguesArrayList().size() && DialogueWindow.getJ() != 0){
                         Npc.setRemove(true);
                         Npc.setInteract(true);
@@ -225,6 +257,7 @@ public class Player extends Actor {
                     PlayState.setGameState(1);
                     Npc.setRemove(true);
                 }
+*/
             }
         });
 

@@ -38,7 +38,7 @@ public class DialogueWindow extends Component implements Renderable{
         this.g = this;
         this.npc = npc;
     }
-
+    
     @Override
     public void Render(Graphics2D g, Vector2D<Float> camerapos) {
         // TODO Auto-generated method stub
@@ -56,14 +56,17 @@ public class DialogueWindow extends Component implements Renderable{
         x += 20;
         y += 20;
         yFinal = y;
-
+        if(siguiente) {
+            j++;
+        } else{   }
         for(String line: Npc.getNpcArrayList().get(0).getDialoguesArrayList().get(j).split("\n")){
             mFont.Render(g, line, new Vector2D<Float>((float)x, (float)y), 32, 32, 15, 0);
             y += 40;
         }
-        if(siguiente) {
-            j++;
-        }
+
+
+
+
 /*
         InputManager.SubscribeReleased(KeyEvent.VK_O, new InputFunction() {
             @Override
