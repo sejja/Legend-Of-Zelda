@@ -29,5 +29,10 @@ public class ObjectBlock extends Block {
         super.Render(g, camerapos);
         //g.setColor(Color.white);
         //g.drawRect((int)(float)mPosition.x - (int)(float)camerapos.x, (int)(float)mPosition.y - (int)(float)camerapos.y, mWidth, mHeight);
+    }
+
+    @Override
+    public boolean IsInside(AABB p) {
+        return false;
     }  
 }
