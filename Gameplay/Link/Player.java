@@ -39,10 +39,11 @@ public class Player extends Actor {
         Used to confirm the direction
      */
     //private boolean up = false;
-    public DIRECTION direction;
+    public DIRECTION direction = DIRECTION.RIGHT;
     private boolean attack = false;
     private boolean stop = true;
     private boolean bow = false;
+    public boolean dash = false;
     //----------------------------------------------------------------------
 
     /* Animation
@@ -64,6 +65,7 @@ public class Player extends Actor {
      */
     private static int nArrows = 10;
     private static int nbombs = 10;
+    private static int nDash = 3;
     //----------------------------------------------------------------------
 
     /* Player Stats
@@ -181,6 +183,7 @@ public class Player extends Actor {
                 stop = true;
                 attack = false;
                 bow = false;
+                dash = false;
             }
         });
         //BOW________________________________________________________________________________________________
@@ -191,6 +194,7 @@ public class Player extends Actor {
                 stop = true;
                 attack = false;
                 bow =true;
+                dash = false;
             }
         });
         InputManager.SubscribeReleased(KeyEvent.VK_K, new InputFunction() {
@@ -198,6 +202,19 @@ public class Player extends Actor {
             public void Execute() {
                 setVelocity(0);
                 stop = true;
+                attack = false;
+                bow =false;
+            }
+        });
+        //DASH_______________________________________________________________________________________________
+        InputManager.SubscribeReleased(KeyEvent.VK_SHIFT, new InputFunction() {
+            @Override
+            public void Execute() {
+                if (nDash > 0){
+                    dash = true;
+                    nDash--;
+                    able_to_takeDamage = false;
+                }
                 attack = false;
                 bow =false;
             }
@@ -270,20 +287,28 @@ public class Player extends Actor {
     public void Update() {  //Falta hacer que link termine un ataque completo antes de emoezar otro 
         super.Update();
 
-        if (!mAnimation.getMust_Complete())
+        if(dash)
         {
-            Move();
+            dash();
+            return;  //Early return dash is mostly the dominate action, so if link is dashing he can not do anything else
         }
-        else if (nArrows != 0 && mAnimation.finised_Animation && bow) //Spawn Arrow
+        else
         {
-            shootArrow();
-            bow = false;
-            mAnimation.finised_Animation = false;
-        }else if (mAnimation.finised_Animation && attack){
-            //System.out.println("te rajo primo");
-            Attack();
-            attack = false;
-            mAnimation.finised_Animation = false;
+            if (!mAnimation.getMust_Complete())
+            {
+                Move();
+            }
+            else if (nArrows != 0 && mAnimation.finised_Animation && bow) //Spawn Arrow
+            {
+                shootArrow();
+                bow = false;
+                mAnimation.finised_Animation = false;
+            }else if (mAnimation.finised_Animation && attack){
+                //System.out.println("te rajo primo");
+                Attack();
+                attack = false;
+                mAnimation.finised_Animation = false;
+            }
         }
 
         Animate();
@@ -301,12 +326,20 @@ public class Player extends Actor {
     */ //----------------------------------------------------------------------
     public void Move() {
         Vector2D<Float> pos = GetPosition();
-        //System.out.println(directionToString());
+        
         switch (direction){
-            case UP:pos.y -= velocity;return;
-            case DOWN:pos.y += velocity;return;
-            case LEFT:pos.x -= velocity;return;
-            case RIGHT:pos.x += velocity;return;
+            case UP:
+                pos.y -= velocity;
+                return;
+            case DOWN:
+                pos.y += velocity;
+                return;
+            case LEFT:
+                pos.x -= velocity;
+                return;
+            case RIGHT:
+                pos.x += velocity;
+                return;
         }
         SetPosition(pos);
     }
@@ -372,6 +405,8 @@ public class Player extends Actor {
     }
     //------------------------------------------------------------------------
 
+    /* Functions to take damage from the enemies
+    */
     public void activateAction(int action){
         if (action < 4){
             switch(action){
@@ -399,7 +434,6 @@ public class Player extends Actor {
         stop = false; 
         attack = false;
     }
-
     private void takeDamage(){ //Looking for enemies to take damage
         //System.out.println("Vida = " + healthPoints);
         ArrayList<Entity> allEntities = ObjectManager.GetObjectManager().getmAliveEntities();
@@ -414,6 +448,7 @@ public class Player extends Actor {
             }
         }
     }
+    //------------------------------------------------------------------------
 
     /* Getters
      * 
@@ -538,4 +573,33 @@ public class Player extends Actor {
             }
         }
     }
+    //------------------------------------------------------------------------
+    
+    /* Dash mecanics functions
+     * 
+     */
+    public void dash (){
+        Arrow dash_movement = new Arrow(this, new Spritesheet("Content/Animations/Link/LinkDashSpriteSheet.png", 90 , 50), 30, 300, true);
+        dash_movement.SetScale(new Vector2D<>(0f, 0f));
+        Arrow dash_animation = new Arrow(this, new Spritesheet("Content/Animations/Link/LinkDashSpriteSheet.png", 90 , 50), 0.3f , 1, false);
+
+        ObjectManager.GetObjectManager().AddEntity(dash_animation);
+        ObjectManager.GetObjectManager().AddEntity(dash_movement);
+
+        /*
+        Spritesheet spritesheet = new Spritesheet("Content/Animations/Link/Link.png");
+        spritesheet.setmSpriteArray( transposeMatrix(spritesheet.GetSpriteArray2D()) );
+
+        Arrow dash_movement = new Arrow(this, new Spritesheet("Content/Animations/Link/LinkDashSpriteSheet.png", 90 , 50), 50 , 300, true);
+        dash_movement.SetScale(new Vector2D<>(0f, 0f));
+        Arrow dash_animation = new Arrow(this, spritesheet, 45 , 300, false);
+
+        ObjectManager.GetObjectManager().AddEntity(dash_movement);
+        ObjectManager.GetObjectManager().AddEntity(dash_animation);
+        */
+
+        dash = false;
+        able_to_takeDamage = true;
+    }
+     //------------------------------------------------------------------------
 }
