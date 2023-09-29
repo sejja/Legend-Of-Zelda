@@ -226,6 +226,7 @@ public class Player extends Actor {
             SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), delay);   
             mAnimation.setMust_Complete(false);
             SetPosition(new Vector2D<>(mPreviousPositionX, mPreviousPositionY));
+            mCollider.GetBounds().SetBox(GetPosition(), GetScale());
             falling = false;
         }
 
