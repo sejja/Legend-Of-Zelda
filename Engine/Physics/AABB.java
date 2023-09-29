@@ -8,6 +8,8 @@
 
 package Engine.Physics;
 
+import Engine.Graphics.Tile.Block;
+import Engine.Graphics.Tile.HoleBlock;
 import Engine.Graphics.Tile.TilemapObject;
 import Engine.Math.Vector2D;
 
@@ -123,7 +125,29 @@ public class AABB {
             int yt = (int)((mPosition.y + ay) + (int)(c / 2) * mSize.y) / 64;
 
             if(TilemapObject.GetBlockAt(xt, yt) != null) {
-                return TilemapObject.GetBlockAt(xt, yt).Update(this);
+                Block block = TilemapObject.GetBlockAt(xt, yt);
+                if(block instanceof HoleBlock) {
+                    return collisionHole(ax, ay, xt, yt, block);
+                }
+                return block.Update(this);
+            }
+        }
+
+        return false;
+    }
+
+    private boolean collisionHole(float ax, float ay, float xt, float yt, Block block) {
+        int nextXT = (int)((mPosition.x + ax) / 64 + mSize.x / 64);
+        int nextYT = (int)((mPosition.y + ay) / 64 + mSize.y / 64);
+
+        if((nextYT == yt + 1) || (nextYT == xt + 1)) {
+            if(TilemapObject.GetBlockAt(nextXT, nextYT) != null) {
+                Block neighbour = TilemapObject.GetBlockAt(nextXT, nextYT);
+                return neighbour.Update(this);
+            }
+        } else {
+            if(block.IsInside(this)) {
+                return block.Update(this);
             }
         }
 
