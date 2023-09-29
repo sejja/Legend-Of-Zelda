@@ -151,6 +151,10 @@ public final class AnimationMachine extends Component implements Renderable {
             g.drawImage(mAnimation.GetCurrentFrame(), (int)(float)GetParent().GetPosition().x - (int)(float)camcoord.x - (int)(scale.x / 4), (int)(float)GetParent().GetPosition().y - (int)(float)camcoord.y, (int)(float)GetParent().GetScale().x, (int)(float)GetParent().GetScale().y, null);
     }
     
+    public void setMust_Complete(boolean b){
+        must_complete = b;
+    }
+
     public void setMust_Complete(){
         must_complete = true;
     }

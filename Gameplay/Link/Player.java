@@ -18,6 +18,7 @@ import Engine.Graphics.Components.ZeldaCameraComponent;
 import Engine.Input.InputFunction;
 import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
+import Engine.Physics.CollisionResult;
 import Engine.Physics.Components.BoxCollider;
 import Gameplay.Enemies.Enemy;
 
@@ -43,6 +44,7 @@ public class Player extends Actor {
     private boolean attack = false;
     private boolean stop = true;
     private boolean bow = false;
+    private boolean falling = false;
     //----------------------------------------------------------------------
 
     /* Animation
@@ -75,6 +77,8 @@ public class Player extends Actor {
     final private  int damage = 2;
     private int velocity = 0;
     final int default_velocity = 10;
+    private float mPreviousPositionX;
+    private float mPreviousPositionY;
     //----------------------------------------------------------------------
 
     //Methods______________________________________________________________________________________________________________________________________________________________________________
@@ -214,10 +218,19 @@ public class Player extends Actor {
         return mAnimation.GetAnimation();
     }
 
+    int i = 0;
+
     public void Animate() {
+
+        if(falling && mAnimation.GetAnimation().GetFrame() == 7) {
+            SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), delay);   
+            mAnimation.setMust_Complete(false);
+            SetPosition(new Vector2D<>(mPreviousPositionX, mPreviousPositionY));
+            falling = false;
+        }
+
         //System.out.println(actionToString());
         if (mAnimation.getMust_Complete()){return;} //Early return, if it is a animation thats has to be complete, do not animaate
-
 
         if (stop)
         {
@@ -284,6 +297,11 @@ public class Player extends Actor {
             Attack();
             attack = false;
             mAnimation.finised_Animation = false;
+        } else if (mAnimation.finised_Animation && falling){
+            //System.out.println("te rajo primo");
+            
+            SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), delay);
+            mAnimation.finised_Animation = false;
         }
 
         Animate();
@@ -295,19 +313,43 @@ public class Player extends Actor {
     }
     // ------------------------------------------------------------------------
 
+    public boolean SolveCollisions(Vector2D<Integer> dif) {
+        CollisionResult res = mCollider.GetBounds().collisionTile(dif.x, dif.y);
+        
+        falling = res == CollisionResult.Hole;
+
+        return res == CollisionResult.None;
+    }
+
     /*! Move
     *
     *   Moves the sprite on a certain direction
     */ //----------------------------------------------------------------------
     public void Move() {
         Vector2D<Float> pos = GetPosition();
+        mPreviousPositionX = pos.x;
+        mPreviousPositionY = pos.y;
+
         //System.out.println(directionToString());
         switch (direction){
-            case UP:pos.y -= velocity;return;
-            case DOWN:pos.y += velocity;return;
-            case LEFT:pos.x -= velocity;return;
-            case RIGHT:pos.x += velocity;return;
+            case UP:
+                if(SolveCollisions(new Vector2D<>(0, -velocity)))
+                    pos.y -= velocity;
+                break;
+            case DOWN:
+                if(SolveCollisions(new Vector2D<>(0, +velocity)))
+                    pos.y += velocity;
+                break;
+            case LEFT:
+                if(SolveCollisions(new Vector2D<>(-velocity, 0)))
+                    pos.x -= velocity;
+                break;
+            case RIGHT:
+                if(SolveCollisions(new Vector2D<>(velocity, 0)))
+                    pos.x += velocity;
+                break;
         }
+
         SetPosition(pos);
     }
     // ------------------------------------------------------------------------
@@ -450,6 +492,13 @@ public class Player extends Actor {
         }
 
         int i = type.getID();
+
+        if(falling && mCurrentAnimation != FALL+i|| mAnimation.GetAnimation().GetDelay() == -1) {
+            SetAnimation(FALL+i, mAnimation.GetSpriteSheet().GetSpriteArray(FALL+i), delay);
+            mAnimation.setMust_Complete();
+            return;
+        }
+
         switch(direction){
             case UP:
                 if(mCurrentAnimation != UP+i || mAnimation.GetAnimation().GetDelay() == -1) {

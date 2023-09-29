@@ -119,7 +119,7 @@ public class AABB {
             < Math.pow(Math.max(mSize.x, mSize.y) / Math.sqrt(2), 2);
     }
 
-    public boolean collisionTile(float ax, float ay) {
+    public CollisionResult collisionTile(float ax, float ay) {
         for(int c = 0; c < 4; c++) {
             int xt = (int)((mPosition.x + ax) + (c % 2) * mSize.x / 2) / 64;
             int yt = (int)((mPosition.y + ay) + (int)(c / 2) * mSize.y) / 64;
@@ -127,13 +127,13 @@ public class AABB {
             if(TilemapObject.GetBlockAt(xt, yt) != null) {
                 Block block = TilemapObject.GetBlockAt(xt, yt);
                 if(block instanceof HoleBlock) {
-                    return collisionHole(ax, ay, xt, yt, block);
+                    return collisionHole(ax, ay, xt, yt, block) ? CollisionResult.Hole : CollisionResult.None;
                 }
-                return block.Update(this);
+                return block.Update(this) ? CollisionResult.Wall : CollisionResult.None;
             }
         }
 
-        return false;
+        return CollisionResult.None;
     }
 
     private boolean collisionHole(float ax, float ay, float xt, float yt, Block block) {
