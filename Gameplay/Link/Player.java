@@ -221,36 +221,39 @@ public class Player extends Actor {
 
             @Override
             public void Execute() {
-                if(DialogueWindow.getJ() + 1 >  Npc.getNpcArrayList().get(1).getDialoguesArrayList().size()-1 ) {
-                    isFinished = true;
-                    System.out.println(isFinished);
-                }
-                if (DialogueWindow.getJ() == 0 && firstDialogue == false){
-                    Npc.setInteract(true);
-                    try {Thread.sleep(100);
-                    } catch (InterruptedException e) {}
-                    Npc.setInteract(false);
-                    PlayState.setGameState(2);
-                    firstDialogue = true;
-                }  else if(isFinished){
-                    PlayState.setGameState(1);
-                    DialogueWindow.setSiguiente(false);
-                    Npc.setInteract(false);
-                    Npc.setRemove(true);
-                    DialogueWindow.setJ(0);
-                    isFinished = false;
-                    firstDialogue = false;
-                }
-                else if(DialogueWindow.getJ() + 1 <=  Npc.getNpcArrayList().get(1).getDialoguesArrayList().size() -1){
-                    Npc.setRemove(true);
-                    DialogueWindow.setJ(1);
-                    DialogueWindow.setSiguiente(true);
-                    Npc.setInteract(true);
-                    DialogueWindow.setSiguiente(false);
-                    try {Thread.sleep(100);} catch (InterruptedException e) {}
-                    Npc.setRemove(false);
-                    PlayState.setGameState(2);
-                    System.out.println(DialogueWindow.getJ());
+                if(isTouchingNpc){
+                    if(DialogueWindow.getJ() + 1 >  Npc.getNpcArrayList().get(1).getDialoguesArrayList().size()-1 ) {
+                        isFinished = true;
+                        System.out.println(isFinished);
+                    }
+                    if (DialogueWindow.getJ() == 0 && firstDialogue == false){
+                        Npc.setInteract(true);
+                        try {Thread.sleep(100);
+                        } catch (InterruptedException e) {}
+                        Npc.setInteract(false);
+                        PlayState.setGameState(2);
+                        firstDialogue = true;
+                    }  else if(isFinished){
+                        PlayState.setGameState(1);
+                        DialogueWindow.setSiguiente(false);
+                        Npc.setInteract(false);
+                        Npc.setRemove(true);
+                        DialogueWindow.setJ(0);
+                        isFinished = false;
+                        firstDialogue = false;
+                        isTouchingNpc = false;
+                    }
+                    else if(DialogueWindow.getJ() + 1 <=  Npc.getNpcArrayList().get(1).getDialoguesArrayList().size() -1){
+                        Npc.setRemove(true);
+                        DialogueWindow.setJ(1);
+                        DialogueWindow.setSiguiente(true);
+                        Npc.setInteract(true);
+                        DialogueWindow.setSiguiente(false);
+                        try {Thread.sleep(100);} catch (InterruptedException e) {}
+                        Npc.setRemove(false);
+                        PlayState.setGameState(2);
+                        System.out.println(DialogueWindow.getJ());
+                    }
                 }
 
 /*                if(PlayState.getGameState() == PlayState.getPlayState()){
@@ -486,6 +489,9 @@ public class Player extends Actor {
         attack = false;
     }
 
+    private boolean isTouchingNpc = false;
+    private static Vector2D<Float> npcIndex;
+
     private void takeDamage(){ //Looking for enemies to take damage
         //System.out.println("Vida = " + healthPoints);
         ArrayList<Entity> allEntities = ObjectManager.GetObjectManager().getmAliveEntities();
@@ -496,6 +502,15 @@ public class Player extends Actor {
                 if (enemyPosition.getModuleDistance(this.GetPosition()) < this.GetScale().y/2){
                     this.setDamage(enemy.getDamage());
                     enemy.KnockBack(this.GetPosition());
+                }
+            } else if(allEntities.get(i) instanceof Npc){
+                Npc npc = (Npc) allEntities.get(i);
+                Vector2D<Float> npcPosition = npc.GetPosition();
+                if (npcPosition.getModuleDistance(this.GetPosition()) < this.GetScale().y/2){
+                    isTouchingNpc = true;
+                    npcIndex = npc.GetPosition();
+                } else{
+                    //isTouchingNpc = false; El segundo Npc no funciona
                 }
             }
         }
@@ -510,6 +525,7 @@ public class Player extends Actor {
     public boolean isHaveBomb() {return HaveBomb;}
     public int getVelocity() {return velocity;}
     public DIRECTION getDirection(){return this.direction;}
+    public static Vector2D<Float> getNpcIndex(){return npcIndex;}
     //------------------------------------------------------------------------
 
     /* Setters

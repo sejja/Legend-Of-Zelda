@@ -19,6 +19,7 @@ import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
 import Engine.Window.PresentBuffer;
 import Engine.Window.Window;
+import Gameplay.Link.Player;
 
 public class DialogueWindow extends Component implements Renderable{
 
@@ -26,12 +27,13 @@ public class DialogueWindow extends Component implements Renderable{
     private static DialogueWindow g;
     private int y = 0;
     private int x = 0;
-    private static int i = 0;
+    private static int k = 0;
     private static int j = 0;
     private int yFinal;
     private int code;
     private Npc npc;
     private static boolean siguiente = false;
+    public static boolean isTouchingNpc = false;
 
     protected DialogueWindow(Actor parent, Npc npc) {
         super(parent);
@@ -60,13 +62,16 @@ public class DialogueWindow extends Component implements Renderable{
         if(siguiente) {
             j++;
         } else{   }
-        for(String line: Npc.getNpcArrayList().get(0).getDialoguesArrayList().get(j).split("\n")){
+        Vector2D<Float> currentNpc = Player.getNpcIndex();
+        for(int i=0; i < Npc.getNpcArrayList().size(); i++) {
+            if (Npc.getNpcArrayList().get(i).GetPosition() == currentNpc){
+                k = i;
+            }
+        }
+        for(String line: Npc.getNpcArrayList().get(k).getDialoguesArrayList().get(j).split("\n")){
             mFont.Render(g, line, new Vector2D<Float>((float)x, (float)y), 32, 32, 15, 0);
             y += 40;
         }
-
-
-
 
 /*
         InputManager.SubscribeReleased(KeyEvent.VK_O, new InputFunction() {
@@ -116,11 +121,11 @@ public class DialogueWindow extends Component implements Renderable{
         return g;
     }
 
-    public static void setI(int index){
-        i = index;
+    public static void setK(int index){
+        k = index;
     }
-    public int getI(){
-        return i;
+    public int getK(){
+        return k;
     }
     public static int getJ(){
         return j;

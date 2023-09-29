@@ -7,6 +7,7 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.JLabel;
@@ -26,6 +27,7 @@ import Engine.Graphics.Tile.Tilemap;
 import Engine.Input.InputFunction;
 import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
+import Engine.Physics.Components.BoxCollider;
 
 
 public class Npc extends Engine.ECSystem.Types.Actor {
@@ -35,6 +37,7 @@ public class Npc extends Engine.ECSystem.Types.Actor {
     private SpriteComponent mAnimation;
     private ArrayList<String> mdialogueArrayList;
     private static ArrayList<Npc> npcArrayList = new ArrayList<Npc>();
+    protected BoxCollider mCollider;
 
 
         /*! Conversion Constructor
@@ -50,6 +53,7 @@ public class Npc extends Engine.ECSystem.Types.Actor {
         SetScale(size);
         this.mdialogueArrayList = dialogueArrayList;
         npcArrayList.add(this);
+        mCollider = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<>(75f,0.f)));
     }
 
         /*! Transpose

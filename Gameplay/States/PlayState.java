@@ -56,16 +56,16 @@ public class PlayState extends State {
     */ //----------------------------------------------------------------------
     public PlayState() {
         dialogueArrayList.add("En un mundo muy lejano] vivia una princesa que buscaba a su \nprincipe] y para logralo] llamo a todos los principes del reino \nademas deberas vuscar todos los artefactos de las piedras para \necuperar el poder de hyrule");
-        dialogueArrayList.add("Eee");
-        dialogueArrayList2.add("Hola muy buenas");
-        dialogueArrayList2.add("Buenas tardes");
+        dialogueArrayList.add("Ahora embarcate en una nueva aventura junto a tu espada y tu \narco");
+        dialogueArrayList2.add("Muy buenas caballero] mi nombre es Juan] y estoy aqui protegiendo \nla puerta de acceso al palacio");
+        dialogueArrayList2.add("A si que abandona este lugar por favor");
         mTilemap = new TileManager("Content/TiledProject/TestRoom.tmx");
         mFont =(FontObject)ObjectManager.GetObjectManager().AddEntity(new FontObject("Content/Fonts/ZeldaFont.png", "THE LEGEND OF ANDONI", 56));
         mFont.SetPosition(new Vector2D<>(100.f, 100.f));
         mFont.SetScale(new Vector2D<>(32.f, 32.f));
         mNpc1 = (Npc)ObjectManager.GetObjectManager().AddEntity(new Npc("Aelarion", new Sprite("Content/Animations/NPC1.png"), new Vector2D<Float>(1415.f, 725.f), dialogueArrayList, new Vector2D<Float>(50.f, 62.f)) );
         mNpc2 = (Npc)ObjectManager.GetObjectManager().AddEntity(new Npc("Juan", new Sprite("Content/Animations/NPC1.png"), new Vector2D<Float>(1200f, 725.f), dialogueArrayList2, new Vector2D<Float>(50.f, 62.f)) );
-        mPlayer = (Player)ObjectManager.GetObjectManager().AddEntity(new Player(new Spritesheet("Content/Animations/Link.png"), new Vector2D<Float>(700.f, 400.f), new Vector2D<Float>(100.f, 100.f)));
+        mPlayer = (Player)ObjectManager.GetObjectManager().AddEntity(new Player(new Spritesheet("Content/Animations/Link/Link.png"), new Vector2D<Float>(700.f, 400.f), new Vector2D<Float>(100.f, 100.f)));
         mPos = new Vector2D<Float>(300.f, 600.f);
         mNpcArrayList.add(mNpc1);
         mNpcArrayList.add(mNpc2);
@@ -88,11 +88,12 @@ public class PlayState extends State {
     */ //----------------------------------------------------------------------
     @Override
     public void Update() {
-/*         if(gameState == playState){
+        if(gameState == playState){
             ObjectManager.GetObjectManager().Update();
-            mEnemy.Update();
-            for(int i=0; i<mNpcArrayList.size();i++){
-                mNpcArrayList.get(i).Update(mPlayer.GetPosition());
+           mEnemy.Update();
+           for(int i=0; i<mNpcArrayList.size();i++){
+               mNpcArrayList.get(i).Update(mPlayer.GetPosition());
+//            ObjectManager.GetObjectManager().Update();
             }
         } 
         if(gameState == pauseState){
@@ -117,10 +118,10 @@ public class PlayState extends State {
 //    @Override
 //    public void Render(Graphics2D g) {
 //        GraphicsPipeline.GetGraphicsPipeline().Render(g);
-        if(!mPause) {
-            ObjectManager.GetObjectManager().Update();
-        }
-    }
+//        if(!mPause) {
+//            ObjectManager.GetObjectManager().Update();
+//        }
+//   }
     public static void setGameState(int state){
         gameState = state;
     }
