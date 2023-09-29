@@ -44,7 +44,7 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
 
 
     //stats
-    protected int healthPoints = 2;
+    protected int healthPoints = 4;
     protected int damage = 1; //magic number, it has to be defined in a constructor
 
     protected float speed = 3;
@@ -301,8 +301,8 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
         Vector2D<Float> pos = GetPosition();
         Vector2D<Float> dir = pos.getVectorToAnotherActor(playerPos);
         ndir=Normalize(dir);
-        pos.x -= (float)ndir.x * 100;
-        pos.y -= (float)ndir.y * 100;
+        pos.x -= (float)ndir.x * 60;
+        pos.y -= (float)ndir.y * 60;
         SetPosition(pos);
     }
     
@@ -328,6 +328,10 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
 
     public void setHealthPoints(int damage){
         this.healthPoints -= damage;
+        if (healthPoints <= 0){
+            this.SetScale(new Vector2D<Float>(0f,0f));
+            ObjectManager.GetObjectManager().RemoveEntity(this);
+        }
         //______________________
         //______________________
     }
