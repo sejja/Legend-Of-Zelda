@@ -8,13 +8,13 @@
 
 package Engine;
 
-public class Game {
+class Game {
     // ------------------------------------------------------------------------
     /*! Constructor
     *
     *   Creates a new Window
     */ //----------------------------------------------------------------------
-    Game() {
+    public Game() {
         new Engine.Window.Window();
     }
 }
