@@ -89,7 +89,7 @@ public class Player extends Actor {
         super(position);
         SetScale(size);
         this.direction = DIRECTION.RIGHT;
-        //Lets transpose the Sprite Matrix
+        //Lets transpose the Sprite Matrix and add all extra Animations
         sprite.setmSpriteArray(completeAnimationSet(sprite.GetSpriteArray2D()));
         //---------------------------------------------------------------------
         mAnimation = AddComponent(new AnimationMachine(this, sprite));
@@ -220,17 +220,21 @@ public class Player extends Actor {
             }
         });
     }
+    // ------------------------------------------------------------------------
 
+    /* This function set the delay and the frames of a animation to the animation machine
+     * 
+     */
     public void SetAnimation(int i, BufferedImage[] frames, int delay) {
         mCurrentAnimation = i;
         mAnimation.SetFrames(frames);
         mAnimation.GetAnimation().SetDelay(delay);
     }
+    // ------------------------------------------------------------------------
 
-    public Animation GetAnimation() {
-        return mAnimation.GetAnimation();
-    }
-
+    /*  This function is a state machine thats determinate which animation to animate
+     * 
+     */
     public void Animate() {
         //System.out.println(actionToString());
         if (mAnimation.getMust_Complete()){return;} //Early return, if it is a animation thats has to be complete, do not animaate
@@ -267,7 +271,6 @@ public class Player extends Actor {
                 {
                     setMovement(Action.STOP);
                     setMovement(Action.BOW);
-                    //System.out.println(mAnimatioT0String());
                 }
                 else
                 {
@@ -275,7 +278,6 @@ public class Player extends Actor {
                 }
             }
         }
-        //System.out.println(mAnimatioT0String());
     }
     // ------------------------------------------------------------------------
 
@@ -284,7 +286,7 @@ public class Player extends Actor {
     *   Adds Behavior to the Player
     */ //----------------------------------------------------------------------
     @Override
-    public void Update() {  //Falta hacer que link termine un ataque completo antes de emoezar otro 
+    public void Update() { 
         super.Update();
 
         if(dash)
@@ -304,7 +306,6 @@ public class Player extends Actor {
                 bow = false;
                 mAnimation.finised_Animation = false;
             }else if (mAnimation.finised_Animation && attack){
-                //System.out.println("te rajo primo");
                 Attack();
                 attack = false;
                 mAnimation.finised_Animation = false;
@@ -329,16 +330,24 @@ public class Player extends Actor {
         
         switch (direction){
             case UP:
-                pos.y -= velocity;
+                if(!mCollider.GetBounds().collisionTile(0, -velocity)){
+                    pos.y -= velocity;
+                }
                 return;
             case DOWN:
-                pos.y += velocity;
+                if(!mCollider.GetBounds().collisionTile(0, velocity)){
+                    pos.y += velocity;
+                }
                 return;
             case LEFT:
-                pos.x -= velocity;
+                if(!mCollider.GetBounds().collisionTile(-velocity, 0)){
+                    pos.x -= velocity;
+                }
                 return;
             case RIGHT:
-                pos.x += velocity;
+                if(!mCollider.GetBounds().collisionTile(velocity, 0)){
+                    pos.x += velocity;
+                }
                 return;
         }
         SetPosition(pos);
@@ -374,10 +383,8 @@ public class Player extends Actor {
     private void setBowAnimaitonSet(BufferedImage[][] temp, int size){
         Spritesheet Bow = new Spritesheet("Content/Animations/Link/LinkArco.png", 30, 30);
         BufferedImage[][] animation = transposeMatrix(Bow.GetSpriteArray2D());
-        //System.out.println(animation.length + "|" + animation[0].length);
         for (int i = 0; i < 4; i++){
             for (int j = 0; j < 8; j++ ){
-                //System.out.println("i = " + i + " | j =" + j );
                 if (j >= 3)
                 {
                     temp[size+4+i][j] = animation[i][2];
@@ -459,6 +466,7 @@ public class Player extends Actor {
     public boolean isHaveBomb() {return HaveBomb;}
     public int getVelocity() {return velocity;}
     public DIRECTION getDirection(){return this.direction;}
+    public Animation GetAnimation() {return mAnimation.GetAnimation();}
     //------------------------------------------------------------------------
 
     /* Setters
@@ -508,7 +516,6 @@ public class Player extends Actor {
                 return;
         }
     }
-    
     //------------------------------------------------------------------------
 
     /* Spawn a Arrow object
@@ -521,6 +528,7 @@ public class Player extends Actor {
         }
         ObjectManager.GetObjectManager().AddEntity(new Arrow(this));
     }
+    //------------------------------------------------------------------------
 
     /*  This function is only called if Link has no healthpoints
     *   
@@ -535,7 +543,7 @@ public class Player extends Actor {
     /*  These functions are called when the acttack animation has finished
      * 
      */
-    public int Attack(){ //Range of attack has to be determined -> Magic numbers
+    public int Attack(){
         /*  This function takes all de Entitys and if any of them is a instance of Enemys it has to ve consider hast potencial objetives to hit
          *      It will calculate a vector to the player position to the enemy position
          *          If the DIRECTION of the vector Player-Enemy and The DIRECTION of the player is the same
@@ -579,24 +587,16 @@ public class Player extends Actor {
      * 
      */
     public void dash (){
+        /*  This function used to arrows to simulate a classic dash
+         *      The first arrow and player have the same instance of the vectorposition it moves modifiying the position of the arrow and the vecto at the same time
+         *      The second arrow it a arrow that contais a 1 frame animation and its has a low range to emulate a dash effect
+         */
         Arrow dash_movement = new Arrow(this, new Spritesheet("Content/Animations/Link/LinkDashSpriteSheet.png", 90 , 50), 30, 300, true);
         dash_movement.SetScale(new Vector2D<>(0f, 0f));
         Arrow dash_animation = new Arrow(this, new Spritesheet("Content/Animations/Link/LinkDashSpriteSheet.png", 90 , 50), 0.3f , 1, false);
 
         ObjectManager.GetObjectManager().AddEntity(dash_animation);
         ObjectManager.GetObjectManager().AddEntity(dash_movement);
-
-        /*
-        Spritesheet spritesheet = new Spritesheet("Content/Animations/Link/Link.png");
-        spritesheet.setmSpriteArray( transposeMatrix(spritesheet.GetSpriteArray2D()) );
-
-        Arrow dash_movement = new Arrow(this, new Spritesheet("Content/Animations/Link/LinkDashSpriteSheet.png", 90 , 50), 50 , 300, true);
-        dash_movement.SetScale(new Vector2D<>(0f, 0f));
-        Arrow dash_animation = new Arrow(this, spritesheet, 45 , 300, false);
-
-        ObjectManager.GetObjectManager().AddEntity(dash_movement);
-        ObjectManager.GetObjectManager().AddEntity(dash_animation);
-        */
 
         dash = false;
         able_to_takeDamage = true;

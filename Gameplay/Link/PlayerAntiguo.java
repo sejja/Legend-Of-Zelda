@@ -1,4 +1,4 @@
-package Gameplay;
+package Gameplay.Link;
 
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
@@ -18,7 +18,7 @@ import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
 import Engine.Physics.Components.BoxCollider;
 
-public class Player extends Actor {
+public class PlayerAntiguo extends Actor {
     
     /*  Animation types
         The difference between the direction and attack is 5
@@ -83,7 +83,7 @@ public class Player extends Actor {
     *
     *   Constructs a Player with a sprite, a position, and gives it a size
     */ //----------------------------------------------------------------------
-    public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size) {
+    public PlayerAntiguo(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size) {
         super(position);
         SetScale(size);
 
