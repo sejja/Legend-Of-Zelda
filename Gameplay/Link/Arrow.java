@@ -14,11 +14,12 @@ public class Arrow extends Actor{
     
     final private int damage = 2;
     private AnimationMachine animationMachine;
-    final private int speed = 18;
-    final private float range = 350;
+    private float speed = 18;
+    private float range = 350;
     private Float distance = 0f;
     private DIRECTION direction;
     private BoxCollider boxCollider;
+    //private Player link;
 
     public Arrow(Player Link){
         super(Link.GetPosition());
@@ -28,11 +29,38 @@ public class Arrow extends Actor{
         direction = Link.getDirection();
 
         SetPosition(new Vector2D<Float>(Link.GetPosition().x + 28, Link.GetPosition().y + 45)); //Magic numbers because of the hitbox waiting to be fixed
+        //SetPosition(Link.GetPosition());
         SetScale( new Vector2D<Float>(44f,40f));
         animationMachine.GetAnimation().SetDelay(1);
         boxCollider = (BoxCollider)AddComponent(new BoxCollider(this));
         Animate();
     }
+
+    public Arrow (Player Link, Spritesheet spritesheet, float speed, float range, boolean fixed){ //This is actually a dash XD
+        super(Link.GetPosition());
+        //link = Link;
+
+        this.speed = speed;
+        this.range = range;
+
+        this.animationMachine = AddComponent(new AnimationMachine(this ,spritesheet)); 
+
+        allAnimation = animationMachine.GetSpriteSheet().GetSpriteArray2D();
+         direction = Link.getDirection();
+        if (fixed)
+        {
+            SetPosition(Link.GetPosition());
+        }
+        else
+        {
+        SetPosition(new Vector2D<Float>(Link.GetPosition().x, Link.GetPosition().y));
+        }
+        SetScale(new Vector2D<Float>(100f,100f));
+        animationMachine.GetAnimation().SetDelay(1);
+        //boxCollider = (BoxCollider)AddComponent(new BoxCollider(this));
+        Animate();
+    }
+
     public void Move(){
         
         Vector2D<Float> pos = GetPosition();
@@ -67,7 +95,9 @@ public class Arrow extends Actor{
         if (!(distance >= range)){
             Animate();
         }else{ //Delete arrow
+            System.out.println("Eliminado flecha");
             animationMachine.SetFrames(allAnimation[4]);
+            this.SetScale(new Vector2D<>(0f,0f));
             ObjectManager.GetObjectManager().RemoveEntity(this);
         }
     }
@@ -81,4 +111,5 @@ public class Arrow extends Actor{
         }
     }
     public int damage(){return damage;}
+    public float getVelocity(){return speed;}
 }
