@@ -19,7 +19,7 @@ public class Arrow extends Actor{
     private Float distance = 0f;
     private DIRECTION direction;
     private BoxCollider boxCollider;
-    //private Player link;
+    private boolean endArrow;
 
     public Arrow(Player Link){
         super(Link.GetPosition());
@@ -57,7 +57,7 @@ public class Arrow extends Actor{
         }
         SetScale(new Vector2D<Float>(100f,100f));
         animationMachine.GetAnimation().SetDelay(1);
-        //boxCollider = (BoxCollider)AddComponent(new BoxCollider(this));
+        boxCollider = (BoxCollider)AddComponent(new BoxCollider(this));
         Animate();
     }
 
@@ -68,22 +68,30 @@ public class Arrow extends Actor{
         switch (direction){
             case UP:
                 currentPosition = pos.y;
-                pos.y -= speed;
+                if(!boxCollider.GetBounds().collisionTile(0, -speed)){
+                    pos.y -= speed;
+                }else{endArrow = true;}
                 distance += Math.abs(currentPosition - pos.y);
                 return;
             case DOWN:
                 currentPosition = pos.y;
-                pos.y += speed;
+                if(!boxCollider.GetBounds().collisionTile(0, +speed)){
+                    pos.y += speed;
+                }else{endArrow = true;}
                 distance += Math.abs(currentPosition - pos.y);
                 return;
             case LEFT:
                 currentPosition = pos.x;
-                pos.x -= speed;
+                if(!boxCollider.GetBounds().collisionTile(-speed, 0)){
+                    pos.x -= speed;
+                }else{endArrow = true;}
                 distance += Math.abs(currentPosition - pos.x);
                 return;
             case RIGHT:
                 currentPosition = pos.x;
-                pos.x += speed;
+                if(!boxCollider.GetBounds().collisionTile(+speed, 0)){
+                    pos.x += speed;
+                }else{endArrow = true;}
                 distance += Math.abs(currentPosition - pos.x);
                 return;
         }
@@ -95,6 +103,12 @@ public class Arrow extends Actor{
         if (!(distance >= range)){
             Animate();
         }else{ //Delete arrow
+            System.out.println("Eliminado flecha");
+            animationMachine.SetFrames(allAnimation[4]);
+            this.SetScale(new Vector2D<>(0f,0f));
+            ObjectManager.GetObjectManager().RemoveEntity(this);
+        }
+        if( endArrow ){
             System.out.println("Eliminado flecha");
             animationMachine.SetFrames(allAnimation[4]);
             this.SetScale(new Vector2D<>(0f,0f));
