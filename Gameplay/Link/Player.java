@@ -20,6 +20,7 @@ import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
 import Engine.Physics.Components.BoxCollider;
 import Gameplay.Enemies.Enemy;
+import Gameplay.LifeBar.LifeBar;
 
 public class Player extends Actor {
     
@@ -76,6 +77,7 @@ public class Player extends Actor {
     final private  int damage = 2;
     private int velocity = 0;
     final int default_velocity = 10;
+    private LifeBar lifeBar;
     //----------------------------------------------------------------------
 
     //Methods______________________________________________________________________________________________________________________________________________________________________________
@@ -98,7 +100,8 @@ public class Player extends Actor {
         SetAnimation(RIGHT, sprite.GetSpriteArray(RIGHT), delay);
         implementsActions();
         this.SetName("Player");
-
+        //---------------------------------------------------------------------
+        lifeBar = new LifeBar(this, healthPoints);
         mCollider = (BoxCollider)AddComponent(new BoxCollider(this));
     }
     // ------------------------------------------------------------------------
@@ -216,6 +219,20 @@ public class Player extends Actor {
                 }
                 attack = false;
                 bow =false;
+            }
+        });
+        //Show LifeBar_______________________________________________________________________________________
+        InputManager.SubscribePressed(KeyEvent.VK_M, new InputFunction() {
+            @Override
+            public void Execute() {
+                lifeBar.setVisible(true);
+            }
+        });
+        InputManager.SubscribeReleased(KeyEvent.VK_M, new InputFunction() {
+            @Override
+            public void Execute() {
+                lifeBar.setVisible(false);
+                ObjectManager.GetObjectManager().AddEntity(lifeBar);
             }
         });
     }
@@ -479,6 +496,9 @@ public class Player extends Actor {
             ThreadInmortal thread = new ThreadInmortal(this);
             thread.start();
             System.out.println("Comienza hilo");
+            //HUD
+            lifeBar.setHealthPoints(this.healthPoints);
+            lifeBar.setHearts();
         }
 
     }
