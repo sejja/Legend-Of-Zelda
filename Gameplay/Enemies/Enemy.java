@@ -326,8 +326,10 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
     public void setHealthPoints(int damage){
         this.healthPoints -= damage;
         if (healthPoints <= 0){
+            mCollision.ShutDown();
             this.SetScale(new Vector2D<Float>(0f,0f));
             ObjectManager.GetObjectManager().RemoveEntity(this);
+            path.clear();
         }
         //______________________
         //______________________
