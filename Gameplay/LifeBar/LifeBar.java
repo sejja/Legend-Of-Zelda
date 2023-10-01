@@ -31,6 +31,9 @@ public class LifeBar extends Actor{
         this.healthPoints = healthPoints;
         createHearts();
         this.animationMachine = AddComponent(new AnimationMachine(this, new Spritesheet("Content/Animations/HeartSpriteSheet.png", 19 , 14)));
+        this.animationMachine.SetFrames(animationMachine.GetSpriteSheet().GetSpriteArray2D()[0]);
+        ObjectManager.GetObjectManager().AddEntity(this);
+        animationMachine.GetAnimation().SetDelay(1);
     }
 
     public void setVisible(boolean b){

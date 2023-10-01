@@ -27,7 +27,7 @@ public class Arrow extends Actor{
 
     public Arrow(Player Link){
         super(Link.GetPosition());
-        this.animationMachine = AddComponent(new AnimationMachine(this ,new Spritesheet("Content/Animations/Link/Arrow.png", 44 , 40))); //52, 40
+        this.animationMachine = AddComponent(new AnimationMachine(this ,new Spritesheet("Content/Animations/Link/Arrow.png", 19 , 14))); //52, 40
         allAnimation = animationMachine.GetSpriteSheet().GetSpriteArray2D();
 
         direction = Link.getDirection();
