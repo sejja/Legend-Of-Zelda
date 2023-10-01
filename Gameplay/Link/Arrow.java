@@ -1,18 +1,22 @@
 package Gameplay.Link;
 
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
+import Engine.ECSystem.Types.Entity;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.AnimationMachine;
 import Engine.Math.Vector2D;
 import Engine.Physics.Components.BoxCollider;
+import Gameplay.Enemies.Enemy;
 
 public class Arrow extends Actor{
 
     BufferedImage[][] allAnimation;
     
-    final private int damage = 2;
+    private int damage = 2;
     private AnimationMachine animationMachine;
     private float speed = 18;
     private float range = 350;
@@ -42,7 +46,7 @@ public class Arrow extends Actor{
 
         this.speed = speed;
         this.range = range;
-
+        this.damage = 0;
         this.animationMachine = AddComponent(new AnimationMachine(this ,spritesheet)); 
 
         allAnimation = animationMachine.GetSpriteSheet().GetSpriteArray2D();
@@ -114,6 +118,7 @@ public class Arrow extends Actor{
             this.SetScale(new Vector2D<>(0f,0f));
             ObjectManager.GetObjectManager().RemoveEntity(this);
         }
+        Attack();
     }
     public void Animate(){
         switch(direction)
@@ -126,4 +131,25 @@ public class Arrow extends Actor{
     }
     public int damage(){return damage;}
     public float getVelocity(){return speed;}
+    public void Attack(){
+        /*  This function takes all de Entitys and if any of them is a instance of Enemys it has to ve consider hast potencial objetives to hit
+         *      It will calculate a vector to the player position to the enemy position
+         *             It will called a KnockBack() function of that enemy
+         */
+        ArrayList<Entity> allEntities = ObjectManager.GetObjectManager().getmAliveEntities();
+        for (int i = 0; i < allEntities.size(); i++){
+            if (allEntities.get(i) instanceof Enemy){
+                Enemy enemy = (Enemy) allEntities.get(i);
+                Vector2D<Float> enemyPosition = enemy.GetPosition();
+                //System.out.println(enemyPosition.getModuleDistance(this.GetPosition()));
+                if (enemyPosition.getModuleDistance(this.GetPosition()) < this.GetScale().getModule()){ //Each enemy thats can be attacked
+                    System.out.println("Le da");
+                    enemy.setHealthPoints(damage);
+                    enemy.KnockBack(this.GetPosition());
+                    endArrow = true;
+                    return;
+                }
+            }
+        }
+    }
 }
