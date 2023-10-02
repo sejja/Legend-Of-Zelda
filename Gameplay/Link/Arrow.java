@@ -110,6 +110,7 @@ public class Arrow extends Actor{
             System.out.println("Eliminado flecha");
             animationMachine.SetFrames(allAnimation[4]);
             this.SetScale(new Vector2D<>(0f,0f));
+            boxCollider.ShutDown();
             ObjectManager.GetObjectManager().RemoveEntity(this);
         }
         if( endArrow ){

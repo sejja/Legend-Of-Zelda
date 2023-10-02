@@ -242,7 +242,7 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
     */ //----------------------------------------------------------------------
     public void MovementVector(Vector2D<Float> playerPos) {
         Vector2D<Float> pos = GetPosition();
-        Vector2D<Float> dir = new Vector2D<Float>((float)playerPos.x - pos.x, (float)playerPos.y - pos.y);
+        Vector2D<Float> dir = new Vector2D<Float>((float)playerPos.x - (pos.x +16), (float)playerPos.y - (pos.y +16));
         ndir=Normalize(dir);
     }
 
@@ -253,7 +253,7 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
     *   Receives the movements in a stack and sets the movement of the Enemy with the A* search
     */ //----------------------------------------------------------------------
     public void Move() {
-        int suma =0;
+        int posoffset =20;
         Vector2D<Float> pos = GetPosition();
         Vector2D<Float> ppos = ObjectManager.GetObjectManager().GetObjectByName("Player").GetPosition();
         if(chase){
@@ -271,16 +271,16 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
             float yupperBound = currentDestination.getSecond()*64 + 3;
 
             //If currentDestination reached, pop next destination
-            if(((((xlowerBound <= pos.x+suma) && (pos.x+suma <= xupperBound)) && ((ylowerBound <= pos.y+suma) && (pos.y+suma <= yupperBound)))) && (currentDestination != finalDestination) && !path.isEmpty()){
+            if(((((xlowerBound <= pos.x+posoffset) && (pos.x+posoffset <= xupperBound)) && ((ylowerBound <= pos.y+posoffset) && (pos.y+posoffset <= yupperBound)))) && (currentDestination != finalDestination) && !path.isEmpty()){
                 path.pop();
                 if(!path.isEmpty()){
                     currentDestination = path.peek();
                 }
-                ndir = Normalize(new Vector2D<Float>((float)currentDestination.getFirst()*64+suma - pos.x, (float)currentDestination.getSecond()*64+suma - pos.y));
+                ndir = Normalize(new Vector2D<Float>((float)currentDestination.getFirst()*64 - (pos.x+posoffset), (float)currentDestination.getSecond()*64 - (pos.y+posoffset)));
                 pos.x += (float)ndir.x * speed;
                 pos.y += (float)ndir.y * speed;
             }else{
-                ndir = Normalize(new Vector2D<Float>((float)currentDestination.getFirst()*64+suma - pos.x, (float)currentDestination.getSecond()*64+suma - pos.y));
+                ndir = Normalize(new Vector2D<Float>((float)currentDestination.getFirst()*64 - (pos.x+posoffset), (float)currentDestination.getSecond()*64 - (pos.y+posoffset)));
                 pos.x += (float)ndir.x * speed;
                 pos.y += (float)ndir.y * speed;
             }

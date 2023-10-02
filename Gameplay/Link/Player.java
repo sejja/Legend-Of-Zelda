@@ -553,7 +553,7 @@ public class Player extends Actor {
             if (allEntities.get(i) instanceof Enemy){
                 Enemy enemy = (Enemy) allEntities.get(i);
                 Vector2D<Float> enemyPosition = enemy.GetPosition();
-                if (enemyPosition.getModuleDistance(this.GetPosition()) < this.GetScale().y/2+50){ //Each enemy thats can be attacked
+                if (enemyPosition.getModuleDistance(this.GetPosition()) < this.GetScale().y/2+100){ //Each enemy thats can be attacked
                     if(direction == getAttackDirection(this.GetPosition().getVectorToAnotherActor(enemyPosition))){
                         System.out.println("Le da");
                         enemy.setHealthPoints(damage);
