@@ -33,7 +33,7 @@ public abstract class Entity implements Base {
     *   Sets the position of the actor
     */ //----------------------------------------------------------------------
     public void SetPosition(Vector2D<Float> p) {
-        mTransform.mPosition = p;
+        this.mTransform.mPosition = p;
     }
 
     // ------------------------------------------------------------------------

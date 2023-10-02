@@ -20,7 +20,10 @@ import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
 import Engine.Physics.CollisionResult;
 import Engine.Physics.Components.BoxCollider;
+import Gameplay.States.PlayState;
 import Gameplay.Enemies.Enemy;
+import Gameplay.NPC.DialogueWindow;
+import Gameplay.NPC.Npc;
 
 public class Player extends Actor {
     
@@ -88,12 +91,12 @@ public class Player extends Actor {
     *
     *   Constructs a Player with a sprite, a position, and gives it a size
     */ //----------------------------------------------------------------------
-    public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size) {
+public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size) {
         super(position);
         SetScale(size);
         this.direction = DIRECTION.RIGHT;
         //Lets transpose the Sprite Matrix and add all extra Animations
-        sprite.setmSpriteArray(completeAnimationSet(sprite.GetSpriteArray2D()));
+        sprite.setmSpriteArray(this.completeAnimationSet(sprite.GetSpriteArray2D()));
         //---------------------------------------------------------------------
         mAnimation = AddComponent(new AnimationMachine(this, sprite));
         mCamera = AddComponent(new ZeldaCameraComponent(this));
@@ -222,6 +225,73 @@ public class Player extends Actor {
                 bow =false;
             }
         });
+        InputManager.SubscribePressed(KeyEvent.VK_P, new InputFunction() {
+            @Override
+            public void Execute() {
+                if(PlayState.getGameState() == PlayState.getPlayState()){
+                    PlayState.setGameState(2);
+                }else if(PlayState.getGameState() == PlayState.getPauseState()){
+                    PlayState.setGameState(1);
+                }
+                }
+        });
+       InputManager.SubscribePressed(KeyEvent.VK_E, new InputFunction() {
+            private boolean firstDialogue = false;
+            private boolean isFinished = false;
+
+            @Override
+            public void Execute() {
+                if(isTouchingNpc){
+                    if(DialogueWindow.getJ() + 1 >  Npc.getNpcArrayList().get(1).getDialoguesArrayList().size()-1 ) {
+                        isFinished = true;
+                        System.out.println(isFinished);
+                    }
+                    if (DialogueWindow.getJ() == 0 && firstDialogue == false){
+                        Npc.setInteract(true);
+                        try {Thread.sleep(100);
+                        } catch (InterruptedException e) {}
+                        Npc.setInteract(false);
+                        PlayState.setGameState(2);
+                        firstDialogue = true;
+                    }  else if(isFinished){
+                        PlayState.setGameState(1);
+                        DialogueWindow.setSiguiente(false);
+                        Npc.setInteract(false);
+                        Npc.setRemove(true);
+                        DialogueWindow.setJ(0);
+                        isFinished = false;
+                        firstDialogue = false;
+                        isTouchingNpc = false;
+                    }
+                    else if(DialogueWindow.getJ() + 1 <=  Npc.getNpcArrayList().get(1).getDialoguesArrayList().size() -1){
+                        Npc.setRemove(true);
+                        DialogueWindow.setJ(1);
+                        DialogueWindow.setSiguiente(true);
+                        Npc.setInteract(true);
+                        DialogueWindow.setSiguiente(false);
+                        try {Thread.sleep(100);} catch (InterruptedException e) {}
+                        Npc.setRemove(false);
+                        PlayState.setGameState(2);
+                        System.out.println(DialogueWindow.getJ());
+                    }
+                }
+            }
+        });
+
+
+        InputManager.SubscribePressed(KeyEvent.VK_M, new InputFunction() {
+            @Override
+            public void Execute() {
+                SetScale(new Vector2D<>(1f, 1f));
+            }
+        });
+
+        InputManager.SubscribeReleased(KeyEvent.VK_M, new InputFunction() {
+            @Override
+            public void Execute() {
+                SetScale(new Vector2D<Float>(100f, 100f));
+            }
+        });
     }
     // ------------------------------------------------------------------------
 
@@ -234,10 +304,6 @@ public class Player extends Actor {
         mAnimation.GetAnimation().SetDelay(delay);
     }
     // ------------------------------------------------------------------------
-
-    public Animation GetAnimation() {
-        return mAnimation.GetAnimation();
-    }
 
     int i = 0;
 
@@ -469,6 +535,10 @@ public class Player extends Actor {
         stop = false; 
         attack = false;
     }
+
+    private boolean isTouchingNpc = false;
+    private static Vector2D<Float> npcIndex;
+
     private void takeDamage(){ //Looking for enemies to take damage
         //System.out.println("Vida = " + healthPoints);
         ArrayList<Entity> allEntities = ObjectManager.GetObjectManager().getmAliveEntities();
@@ -479,6 +549,15 @@ public class Player extends Actor {
                 if (enemyPosition.getModuleDistance(this.GetPosition()) < this.GetScale().y/2){
                     this.setDamage(enemy.getDamage());
                     enemy.KnockBack(this.GetPosition());
+                }
+            } else if(allEntities.get(i) instanceof Npc){
+                Npc npc = (Npc) allEntities.get(i);
+                Vector2D<Float> npcPosition = npc.GetPosition();
+                if (npcPosition.getModuleDistance(this.GetPosition()) < this.GetScale().y/2){
+                    isTouchingNpc = true;
+                    npcIndex = npc.GetPosition();
+                } else{
+                    //isTouchingNpc = false; El segundo Npc no funciona
                 }
             }
         }
@@ -495,6 +574,7 @@ public class Player extends Actor {
     public int getVelocity() {return velocity;}
     public DIRECTION getDirection(){return this.direction;}
     public Animation GetAnimation() {return mAnimation.GetAnimation();}
+    public static Vector2D<Float> getNpcIndex(){return npcIndex;}
     //------------------------------------------------------------------------
 
     /* Setters
@@ -636,4 +716,4 @@ public class Player extends Actor {
         able_to_takeDamage = true;
     }
      //------------------------------------------------------------------------
-}
+        }
