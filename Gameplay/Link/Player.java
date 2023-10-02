@@ -101,7 +101,7 @@ public class Player extends Actor {
         implementsActions();
         this.SetName("Player");
         //---------------------------------------------------------------------
-        lifeBar = new LifeBar(this, healthPoints);
+        //lifeBar = new LifeBar(this, healthPoints);
         mCollider = (BoxCollider)AddComponent(new BoxCollider(this));
     }
     // ------------------------------------------------------------------------
@@ -225,14 +225,13 @@ public class Player extends Actor {
         InputManager.SubscribePressed(KeyEvent.VK_M, new InputFunction() {
             @Override
             public void Execute() {
-                lifeBar.setVisible(true);
+                //lifeBar.setVisible(true);
             }
         });
         InputManager.SubscribeReleased(KeyEvent.VK_M, new InputFunction() {
             @Override
             public void Execute() {
-                lifeBar.setVisible(false);
-                ObjectManager.GetObjectManager().AddEntity(lifeBar);
+                //lifeBar.setVisible(false);
             }
         });
     }
@@ -497,8 +496,8 @@ public class Player extends Actor {
             thread.start();
             System.out.println("Comienza hilo");
             //HUD
-            lifeBar.setHealthPoints(this.healthPoints);
-            lifeBar.setHearts();
+            //lifeBar.setHealthPoints(this.healthPoints);
+            //lifeBar.setHearts();
         }
 
     }
