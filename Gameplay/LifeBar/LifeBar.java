@@ -1,28 +1,10 @@
 package Gameplay.LifeBar;
 
-import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
-import java.beans.Visibility;
-import java.lang.management.MonitorInfo;
-import java.security.AllPermission;
-import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import javax.swing.text.Position;
-
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Entity;
-import Engine.Graphics.Animation;
-import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.AnimationMachine;
-import Engine.Graphics.Components.CameraComponent;
-import Engine.Graphics.Components.ZeldaCameraComponent;
-import Engine.Input.InputFunction;
-import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
-import Engine.Physics.Components.BoxCollider;
-import Gameplay.Enemies.Enemy;
 
 /*  This is a class that allow to show a LifeBar
  *      FEATURE:
