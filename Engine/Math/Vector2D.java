@@ -54,6 +54,9 @@ public class Vector2D<T> {
         Float yf = Math.abs((Float)this.y - a.y);
         return (Float)(float) Math.sqrt(Math.pow(xf,2) + Math.pow(yf, 2));
     }
+    public Float getModule (){
+        return (Float)(float) Math.sqrt(Math.pow((Float)x,2) + Math.pow((Float)y, 2));
+    }
 
     public Vector2D<Float> getVectorToAnotherActor(Vector2D<Float> enemyPosition){
         Float xf = -((Float)this.x - enemyPosition.x);

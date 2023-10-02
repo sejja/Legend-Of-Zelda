@@ -32,7 +32,6 @@ public class Player extends Actor {
     private final int LEFT = 1;
     private final int DOWN = 2;
     private final int UP = 3;
-
     private final int FALL = 4;
     //----------------------------------------------------------------------
 
@@ -579,7 +578,7 @@ public class Player extends Actor {
     /*  These functions are called when the acttack animation has finished
      * 
      */
-    public int Attack(){
+    public void Attack(){
         /*  This function takes all de Entitys and if any of them is a instance of Enemys it has to ve consider hast potencial objetives to hit
          *      It will calculate a vector to the player position to the enemy position
          *          If the DIRECTION of the vector Player-Enemy and The DIRECTION of the player is the same
@@ -590,7 +589,7 @@ public class Player extends Actor {
             if (allEntities.get(i) instanceof Enemy){
                 Enemy enemy = (Enemy) allEntities.get(i);
                 Vector2D<Float> enemyPosition = enemy.GetPosition();
-                if (enemyPosition.getModuleDistance(this.GetPosition()) < this.GetScale().y/2+50){ //Each enemy thats can be attacked
+                if (enemyPosition.getModuleDistance(this.GetPosition()) < this.GetScale().y/2+100){ //Each enemy thats can be attacked
                     if(direction == getAttackDirection(this.GetPosition().getVectorToAnotherActor(enemyPosition))){
                         System.out.println("Le da");
                         enemy.setHealthPoints(damage);
@@ -599,7 +598,6 @@ public class Player extends Actor {
                 }
             }
         }
-        return 0;
     }
     public boolean isAble_to_takeDamage() {return able_to_takeDamage;}
     public DIRECTION getAttackDirection(Vector2D<Float> vector) { 
