@@ -25,7 +25,7 @@ public class TilemapObject extends Tilemap {
     private static int mHeight;
     private int mWidth;
 
-    public TilemapObject(String data, Spritesheet sprite, int width , int height, int tilewidth, int tileheight, int tilecolumns) {
+    public TilemapObject(Vector2D<Float> position, String data, Spritesheet sprite, int width , int height, int tilewidth, int tileheight, int tilecolumns) {
         Block temp;
         mTileHeight = tileheight;
         mTileWidth = tilewidth;
@@ -38,11 +38,15 @@ public class TilemapObject extends Tilemap {
         for(int i= 0; i < (width * height); i++) {
             int tempint = Integer.parseInt(block[i].replaceAll("\\s+",""));
 
+            Vector2D<Integer> positiontemp = new Vector2D<Integer>((int) (i % width) * tilewidth, (int) (i / height) * tileheight);
+                positiontemp.x += (int)(float)position.x;
+                positiontemp.y += (int)(float)position.y;
+
             if(tempint != 0) {
                 if(tempint == 172) { // TODO, Review
-                    temp = new HoleBlock(sprite.GetSprite((int) ((tempint - 1) % tilecolumns), (int) ((tempint - 1) / tilecolumns)), new Vector2D<Integer>((int) (i % width) * tilewidth, (int) (i / height) * tileheight), tilewidth, tileheight);
+                    temp = new HoleBlock(sprite.GetSprite((int) ((tempint - 1) % tilecolumns), (int) ((tempint - 1) / tilecolumns)), positiontemp, tilewidth, tileheight);
                 } else {
-                    temp = new ObjectBlock(sprite.GetSprite((int) ((tempint - 1) % tilecolumns), (int) ((tempint - 1) / tilecolumns)), new Vector2D<Integer>((int) (i % width) * tilewidth, (int) (i / height) * tileheight), tilewidth, tileheight);
+                    temp = new ObjectBlock(sprite.GetSprite((int) ((tempint - 1) % tilecolumns), (int) ((tempint - 1) / tilecolumns)), positiontemp, tilewidth, tileheight);
                 }
 
                 mBlocks[i] = temp;

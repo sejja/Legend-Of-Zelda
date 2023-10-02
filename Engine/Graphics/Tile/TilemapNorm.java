@@ -20,7 +20,7 @@ public class TilemapNorm extends Tilemap {
 
     private Block[] mBlocks;
 
-    public TilemapNorm(String data, Spritesheet sprite, int width , int height, int tilewidth, int tileheight, int tilecolumns) {
+    public TilemapNorm(Vector2D<Float> position, String data, Spritesheet sprite, int width , int height, int tilewidth, int tileheight, int tilecolumns) {
         mBlocks = new Block[width * height];
 
         String[] block = data.split(",");
@@ -30,7 +30,10 @@ public class TilemapNorm extends Tilemap {
 
             if(temp != 0) {
 
-                mBlocks[i] = new Normblock(sprite.GetSprite((int) ((temp - 1) % tilecolumns), (int) ((temp - 1) / tilecolumns)), new Vector2D<Integer>((int) (i % width) * tilewidth, (int) (i / height) * tileheight), tilewidth, tileheight);
+                Vector2D<Integer> positiontemp = new Vector2D<Integer>((int) (i % width) * tilewidth, (int) (i / height) * tileheight);
+                positiontemp.x += (int)(float)position.x;
+                positiontemp.y += (int)(float)position.y;
+                mBlocks[i] = new Normblock(sprite.GetSprite((int) ((temp - 1) % tilecolumns), (int) ((temp - 1) / tilecolumns)), positiontemp, tilewidth, tileheight);
             }
         }
     }

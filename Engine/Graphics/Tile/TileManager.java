@@ -11,7 +11,7 @@ package Engine.Graphics.Tile;
 import java.awt.Graphics2D;
 import java.io.File;
 import java.util.ArrayList;
-
+import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -27,9 +27,13 @@ import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.CameraComponent;
 import Engine.Graphics.Components.Renderable;
 import Engine.Math.Vector2D;
+import Engine.Physics.AABB;
 
 public class TileManager extends ECObject implements Renderable {
     public static ArrayList<Tilemap>  mLayers;
+    private String mPath;
+    private Vector2D<Float> mPosition;
+    private AABB mBounds;
 
     // ------------------------------------------------------------------------
     /*! Default Constructor
@@ -38,7 +42,7 @@ public class TileManager extends ECObject implements Renderable {
     */ //----------------------------------------------------------------------
     public TileManager() {
         mLayers = new ArrayList<>();
-        GraphicsPipeline.GetGraphicsPipeline().AddRenderable(this);
+        GraphicsPipeline.GetGraphicsPipeline().AddRenderable(this); 
     }
 
     // ------------------------------------------------------------------------
@@ -48,7 +52,7 @@ public class TileManager extends ECObject implements Renderable {
     */ //----------------------------------------------------------------------
     public TileManager(String path) {
         mLayers = new ArrayList<>();
-        AddTileMap(path, 64, 64);
+        mPath = path;
         GraphicsPipeline.GetGraphicsPipeline().AddRenderable(this);
     }
 
@@ -57,7 +61,7 @@ public class TileManager extends ECObject implements Renderable {
     *
     *   From a file and the sizes, configure the tilemap to be render-ready
     */ //----------------------------------------------------------------------
-    private void AddTileMap(String path, int blockwith, int blockheigh) {
+    public void CreateTileMap(int blockwith, int blockheigh, Vector2D<Float> position) {
         String imagePath;
 
         int width = 0;
@@ -73,7 +77,7 @@ public class TileManager extends ECObject implements Renderable {
         try {
             DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = builderFactory.newDocumentBuilder();
-            Document doc = builder.parse(new File(getClass().getClassLoader().getResource(path).toURI()));
+            Document doc = builder.parse(new File(getClass().getClassLoader().getResource(mPath).toURI()));
             doc.getDocumentElement().normalize();
 
             NodeList list = doc.getElementsByTagName("tileset");
@@ -112,16 +116,27 @@ public class TileManager extends ECObject implements Renderable {
                 data[i] = eElement.getElementsByTagName("data").item(0).getTextContent();
 
                 if(i >= 1) {
-                    mLayers.add(new TilemapNorm(data[i], sprite, width, height, blockwith, blockheigh, tileColumns));
+                    mLayers.add(new TilemapNorm(position, data[i], sprite, width, height, blockwith, blockheigh, tileColumns));
                 } else {
-                    mLayers.add(new TilemapObject(data[i], sprite, width, height, blockwith, blockheigh, tileColumns));
+                    mLayers.add(new TilemapObject(position, data[i], sprite, width, height, blockwith, blockheigh, tileColumns));
                 }
             }
+
+            mBounds = new AABB(position, new Vector2D<Float>((float)(width * tileWidth), (float)(height * tileHeight)));
+
         } catch(Exception e) {
             System.out.println("ERROR - TILEMANAGER: can not read tilemap:");
             e.printStackTrace();
             System.exit(0);
         }
+    }
+
+    public Vector2D<Float> GetPosition() {
+        return mPosition;
+    }
+
+    public AABB GetBounds() {
+        return mBounds;
     }
 
     public void Render(Graphics2D g, CameraComponent camerapos) {
