@@ -26,12 +26,13 @@ import Gameplay.Enemies.Enemy;
 
 /*  This is a class that allow to show a LifeBar
  *      FEATURE:
- *              -> It does NOT add any object to the object Manager
+ *              -> It does NOT add any object to the ObjectManager thats are permanent, so this object it is not accesible from the ObjectManager
  *              -> The actor must have healthPoints
  * 
  *      HOW TO add A LIFEBAR TO A ACTOR:
  *              -> Call LifeBar.Update() in the Actor.Update()
- *              -> Use setVisible to show lifeBar or not()
+ *              -> Use setVisible() to show lifeBar or not
+ *              -> Use setHealthpoints() to change the healthpoints of the actor in the lifebar
  */
 public class LifeBar extends Entity{
     private int healthPoints;
@@ -72,8 +73,10 @@ public class LifeBar extends Entity{
     
     public void setHealthPoints(int healthPoints) {
         this.healthPoints = healthPoints;
+        addToObjectManager();
         setHearts();
         System.out.println(heartsInfoToString());
+        clearHeartsObjectManager();
     } 
 
     public void Update(){
@@ -121,7 +124,6 @@ public class LifeBar extends Entity{
             counter += hearts[0].GetScale().x;
         }
     }
-
     private void setHeartsPosition(){
         Vector2D<Float> actorPosition = actor.GetPosition();
         Float counter = 0f;
@@ -137,5 +139,15 @@ public class LifeBar extends Entity{
             str = str + hearts[i].getHealthPoints() + ";"; 
         }
         return str;
+    }
+    private void addToObjectManager(){
+        for (int i = 0; i < hearts.length; i++){
+            hearts[i].addToObjectManager();
+        }
+    }
+    private void clearHeartsObjectManager (){
+        for (int i = 0; i < hearts.length; i++){
+            hearts[i].popFromObjectManager();
+        }
     }
 }

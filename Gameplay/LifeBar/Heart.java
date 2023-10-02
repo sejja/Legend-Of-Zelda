@@ -50,4 +50,10 @@ public class Heart extends Actor {
     public int getHealthPoints() {
         return healthPoints;
     }
+    public void addToObjectManager(){
+        ObjectManager.GetObjectManager().AddEntity(this);
+    }
+    public void popFromObjectManager(){
+        ObjectManager.GetObjectManager().RemoveEntity(this);
+    }
 }
