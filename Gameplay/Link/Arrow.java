@@ -9,6 +9,7 @@ import Engine.ECSystem.Types.Entity;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.AnimationMachine;
 import Engine.Math.Vector2D;
+import Engine.Physics.CollisionResult;
 import Engine.Physics.Components.BoxCollider;
 import Gameplay.Enemies.Enemy;
 
@@ -72,28 +73,28 @@ public class Arrow extends Actor{
         switch (direction){
             case UP:
                 currentPosition = pos.y;
-                if(!boxCollider.GetBounds().collisionTile(0, -speed)){
+                if(boxCollider.GetBounds().collisionTile(0, -speed) == CollisionResult.None){
                     pos.y -= speed;
                 }else{endArrow = true;}
                 distance += Math.abs(currentPosition - pos.y);
                 return;
             case DOWN:
                 currentPosition = pos.y;
-                if(!boxCollider.GetBounds().collisionTile(0, +speed)){
+                if(boxCollider.GetBounds().collisionTile(0, +speed) == CollisionResult.None){
                     pos.y += speed;
                 }else{endArrow = true;}
                 distance += Math.abs(currentPosition - pos.y);
                 return;
             case LEFT:
                 currentPosition = pos.x;
-                if(!boxCollider.GetBounds().collisionTile(-speed, 0)){
+                if(boxCollider.GetBounds().collisionTile(-speed, 0) == CollisionResult.None){
                     pos.x -= speed;
                 }else{endArrow = true;}
                 distance += Math.abs(currentPosition - pos.x);
                 return;
             case RIGHT:
                 currentPosition = pos.x;
-                if(!boxCollider.GetBounds().collisionTile(+speed, 0)){
+                if(boxCollider.GetBounds().collisionTile(+speed, 0) == CollisionResult.None){
                     pos.x += speed;
                 }else{endArrow = true;}
                 distance += Math.abs(currentPosition - pos.x);
