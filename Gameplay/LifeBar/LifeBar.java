@@ -2,10 +2,13 @@ package Gameplay.LifeBar;
 
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.beans.Visibility;
 import java.lang.management.MonitorInfo;
 import java.security.AllPermission;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import javax.swing.text.Position;
 
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
@@ -21,42 +24,74 @@ import Engine.Math.Vector2D;
 import Engine.Physics.Components.BoxCollider;
 import Gameplay.Enemies.Enemy;
 
-public class LifeBar extends Actor{
+/*  This is a class that allow to show a LifeBar
+ *      FEATURE:
+ *              -> It does NOT add any object to the object Manager
+ *              -> The actor must have healthPoints
+ * 
+ *      HOW TO add A LIFEBAR TO A ACTOR:
+ *              -> Call LifeBar.Update() in the Actor.Update()
+ *              -> Use setVisible to show lifeBar or not()
+ */
+public class LifeBar extends Entity{
     private int healthPoints;
     private Heart[] hearts;
     private AnimationMachine animationMachine;
+    private Vector2D<Float> position;
+    private boolean VISIBLE = false;
+    private Actor actor;
 
     public LifeBar (Actor actor, int healthPoints){
-        super(new Vector2D<Float>(actor.GetPosition().x - actor.GetScale().x/2, actor.GetPosition().y - actor.GetScale().y/2));
+        this.actor = actor;
+        this.position = actor.GetPosition();
         this.healthPoints = healthPoints;
         createHearts();
-        this.animationMachine = AddComponent(new AnimationMachine(this, new Spritesheet("Content/Animations/HeartSpriteSheet.png", 19 , 14)));
-        this.animationMachine.SetFrames(animationMachine.GetSpriteSheet().GetSpriteArray2D()[0]);
-        ObjectManager.GetObjectManager().AddEntity(this);
-        animationMachine.GetAnimation().SetDelay(1);
+        setVisible(VISIBLE);
     }
 
     public void setVisible(boolean b){
-        if (b){
-            for (int i = 0; i < hearts.length; i++){
+        this.VISIBLE = b;
+        if (b)
+        {
+            for (int i = 0; i < hearts.length; i++)
+            {
+                hearts[i].SetScale(new Vector2D<>(15f, 14f));
+            }
+            ObjectManager.GetObjectManager().AddEntity(this);
+        }
+        else
+        {
+            for (int i = 0; i < hearts.length; i++)
+            {
                 hearts[i].SetScale(new Vector2D<>(0f, 0f));
             }
-        }else{
-            for (int i = 0; i < hearts.length; i++){
-                hearts[i].SetScale(new Vector2D<>(20f, 20f));
+            ObjectManager.GetObjectManager().RemoveEntity(this);
+        }
+        Update();
+    }
+    
+    public void setHealthPoints(int healthPoints) {
+        this.healthPoints = healthPoints;
+        setHearts();
+        System.out.println(heartsInfoToString());
+    } 
+
+    public void Update(){
+        if(VISIBLE){
+            setHeartsPosition();
+            for (int i = 0; i < healthPoints/2; i++){
+                hearts[i].Update();
             }
         }
     }
-    
-    public void setHealthPoints(int healthPoints) {this.healthPoints = healthPoints;} 
 
-    public void setHearts(){
+    private void setHearts(){
         int completeHearts = 0;
         int incompleteHearts = 0;
         if (healthPoints % 2 == 0){
             completeHearts = healthPoints/2;
         } else {
-            completeHearts = healthPoints-1/2;
+            completeHearts = (healthPoints-1)/2;
             incompleteHearts = 1;
         }
 
@@ -65,7 +100,11 @@ public class LifeBar extends Actor{
             hearts[i].setHealthPoints(2);
         }
         //Half heart
-        hearts[completeHearts].setHealthPoints(incompleteHearts);
+        if(incompleteHearts != 0){
+            hearts[completeHearts].setHealthPoints(incompleteHearts);
+        }else{
+            hearts[completeHearts].setHealthPoints(0);
+        }
         //Empty Hearts
         for (int i = completeHearts+1; i < hearts.length; i++){
             hearts[i].setHealthPoints(0);
@@ -74,18 +113,29 @@ public class LifeBar extends Actor{
 
     private void createHearts (){
         Float counter = 0f;
-        hearts = new Heart[healthPoints];
+        hearts = new Heart[healthPoints/2];
         for (int i = 0; i < healthPoints/2; i++){
-            Vector2D<Float> position = new Vector2D<>(GetPosition().x + counter, GetPosition().y);
+            Vector2D<Float> position = new Vector2D<>(this.position.x + counter, this.position.y);
             hearts[i] = new Heart(position);
+            //ObjectManager.GetObjectManager().AddEntity(hearts[i]);
             counter += hearts[0].GetScale().x;
         }
     }
 
-    public void Update(){
-        setHearts();
-        for (int i = 0; i < healthPoints; i++){
-            hearts[i].Animate();
+    private void setHeartsPosition(){
+        Vector2D<Float> actorPosition = actor.GetPosition();
+        Float counter = 0f;
+        for (int i = 0; i < hearts.length; i++){
+            Vector2D<Float> heartPosition = new Vector2D<>(actorPosition.x-10 + counter, actorPosition.y-10);
+            hearts[i].SetPosition(heartPosition);
+            counter += hearts[0].GetScale().x;
         }
+    }
+    private String heartsInfoToString (){
+        String str = "";
+        for (int i = 0; i<hearts.length; i++){
+            str = str + hearts[i].getHealthPoints() + ";"; 
+        }
+        return str;
     }
 }

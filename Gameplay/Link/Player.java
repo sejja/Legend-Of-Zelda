@@ -20,6 +20,7 @@ import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
 import Engine.Physics.Components.BoxCollider;
 import Gameplay.Enemies.Enemy;
+import Gameplay.LifeBar.Heart;
 import Gameplay.LifeBar.LifeBar;
 
 public class Player extends Actor {
@@ -102,6 +103,8 @@ public class Player extends Actor {
         this.SetName("Player");
         //---------------------------------------------------------------------
         //lifeBar = new LifeBar(this, healthPoints);
+        lifeBar = new LifeBar(getPlayer(), getHealthPoints());
+        //---------------------------------------------------------------------
         mCollider = (BoxCollider)AddComponent(new BoxCollider(this));
     }
     // ------------------------------------------------------------------------
@@ -225,13 +228,13 @@ public class Player extends Actor {
         InputManager.SubscribePressed(KeyEvent.VK_M, new InputFunction() {
             @Override
             public void Execute() {
-                //lifeBar.setVisible(true);
+                lifeBar.setVisible(true);
             }
         });
         InputManager.SubscribeReleased(KeyEvent.VK_M, new InputFunction() {
             @Override
             public void Execute() {
-                //lifeBar.setVisible(false);
+                lifeBar.setVisible(false);
             }
         });
     }
@@ -303,7 +306,7 @@ public class Player extends Actor {
     @Override
     public void Update() { 
         super.Update();
-
+        lifeBar.Update();
         if(dash)
         {
             dash();
@@ -482,6 +485,9 @@ public class Player extends Actor {
     public int getVelocity() {return velocity;}
     public DIRECTION getDirection(){return this.direction;}
     public Animation GetAnimation() {return mAnimation.GetAnimation();}
+    public int getHealthPoints(){return this.healthPoints;}
+    private Player getPlayer (){return this;}
+    public boolean isAble_to_takeDamage() {return able_to_takeDamage;}
     //------------------------------------------------------------------------
 
     /* Setters
@@ -496,7 +502,7 @@ public class Player extends Actor {
             thread.start();
             System.out.println("Comienza hilo");
             //HUD
-            //lifeBar.setHealthPoints(this.healthPoints);
+            lifeBar.setHealthPoints(this.healthPoints);
             //lifeBar.setHearts();
         }
 
@@ -582,7 +588,6 @@ public class Player extends Actor {
             }
         }
     }
-    public boolean isAble_to_takeDamage() {return able_to_takeDamage;}
     public DIRECTION getAttackDirection(Vector2D<Float> vector) { 
         if (Math.abs(vector.x) > Math.abs(vector.y)) {
             if (vector.x > 0) {

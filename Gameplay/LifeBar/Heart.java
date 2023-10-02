@@ -30,14 +30,24 @@ public class Heart extends Actor {
         super(position);
         this.animationMachine = AddComponent(new AnimationMachine(this ,new Spritesheet("Content/Animations/HeartSpriteSheet.png", 19 , 14)));
         allAnimations = animationMachine.GetSpriteSheet().GetSpriteArray2D();
-        //System.out.println(allAnimations.length);
-        //System.out.println(allAnimations[0].length);
+
+        animationMachine.SetFrames(allAnimations[0]);
+        SetScale( new Vector2D<Float>(15f,11f));
+        animationMachine.GetAnimation().SetDelay(1);
+        Animate();
     }
     public void Animate(){
         this.animationMachine.SetFrames(allAnimations[(int)Math.abs(healthPoints-2)]);
     }
     public void setHealthPoints(int life){
-        if (life < 0){System.out.println("Error");return;}
+        if (life < 0){System.err.println("Error");return;}
         this.healthPoints = life;
+    }
+    @Override
+    public void Update(){
+        Animate();
+    }
+    public int getHealthPoints() {
+        return healthPoints;
     }
 }
