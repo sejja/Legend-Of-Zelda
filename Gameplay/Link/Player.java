@@ -20,6 +20,7 @@ import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
 import Engine.Physics.CollisionResult;
 import Engine.Physics.Components.BoxCollider;
+import Engine.Window.GameLoop;
 import Gameplay.States.PlayState;
 import Gameplay.Enemies.Enemy;
 import Gameplay.NPC.DialogueWindow;
@@ -225,16 +226,6 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
                 bow =false;
             }
         });
-        InputManager.SubscribePressed(KeyEvent.VK_P, new InputFunction() {
-            @Override
-            public void Execute() {
-                if(PlayState.getGameState() == PlayState.getPlayState()){
-                    PlayState.setGameState(2);
-                }else if(PlayState.getGameState() == PlayState.getPauseState()){
-                    PlayState.setGameState(1);
-                }
-                }
-        });
        InputManager.SubscribePressed(KeyEvent.VK_E, new InputFunction() {
             private boolean firstDialogue = false;
             private boolean isFinished = false;
@@ -251,10 +242,10 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
                         try {Thread.sleep(100);
                         } catch (InterruptedException e) {}
                         Npc.setInteract(false);
-                        PlayState.setGameState(2);
+                        GameLoop.SetPaused(true);
                         firstDialogue = true;
                     }  else if(isFinished){
-                        PlayState.setGameState(1);
+                        GameLoop.SetPaused(false);
                         DialogueWindow.setSiguiente(false);
                         Npc.setInteract(false);
                         Npc.setRemove(true);
@@ -271,7 +262,7 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
                         DialogueWindow.setSiguiente(false);
                         try {Thread.sleep(100);} catch (InterruptedException e) {}
                         Npc.setRemove(false);
-                        PlayState.setGameState(2);
+                        GameLoop.SetPaused(true);
                         System.out.println(DialogueWindow.getJ());
                     }
                 }

@@ -7,9 +7,11 @@ public class GameLoop extends Thread {
     private boolean mRunning;
     private StateMachine mStateManager;
     private PresentBuffer mTargetBuffer;
+    static private boolean mPause;
 
     public GameLoop(PresentBuffer target) {
         mTargetBuffer = target;
+        mPause = false;
     }
 
     // ------------------------------------------------------------------------
@@ -33,6 +35,24 @@ public class GameLoop extends Thread {
     }
 
     // ------------------------------------------------------------------------
+    /*! Is Paused
+    *
+    *   Return wether we are paused or not
+    */ //----------------------------------------------------------------------
+    static public boolean IsPaused() {
+        return mPause;
+    }
+
+    // ------------------------------------------------------------------------
+    /*! Set Paused
+    *
+    *   Returns wether we pause the game or not
+    */ //----------------------------------------------------------------------
+    static public void SetPaused(boolean b) {
+        mPause = b;
+    }
+
+    // ------------------------------------------------------------------------
     /*! Run
     *
     *   The game loop.
@@ -46,7 +66,8 @@ public class GameLoop extends Thread {
 
         //While the window is present
         for(long frametime = System.nanoTime(); mRunning; frametime = System.nanoTime()) {
-            Update();
+            
+            if(!mPause) Update();
             mTargetBuffer.Render();
             mTargetBuffer.Present();
             final long lastRenderTime = System.nanoTime();

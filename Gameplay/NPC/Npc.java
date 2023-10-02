@@ -64,7 +64,8 @@ public class Npc extends Engine.ECSystem.Types.Actor {
     static boolean interact = false;
     static boolean remove = false;
 
-    public void Update(Vector2D<Float> playerPosition) {
+    @Override
+    public void Update() {
 
         super.Update();
         if(interact) {
