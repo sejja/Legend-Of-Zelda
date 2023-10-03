@@ -1,5 +1,7 @@
 package Gameplay.Enemies;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -9,8 +11,11 @@ import java.util.concurrent.atomic.AtomicStampedReference;
 
 import Engine.ECSystem.ObjectManager;
 import Engine.Graphics.Animation;
+import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.AnimationMachine;
+import Engine.Graphics.Components.CameraComponent;
+import Engine.Graphics.Components.Renderable;
 import Engine.Graphics.Tile.*;
 import Engine.Math.Vector2D;
 import Engine.Physics.AABB;
@@ -18,7 +23,7 @@ import Engine.Physics.Components.BoxCollider;
 import Gameplay.Enemies.Search.*;
 import Gameplay.Link.DIRECTION;
 
-public class Enemy extends Engine.ECSystem.Types.Actor {
+public class Enemy extends Engine.ECSystem.Types.Actor implements Renderable{
     private final int UP = 0;
     private final int DOWN = 2;
     private final int RIGHT = 1;
@@ -35,13 +40,12 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
     protected Pair finalDestination;
     protected Pair lastFinalDestination= new Pair(0, 0);
     protected Pair currentDestination;
-    protected Stack<Pair> path;
-    protected AStarSearch Pathfinding = new AStarSearch();
+    protected Stack<Pair> path = new Stack<Pair>();
 
     //stats
     protected int healthPoints = 4;
     protected int damage = 1; //magic number, it has to be defined in a constructor
-    protected float speed = 1;
+    protected float speed = 2;
 
     //components
     protected int mCurrentAnimation;
@@ -62,17 +66,21 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
 
         super(position);
         SetScale(size);
-        Spritesheet sprite=new Spritesheet(originalsprite, "Content/Animations/gknight.png");
+        Spritesheet sprite=new Spritesheet("Content/Animations/gknight.png", 24,28);
 
         // TRANSPOSE SPRITE MATRIX
         sprite.setmSpriteArray(transposeMatrix(sprite.GetSpriteArray2D()));
 
         // ADD ANIMATION COMPONENT
         mAnimation = AddComponent(new AnimationMachine(this, sprite));
+        SetScale(new Vector2D<Float>(size.x+25, size.y));
         
         // ADD COLLIDER COMPONENT
-        mCollision = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<Float>(100f, 200f)));
+        mCollision = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<Float>(size.x*2, size.y*2)));
         SetAnimation(UP, sprite.GetSpriteArray(UP), 2);
+
+        //Render path
+        GraphicsPipeline.GetGraphicsPipeline().AddRenderable(this);
     }
 
     public void SetAnimation(int i, BufferedImage[] frames, int delay) {
@@ -223,8 +231,7 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
         finalDestination = new Pair((int)Math.round((playerPos.x +xoffset)/divisior), (int)Math.round((playerPos.y +yoffset)/divisior));
         if(lastFinalDestination.getFirst() != finalDestination.getFirst() || lastFinalDestination.getSecond() != finalDestination.getSecond()){
             lastFinalDestination = finalDestination;
-            path = Pathfinding.aStarSearch(src, finalDestination);
-            path.pop();
+            path = AStarSearch.aStarSearch(src, finalDestination);
         }
     }
 
@@ -308,5 +315,16 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
         }
         //______________________
         //______________________
+    }
+    @Override
+    public void Render(Graphics2D g, CameraComponent camerapos) {
+        var camcoord = camerapos.GetCoordinates();
+        g.setColor(Color.green);
+        Stack<Pair> mPath = (Stack<Pair>)path.clone();
+
+        while (!mPath.isEmpty()) {
+            Pair p = mPath.pop();
+            g.drawRect(p.getFirst() * 64 - (int)(float)camcoord.x, p.getSecond() * 64 - (int)(float)camcoord.y, 64, 64);
+        }
     }
 }

@@ -25,6 +25,7 @@ import Engine.Math.Vector2D;
 import Engine.StateMachine.State;
 import Engine.StateMachine.StateMachine;
 import Gameplay.Enemies.*;
+import Gameplay.Enemies.Units.GreenKnight;
 import Gameplay.Link.Arrow;
 import Gameplay.Link.Player;
 import Gameplay.NPC.Npc;
@@ -69,8 +70,9 @@ public class PlayState extends State {
         mNpcArrayList.add(mNpc1);
         mNpcArrayList.add(mNpc2);
         Spritesheet esprite = new Spritesheet("Content/Animations/gknight.png",16,28);
-        ArrayList<Enemy> mEnemies = new ArrayList<Enemy>();
-        mEnemy = (Enemy)ObjectManager.GetObjectManager().AddEntity(new Enemy(esprite, new Vector2D<Float>(450.f, 300.f), new Vector2D<Float>(50.f, 100.f)));
+        mEnemy = (Enemy)ObjectManager.GetObjectManager().AddEntity(new GreenKnight(esprite, new Vector2D<Float>(450.f, 300.f), new Vector2D<Float>(50.f, 100.f)));
+        mEnemy2 = (Enemy)ObjectManager.GetObjectManager().AddEntity(new GreenKnight(esprite, new Vector2D<Float>(600.f, 300.f), new Vector2D<Float>(50.f, 100.f)));
+        mEnemy3 = (Enemy)ObjectManager.GetObjectManager().AddEntity(new GreenKnight(esprite, new Vector2D<Float>(800.f, 800.f), new Vector2D<Float>(50.f, 100.f)));
     
         InputManager.SubscribePressed(KeyEvent.VK_P, new InputFunction() {
             @Override
@@ -89,7 +91,6 @@ public class PlayState extends State {
     public void Update() {
         if(gameState == playState){
             ObjectManager.GetObjectManager().Update();
-           mEnemy.Update();
            for(int i=0; i<mNpcArrayList.size();i++){
                mNpcArrayList.get(i).Update(mPlayer.GetPosition());
 //            ObjectManager.GetObjectManager().Update();

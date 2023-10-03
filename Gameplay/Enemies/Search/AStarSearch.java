@@ -9,14 +9,10 @@ import Engine.Graphics.Components.Renderable;
 import Engine.Graphics.Tile.*;
 
 
-public class AStarSearch implements Renderable {
-    Stack<Pair> Path = new Stack<>();
+public class AStarSearch{
+    static Stack<Pair> Path = new Stack<>();
     static final int COL = 50;
     static final int ROW = 50;
-    private Stack<Pair> mPath = new Stack<>();
-    public AStarSearch() {
-        GraphicsPipeline.GetGraphicsPipeline().AddRenderable(this);
-    }
 
 
     // Creating a shortcut for pair<int, pair<int, int>> type
@@ -75,7 +71,7 @@ public class AStarSearch implements Renderable {
     // A Function to find the shortest path between
     // a given source cell to a destination cell according
     // to A* Search Algorithm
-    public Stack<Pair> aStarSearch( Pair src, Pair dest) {
+    public static Stack<Pair> aStarSearch( Pair src, Pair dest) {
         if (!isValid(src.first, src.second)) {
             //System.out.println("Source is invalid");
             return Path;
@@ -343,7 +339,7 @@ public class AStarSearch implements Renderable {
     }
 
     // A utility function to trace the path from the source to the destination.
-    void tracePath(cell cellDetails[][], Pair dest) {
+    static void tracePath(cell cellDetails[][], Pair dest) {
         int Column = dest.first;
         int Row = dest.second;
 
@@ -357,8 +353,6 @@ public class AStarSearch implements Renderable {
             Row = temp_col;
         }
 
-        Path.push(new Pair(Column, Row));
-        mPath = Path;
         /*while (!Path.isEmpty()) {
             Pair p = Path.pop();
             System.out.print("-> (" + p.first + ", " + p.second + ") ");
@@ -366,17 +360,7 @@ public class AStarSearch implements Renderable {
         return;
     }
 
-    @Override
-    public void Render(Graphics2D g, CameraComponent camerapos) {
-        var camcoord = camerapos.GetCoordinates();
-        g.setColor(Color.green);
-        Stack<Pair> stack = (Stack<Pair>)mPath.clone();
 
-        while (!stack.isEmpty()) {
-            Pair p = stack.pop();
-            g.drawRect(p.first * 64 - (int)(float)camcoord.x, p.second * 64 - (int)(float)camcoord.y, 64, 64);
-        }
-    }
 
     /*public static void main(String[] args) {
         int ][] = new int[][] {
