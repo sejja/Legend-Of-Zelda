@@ -73,7 +73,7 @@ public class Enemy extends Engine.ECSystem.Types.Actor implements Renderable{
 
         // ADD ANIMATION COMPONENT
         mAnimation = AddComponent(new AnimationMachine(this, sprite));
-        SetScale(new Vector2D<Float>(size.x+25, size.y));
+        SetScale(new Vector2D<Float>(size.x+25, size.y));a
         
         // ADD COLLIDER COMPONENT
         mCollision = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<Float>(size.x*2, size.y*2)));
