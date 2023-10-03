@@ -89,7 +89,7 @@ public class Player extends Actor {
     private boolean isTouchingNpc = false;
     private static Vector2D<Float> npcIndex;
     //----------------------------------------------------------------------
-    
+
     //Methods______________________________________________________________________________________________________________________________________________________________________________
 
     /*! Conversion Constructor
@@ -399,9 +399,7 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
             mAnimation.finised_Animation = false;
         }
     }
-
         Animate();
-
         if(able_to_takeDamage){
             takeDamage();
         }
@@ -411,9 +409,7 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
 
     public boolean SolveCollisions(Vector2D<Integer> dif) {
         CollisionResult res = mCollider.GetBounds().collisionTile(dif.x, dif.y);
-        
         falling = res == CollisionResult.Hole;
-
         return res == CollisionResult.None;
     }
 
