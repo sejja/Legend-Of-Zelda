@@ -35,7 +35,7 @@ public final class AnimationMachine extends Component implements Renderable {
     private boolean must_complete = false;
     private BufferedImage[] must_end_frames;
     private BufferedImage[] previus_frames;
-    public boolean finised_Animation = false;
+    public boolean finised_Animation = false; //It turns true when the animation is finished
 
     // ------------------------------------------------------------------------
     /*! Animation Machine
@@ -91,7 +91,7 @@ public final class AnimationMachine extends Component implements Renderable {
         }
         else if (must_complete && must_end_frames != null)
         {   
-            System.out.println("Continue must complete animation");
+            //System.out.println("Continue must complete animation");
             return;
         }
         else

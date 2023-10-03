@@ -310,17 +310,8 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
     //int NumeroSecreto = 0; //que wea es esto? //No hace nada??
 
     public void Animate() {
-
-        if(falling && mAnimation.GetAnimation().GetFrame() == 7) {
-            SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), delay);   
-            mAnimation.setMust_Complete(false);
-            SetPosition(new Vector2D<>(mPreviousPositionX, mPreviousPositionY));
-            mCollider.GetBounds().SetBox(GetPosition(), GetScale());
-            falling = false;
-        }
-
         //System.out.println(actionToString());
-        if (mAnimation.getMust_Complete()){return;} //Early return, if it is a animation thats has to be complete, do not animaate
+        if (mAnimation.getMust_Complete()){System.out.println("Is must finised");return;} //Early return, if it is a animation thats has to be complete, do not animaate
 
         if (stop)
         {
@@ -355,8 +346,15 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
                     setMovement(Action.BOW);
                 }
                 else
-                {
-                    setMovement(Action.RUN);
+                {   
+                    if(falling){
+                        setMovement(null);
+                        System.out.println("Se cae");
+                        attack = false;
+                        bow = false;
+                    }else{
+                        setMovement(Action.RUN);
+                    }
                 }
             }
         }
@@ -387,19 +385,22 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
             shootArrow();
             bow = false;
             mAnimation.finised_Animation = false;
-        }else if (mAnimation.finised_Animation && attack){
-            //System.out.println("te rajo primo");
-            Attack();
-            attack = false;
-            mAnimation.finised_Animation = false;
-        } else if (mAnimation.finised_Animation && falling){
-            //System.out.println("te rajo primo");
-            
-            SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), delay);
-            mAnimation.finised_Animation = false;
+            }
+            else if (mAnimation.finised_Animation && attack) //Finished Attack
+            {
+                Attack();
+                attack = false;
+                mAnimation.finised_Animation = false;
+            } 
+            else if (!mAnimation.finised_Animation && falling) //Finished falling animation
+            { 
+                mAnimation.finised_Animation = false;
+                linkHasFalled();
+            }
         }
-    }
+
         Animate();
+        System.out.println(mAnimatioT0String());
         if(able_to_takeDamage){
             takeDamage();
         }
@@ -533,7 +534,6 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
         stop = false;
         attack = false;
     }
-
     private void takeDamage(){ //Looking for enemies to take damage
         //System.out.println("Vida = " + healthPoints);
         ArrayList<Entity> allEntities = ObjectManager.GetObjectManager().getmAliveEntities();
@@ -545,7 +545,10 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
                     this.setDamage(enemy.getDamage());
                     enemy.KnockBack(this.GetPosition());
                 }
-            } else if(allEntities.get(i) instanceof Npc){
+            } 
+            //Change solution
+            
+            else if(allEntities.get(i) instanceof Npc){
                 Npc npc = (Npc) allEntities.get(i);
                 Vector2D<Float> npcPosition = npc.GetPosition();
                 if (npcPosition.getModuleDistance(this.GetPosition()) < this.GetScale().y/2){
@@ -585,7 +588,7 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
         else{
             ThreadInmortal thread = new ThreadInmortal(this);
             thread.start();
-            System.out.println("Comienza hilo");
+            //System.out.println("Comienza hilo");
             //HUD
             lifeBar.setHealthPoints(this.healthPoints);
             //lifeBar.setHearts();
@@ -596,18 +599,19 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
     public void setAttack(boolean attack) {this.attack = attack;}
     public void setAble_to_takeDamage(boolean able_to_takeDamage) {this.able_to_takeDamage = able_to_takeDamage;}
     private void setMovement(Action type){
+        if(falling && mCurrentAnimation != FALL || mAnimation.GetAnimation().GetDelay() == -1) { //Enviromental special case
+            SetAnimation(FALL, mAnimation.GetSpriteSheet().GetSpriteArray(FALL), delay);
+            mAnimation.setMust_Complete();
+            System.out.println("Set falling Animation");
+            return;
+        }
+
 
         if (type == Action.ATTACK || type == Action.BOW){ //Activate must-end sequence
             mAnimation.setMust_Complete();
         }
 
         int i = type.getID();
-
-        if(falling && mCurrentAnimation != FALL+i|| mAnimation.GetAnimation().GetDelay() == -1) {
-            SetAnimation(FALL+i, mAnimation.GetSpriteSheet().GetSpriteArray(FALL+i), delay);
-            mAnimation.setMust_Complete();
-            return;
-        }
 
         switch(direction){
             case UP:
@@ -619,6 +623,7 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
                 if(mCurrentAnimation != DOWN+i || mAnimation.GetAnimation().GetDelay() == -1) {
                     SetAnimation(DOWN+i, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN+i), delay);
                 }
+                //System.out.println("Patata");
                 return;
             case RIGHT:
                 if(mCurrentAnimation != RIGHT+i || mAnimation.GetAnimation().GetDelay() == -1) {
@@ -640,7 +645,7 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
     private void shootArrow(){ //Tiene que dar al enemigo
         nArrows--;
         if(nArrows == 0){
-            System.out.println("0 Arrows in quiver");
+            //System.out.println("0 Arrows in quiver");
         }
         ObjectManager.GetObjectManager().AddEntity(new Arrow(this));
     }
@@ -728,4 +733,19 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
         }
     }
     //------------------------------------------------------------------------
+
+    /* This function set the player position to the spawn Point
+     * 
+     */
+    private void setToSpawnPoint(){SetPosition(new Vector2D<Float>(700.f, 400.f));}
+    //------------------------------------------------------------------------
+
+    private void linkHasFalled(){
+        falling = false;
+        stop = true;
+        setDamage(2);
+        setToSpawnPoint();
+        this.direction = DIRECTION.DOWN;
+        setMovement(Action.STOP);
+    }
 }
