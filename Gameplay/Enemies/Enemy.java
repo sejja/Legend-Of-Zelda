@@ -41,6 +41,8 @@ public class Enemy extends Engine.ECSystem.Types.Actor implements Renderable{
     protected Pair lastFinalDestination= new Pair(0, 0);
     protected Pair currentDestination;
     protected Stack<Pair> path = new Stack<Pair>();
+    protected Vector2D<Float> pos = GetPosition();
+    protected Vector2D<Float> playerPos = ObjectManager.GetObjectManager().GetObjectByName("Player").GetPosition();
 
     //stats
     protected int healthPoints = 4;
@@ -62,7 +64,7 @@ public class Enemy extends Engine.ECSystem.Types.Actor implements Renderable{
     *
     *   Constructs an Enemy with a sprite, a position, and gives it a size
     */ //----------------------------------------------------------------------
-    public Enemy(Spritesheet originalsprite, Vector2D<Float> position, Vector2D<Float> size) {
+    public Enemy( Vector2D<Float> position, Vector2D<Float> size) {
 
         super(position);
         SetScale(size);
@@ -73,7 +75,7 @@ public class Enemy extends Engine.ECSystem.Types.Actor implements Renderable{
 
         // ADD ANIMATION COMPONENT
         mAnimation = AddComponent(new AnimationMachine(this, sprite));
-        SetScale(new Vector2D<Float>(size.x+25, size.y));a
+        SetScale(new Vector2D<Float>(size.x+25, size.y));
         
         // ADD COLLIDER COMPONENT
         mCollision = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<Float>(size.x*2, size.y*2)));
@@ -226,12 +228,11 @@ public class Enemy extends Engine.ECSystem.Types.Actor implements Renderable{
     */ //----------------------------------------------------------------------
     public void Pathfinding(Vector2D<Float> playerPos) { // Tile size is 64x64 and the player is yoffsetxyoffset
         int divisior = 64;
-        Vector2D pos = GetPosition();
-        Pair src = new Pair((int)Math.round(((float)pos.x + xoffset)/divisior), (int)Math.round(((float)pos.y+yoffset)/divisior));
+        Pair enemyTile = new Pair((int)Math.round(((float)pos.x + xoffset)/divisior), (int)Math.round(((float)pos.y+yoffset)/divisior));
         finalDestination = new Pair((int)Math.round((playerPos.x +xoffset)/divisior), (int)Math.round((playerPos.y +yoffset)/divisior));
         if(lastFinalDestination.getFirst() != finalDestination.getFirst() || lastFinalDestination.getSecond() != finalDestination.getSecond()){
             lastFinalDestination = finalDestination;
-            path = AStarSearch.aStarSearch(src, finalDestination);
+            path = AStarSearch.aStarSearch(enemyTile, finalDestination);
         }
     }
 
@@ -241,7 +242,6 @@ public class Enemy extends Engine.ECSystem.Types.Actor implements Renderable{
     *   Calculates the movement of the Enemy
     */ //----------------------------------------------------------------------
     public void MovementVector(Vector2D<Float> playerPos) {
-        Vector2D<Float> pos = GetPosition();
         Vector2D<Float> dir = new Vector2D<Float>((float)playerPos.x - (pos.x +xoffset), (float)playerPos.y - (pos.y +yoffset));
         normalizedDirection=Normalize(dir);
     }
@@ -253,8 +253,6 @@ public class Enemy extends Engine.ECSystem.Types.Actor implements Renderable{
     *   Receives the movements in a stack and sets the movement of the Enemy with the A* search
     */ //----------------------------------------------------------------------
     public void Move() {
-        Vector2D<Float> pos = GetPosition();
-        Vector2D<Float> playerPos = ObjectManager.GetObjectManager().GetObjectByName("Player").GetPosition();
         if(chase){
             speed = 3;
         }

@@ -7,8 +7,8 @@ import Gameplay.Enemies.*;
 public class GreenKnight extends Enemy{
     
 
-    public GreenKnight(Spritesheet originalsprite, Vector2D<Float> position, Vector2D<Float> size) {
-        super(originalsprite, position, size);
+    public GreenKnight(Vector2D<Float> position, Vector2D<Float> size) {
+        super(position, size);
     }
     
 }

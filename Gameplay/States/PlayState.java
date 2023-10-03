@@ -69,10 +69,11 @@ public class PlayState extends State {
         mPos = new Vector2D<Float>(300.f, 600.f);
         mNpcArrayList.add(mNpc1);
         mNpcArrayList.add(mNpc2);
+        ObjectManager.GetObjectManager().Update();
         Spritesheet esprite = new Spritesheet("Content/Animations/gknight.png",16,28);
-        mEnemy = (Enemy)ObjectManager.GetObjectManager().AddEntity(new GreenKnight(esprite, new Vector2D<Float>(450.f, 300.f), new Vector2D<Float>(50.f, 100.f)));
-        mEnemy2 = (Enemy)ObjectManager.GetObjectManager().AddEntity(new GreenKnight(esprite, new Vector2D<Float>(600.f, 300.f), new Vector2D<Float>(50.f, 100.f)));
-        mEnemy3 = (Enemy)ObjectManager.GetObjectManager().AddEntity(new GreenKnight(esprite, new Vector2D<Float>(800.f, 800.f), new Vector2D<Float>(50.f, 100.f)));
+        mEnemy = (Enemy)ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Float>(450.f, 300.f), new Vector2D<Float>(50.f, 100.f)));
+        mEnemy2 = (Enemy)ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Float>(600.f, 300.f), new Vector2D<Float>(50.f, 100.f)));
+        mEnemy3 = (Enemy)ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Float>(800.f, 800.f), new Vector2D<Float>(50.f, 100.f)));
     
         InputManager.SubscribePressed(KeyEvent.VK_P, new InputFunction() {
             @Override
