@@ -51,7 +51,7 @@ public class Player extends Actor {
      */
     private int mCurrentAnimation;
     protected AnimationMachine mAnimation;
-    final private int delay = 3; //This is the delay of the all animations
+    private int delay = 3; //This is the delay of the all animations
     //----------------------------------------------------------------------
 
     /*  Enable skills
@@ -192,7 +192,7 @@ public class Player extends Actor {
             public void Execute() {
                 setVelocity(0);
                 stop = true;
-                attack = false;
+                //attack = false;
                 bow = false;
                 dash = false;
             }
@@ -363,6 +363,15 @@ public class Player extends Actor {
     @Override
     public void Update() { 
         super.Update();
+        playerStateMachine();
+        Animate();
+        if(able_to_takeDamage){
+            takeDamage();
+        }
+        mAnimation.GetAnimation().SetDelay(delay);
+        lifeBar.Update();
+    }
+    public void playerStateMachine(){
         if(dash)
         {
             dash();
@@ -371,6 +380,8 @@ public class Player extends Actor {
         else
         {
             if(mAnimation.finised_Animation){ //When a special animation has finished
+                //System.out.println("Animacion ha terminando : " + mAnimation.finised_Animation + ", Animacion debe continuar: " + mAnimation.getMust_Complete());
+                //System.out.println(actionToString());
                 if (falling) //Finished falling animation
                 {
                     linkHasFalled();
@@ -378,10 +389,13 @@ public class Player extends Actor {
                 else if (nArrows != 0 && bow) //Spawn Arrow
                 {
                     shootArrow();
+                    attack = false;
                     bow = false;
                 }
-                else if (attack) //Finished Attack
+                else if (attack) //Finished Attack (attack && !bow)
                 {
+                    bow = false;
+                    System.out.println("ataca");
                     Attack();
                     attack = false;
                 }
@@ -391,13 +405,8 @@ public class Player extends Actor {
             {
                 Move();
             }
+            //System.out.println(actionToString());
         }
-        Animate();
-        if(able_to_takeDamage){
-            takeDamage();
-        }
-        mAnimation.GetAnimation().SetDelay(delay);
-        lifeBar.Update();
     }
     // ------------------------------------------------------------------------
 
@@ -601,6 +610,7 @@ public class Player extends Actor {
         if (type == Action.ATTACK || type == Action.BOW){ //Activate must-end sequence
             mAnimation.setMust_Complete();
         }
+
 
         int i = type.getID();
 

@@ -17,7 +17,7 @@ public class ThreadInmortal extends Thread {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            Link.SetScale(new Vector2D<>(1f, 1f));
+            Link.SetScale(new Vector2D<>(0f, 0f));
             try {
                 this.sleep(100); //5times
             } catch (InterruptedException e) {
