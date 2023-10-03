@@ -46,6 +46,7 @@ public class Heart extends Actor {
     @Override
     public void Update(){
         Animate();
+        popFromObjectManager();
     }
     public int getHealthPoints() {
         return healthPoints;
@@ -55,5 +56,8 @@ public class Heart extends Actor {
     }
     public void popFromObjectManager(){
         ObjectManager.GetObjectManager().RemoveEntity(this);
+    }
+    public boolean isInObjectManager(){
+        return ObjectManager.GetObjectManager().getmAliveEntities().contains(this);
     }
 }

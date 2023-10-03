@@ -94,6 +94,7 @@ public class PlayState extends State {
                mNpcArrayList.get(i).Update(mPlayer.GetPosition());
 //            ObjectManager.GetObjectManager().Update();
             }
+            System.out.println(ObjectManager.GetObjectManager().getmAliveEntities().size());
         } 
         if(gameState == pauseState){
             //Nothing

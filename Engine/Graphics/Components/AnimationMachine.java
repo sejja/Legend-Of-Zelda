@@ -35,7 +35,7 @@ public final class AnimationMachine extends Component implements Renderable {
     private boolean must_complete = false;
     private BufferedImage[] must_end_frames;
     private BufferedImage[] previus_frames;
-    public boolean finised_Animation = false; //It turns true when the animation is finished
+    public boolean finised_Animation = true; //It turns true when the animation is finished
 
     // ------------------------------------------------------------------------
     /*! Animation Machine
@@ -118,12 +118,14 @@ public final class AnimationMachine extends Component implements Renderable {
     @Override
     public void Update() {
         //System.out.println(must_complete);
-        if (mAnimation.Update() && must_complete){
+        if (mAnimation.Update() && must_complete){ //if Animation has ended
             mAnimation.SetFrames(previus_frames);
             must_complete = false;
             must_end_frames = null;
             previus_frames = null;
             finised_Animation = true;
+        }else{
+            finised_Animation = false;
         }
     }
 
@@ -150,7 +152,7 @@ public final class AnimationMachine extends Component implements Renderable {
         if(camerapos.OnBounds(new AABB(GetParent().GetPosition(), GetParent().GetScale())))
             g.drawImage(mAnimation.GetCurrentFrame(), (int)(float)GetParent().GetPosition().x - (int)(float)camcoord.x - (int)(scale.x / 4), (int)(float)GetParent().GetPosition().y - (int)(float)camcoord.y, (int)(float)GetParent().GetScale().x, (int)(float)GetParent().GetScale().y, null);
     }
-    
+    //Call this function before adding the animation
     public void setMust_Complete(boolean b){
         must_complete = b;
     }

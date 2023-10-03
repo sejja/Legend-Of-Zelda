@@ -79,8 +79,6 @@ public class Player extends Actor {
     private int velocity = 0;
     final int default_velocity = 10;
     private LifeBar lifeBar;
-    private float mPreviousPositionX;
-    private float mPreviousPositionY;
     //----------------------------------------------------------------------
 
     /* NPC
@@ -96,7 +94,7 @@ public class Player extends Actor {
     *
     *   Constructs a Player with a sprite, a position, and gives it a size
     */ //----------------------------------------------------------------------
-public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size) {
+    public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size) {
         super(position);
         SetScale(size);
         this.direction = DIRECTION.RIGHT;
@@ -111,7 +109,6 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
         implementsActions();
         this.SetName("Player");
         //---------------------------------------------------------------------
-        //lifeBar = new LifeBar(this, healthPoints);
         lifeBar = new LifeBar(getPlayer(), getHealthPoints());
         //---------------------------------------------------------------------
         mCollider = (BoxCollider)AddComponent(new BoxCollider(this));
@@ -307,11 +304,11 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
     }
     // ------------------------------------------------------------------------
 
-    //int NumeroSecreto = 0; //que wea es esto? //No hace nada??
-
     public void Animate() {
         //System.out.println(actionToString());
-        if (mAnimation.getMust_Complete()){System.out.println("Is must finised");return;} //Early return, if it is a animation thats has to be complete, do not animaate
+        if (mAnimation.getMust_Complete()){
+            //System.out.println("Is must finised");
+            return;} //Early return, if it is a animation thats has to be complete, do not animaate
 
         if (stop)
         {
@@ -348,10 +345,8 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
                 else
                 {   
                     if(falling){
+                        setMovement(Action.STOP);
                         setMovement(null);
-                        System.out.println("Se cae");
-                        attack = false;
-                        bow = false;
                     }else{
                         setMovement(Action.RUN);
                     }
@@ -368,7 +363,6 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
     @Override
     public void Update() { 
         super.Update();
-        lifeBar.Update();
         if(dash)
         {
             dash();
@@ -376,35 +370,34 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
         }
         else
         {
-            if (!mAnimation.getMust_Complete())
+            if(mAnimation.finised_Animation){ //When a special animation has finished
+                if (falling) //Finished falling animation
+                {
+                    linkHasFalled();
+                }
+                else if (nArrows != 0 && bow) //Spawn Arrow
+                {
+                    shootArrow();
+                    bow = false;
+                }
+                else if (attack) //Finished Attack
+                {
+                    Attack();
+                    attack = false;
+                }
+                 mAnimation.finised_Animation = false;
+            }
+            else if (!mAnimation.getMust_Complete())
             {
                 Move();
             }
-            else if (nArrows != 0 && mAnimation.finised_Animation && bow) //Spawn Arrow
-            {
-            shootArrow();
-            bow = false;
-            mAnimation.finised_Animation = false;
-            }
-            else if (mAnimation.finised_Animation && attack) //Finished Attack
-            {
-                Attack();
-                attack = false;
-                mAnimation.finised_Animation = false;
-            } 
-            else if (!mAnimation.finised_Animation && falling) //Finished falling animation
-            { 
-                mAnimation.finised_Animation = false;
-                linkHasFalled();
-            }
         }
-
         Animate();
-        System.out.println(mAnimatioT0String());
         if(able_to_takeDamage){
             takeDamage();
         }
         mAnimation.GetAnimation().SetDelay(delay);
+        lifeBar.Update();
     }
     // ------------------------------------------------------------------------
 
@@ -420,8 +413,6 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
     */ //----------------------------------------------------------------------
     public void Move() {
         Vector2D<Float> pos = GetPosition();
-        mPreviousPositionX = pos.x;
-        mPreviousPositionY = pos.y;
 
         //System.out.println(directionToString());
         switch (direction){
@@ -498,7 +489,7 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
         return "Player direction = " + direction;
     }
     public String actionToString(){
-        return("mCurrentAnimation=" +mCurrentAnimation + ", stop=" + stop + ", attack =" + attack  + ", bow = " + bow);
+        return("mCurrentAnimation=" +mCurrentAnimation + ", stop=" + stop + ", attack =" + attack  + ", bow = " + bow + ", falling = " + falling);
     }
     public String mAnimatioT0String(){
         return ("My current animation: " + mCurrentAnimation);
@@ -599,13 +590,13 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
     public void setAttack(boolean attack) {this.attack = attack;}
     public void setAble_to_takeDamage(boolean able_to_takeDamage) {this.able_to_takeDamage = able_to_takeDamage;}
     private void setMovement(Action type){
-        if(falling && mCurrentAnimation != FALL || mAnimation.GetAnimation().GetDelay() == -1) { //Enviromental special case
-            SetAnimation(FALL, mAnimation.GetSpriteSheet().GetSpriteArray(FALL), delay);
+        if (type == null){
             mAnimation.setMust_Complete();
-            System.out.println("Set falling Animation");
+            if(falling && mCurrentAnimation != FALL || mAnimation.GetAnimation().GetDelay() == -1) { //Enviromental special case
+            SetAnimation(FALL, mAnimation.GetSpriteSheet().GetSpriteArray(FALL), delay);
+            }
             return;
         }
-
 
         if (type == Action.ATTACK || type == Action.BOW){ //Activate must-end sequence
             mAnimation.setMust_Complete();
@@ -655,8 +646,6 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
     *   
     */
     private void dead(){ //falta hacer que link se muera y termine el juego
-        //this.mAnimation.setMust_Complete();
-        //this.mAnimation.SetFrames(mAnimation.GetSpriteSheet().GetSpriteArray(4));
         System.out.println("Ha muerto");
     }
     //------------------------------------------------------------------------
@@ -737,15 +726,17 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
     /* This function set the player position to the spawn Point
      * 
      */
-    private void setToSpawnPoint(){SetPosition(new Vector2D<Float>(700.f, 400.f));}
+    private void setToSpawnPoint(){
+        SetPosition(new Vector2D<Float>(700.f, 400.f));
+    }
     //------------------------------------------------------------------------
 
     private void linkHasFalled(){
         falling = false;
         stop = true;
         setDamage(2);
-        setToSpawnPoint();
         this.direction = DIRECTION.DOWN;
-        setMovement(Action.STOP);
+        setToSpawnPoint();
+        mCollider.Reset();
     }
 }
