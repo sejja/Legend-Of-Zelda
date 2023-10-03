@@ -1,51 +1,58 @@
 //
-//	BoxCollider.java
+//	AnimationMachine.java
 //	Legend Of Zelda
 //
 //	Created by Diego Revilla on 19/09/2023
 //	Copyright Deusto © 2023. All Rights reserved
 //
 
-package Engine.Physics.Components;
+package Engine.Graphics.Components;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Component;
+import Engine.Graphics.Animation;
 import Engine.Graphics.GraphicsPipeline;
-import Engine.Graphics.Components.CameraComponent;
-import Engine.Graphics.Components.Renderable;
+import Engine.Graphics.Sprite;
+import Engine.Graphics.Spritesheet;
 import Engine.Math.Vector2D;
-import Engine.Physics.AABB;
 
-public class BoxCollider extends Component implements Renderable{
-    private AABB mBounds;
+public final class SpriteComponent extends Component implements Renderable {
+    private Sprite mSprite;
 
     // ------------------------------------------------------------------------
-    /*! Conversion Constructor
+    /*! Animation Machine
     *
-    *   Constructs a Box Collider from a parent actor
+    *   Creates an Animation Machine with a parent and a sprite
     */ //----------------------------------------------------------------------
-    public BoxCollider(Actor parent) {
+    public SpriteComponent(Actor parent, Sprite sprite) {
         super(parent);
-        mBounds = new AABB(parent.GetPosition(), parent.GetScale());
+        mSprite = sprite;
     }
 
     // ------------------------------------------------------------------------
-    /*! Conversion Constructor
+    /*! Get Spritesheet
     *
-    *   Constructs a Box Collider from a parent actor and a scale
+    *   Returns the spritesheet that we are using for animating
     */ //----------------------------------------------------------------------
-    public BoxCollider(Actor parent, Vector2D<Float> scale) {
-        super(parent);
-        mBounds = new AABB(parent.GetPosition(), scale);
+    public Sprite GetSprite() {
+        return mSprite;
+    }
+
+    // ------------------------------------------------------------------------
+    /*! Set Sprite
+    *GraphicsPipeline
+    *   Sets the Sprite that we are going to animate
+    */ //----------------------------------------------------------------------
+    public void SetSprite(Sprite sp) {
+        mSprite = sp;
     }
 
     // ------------------------------------------------------------------------
     /*! Init
     *
-    *   EMPTY FUNCTION
+    *   Adds the Animation to the Graphics Pipeline
     */ //----------------------------------------------------------------------
     @Override
     public void Init() {
@@ -55,18 +62,16 @@ public class BoxCollider extends Component implements Renderable{
     // ------------------------------------------------------------------------
     /*! Update
     *
-    *   Updates the bounds of the AABB
+    *   Updates the Animation every frame
     */ //----------------------------------------------------------------------
     @Override
     public void Update() {
-        mBounds.SetHeight(this.GetBounds().GetWidth());
-        mBounds.SetWidth(this.GetBounds().GetHeight());
     }
 
     // ------------------------------------------------------------------------
-    /*! Shutdown
+    /*! Shut Down
     *
-    *   EMPTY FUNCTION
+    *   Removes the Animation from the Rendering Pipeline
     */ //----------------------------------------------------------------------
     @Override
     public void ShutDown() {
@@ -74,18 +79,13 @@ public class BoxCollider extends Component implements Renderable{
     }
 
     // ------------------------------------------------------------------------
-    /*! Get Bounds
+    /*! Render
     *
-    *   Returns the Axis Aligned Bouding Box of the Collider
+    *   Renders the animation
     */ //----------------------------------------------------------------------
-    public AABB GetBounds() {
-        return mBounds;
-    }
-
     @Override
     public void Render(Graphics2D g, CameraComponent camerapos) {
-        var campos = camerapos.GetCoordinates();
-       g.setColor(Color.blue);
-       //g.drawRect((int)(float)(mBounds.GetPosition().x - campos.x), (int)(float)(mBounds.GetPosition().y - campos.y), (int)mBounds.GetWidth() / 2, (int)mBounds.GetHeight());
+        g.drawImage(mSprite.GetSprite(), (int)(float)GetParent().GetPosition().x - (int)(float)camerapos.GetCoordinates().x, (int)(float)GetParent().GetPosition().y - (int)(float)camerapos.GetCoordinates().y, (int)(float)GetParent().GetScale().x, (int)(float)GetParent().GetScale().y, null);
     }
+    
 }

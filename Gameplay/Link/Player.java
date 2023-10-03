@@ -2,10 +2,7 @@ package Gameplay.Link;
 
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
-import java.lang.management.MonitorInfo;
-import java.security.AllPermission;
 import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
@@ -13,15 +10,17 @@ import Engine.ECSystem.Types.Entity;
 import Engine.Graphics.Animation;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.AnimationMachine;
-import Engine.Graphics.Components.CameraComponent;
 import Engine.Graphics.Components.ZeldaCameraComponent;
 import Engine.Input.InputFunction;
 import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
+import Engine.Physics.CollisionResult;
 import Engine.Physics.Components.BoxCollider;
+import Gameplay.States.PlayState;
 import Gameplay.Enemies.Enemy;
-import Gameplay.LifeBar.Heart;
 import Gameplay.LifeBar.LifeBar;
+import Gameplay.NPC.DialogueWindow;
+import Gameplay.NPC.Npc;
 
 public class Player extends Actor {
     
@@ -45,6 +44,7 @@ public class Player extends Actor {
     private boolean stop = true;
     private boolean bow = false;
     public boolean dash = false;
+    private boolean falling = false;
     //----------------------------------------------------------------------
 
     /* Animation
@@ -79,20 +79,29 @@ public class Player extends Actor {
     private int velocity = 0;
     final int default_velocity = 10;
     private LifeBar lifeBar;
+    private float mPreviousPositionX;
+    private float mPreviousPositionY;
     //----------------------------------------------------------------------
 
+    /* NPC
+     * 
+     */
+    private boolean isTouchingNpc = false;
+    private static Vector2D<Float> npcIndex;
+    //----------------------------------------------------------------------
+    
     //Methods______________________________________________________________________________________________________________________________________________________________________________
 
     /*! Conversion Constructor
     *
     *   Constructs a Player with a sprite, a position, and gives it a size
     */ //----------------------------------------------------------------------
-    public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size) {
+public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size) {
         super(position);
         SetScale(size);
         this.direction = DIRECTION.RIGHT;
         //Lets transpose the Sprite Matrix and add all extra Animations
-        sprite.setmSpriteArray(completeAnimationSet(sprite.GetSpriteArray2D()));
+        sprite.setmSpriteArray(this.completeAnimationSet(sprite.GetSpriteArray2D()));
         //---------------------------------------------------------------------
         mAnimation = AddComponent(new AnimationMachine(this, sprite));
         mCamera = AddComponent(new ZeldaCameraComponent(this));
@@ -237,6 +246,54 @@ public class Player extends Actor {
                 lifeBar.setVisible(false);
             }
         });
+        InputManager.SubscribePressed(KeyEvent.VK_P, new InputFunction() { //Pause
+            @Override
+            public void Execute() {
+                Pause();
+            }
+        });
+        InputManager.SubscribePressed(KeyEvent.VK_E, new InputFunction() {
+            private boolean firstDialogue = false;
+            private boolean isFinished = false;
+
+            @Override
+            public void Execute() {
+                if(isTouchingNpc){
+                    if(DialogueWindow.getJ() + 1 >  Npc.getNpcArrayList().get(1).getDialoguesArrayList().size()-1 ) {
+                        isFinished = true;
+                        System.out.println(isFinished);
+                    }
+                    if (DialogueWindow.getJ() == 0 && firstDialogue == false){
+                        Npc.setInteract(true);
+                        try {Thread.sleep(100);
+                        } catch (InterruptedException e) {}
+                        Npc.setInteract(false);
+                        PlayState.setGameState(2);
+                        firstDialogue = true;
+                    }  else if(isFinished){
+                        PlayState.setGameState(1);
+                        DialogueWindow.setSiguiente(false);
+                        Npc.setInteract(false);
+                        Npc.setRemove(true);
+                        DialogueWindow.setJ(0);
+                        isFinished = false;
+                        firstDialogue = false;
+                        isTouchingNpc = false;
+                    }
+                    else if(DialogueWindow.getJ() + 1 <=  Npc.getNpcArrayList().get(1).getDialoguesArrayList().size() -1){
+                        Npc.setRemove(true);
+                        DialogueWindow.setJ(1);
+                        DialogueWindow.setSiguiente(true);
+                        Npc.setInteract(true);
+                        DialogueWindow.setSiguiente(false);
+                        try {Thread.sleep(100);} catch (InterruptedException e) {}
+                        Npc.setRemove(false);
+                        PlayState.setGameState(2);
+                        System.out.println(DialogueWindow.getJ());
+                    }
+                }
+            }
+        });
     }
     // ------------------------------------------------------------------------
 
@@ -250,13 +307,20 @@ public class Player extends Actor {
     }
     // ------------------------------------------------------------------------
 
-    /*  This function is a state machine thats determinate which animation to animate
-     * 
-     */
+    //int NumeroSecreto = 0; //que wea es esto? //No hace nada??
+
     public void Animate() {
+
+        if(falling && mAnimation.GetAnimation().GetFrame() == 7) {
+            SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), delay);   
+            mAnimation.setMust_Complete(false);
+            SetPosition(new Vector2D<>(mPreviousPositionX, mPreviousPositionY));
+            mCollider.GetBounds().SetBox(GetPosition(), GetScale());
+            falling = false;
+        }
+
         //System.out.println(actionToString());
         if (mAnimation.getMust_Complete()){return;} //Early return, if it is a animation thats has to be complete, do not animaate
-
 
         if (stop)
         {
@@ -320,15 +384,21 @@ public class Player extends Actor {
             }
             else if (nArrows != 0 && mAnimation.finised_Animation && bow) //Spawn Arrow
             {
-                shootArrow();
-                bow = false;
-                mAnimation.finised_Animation = false;
-            }else if (mAnimation.finised_Animation && attack){
-                Attack();
-                attack = false;
-                mAnimation.finised_Animation = false;
-            }
+            shootArrow();
+            bow = false;
+            mAnimation.finised_Animation = false;
+        }else if (mAnimation.finised_Animation && attack){
+            //System.out.println("te rajo primo");
+            Attack();
+            attack = false;
+            mAnimation.finised_Animation = false;
+        } else if (mAnimation.finised_Animation && falling){
+            //System.out.println("te rajo primo");
+            
+            SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), delay);
+            mAnimation.finised_Animation = false;
         }
+    }
 
         Animate();
 
@@ -339,35 +409,43 @@ public class Player extends Actor {
     }
     // ------------------------------------------------------------------------
 
+    public boolean SolveCollisions(Vector2D<Integer> dif) {
+        CollisionResult res = mCollider.GetBounds().collisionTile(dif.x, dif.y);
+        
+        falling = res == CollisionResult.Hole;
+
+        return res == CollisionResult.None;
+    }
+
     /*! Move
     *
     *   Moves the sprite on a certain direction
     */ //----------------------------------------------------------------------
     public void Move() {
         Vector2D<Float> pos = GetPosition();
-        
+        mPreviousPositionX = pos.x;
+        mPreviousPositionY = pos.y;
+
+        //System.out.println(directionToString());
         switch (direction){
             case UP:
-                if(!mCollider.GetBounds().collisionTile(0, -velocity)){
+                if(SolveCollisions(new Vector2D<>(0, -velocity)))
                     pos.y -= velocity;
-                }
-                return;
+                break;
             case DOWN:
-                if(!mCollider.GetBounds().collisionTile(0, velocity)){
+                if(SolveCollisions(new Vector2D<>(0, +velocity)))
                     pos.y += velocity;
-                }
-                return;
+                break;
             case LEFT:
-                if(!mCollider.GetBounds().collisionTile(-velocity, 0)){
+                if(SolveCollisions(new Vector2D<>(-velocity, 0)))
                     pos.x -= velocity;
-                }
-                return;
+                break;
             case RIGHT:
-                if(!mCollider.GetBounds().collisionTile(velocity, 0)){
+                if(SolveCollisions(new Vector2D<>(velocity, 0)))
                     pos.x += velocity;
-                }
-                return;
+                break;
         }
+
         SetPosition(pos);
     }
     // ------------------------------------------------------------------------
@@ -456,9 +534,10 @@ public class Player extends Actor {
             setVelocity(0);
             setAttack(true);
         }
-        stop = false; 
+        stop = false;
         attack = false;
     }
+
     private void takeDamage(){ //Looking for enemies to take damage
         //System.out.println("Vida = " + healthPoints);
         ArrayList<Entity> allEntities = ObjectManager.GetObjectManager().getmAliveEntities();
@@ -469,6 +548,15 @@ public class Player extends Actor {
                 if (enemyPosition.getModuleDistance(this.GetPosition()) < this.GetScale().y/2){
                     this.setDamage(enemy.getDamage());
                     enemy.KnockBack(this.GetPosition());
+                }
+            } else if(allEntities.get(i) instanceof Npc){
+                Npc npc = (Npc) allEntities.get(i);
+                Vector2D<Float> npcPosition = npc.GetPosition();
+                if (npcPosition.getModuleDistance(this.GetPosition()) < this.GetScale().y/2){
+                    isTouchingNpc = true;
+                    npcIndex = npc.GetPosition();
+                } else{
+                    //isTouchingNpc = false; El segundo Npc no funciona
                 }
             }
         }
@@ -488,6 +576,7 @@ public class Player extends Actor {
     public int getHealthPoints(){return this.healthPoints;}
     private Player getPlayer (){return this;}
     public boolean isAble_to_takeDamage() {return able_to_takeDamage;}
+    public static Vector2D<Float> getNpcIndex(){return npcIndex;}
     //------------------------------------------------------------------------
 
     /* Setters
@@ -517,6 +606,13 @@ public class Player extends Actor {
         }
 
         int i = type.getID();
+
+        if(falling && mCurrentAnimation != FALL+i|| mAnimation.GetAnimation().GetDelay() == -1) {
+            SetAnimation(FALL+i, mAnimation.GetSpriteSheet().GetSpriteArray(FALL+i), delay);
+            mAnimation.setMust_Complete();
+            return;
+        }
+
         switch(direction){
             case UP:
                 if(mCurrentAnimation != UP+i || mAnimation.GetAnimation().GetDelay() == -1) {
@@ -578,7 +674,7 @@ public class Player extends Actor {
             if (allEntities.get(i) instanceof Enemy){
                 Enemy enemy = (Enemy) allEntities.get(i);
                 Vector2D<Float> enemyPosition = enemy.GetPosition();
-                if (enemyPosition.getModuleDistance(this.GetPosition()) < this.GetScale().y/2+50){ //Each enemy thats can be attacked
+                if (enemyPosition.getModuleDistance(this.GetPosition()) < this.GetScale().y/2+100){ //Each enemy thats can be attacked
                     if(direction == getAttackDirection(this.GetPosition().getVectorToAnotherActor(enemyPosition))){
                         System.out.println("Le da");
                         enemy.setHealthPoints(damage);
@@ -623,5 +719,17 @@ public class Player extends Actor {
         dash = false;
         able_to_takeDamage = true;
     }
-     //------------------------------------------------------------------------
+    //------------------------------------------------------------------------
+    
+    /* To pause the gameplay
+     * 
+     */
+    private void Pause(){
+        if(PlayState.getGameState() == PlayState.getPlayState()){
+            PlayState.setGameState(2);
+        }else if(PlayState.getGameState() == PlayState.getPauseState()){
+            PlayState.setGameState(1);
+        }
+    }
+    //------------------------------------------------------------------------
 }

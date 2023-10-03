@@ -13,11 +13,13 @@ import Engine.Physics.AABB;
 public class FontObject extends ECObject implements Renderable {
     private Font mFont;
     private String mString;
+    private int mOffSet;
 
-    public FontObject(String fontsheet, String text) {
+    public FontObject(String fontsheet, String text, int offSet) {
         mFont = new Font(fontsheet, 16, 16); 
         GraphicsPipeline.GetGraphicsPipeline().AddRenderable(this);
         mString = text;
+        mOffSet = offSet;
     }
 
     @Override

@@ -374,7 +374,7 @@ public class AStarSearch implements Renderable {
 
         while (!stack.isEmpty()) {
             Pair p = stack.pop();
-            g.drawRect(p.first * 64 - (int)(float)camcoord.x, p.second * 64 - (int)(float)camcoord.y, 64, 64);
+            //g.drawRect(p.first * 64 - (int)(float)camcoord.x, p.second * 64 - (int)(float)camcoord.y, 64, 64);
         }
     }
 
