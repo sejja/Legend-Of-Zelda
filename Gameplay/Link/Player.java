@@ -203,8 +203,9 @@ public class Player extends Actor {
             public void Execute() {
                 setVelocity(0);
                 stop = true;
-                attack = false;
-                bow =true;
+                if(!attack){ //If not attacking, then shoot
+                    bow = true;
+                }
                 dash = false;
             }
         });
@@ -213,7 +214,6 @@ public class Player extends Actor {
             public void Execute() {
                 setVelocity(0);
                 stop = true;
-                attack = false;
                 bow =false;
             }
         });
@@ -380,23 +380,21 @@ public class Player extends Actor {
         else
         {
             if(mAnimation.finised_Animation){ //When a special animation has finished
-                //System.out.println("Animacion ha terminando : " + mAnimation.finised_Animation + ", Animacion debe continuar: " + mAnimation.getMust_Complete());
-                //System.out.println(actionToString());
                 if (falling) //Finished falling animation
                 {
                     linkHasFalled();
                 }
                 else if (nArrows != 0 && bow) //Spawn Arrow
                 {
+                    //System.out.println("Dispara");
                     shootArrow();
-                    attack = false;
                     bow = false;
                 }
                 else if (attack) //Finished Attack (attack && !bow)
                 {
-                    bow = false;
-                    System.out.println("ataca");
+                    //sSystem.out.println("ataca");
                     Attack();
+                    bow = false;
                     attack = false;
                 }
                  mAnimation.finised_Animation = false;
