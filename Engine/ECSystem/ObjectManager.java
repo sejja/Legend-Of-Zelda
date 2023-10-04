@@ -37,11 +37,9 @@ public class ObjectManager {
     }
 
     public void Update() {
-        for(Entity x : mAliveEntities){
-            //System.out.println(mAliveEntities.size());;
+        for(Entity x : mAliveEntities)
             x.Update();
-        }
-
+            
         for(Entity x : mDeadEntities)
             mAliveEntities.remove(x);
 

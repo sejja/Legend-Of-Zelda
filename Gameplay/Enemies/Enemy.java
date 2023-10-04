@@ -16,6 +16,7 @@ import Engine.Math.Vector2D;
 import Engine.Physics.AABB;
 import Engine.Physics.Components.BoxCollider;
 import Gameplay.Enemies.Search.*;
+import Gameplay.LifeBar.LifeBar;
 import Gameplay.Link.DirectionObject;
 
 public class Enemy extends Engine.ECSystem.Types.Actor {
@@ -58,6 +59,7 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
     //ID
     static int idx = 0;
     
+    LifeBar lifeBar;
     // ------------------------------------------------------------------------
     /*! Conversion Constructor
     *
@@ -80,6 +82,9 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
         SetAnimation(UP, sprite.GetSpriteArray(UP), 2);
         SetName("Enemy " + idx);
         idx++;
+
+        lifeBar = new LifeBar(this, healthPoints);
+        lifeBar.setVisible(true);
     }
 
     public void SetAnimation(int i, BufferedImage[] frames, int delay) {
@@ -212,6 +217,7 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
     *   Adds Behavior to the Enemy
     */ //----------------------------------------------------------------------
     public void Update() {
+        //System.out.println("pdsofhiusf");
         super.Update();
         Vector2D<Float> ppos = ObjectManager.GetObjectManager().GetObjectByName("Player").GetPosition();
         GetDirection(ndir);
@@ -220,6 +226,7 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
         Animate();
         mAnimation.GetAnimation().SetDelay(20);
         //System.out.println(ppos.x + " " + ppos.y + " " + ndir+ " " );
+        lifeBar.Update();
     }
     // ------------------------------------------------------------------------
     /*! Pathfinding
@@ -326,11 +333,13 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
     public void setHealthPoints(int damage){
         this.healthPoints -= damage;
         if (healthPoints <= 0){
+            //System.out.println("aibfhdp`");
             mCollision.ShutDown();
-            this.SetScale(new Vector2D<Float>(0f,0f));
+            //this.SetScale(new Vector2D<Float>(0f,0f));
             ObjectManager.GetObjectManager().RemoveEntity(this);
             path.clear();
         }
+        //lifeBar.setHealthPoints(this.healthPoints);
         //______________________
         //______________________
     }
