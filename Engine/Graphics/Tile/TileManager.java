@@ -122,7 +122,7 @@ public class TileManager extends ECObject implements Renderable {
                 }
             }
 
-            mBounds = new AABB(position, new Vector2D<Float>((float)(width * tileWidth), (float)(height * tileHeight)));
+            mBounds = new AABB(position, new Vector2D<Float>((float)(width), (float)(height)));
 
         } catch(Exception e) {
             System.out.println("ERROR - TILEMANAGER: can not read tilemap:");

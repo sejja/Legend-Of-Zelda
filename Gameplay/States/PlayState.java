@@ -31,8 +31,7 @@ public class PlayState extends State {
     *   Just assigns the statemachine child
     */ //----------------------------------------------------------------------
     public PlayState() {
-        mTestLevel = new TestRoom(null, null, null, null, "Content/TiledProject/TestRoom.tmx");
-        mTestLevel.Init(new Vector2D<>(0.f, 0.f));
+        mTestLevel = new TestRoom(null, null, null, null, "Content/TiledProject/TestRoom2.tmx", new Vector2D<>(0.f, 0.f));
     }
 
     // ------------------------------------------------------------------------
@@ -42,6 +41,7 @@ public class PlayState extends State {
     */ //----------------------------------------------------------------------
     @Override
     public void Update() {
+        mTestLevel.Update();
         ObjectManager.GetObjectManager().Update();
     }
 }

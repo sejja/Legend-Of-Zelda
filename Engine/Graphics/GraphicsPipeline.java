@@ -81,4 +81,8 @@ public class GraphicsPipeline {
     public void RemoveRenderable(Renderable r) {
         mRenderables.remove(r);
     }
+
+    public CameraComponent GetCamera() {
+        return mCamera;
+    }
 }

@@ -28,6 +28,7 @@ public abstract class Component implements Base {
     public Entity GetParent() {
         return mParent;
     }
+    
     public abstract void Init();
     public abstract void Update();
     public abstract void ShutDown();

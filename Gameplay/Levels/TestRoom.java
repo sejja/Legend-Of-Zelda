@@ -4,7 +4,9 @@ import java.util.ArrayList;
 
 import Engine.ECSystem.Level;
 import Engine.ECSystem.ObjectManager;
+import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Sprite;
+import Engine.Graphics.Components.ZeldaCameraComponent;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Tile.TileManager;
 import Engine.Math.Vector2D;
@@ -14,8 +16,9 @@ import Gameplay.NPC.Npc;
 
 public class TestRoom extends Level {
 
-    public TestRoom(Level right, Level left, Level up, Level down, String tiles) {
+    public TestRoom(Level right, Level left, Level up, Level down, String tiles, Vector2D<Float> pos) {
         super(right, left, up, down, new TileManager(tiles));
+        Init(pos);
         ArrayList<String> dialogueArrayList = new ArrayList<String>();
         ArrayList<String> dialogueArrayList2 = new ArrayList<String>();
         
@@ -27,5 +30,12 @@ public class TestRoom extends Level {
         ObjectManager.GetObjectManager().AddEntity(new Npc("Juan", new Sprite("Content/Animations/NPC1.png"), new Vector2D<Float>(1200f, 725.f), dialogueArrayList2, new Vector2D<Float>(50.f, 62.f)) );
         ObjectManager.GetObjectManager().AddEntity(new Player(new Spritesheet("Content/Animations/Link/Link.png"), new Vector2D<Float>(700.f, 400.f), new Vector2D<Float>(100.f, 100.f)));
         ObjectManager.GetObjectManager().AddEntity(new Enemy(new Spritesheet("Content/Animations/gknight.png",16,28), new Vector2D<Float>(450.f, 300.f), new Vector2D<Float>(50.f, 100.f)));
-    } 
+        var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetCamera();
+
+        Vector2D<Float> topright = new Vector2D<>(GetBounds().GetPosition().x + 1280.f / 2, GetBounds().GetPosition().y + 720.f / 2);
+
+        Vector2D<Float> bottomleft = new Vector2D<>(GetBounds().GetPosition().x + GetBounds().GetWidth() * 64 - 1280.f / 2, GetBounds().GetPosition().y + GetBounds().GetHeight()  * 64.f - 760.f / 2);
+
+        z.SetBounds(topright, bottomleft);
+    }
 }

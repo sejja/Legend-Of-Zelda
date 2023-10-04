@@ -102,7 +102,6 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
         mAnimation = AddComponent(new AnimationMachine(this, sprite));
         mCamera = AddComponent(new ZeldaCameraComponent(this));
         mCamera.Bind();
-        mCamera.SetBounds(new Vector2D<>(800.f, 600.f), new Vector2D<>(75 * 32.f, 75 * 32.f));
         SetAnimation(RIGHT, sprite.GetSpriteArray(RIGHT), delay);
         implementsActions();
         this.SetName("Player");

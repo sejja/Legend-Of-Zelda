@@ -20,7 +20,7 @@ public class Level {
         mTilemap = tiles;
     }
 
-    AABB GetBounds() {
+    protected AABB GetBounds() {
         return mTilemap.GetBounds();
     }
 
@@ -28,7 +28,8 @@ public class Level {
         mTilemap.CreateTileMap(64, 64, position);
     }
 
-    void Update() {}
+    public void Update() {
+    }
 
     void ShutDown() {}
 
@@ -48,10 +49,10 @@ public class Level {
         return mLower;
     }
 
-    void SpawnEntity(Entity e) {
+    protected void SpawnEntity(Entity e) {
         Vector2D<Float> finalpos = new Vector2D<>(e.GetPosition());
-        finalpos.x += mTilemap.GetPosition().x;
-        finalpos.y += mTilemap.GetPosition().y;
+        finalpos.x += GetBounds().GetPosition().x;
+        finalpos.y += GetBounds().GetPosition().y;
         e.SetPosition(finalpos);
         ObjectManager.GetObjectManager().AddEntity(e);
     }
