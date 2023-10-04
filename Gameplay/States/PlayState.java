@@ -73,15 +73,17 @@ public class PlayState extends State {
         mEnemy = (Enemy)ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Float>(450.f, 300.f), new Vector2D<Float>(50.f, 100.f)));
         mEnemy2 = (Enemy)ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Float>(600.f, 300.f), new Vector2D<Float>(50.f, 100.f)));
         mEnemy3 = (Enemy)ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Float>(800.f, 800.f), new Vector2D<Float>(50.f, 100.f)));
-    
-        InputManager.SubscribePressed(KeyEvent.VK_P, new InputFunction() {
+    for (int i=0; i<10; i++){
+        Enemy enemy = (Enemy)ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Float>(i*100f, i*100f), new Vector2D<Float>(50.f, 100.f)));
+        
+    }
+    InputManager.SubscribePressed(KeyEvent.VK_P, new InputFunction() {
             @Override
             public void Execute() {
                 mPause = !mPause;
              }
         });
     }
-
     // ------------------------------------------------------------------------
     /*! Update
     *
