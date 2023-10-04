@@ -85,7 +85,7 @@ public class Player extends Actor {
      * 
      */
     private boolean isTouchingNpc = false;
-    private static Vector2D<Float> npcIndex;
+    private static Npc npcIndex;
     //----------------------------------------------------------------------
 
     //Methods______________________________________________________________________________________________________________________________________________________________________________
@@ -250,17 +250,17 @@ public class Player extends Actor {
             }
         });
         InputManager.SubscribePressed(KeyEvent.VK_E, new InputFunction() {
-            private boolean firstDialogue = false;
-            private boolean isFinished = false;
+
+            boolean firstDialogue = false;
+            boolean isFinished = false;
 
             @Override
             public void Execute() {
                 if(isTouchingNpc){
-                    if(DialogueWindow.getJ() + 1 >  Npc.getNpcArrayList().get(1).getDialoguesArrayList().size()-1 ) {
+                    if(DialogueWindow.getJ() + 1 >  npcIndex.getDialoguesArrayList().size()-1 ) { //Si no tiene sigueinte dialogo, en el siguiente bucle termina
                         isFinished = true;
-                        System.out.println(isFinished);
                     }
-                    if (DialogueWindow.getJ() == 0 && firstDialogue == false){
+                    if (DialogueWindow.getJ() == 0 && firstDialogue == false){ //Si es el primer dialogo, muestra el primer dialogo
                         Npc.setInteract(true);
                         try {Thread.sleep(100);
                         } catch (InterruptedException e) {}
@@ -277,16 +277,13 @@ public class Player extends Actor {
                         firstDialogue = false;
                         isTouchingNpc = false;
                     }
-                    else if(DialogueWindow.getJ() + 1 <=  Npc.getNpcArrayList().get(1).getDialoguesArrayList().size() -1){
+                    else if(DialogueWindow.getJ() + 1 <=  PlayState.getNpcArrayList().get(1).getDialoguesArrayList().size() -1){ // Si tiene siguiente dialogo, borra el anterior y dibuja el nuevo
                         Npc.setRemove(true);
-                        DialogueWindow.setJ(1);
-                        DialogueWindow.setSiguiente(true);
+                        DialogueWindow.setJ(DialogueWindow.getJ()+1);
                         Npc.setInteract(true);
-                        DialogueWindow.setSiguiente(false);
                         try {Thread.sleep(100);} catch (InterruptedException e) {}
                         Npc.setRemove(false);
                         PlayState.setGameState(2);
-                        System.out.println(DialogueWindow.getJ());
                     }
                 }
             }
@@ -547,15 +544,13 @@ public class Player extends Actor {
                 }
             } 
             //Change solution
-            
             else if(allEntities.get(i) instanceof Npc){
                 Npc npc = (Npc) allEntities.get(i);
-                Vector2D<Float> npcPosition = npc.GetPosition();
-                if (npcPosition.getModuleDistance(this.GetPosition()) < this.GetScale().y/2){
+                if (npc.GetPosition().getModuleDistance(this.GetPosition()) < this.GetScale().y/2){
                     isTouchingNpc = true;
-                    npcIndex = npc.GetPosition();
+                    npcIndex = npc;
                 } else{
-                    //isTouchingNpc = false; El segundo Npc no funciona
+                    //isTouchingNpc = false;
                 }
             }
         }
@@ -575,7 +570,7 @@ public class Player extends Actor {
     public int getHealthPoints(){return this.healthPoints;}
     private Player getPlayer (){return this;}
     public boolean isAble_to_takeDamage() {return able_to_takeDamage;}
-    public static Vector2D<Float> getNpcIndex(){return npcIndex;}
+    public static Npc getNpcIndex(){return npcIndex;}
     //------------------------------------------------------------------------
 
     /* Setters

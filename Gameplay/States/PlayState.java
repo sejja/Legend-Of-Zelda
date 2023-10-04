@@ -8,6 +8,7 @@
 
 package Gameplay.States;
 
+import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ public class PlayState extends State {
     private Player mPlayer;
     private Npc mNpc1;
     private Npc mNpc2;
-    private ArrayList<Npc> mNpcArrayList = new ArrayList<Npc>();
+    private static ArrayList<Npc> mNpcArrayList = new ArrayList<Npc>();
     private Enemy mEnemy;
     private Enemy mEnemy2;
     private Enemy mEnemy3;
@@ -90,9 +91,9 @@ public class PlayState extends State {
         if(gameState == playState){
             ObjectManager.GetObjectManager().Update();
            mEnemy.Update();
-           for(int i=0; i<mNpcArrayList.size();i++){
+           for(int i=0; i < mNpcArrayList.size();i++){
                mNpcArrayList.get(i).Update(mPlayer.GetPosition());
-//            ObjectManager.GetObjectManager().Update();
+            //ObjectManager.GetObjectManager().Update();
             }
             //System.out.println(ObjectManager.GetObjectManager().getmAliveEntities().size());
         } 
@@ -136,6 +137,15 @@ public class PlayState extends State {
 
     public static int getGameState() {
         return gameState;
+    }
+
+    public static ArrayList<Npc> getNpcArrayList() {
+        return mNpcArrayList;
+    }
+
+    public String saltoDeLinea(String texto){
+        String nuevoTexto = texto;
+        return nuevoTexto;
     }
     
 }

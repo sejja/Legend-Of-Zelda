@@ -28,16 +28,19 @@ import Engine.Input.InputFunction;
 import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
 import Engine.Physics.Components.BoxCollider;
+import Gameplay.Link.Player;
+import Gameplay.States.PlayState;
 
 
 public class Npc extends Engine.ECSystem.Types.Actor {
     private String name;
-    private static String dialogue; //Como que estatico?
     protected Graphics2D window;
     private SpriteComponent mAnimation;
     private ArrayList<String> mdialogueArrayList;
-    private static ArrayList<Npc> npcArrayList = new ArrayList<Npc>(); //Para que?
     protected BoxCollider mCollider;
+    static boolean interact = false;
+    static boolean remove = false;
+
 
 
         /*! Conversion Constructor
@@ -48,11 +51,9 @@ public class Npc extends Engine.ECSystem.Types.Actor {
     public Npc(String nameNPC, Sprite sprite, Vector2D<Float> position, ArrayList<String> dialogueArrayList, Vector2D<Float> size) {
         super(position);
         this.name = nameNPC;
-        //this.dialogue = dialogue;
         mAnimation = AddComponent(new SpriteComponent(this, sprite));
         SetScale(size);
         this.mdialogueArrayList = dialogueArrayList;
-        npcArrayList.add(this);
         mCollider = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<>(75f,0.f)));
     }
 
@@ -61,14 +62,13 @@ public class Npc extends Engine.ECSystem.Types.Actor {
     *       ret     -> Transposed BufferedImage 2D Matrix
     */ //----------------------------------------------------------------------
     
-    static boolean interact = false;
-    static boolean remove = false;
+    
 
     public void Update(Vector2D<Float> playerPosition) {
 
         super.Update();
         if(interact) {
-            AddComponent(new DialogueWindow(this, npcArrayList.get(0)));    
+            AddComponent(new DialogueWindow(this, Player.getNpcIndex()));    
             interact = false;
         }else if(remove == true){
             RemoveComponent(DialogueWindow.getDialgueWindow());
@@ -76,22 +76,8 @@ public class Npc extends Engine.ECSystem.Types.Actor {
         }
     }
 
-    public ArrayList<String> getDialoguesArrayList() {
-        return mdialogueArrayList;
-    }
-    public void setdialogue(String dialogue){
-        this.dialogue = dialogue;
-    }
-    public static void setInteract(boolean interact1){
-        interact = interact1;
-    }
-    public static void setRemove(boolean remove1) {
-        remove = remove1;
-    }
-    public String getName() {
-        return name;
-    }
-    public static ArrayList<Npc> getNpcArrayList() {
-        return npcArrayList;
-    }
+    public ArrayList<String> getDialoguesArrayList() {return mdialogueArrayList;}
+    public static void setInteract(boolean interact1){interact = interact1;}
+    public static void setRemove(boolean remove1) {remove = remove1;}
+    public String getName() {return name;}
 }
