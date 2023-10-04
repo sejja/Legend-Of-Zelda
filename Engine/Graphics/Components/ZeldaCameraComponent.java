@@ -34,6 +34,6 @@ public class ZeldaCameraComponent extends CameraComponent {
         temp.x = Math.max(Math.min(pos.x, mBottomLeft.x), mTopRight.x) - camera.x / 2;
         temp.y = Math.max(Math.min(pos.y, mBottomLeft.y), mTopRight.y) - camera.y / 2;
 
-        return temp;
+        return pos;
     }
 }

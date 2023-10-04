@@ -12,6 +12,7 @@ public class Level {
     private Level mUpper;
     private Level mLower;
     private TileManager mTilemap;
+    static public Level mCurrentLevel = null;
 
     protected Level(Level right, Level left, Level up, Level down, TileManager tiles) {
         mRight = right;
@@ -27,6 +28,7 @@ public class Level {
 
     public void Init(Vector2D<Float> position) {
         mTilemap.CreateTileMap(64, 64, position);
+        mCurrentLevel = this;
     }
 
     public void Update() {
@@ -36,20 +38,32 @@ public class Level {
         
         if(!GetBounds().Collides(new AABB(position, new Vector2D<>(1.f, 1.f)))) {
             //LEFT
-            if(position.x > (GetBounds().GetPosition().x + GetBounds().GetWidth()))
-                System.out.println("left");
+            if(position.x > (GetBounds().GetPosition().x + GetBounds().GetWidth()) && mRight != null) {
+                mRight.Init(new Vector2D<>(GetBounds().GetPosition().x + GetBounds().GetWidth(), GetBounds().GetPosition().y));
+            }
+
             //RIGHT
+            if(position.x < (GetBounds().GetPosition().x) && mLeft != null) {
+                var b = mRight.mTilemap.EstimateBounds(64, 64);
+                Vector2D<Float> scale = new Vector2D<>(b.GetWidth(), b.GetHeight());
+                var pos = GetBounds().GetPosition();
+                pos.x -= scale.x;
 
-            if(position.x < (GetBounds().GetPosition().x))
-                System.out.println("right");
+                mLeft.Init(pos);
+            }
             //UP
+            if(position.y < (GetBounds().GetPosition().y) && mUpper != null) {
+                var b = mRight.mTilemap.EstimateBounds(64, 64);
+                Vector2D<Float> scale = new Vector2D<>(b.GetWidth(), b.GetHeight());
+                var pos = GetBounds().GetPosition();
+                pos.y -= scale.y;
 
-            if(position.y < (GetBounds().GetPosition().y))
-                System.out.println("up");
+                mRight.Init(pos);
+            }
+
             //DOWN
-
-            if(position.y > (GetBounds().GetPosition().y + GetBounds().GetHeight()))
-                System.out.println("down");
+            if(position.y > (GetBounds().GetPosition().y + GetBounds().GetHeight()) && mLower != null)
+                mLower.Init(new Vector2D<>(GetBounds().GetPosition().x, GetBounds().GetPosition().y + GetBounds().GetHeight()));
         }
     }
 

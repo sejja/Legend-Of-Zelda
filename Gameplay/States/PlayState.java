@@ -19,6 +19,7 @@ import Engine.Math.Vector2D;
 import Engine.StateMachine.State;
 import Gameplay.Enemies.*;
 import Gameplay.Levels.TestRoom;
+import Gameplay.Levels.TestRoom2;
 import Gameplay.Link.Player;
 import Gameplay.NPC.Npc;
 
@@ -31,7 +32,8 @@ public class PlayState extends State {
     *   Just assigns the statemachine child
     */ //----------------------------------------------------------------------
     public PlayState() {
-        mTestLevel = new TestRoom(null, null, null, null, "Content/TiledProject/TestRoom2.tmx", new Vector2D<>(0.f, 0.f));
+        var t = new TestRoom2(null, null, null, null, "Content/TiledProject/StressTest.tmx", new Vector2D<>(0.f, 0.f));
+        mTestLevel = new TestRoom(t, null, null, null, "Content/TiledProject/TestRoom2.tmx", new Vector2D<>(0.f, 0.f));
     }
 
     // ------------------------------------------------------------------------
@@ -41,7 +43,7 @@ public class PlayState extends State {
     */ //----------------------------------------------------------------------
     @Override
     public void Update() {
-        mTestLevel.Update();
+        Level.mCurrentLevel.Update();
         ObjectManager.GetObjectManager().Update();
     }
 }
