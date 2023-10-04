@@ -107,6 +107,7 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
         this.SetName("Player");
 
         mCollider = (BoxCollider)AddComponent(new BoxCollider(this));
+        ObjectManager.GetObjectManager().SetPawn(this);
     }
     // ------------------------------------------------------------------------
 

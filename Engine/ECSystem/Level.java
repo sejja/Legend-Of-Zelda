@@ -1,5 +1,6 @@
 package Engine.ECSystem;
 
+import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Entity;
 import Engine.Graphics.Tile.TileManager;
 import Engine.Math.Vector2D;
@@ -29,6 +30,27 @@ public class Level {
     }
 
     public void Update() {
+        Actor p = ObjectManager.GetObjectManager().GetPawn();
+
+        var position = p.GetPosition();
+        
+        if(!GetBounds().Collides(new AABB(position, new Vector2D<>(1.f, 1.f)))) {
+            //LEFT
+            if(position.x > (GetBounds().GetPosition().x + GetBounds().GetWidth()))
+                System.out.println("left");
+            //RIGHT
+
+            if(position.x < (GetBounds().GetPosition().x))
+                System.out.println("right");
+            //UP
+
+            if(position.y < (GetBounds().GetPosition().y))
+                System.out.println("up");
+            //DOWN
+
+            if(position.y > (GetBounds().GetPosition().y + GetBounds().GetHeight()))
+                System.out.println("down");
+        }
     }
 
     void ShutDown() {}

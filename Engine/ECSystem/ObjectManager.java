@@ -2,12 +2,14 @@ package Engine.ECSystem;
 
 import java.util.ArrayList;
 
+import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Entity;
 
 public class ObjectManager {
     private ArrayList<Entity> mAliveEntities;
     private ArrayList<Entity> mDeadEntities;
     private ArrayList<Entity> mNewEntities;
+    private Actor mPawn;
     static private ObjectManager sManager = new ObjectManager();
 
     static public ObjectManager GetObjectManager() {
@@ -25,6 +27,7 @@ public class ObjectManager {
         mAliveEntities = new ArrayList<>();
         mDeadEntities = new ArrayList<>();
         mNewEntities = new ArrayList<>();
+        mPawn = null;
     }
 
     public Entity AddEntity(Entity e) {
@@ -34,6 +37,14 @@ public class ObjectManager {
 
     public void RemoveEntity(Entity e) {
         mDeadEntities.add(e);
+    }
+
+    public void SetPawn(Actor a) {
+        mPawn = a;
+    }
+
+    public Actor GetPawn() {
+        return mPawn;
     }
 
     public void Update() {
