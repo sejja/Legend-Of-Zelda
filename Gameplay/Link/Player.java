@@ -312,7 +312,7 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
         if(falling && mAnimation.GetAnimation().GetFrame() == 7) {
             SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), delay);   
             mAnimation.setMust_Complete(false);
-            SetPosition(new Vector2D<>(mPreviousPositionX, mPreviousPositionY));
+            
             mCollider.GetBounds().SetBox(GetPosition(), GetScale());
             falling = false;
         }

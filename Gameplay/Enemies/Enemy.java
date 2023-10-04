@@ -24,10 +24,13 @@ public class Enemy extends Engine.ECSystem.Types.Actor implements Renderable{
 
     //direction and normalized direction vector
     protected DIRECTION direction = DIRECTION.RIGHT;
-    protected Vector2D normalizedDirection = new Vector2D(0f,0f);
+    protected Vector2D<Float> normalizedDirection = new Vector2D(0f,0f);
 
     //player detected
     protected boolean chase = false;
+
+    //A* search
+    protected static AStarSearch aStarSearch = new AStarSearch();
 
     //Pathfinding variables
     protected Pair finalDestination;
@@ -36,11 +39,15 @@ public class Enemy extends Engine.ECSystem.Types.Actor implements Renderable{
     protected Stack<Pair> path = new Stack<Pair>();
     protected Vector2D<Float> pos = GetPosition();
     protected Vector2D<Float> playerPos = ObjectManager.GetObjectManager().GetObjectByName("Player").GetPosition();
+    protected float xlowerBound;
+    protected float xupperBound;
+    protected float ylowerBound;
+    protected float yupperBound;
 
     //stats
-    protected int healthPoints = 4;
-    protected int damage = 1; //magic number, it has to be defined in a constructor
-    protected float speed = 2;
+    protected int healthPoints = 1;
+    protected int damage = 1;
+    protected float speed = 1;
 
     //components
     protected int mCurrentAnimation;
@@ -48,8 +55,9 @@ public class Enemy extends Engine.ECSystem.Types.Actor implements Renderable{
     protected BoxCollider mCollision;
 
     //offsets of position
-    protected int xoffset = 8;
-    protected int yoffset = 32;
+    protected int xoffset = 0;
+    protected int yoffset = 0;
+
     
     
     // ------------------------------------------------------------------------
@@ -171,27 +179,68 @@ public class Enemy extends Engine.ECSystem.Types.Actor implements Renderable{
     */ //----------------------------------------------------------------------
     public void Update() {
         super.Update();
-        Pathfinding(playerPos);
+        Pathfinding();
         GetDirection(normalizedDirection);
         Animate();
         Move();
         mAnimation.GetAnimation().SetDelay(20);
         //System.out.println(playerPos.x + " " + playerPos.y + " " + normalizedDirection+ " " );
     }
+
     // ------------------------------------------------------------------------
     /*! Pathfinding
     *
-    *   Checks if the Enemy can chase player
+    *   Calculates the path to the player if the path is unblocked and is not the same as the last time A* was called
     */ //----------------------------------------------------------------------
-    public void Pathfinding(Vector2D<Float> playerPos) { // Tile size is 64x64 and the player is yoffsetxyoffset
-        int divisior = 64;
-        Pair enemyTile = new Pair((int)Math.round(((float)pos.x + xoffset)/divisior), (int)Math.round(((float)pos.y+yoffset)/divisior));
-        finalDestination = new Pair((int)Math.round((playerPos.x +xoffset)/divisior), (int)Math.round((playerPos.y +yoffset)/divisior));
-        if(lastFinalDestination.getFirst() != finalDestination.getFirst() || lastFinalDestination.getSecond() != finalDestination.getSecond()){
+    public void Pathfinding() {
+        Pair enemyTile = PositionToPair(pos);
+        finalDestination = PositionToPair(playerPos);
+        if(isDestinationChanged() && isDestinationReachable()){
             lastFinalDestination = finalDestination;
-            path = AStarSearch.aStarSearch(enemyTile, finalDestination);
+            path = aStarSearch.aStarSearch(enemyTile, finalDestination);
         }
     }
+
+    // ------------------------------------------------------------------------
+    /*! PositionToPair
+    *
+    *   Changes the position given to a Pair
+    */ //----------------------------------------------------------------------
+    public Pair PositionToPair(Vector2D<Float> position) {
+        int divisior = 64;
+        Pair pair = new Pair(Math.round((position.x +xoffset)/divisior), Math.round((position.y +yoffset)/divisior));
+        return pair;
+    }
+
+
+
+    // ------------------------------------------------------------------------
+    /*! isDestinationChanged
+    *
+    *   Checks if the destination (Player) has changed of Tile
+    */ //----------------------------------------------------------------------
+    public boolean isDestinationChanged() {
+        if(lastFinalDestination.getFirst() != finalDestination.getFirst() || lastFinalDestination.getSecond() != finalDestination.getSecond()){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    // ------------------------------------------------------------------------
+    /*! isDestinationReachable
+    *
+    *   Checks if the destination is reachable by the Enemy
+    */ //----------------------------------------------------------------------
+    public boolean isDestinationReachable() {
+        if(aStarSearch.isUnBlocked(finalDestination.getFirst(), finalDestination.getSecond())){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+
 
     // ------------------------------------------------------------------------
     /*! MovementVector
@@ -199,7 +248,7 @@ public class Enemy extends Engine.ECSystem.Types.Actor implements Renderable{
     *   Calculates the movement of the Enemy
     */ //----------------------------------------------------------------------
     public void MovementVector() {
-        Vector2D<Float> dir = new Vector2D<Float>((float)playerPos.x - (pos.x +xoffset), (float)playerPos.y - (pos.y +yoffset));
+        Vector2D<Float> dir = new Vector2D<Float>(playerPos.x - (pos.x +xoffset), playerPos.y - (pos.y +yoffset));
         normalizedDirection=Normalize(dir);
     }
 
@@ -218,10 +267,10 @@ public class Enemy extends Engine.ECSystem.Types.Actor implements Renderable{
                 currentDestination = path.peek();
             }
             // Margin of error for the movement
-            float xlowerBound = currentDestination.getFirst()*64 - 3;
-            float xupperBound = currentDestination.getFirst()*64 + 3;
-            float ylowerBound = currentDestination.getSecond()*64 - 3;
-            float yupperBound = currentDestination.getSecond()*64 + 3;
+            xlowerBound = currentDestination.getFirst()*64 - 3;
+            xupperBound = currentDestination.getFirst()*64 + 3;
+            ylowerBound = currentDestination.getSecond()*64 - 3;
+            yupperBound = currentDestination.getSecond()*64 + 3;
 
             //If currentDestination reached, pop next destination
             if(((((xlowerBound <= pos.x+xoffset) && (pos.x+xoffset <= xupperBound)) && ((ylowerBound <= pos.y+yoffset) && (pos.y+yoffset <= yupperBound)))) && (currentDestination != finalDestination) && !path.isEmpty()){
@@ -229,19 +278,19 @@ public class Enemy extends Engine.ECSystem.Types.Actor implements Renderable{
                 if(!path.isEmpty()){
                     currentDestination = path.peek();
                 }
-                normalizedDirection = Normalize(new Vector2D<Float>((float)currentDestination.getFirst()*64 - (pos.x+xoffset), (float)currentDestination.getSecond()*64 - (pos.y+yoffset)));
-                pos.x += (float)normalizedDirection.x * speed;
-                pos.y += (float)normalizedDirection.y * speed;
+                normalizedDirection = Normalize(new Vector2D<Float>(currentDestination.getFirst()*64 - (pos.x+xoffset), currentDestination.getSecond()*64 - (pos.y+yoffset)));
+                pos.x += normalizedDirection.x * speed;
+                pos.y += normalizedDirection.y * speed;
             }else{
-                normalizedDirection = Normalize(new Vector2D<Float>((float)currentDestination.getFirst()*64 - (pos.x+xoffset), (float)currentDestination.getSecond()*64 - (pos.y+yoffset)));
-                pos.x += (float)normalizedDirection.x * speed;
-                pos.y += (float)normalizedDirection.y * speed;
+                normalizedDirection = Normalize(new Vector2D<Float>(currentDestination.getFirst()*64 - (pos.x+xoffset), currentDestination.getSecond()*64 - (pos.y+yoffset)));
+                pos.x += normalizedDirection.x * speed;
+                pos.y += normalizedDirection.y * speed;
             }
         //If finalDestination reached, chase player directly
-        }else if((int)currentDestination.getFirst() == (int)finalDestination.getFirst() && (int)currentDestination.getSecond() == (int)finalDestination.getSecond()){
+        }else if(currentDestination.getFirst() == finalDestination.getFirst() && currentDestination.getSecond() == finalDestination.getSecond()){
                 MovementVector();
-                pos.x += (float)normalizedDirection.x * speed;
-                pos.y += (float)normalizedDirection.y * speed;
+                pos.x += normalizedDirection.x * speed;
+                pos.y += normalizedDirection.y * speed;
         }
 
         SetPosition(pos);
@@ -250,14 +299,11 @@ public class Enemy extends Engine.ECSystem.Types.Actor implements Renderable{
     public void KnockBack() {
         Vector2D<Float> dir = pos.getVectorToAnotherActor(playerPos);
         normalizedDirection=Normalize(dir);
-        pos.x -= (float)normalizedDirection.x * 60;
-        pos.y -= (float)normalizedDirection.y * 60;
+        pos.x -= normalizedDirection.x * 60;
+        pos.y -= normalizedDirection.y * 60;
         SetPosition(pos);
     }
     
-    public int getDamage() {
-        return damage;
-    }  
 
     public void setHealthPoints(int damage){
         this.healthPoints -= damage;
@@ -267,9 +313,8 @@ public class Enemy extends Engine.ECSystem.Types.Actor implements Renderable{
             ObjectManager.GetObjectManager().RemoveEntity(this);
             path.clear();
         }
-        //______________________
-        //______________________
     }
+
     @Override
     public void Render(Graphics2D g, CameraComponent camerapos) {
         var camcoord = camerapos.GetCoordinates();
@@ -281,4 +326,36 @@ public class Enemy extends Engine.ECSystem.Types.Actor implements Renderable{
             g.drawRect(p.getFirst() * 64 - (int)(float)camcoord.x, p.getSecond() * 64 - (int)(float)camcoord.y, 64, 64);
         }
     }
+
+    // Getters and Setters
+    public void setOffset(int x, int y){
+        xoffset = x;
+        yoffset = y;
+    }
+
+    public void setDamage(int damage) {
+        this.damage = damage;
+    }
+
+    public void setSpeed(float speed) {
+        this.speed = speed;
+    }
+
+    public void setHp(int hp){
+        this.healthPoints = hp;
+    }
+
+    public int getHealthPoints() {
+        return healthPoints;
+    }
+
+    public float getSpeed() {
+        return speed;
+    }
+
+    public int getDamage() {
+        return damage;
+    }  
+    
+    
 }

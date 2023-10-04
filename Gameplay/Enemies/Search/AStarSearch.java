@@ -9,26 +9,9 @@ public class AStarSearch{
     static final int ROW = 50;
 
 
-    // Creating a shortcut for pair<int, pair<int, int>> type
-    static class pPair {
-        double first;
-        Pair second;
-
-        pPair(double first, Pair second) {
-            this.first = first;
-            this.second = second;
-        }
-    }
-
-    // A structure to hold the necessary parameters
-    static class cell {
-        int parent_i, parent_j;
-        double f, g, h;
-    }
-
     // A Utility Function to check whether given cell (Column, Row)
     // is a valid cell or not.
-    static boolean isValid(int Column, int Row) {
+    public boolean isValid(int Column, int Row) {
         // Returns true if Column number and column number
         // is in range
         return (Column >= 0) && (Column < COL) && (Row >= 0) && (Row < ROW);
@@ -36,7 +19,7 @@ public class AStarSearch{
 
     // A Utility Function to check whether the given cell is
     // blocked or not
-    static boolean isUnBlocked(int Column, int Row) {
+    public boolean isUnBlocked(int Column, int Row) {
         // Returns true if the cell is not blocked else false
         if (isValid(Column, Row)){
             Block block = TilemapObject.GetBlockAt(Column, Row);
@@ -52,12 +35,12 @@ public class AStarSearch{
 
     // A Utility Function to check whether destination cell has
     // been reached or not
-    static boolean isDestination(int Column, int Row, Pair dest) {
+    public boolean isDestination(int Column, int Row, Pair dest) {
         return (Column == dest.first && Row == dest.second);
     }
 
     // A Utility Function to calculate the 'h' heuristics.
-    static double calculateHValue(int Column, int Row, Pair dest) {
+    public double calculateHValue(int Column, int Row, Pair dest) {
         return Math.sqrt((Column - dest.first) * (Column - dest.first) + (Row - dest.second) * (Row - dest.second));
     }
 
@@ -65,7 +48,7 @@ public class AStarSearch{
     // A Function to find the shortest path between
     // a given source cell to a destination cell according
     // to A* Search Algorithm
-    public static Stack<Pair> aStarSearch( Pair src, Pair dest) {
+    public Stack<Pair> aStarSearch( Pair src, Pair dest) {
         if (!isValid(src.first, src.second)) {
             //System.out.println("Source is invalid");
             return Path;
