@@ -3,12 +3,7 @@ package Gameplay.Enemies;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.Stack;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicStampedReference;
-
 import Engine.ECSystem.ObjectManager;
 import Engine.Graphics.Animation;
 import Engine.Graphics.GraphicsPipeline;
@@ -16,18 +11,16 @@ import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.AnimationMachine;
 import Engine.Graphics.Components.CameraComponent;
 import Engine.Graphics.Components.Renderable;
-import Engine.Graphics.Tile.*;
 import Engine.Math.Vector2D;
-import Engine.Physics.AABB;
 import Engine.Physics.Components.BoxCollider;
 import Gameplay.Enemies.Search.*;
 import Gameplay.Link.DIRECTION;
 
 public class Enemy extends Engine.ECSystem.Types.Actor implements Renderable{
-    private final int UP = 0;
-    private final int DOWN = 2;
-    private final int RIGHT = 1;
-    private final int LEFT = 3;
+    protected final int UP = 0;
+    protected final int DOWN = 2;
+    protected final int RIGHT = 1;
+    protected final int LEFT = 3;
 
     //direction and normalized direction vector
     protected DIRECTION direction = DIRECTION.RIGHT;
@@ -64,24 +57,9 @@ public class Enemy extends Engine.ECSystem.Types.Actor implements Renderable{
     *
     *   Constructs an Enemy with a sprite, a position, and gives it a size
     */ //----------------------------------------------------------------------
-    public Enemy( Vector2D<Float> position, Vector2D<Float> size) {
-
+    public Enemy( Vector2D<Float> position) {
         super(position);
-        SetScale(size);
-        Spritesheet sprite=new Spritesheet("Content/Animations/gknight.png", 24,28);
-
-        // TRANSPOSE SPRITE MATRIX
-        sprite.setmSpriteArray(transposeMatrix(sprite.GetSpriteArray2D()));
-
-        // ADD ANIMATION COMPONENT
-        mAnimation = AddComponent(new AnimationMachine(this, sprite));
-        SetScale(new Vector2D<Float>(size.x+25, size.y));
-        
-        // ADD COLLIDER COMPONENT
-        mCollision = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<Float>(size.x*2, size.y*2)));
-        SetAnimation(UP, sprite.GetSpriteArray(UP), 2);
-
-        //Render path
+        //Render path (add to pipeline)
         GraphicsPipeline.GetGraphicsPipeline().AddRenderable(this);
     }
 
@@ -93,26 +71,6 @@ public class Enemy extends Engine.ECSystem.Types.Actor implements Renderable{
 
     public Animation GetAnimation() {
         return mAnimation.GetAnimation();
-    }
-
-    // ------------------------------------------------------------------------
-    /*! transposeMatrix
-    *
-    *   Utility Function for Transposing a Matrix
-    */ //----------------------------------------------------------------------
-    private BufferedImage[][] transposeMatrix(BufferedImage [][] m){
-        BufferedImage[][] temp = new BufferedImage[m[0].length + 4][m.length];
-        for (int i = 0; i < m.length; i++){
-            for (int j = 0; j < m[0].length; j++){
-                temp[j][i] = m[i][j];
-            }
-        }
-        for (int i = 0; i < 4; i++){
-            for (int j = 0;  j < temp[0].length; j++){
-                temp[m[0].length+i][j] = temp[i][0];
-            }
-        }
-        return temp;
     }
 
     // ------------------------------------------------------------------------
@@ -213,7 +171,6 @@ public class Enemy extends Engine.ECSystem.Types.Actor implements Renderable{
     */ //----------------------------------------------------------------------
     public void Update() {
         super.Update();
-        Vector2D<Float> playerPos = ObjectManager.GetObjectManager().GetObjectByName("Player").GetPosition();
         Pathfinding(playerPos);
         GetDirection(normalizedDirection);
         Move();
@@ -241,7 +198,7 @@ public class Enemy extends Engine.ECSystem.Types.Actor implements Renderable{
     *
     *   Calculates the movement of the Enemy
     */ //----------------------------------------------------------------------
-    public void MovementVector(Vector2D<Float> playerPos) {
+    public void MovementVector() {
         Vector2D<Float> dir = new Vector2D<Float>((float)playerPos.x - (pos.x +xoffset), (float)playerPos.y - (pos.y +yoffset));
         normalizedDirection=Normalize(dir);
     }
@@ -282,7 +239,7 @@ public class Enemy extends Engine.ECSystem.Types.Actor implements Renderable{
             }
         //If finalDestination reached, chase player directly
         }else if((int)currentDestination.getFirst() == (int)finalDestination.getFirst() && (int)currentDestination.getSecond() == (int)finalDestination.getSecond()){
-                MovementVector(playerPos);
+                MovementVector();
                 pos.x += (float)normalizedDirection.x * speed;
                 pos.y += (float)normalizedDirection.y * speed;
         }
@@ -291,7 +248,6 @@ public class Enemy extends Engine.ECSystem.Types.Actor implements Renderable{
     } 
     
     public void KnockBack(Vector2D<Float> playerPos) {
-        Vector2D<Float> pos = GetPosition();
         Vector2D<Float> dir = pos.getVectorToAnotherActor(playerPos);
         normalizedDirection=Normalize(dir);
         pos.x -= (float)normalizedDirection.x * 60;
