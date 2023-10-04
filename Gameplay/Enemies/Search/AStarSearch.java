@@ -1,11 +1,5 @@
 package Gameplay.Enemies.Search;
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.util.*;
-import Engine.ECSystem.ObjectManager;
-import Engine.Graphics.GraphicsPipeline;
-import Engine.Graphics.Components.CameraComponent;
-import Engine.Graphics.Components.Renderable;
 import Engine.Graphics.Tile.*;
 
 

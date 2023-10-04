@@ -173,8 +173,8 @@ public class Enemy extends Engine.ECSystem.Types.Actor implements Renderable{
         super.Update();
         Pathfinding(playerPos);
         GetDirection(normalizedDirection);
-        Move();
         Animate();
+        Move();
         mAnimation.GetAnimation().SetDelay(20);
         //System.out.println(playerPos.x + " " + playerPos.y + " " + normalizedDirection+ " " );
     }
@@ -247,7 +247,7 @@ public class Enemy extends Engine.ECSystem.Types.Actor implements Renderable{
         SetPosition(pos);
     } 
     
-    public void KnockBack(Vector2D<Float> playerPos) {
+    public void KnockBack() {
         Vector2D<Float> dir = pos.getVectorToAnotherActor(playerPos);
         normalizedDirection=Normalize(dir);
         pos.x -= (float)normalizedDirection.x * 60;

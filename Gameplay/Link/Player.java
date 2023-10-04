@@ -548,7 +548,7 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
                 Vector2D<Float> enemyPosition = enemy.GetPosition();
                 if (enemyPosition.getModuleDistance(this.GetPosition()) < this.GetScale().y/2){
                     this.setDamage(enemy.getDamage());
-                    enemy.KnockBack(this.GetPosition());
+                    enemy.KnockBack();
                 }
             } else if(allEntities.get(i) instanceof Npc){
                 Npc npc = (Npc) allEntities.get(i);
@@ -673,7 +673,7 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
                     if(direction == getAttackDirection(this.GetPosition().getVectorToAnotherActor(enemyPosition))){
                         System.out.println("Le da");
                         enemy.setHealthPoints(damage);
-                        enemy.KnockBack(this.GetPosition());
+                        enemy.KnockBack();
                     }
                 }
             }
