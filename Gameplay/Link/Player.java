@@ -2,10 +2,7 @@ package Gameplay.Link;
 
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
-import java.lang.management.MonitorInfo;
-import java.security.AllPermission;
 import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
@@ -13,7 +10,6 @@ import Engine.ECSystem.Types.Entity;
 import Engine.Graphics.Animation;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.AnimationMachine;
-import Engine.Graphics.Components.CameraComponent;
 import Engine.Graphics.Components.ZeldaCameraComponent;
 import Engine.Input.InputFunction;
 import Engine.Input.InputManager;
@@ -22,6 +18,7 @@ import Engine.Physics.CollisionResult;
 import Engine.Physics.Components.BoxCollider;
 import Gameplay.States.PlayState;
 import Gameplay.Enemies.Enemy;
+import Gameplay.LifeBar.LifeBar;
 import Gameplay.NPC.DialogueWindow;
 import Gameplay.NPC.Npc;
 
@@ -54,7 +51,7 @@ public class Player extends Actor {
      */
     private int mCurrentAnimation;
     protected AnimationMachine mAnimation;
-    final private int delay = 3; //This is the delay of the all animations
+    private int delay = 3; //This is the delay of the all animations
     //----------------------------------------------------------------------
 
     /*  Enable skills
@@ -81,8 +78,14 @@ public class Player extends Actor {
     final private  int damage = 2;
     private int velocity = 0;
     final int default_velocity = 10;
-    private float mPreviousPositionX;
-    private float mPreviousPositionY;
+    private LifeBar lifeBar;
+    //----------------------------------------------------------------------
+
+    /* NPC
+     * 
+     */
+    private boolean isTouchingNpc = false;
+    private static Vector2D<Float> npcIndex;
     //----------------------------------------------------------------------
 
     //Methods______________________________________________________________________________________________________________________________________________________________________________
@@ -91,7 +94,7 @@ public class Player extends Actor {
     *
     *   Constructs a Player with a sprite, a position, and gives it a size
     */ //----------------------------------------------------------------------
-public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size) {
+    public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size) {
         super(position);
         SetScale(size);
         this.direction = DIRECTION.RIGHT;
@@ -105,7 +108,9 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
         SetAnimation(RIGHT, sprite.GetSpriteArray(RIGHT), delay);
         implementsActions();
         this.SetName("Player");
-
+        //---------------------------------------------------------------------
+        lifeBar = new LifeBar(getPlayer(), getHealthPoints());
+        //---------------------------------------------------------------------
         mCollider = (BoxCollider)AddComponent(new BoxCollider(this));
     }
     // ------------------------------------------------------------------------
@@ -187,7 +192,7 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
             public void Execute() {
                 setVelocity(0);
                 stop = true;
-                attack = false;
+                //attack = false;
                 bow = false;
                 dash = false;
             }
@@ -225,17 +230,26 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
                 bow =false;
             }
         });
-        InputManager.SubscribePressed(KeyEvent.VK_P, new InputFunction() {
+        //Show LifeBar_______________________________________________________________________________________
+        InputManager.SubscribePressed(KeyEvent.VK_M, new InputFunction() {
             @Override
             public void Execute() {
-                if(PlayState.getGameState() == PlayState.getPlayState()){
-                    PlayState.setGameState(2);
-                }else if(PlayState.getGameState() == PlayState.getPauseState()){
-                    PlayState.setGameState(1);
-                }
-                }
+                lifeBar.setVisible(true);
+            }
         });
-       InputManager.SubscribePressed(KeyEvent.VK_E, new InputFunction() {
+        InputManager.SubscribeReleased(KeyEvent.VK_M, new InputFunction() {
+            @Override
+            public void Execute() {
+                lifeBar.setVisible(false);
+            }
+        });
+        InputManager.SubscribePressed(KeyEvent.VK_P, new InputFunction() { //Pause
+            @Override
+            public void Execute() {
+                Pause();
+            }
+        });
+        InputManager.SubscribePressed(KeyEvent.VK_E, new InputFunction() {
             private boolean firstDialogue = false;
             private boolean isFinished = false;
 
@@ -277,21 +291,6 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
                 }
             }
         });
-
-
-        InputManager.SubscribePressed(KeyEvent.VK_M, new InputFunction() {
-            @Override
-            public void Execute() {
-                SetScale(new Vector2D<>(1f, 1f));
-            }
-        });
-
-        InputManager.SubscribeReleased(KeyEvent.VK_M, new InputFunction() {
-            @Override
-            public void Execute() {
-                SetScale(new Vector2D<Float>(100f, 100f));
-            }
-        });
     }
     // ------------------------------------------------------------------------
 
@@ -305,20 +304,11 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
     }
     // ------------------------------------------------------------------------
 
-    int i = 0;
-
     public void Animate() {
-
-        if(falling && mAnimation.GetAnimation().GetFrame() == 7) {
-            SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), delay);   
-            mAnimation.setMust_Complete(false);
-            SetPosition(new Vector2D<>(mPreviousPositionX, mPreviousPositionY));
-            mCollider.GetBounds().SetBox(GetPosition(), GetScale());
-            falling = false;
-        }
-
         //System.out.println(actionToString());
-        if (mAnimation.getMust_Complete()){return;} //Early return, if it is a animation thats has to be complete, do not animaate
+        if (mAnimation.getMust_Complete()){
+            //System.out.println("Is must finised");
+            return;} //Early return, if it is a animation thats has to be complete, do not animaate
 
         if (stop)
         {
@@ -353,8 +343,13 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
                     setMovement(Action.BOW);
                 }
                 else
-                {
-                    setMovement(Action.RUN);
+                {   
+                    if(falling){
+                        setMovement(Action.STOP);
+                        setMovement(null);
+                    }else{
+                        setMovement(Action.RUN);
+                    }
                 }
             }
         }
@@ -368,7 +363,15 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
     @Override
     public void Update() { 
         super.Update();
-
+        playerStateMachine();
+        Animate();
+        if(able_to_takeDamage){
+            takeDamage();
+        }
+        mAnimation.GetAnimation().SetDelay(delay);
+        lifeBar.Update();
+    }
+    public void playerStateMachine(){
         if(dash)
         {
             dash();
@@ -376,42 +379,40 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
         }
         else
         {
-            if (!mAnimation.getMust_Complete())
+            if(mAnimation.finised_Animation){ //When a special animation has finished
+                //System.out.println("Animacion ha terminando : " + mAnimation.finised_Animation + ", Animacion debe continuar: " + mAnimation.getMust_Complete());
+                //System.out.println(actionToString());
+                if (falling) //Finished falling animation
+                {
+                    linkHasFalled();
+                }
+                else if (nArrows != 0 && bow) //Spawn Arrow
+                {
+                    shootArrow();
+                    attack = false;
+                    bow = false;
+                }
+                else if (attack) //Finished Attack (attack && !bow)
+                {
+                    bow = false;
+                    System.out.println("ataca");
+                    Attack();
+                    attack = false;
+                }
+                 mAnimation.finised_Animation = false;
+            }
+            else if (!mAnimation.getMust_Complete())
             {
                 Move();
             }
-            else if (nArrows != 0 && mAnimation.finised_Animation && bow) //Spawn Arrow
-            {
-            shootArrow();
-            bow = false;
-            mAnimation.finised_Animation = false;
-        }else if (mAnimation.finised_Animation && attack){
-            //System.out.println("te rajo primo");
-            Attack();
-            attack = false;
-            mAnimation.finised_Animation = false;
-        } else if (mAnimation.finised_Animation && falling){
-            //System.out.println("te rajo primo");
-            
-            SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), delay);
-            mAnimation.finised_Animation = false;
+            //System.out.println(actionToString());
         }
-    }
-
-        Animate();
-
-        if(able_to_takeDamage){
-            takeDamage();
-        }
-        mAnimation.GetAnimation().SetDelay(delay);
     }
     // ------------------------------------------------------------------------
 
     public boolean SolveCollisions(Vector2D<Integer> dif) {
         CollisionResult res = mCollider.GetBounds().collisionTile(dif.x, dif.y);
-        
         falling = res == CollisionResult.Hole;
-
         return res == CollisionResult.None;
     }
 
@@ -421,8 +422,6 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
     */ //----------------------------------------------------------------------
     public void Move() {
         Vector2D<Float> pos = GetPosition();
-        mPreviousPositionX = pos.x;
-        mPreviousPositionY = pos.y;
 
         //System.out.println(directionToString());
         switch (direction){
@@ -499,7 +498,7 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
         return "Player direction = " + direction;
     }
     public String actionToString(){
-        return("mCurrentAnimation=" +mCurrentAnimation + ", stop=" + stop + ", attack =" + attack  + ", bow = " + bow);
+        return("mCurrentAnimation=" +mCurrentAnimation + ", stop=" + stop + ", attack =" + attack  + ", bow = " + bow + ", falling = " + falling);
     }
     public String mAnimatioT0String(){
         return ("My current animation: " + mCurrentAnimation);
@@ -532,13 +531,9 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
             setVelocity(0);
             setAttack(true);
         }
-        stop = false; 
+        stop = false;
         attack = false;
     }
-
-    private boolean isTouchingNpc = false;
-    private static Vector2D<Float> npcIndex;
-
     private void takeDamage(){ //Looking for enemies to take damage
         //System.out.println("Vida = " + healthPoints);
         ArrayList<Entity> allEntities = ObjectManager.GetObjectManager().getmAliveEntities();
@@ -550,7 +545,10 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
                     this.setDamage(enemy.getDamage());
                     enemy.KnockBack(this.GetPosition());
                 }
-            } else if(allEntities.get(i) instanceof Npc){
+            } 
+            //Change solution
+            
+            else if(allEntities.get(i) instanceof Npc){
                 Npc npc = (Npc) allEntities.get(i);
                 Vector2D<Float> npcPosition = npc.GetPosition();
                 if (npcPosition.getModuleDistance(this.GetPosition()) < this.GetScale().y/2){
@@ -574,6 +572,9 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
     public int getVelocity() {return velocity;}
     public DIRECTION getDirection(){return this.direction;}
     public Animation GetAnimation() {return mAnimation.GetAnimation();}
+    public int getHealthPoints(){return this.healthPoints;}
+    private Player getPlayer (){return this;}
+    public boolean isAble_to_takeDamage() {return able_to_takeDamage;}
     public static Vector2D<Float> getNpcIndex(){return npcIndex;}
     //------------------------------------------------------------------------
 
@@ -587,7 +588,10 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
         else{
             ThreadInmortal thread = new ThreadInmortal(this);
             thread.start();
-            System.out.println("Comienza hilo");
+            //System.out.println("Comienza hilo");
+            //HUD
+            lifeBar.setHealthPoints(this.healthPoints);
+            //lifeBar.setHearts();
         }
 
     }
@@ -595,18 +599,20 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
     public void setAttack(boolean attack) {this.attack = attack;}
     public void setAble_to_takeDamage(boolean able_to_takeDamage) {this.able_to_takeDamage = able_to_takeDamage;}
     private void setMovement(Action type){
+        if (type == null){
+            mAnimation.setMust_Complete();
+            if(falling && mCurrentAnimation != FALL || mAnimation.GetAnimation().GetDelay() == -1) { //Enviromental special case
+            SetAnimation(FALL, mAnimation.GetSpriteSheet().GetSpriteArray(FALL), delay);
+            }
+            return;
+        }
 
         if (type == Action.ATTACK || type == Action.BOW){ //Activate must-end sequence
             mAnimation.setMust_Complete();
         }
 
-        int i = type.getID();
 
-        if(falling && mCurrentAnimation != FALL+i|| mAnimation.GetAnimation().GetDelay() == -1) {
-            SetAnimation(FALL+i, mAnimation.GetSpriteSheet().GetSpriteArray(FALL+i), delay);
-            mAnimation.setMust_Complete();
-            return;
-        }
+        int i = type.getID();
 
         switch(direction){
             case UP:
@@ -618,6 +624,7 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
                 if(mCurrentAnimation != DOWN+i || mAnimation.GetAnimation().GetDelay() == -1) {
                     SetAnimation(DOWN+i, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN+i), delay);
                 }
+                //System.out.println("Patata");
                 return;
             case RIGHT:
                 if(mCurrentAnimation != RIGHT+i || mAnimation.GetAnimation().GetDelay() == -1) {
@@ -639,7 +646,7 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
     private void shootArrow(){ //Tiene que dar al enemigo
         nArrows--;
         if(nArrows == 0){
-            System.out.println("0 Arrows in quiver");
+            //System.out.println("0 Arrows in quiver");
         }
         ObjectManager.GetObjectManager().AddEntity(new Arrow(this));
     }
@@ -649,8 +656,6 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
     *   
     */
     private void dead(){ //falta hacer que link se muera y termine el juego
-        //this.mAnimation.setMust_Complete();
-        //this.mAnimation.SetFrames(mAnimation.GetSpriteSheet().GetSpriteArray(4));
         System.out.println("Ha muerto");
     }
     //------------------------------------------------------------------------
@@ -679,7 +684,6 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
             }
         }
     }
-    public boolean isAble_to_takeDamage() {return able_to_takeDamage;}
     public DIRECTION getAttackDirection(Vector2D<Float> vector) { 
         if (Math.abs(vector.x) > Math.abs(vector.y)) {
             if (vector.x > 0) {
@@ -715,5 +719,34 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
         dash = false;
         able_to_takeDamage = true;
     }
-     //------------------------------------------------------------------------
+    //------------------------------------------------------------------------
+    
+    /* To pause the gameplay
+     * 
+     */
+    private void Pause(){
+        if(PlayState.getGameState() == PlayState.getPlayState()){
+            PlayState.setGameState(2);
+        }else if(PlayState.getGameState() == PlayState.getPauseState()){
+            PlayState.setGameState(1);
         }
+    }
+    //------------------------------------------------------------------------
+
+    /* This function set the player position to the spawn Point
+     * 
+     */
+    private void setToSpawnPoint(){
+        SetPosition(new Vector2D<Float>(700.f, 400.f));
+    }
+    //------------------------------------------------------------------------
+
+    private void linkHasFalled(){
+        falling = false;
+        stop = true;
+        setDamage(2);
+        this.direction = DIRECTION.DOWN;
+        setToSpawnPoint();
+        mCollider.Reset();
+    }
+}

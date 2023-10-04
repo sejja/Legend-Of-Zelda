@@ -32,11 +32,11 @@ import Engine.Physics.Components.BoxCollider;
 
 public class Npc extends Engine.ECSystem.Types.Actor {
     private String name;
-    private static String dialogue;
+    private static String dialogue; //Como que estatico?
     protected Graphics2D window;
     private SpriteComponent mAnimation;
     private ArrayList<String> mdialogueArrayList;
-    private static ArrayList<Npc> npcArrayList = new ArrayList<Npc>();
+    private static ArrayList<Npc> npcArrayList = new ArrayList<Npc>(); //Para que?
     protected BoxCollider mCollider;
 
 

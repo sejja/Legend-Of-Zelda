@@ -21,7 +21,6 @@ import Engine.Physics.AABB;
 
 public class BoxCollider extends Component implements Renderable{
     private AABB mBounds;
-
     // ------------------------------------------------------------------------
     /*! Conversion Constructor
     *
@@ -63,6 +62,9 @@ public class BoxCollider extends Component implements Renderable{
         mBounds.SetWidth(this.GetBounds().GetHeight());
     }
 
+    public void Reset(){
+        mBounds.SetBox(super.GetParent().GetPosition(), super.GetParent().GetScale());
+    }
     // ------------------------------------------------------------------------
     /*! Shutdown
     *
