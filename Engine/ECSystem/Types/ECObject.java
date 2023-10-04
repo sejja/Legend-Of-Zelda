@@ -13,4 +13,10 @@ public class ECObject extends Entity {
     public void Update() {
 
     }
+
+    @Override
+    public int compareTo(Object arg0) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'compareTo'");
+    }
 }

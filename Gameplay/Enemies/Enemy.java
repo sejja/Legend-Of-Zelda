@@ -84,7 +84,7 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
         idx++;
 
         lifeBar = new LifeBar(this, healthPoints);
-        lifeBar.setVisible(true);
+        lifeBar.setVisible(false);
     }
 
     public void SetAnimation(int i, BufferedImage[] frames, int delay) {
@@ -302,6 +302,7 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
     } 
     
     public void KnockBack(Vector2D<Float> playerPos) {
+        lifeBar.setVisible(true);
         Vector2D<Float> pos = GetPosition();
         Vector2D<Float> dir = pos.getVectorToAnotherActor(playerPos);
         ndir=Normalize(dir);
@@ -335,11 +336,11 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
         if (healthPoints <= 0){
             //System.out.println("aibfhdp`");
             mCollision.ShutDown();
-            //this.SetScale(new Vector2D<Float>(0f,0f));
+            this.SetScale(new Vector2D<Float>(0f,0f));
             ObjectManager.GetObjectManager().RemoveEntity(this);
             path.clear();
         }
-        //lifeBar.setHealthPoints(this.healthPoints);
+        lifeBar.setHealthPoints(this.healthPoints);
         //______________________
         //______________________
     }
