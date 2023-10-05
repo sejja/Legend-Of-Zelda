@@ -79,19 +79,4 @@ public abstract class Actor extends Entity {
     public void SetScale(Vector2D<Float> vec) {
         super.SetScale(vec);
     }
-    
-    @Override
-    public int compareTo(Object arg0) {
-        if(arg0 instanceof Player){
-            return 0;
-        }
-        Float distancePlayerThis = GetPosition().getModuleDistance(ObjectManager.GetObjectManager().getMapAliveActors().get(Player.class).first().GetPosition());
-        Actor Other = (Actor) arg0;
-        float distancePlayerOther = Other.GetPosition().getModuleDistance(ObjectManager.GetObjectManager().getMapAliveActors().get(Player.class).first().GetPosition());
-        if(distancePlayerOther == distancePlayerThis){
-            return 0;
-        }else if (distancePlayerOther < distancePlayerThis){
-            return -1;
-        }else{return 1;}
-    }
 }

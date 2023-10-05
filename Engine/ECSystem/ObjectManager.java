@@ -3,6 +3,7 @@ package Engine.ECSystem;
 import java.lang.reflect.ClassFileFormatVersion;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -16,7 +17,7 @@ public class ObjectManager {
     private ArrayList<Entity> mNewEntities;
     static private ObjectManager sManager = new ObjectManager();
 
-    private HashMap<Class,TreeSet<Actor>> mapAliveActors;
+    private HashMap<Class,LinkedList<Actor>> mapAliveActors;
 
     static public ObjectManager GetObjectManager() {
         return sManager;
@@ -44,7 +45,7 @@ public class ObjectManager {
         
         if ((e instanceof Actor)){
             if ( !mapAliveActors.containsKey(e.getClass()) ){
-                mapAliveActors.put(e.getClass(), new TreeSet<Actor>());
+                mapAliveActors.put(e.getClass(), new LinkedList<Actor>());
             }
             mapAliveActors.get(e.getClass()).add((Actor)e);
         }
@@ -55,6 +56,13 @@ public class ObjectManager {
 
     public void RemoveEntity(Entity e) {
         mDeadEntities.add(e);
+        if(e instanceof Actor){
+            try {
+                mapAliveActors.get(e.getClass()).remove(e);
+            } catch (java.lang.NullPointerException a) {
+                //System.err.println(e.getClass() + " Already removed or it does not exist");
+            }
+        }
     }
 
     public void Update() {
@@ -67,10 +75,8 @@ public class ObjectManager {
         mDeadEntities.clear();
         mAliveEntities.addAll(mNewEntities);
         mNewEntities.clear();
-
-        System.out.println(mapAliveActors);
     }
 
     public ArrayList<Entity> getmAliveEntities() {return mAliveEntities;}
-    public HashMap<Class, TreeSet<Actor>> getMapAliveActors() {return mapAliveActors;}
+    public HashMap<Class, LinkedList<Actor>> getMapAliveActors() {return mapAliveActors;}
 }
