@@ -49,7 +49,7 @@ public class ObjectManager {
             }
             mapAliveActors.get(e.getClass()).add((Actor)e);
         }
-        System.out.println(mapAliveActors);
+        //System.out.println(mapAliveActors);
         //-------------------------------------------------------------
         return e;
     }

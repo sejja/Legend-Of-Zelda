@@ -79,4 +79,12 @@ public abstract class Actor extends Entity {
     public void SetScale(Vector2D<Float> vec) {
         super.SetScale(vec);
     }
+
+    public ArrayList<Component> getmComponents() {
+        return mComponents;
+    }
+
+    public void setmComponents(ArrayList<Component> mComponents) {
+        this.mComponents = mComponents;
+    }
 }

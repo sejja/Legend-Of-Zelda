@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Component;
 import Engine.Graphics.Font;
@@ -20,77 +19,40 @@ import Engine.Math.Vector2D;
 import Engine.Window.PresentBuffer;
 import Engine.Window.Window;
 import Gameplay.Link.Player;
+import Gameplay.States.PlayState;
 
 public class DialogueWindow extends Component implements Renderable{
-
-    private static String dialogue;
-    private static DialogueWindow g;
-    private int y = 0;
-    private int x = 0;
-    private static int k = 0;
-    private static int j = 0;
-    private int yFinal;
-    private int code;
+    
+    private DialogueWindow g;
+    private int y;
+    private int x;
+    private int width;
+    private int height;
+    private static int j = 0; //Index del String del arraylist del dialogo
+    //private int yFinal;
     private Npc npc;
-    private static boolean siguiente = false;
-    public static boolean isTouchingNpc = false;
 
-    protected DialogueWindow(Actor parent, Npc npc) {
-        super(parent);
+    protected DialogueWindow(Npc npc) {
+        super(npc);
         //TODO Auto-generated constructor stub
-        this.g = this;
         this.npc = npc;
+        this.g = this;
     }
     
     @Override
     public void Render(Graphics2D g, CameraComponent camerapos) {
-        // TODO Auto-generated method stub
-        //Window
         x = Block.getWidth()*2;
         y = Block.getHeight()*8;
-        int width = 1280  - (Block.getWidth()*4);;
-        int height = Block.getWidth()*3;
-
+        width = 1280  - (Block.getWidth()*4);;
+        height = Block.getWidth()*3;
         Font mFont = new Font("Content/Fonts/ZeldaFont.png", 16, 16);
-
         drawSubWindow(x,y,width,height, g);
-
-        //g.setFont(mFont);
         x += 20;
         y += 20;
-        yFinal = y;
-        if(siguiente) {
-            j++;
-        } else{   }
-        Vector2D<Float> currentNpc = Player.getNpcIndex();
-        for(int i=0; i < Npc.getNpcArrayList().size(); i++) {
-            if (Npc.getNpcArrayList().get(i).GetPosition() == currentNpc){
-                k = i;
-            }
-        }
-        for(String line: Npc.getNpcArrayList().get(k).getDialoguesArrayList().get(j).split("\n")){
+        for(String line: npc.getDialoguesArrayList().get(j).split("\n")){
             mFont.Render(g, line, new Vector2D<Float>((float)x, (float)y), 32, 32, 15, 0);
             y += 40;
         }
-
-/*
-        InputManager.SubscribeReleased(KeyEvent.VK_O, new InputFunction() {
-            @Override
-            public void Execute() {
-                y = yFinal;
-                if( i++ > Npc.getDialoguesArrayList().size()){
-                    i = Npc.getDialoguesArrayList().size();
-                }
-                else{i++;}
-            }
-        });
-
-            for(String line: Npc.getDialoguesArrayList().get(i).split("\n")){
-                mFont.Render(g, line, new Vector2D<Float>((float)x, (float)y), 32, 32, 15, 0);
-                y += 40;
-            }
-            //g.drawString("hadoken", x, y);
-            */
     }
     @Override
     public void Init() {
@@ -103,6 +65,7 @@ public class DialogueWindow extends Component implements Renderable{
     }
     @Override
     public void ShutDown() {
+        System.out.println("oefhoiefh");
         // TODO Auto-generated method stub
         GraphicsPipeline.GetGraphicsPipeline().RemoveRenderable(this);
     }
@@ -117,24 +80,15 @@ public class DialogueWindow extends Component implements Renderable{
         g.drawRoundRect(x+5, y+5, width-10, height-10, 25, 25);
     }
     
-    public static DialogueWindow getDialgueWindow(){
-        return g;
+    public DialogueWindow getDialgueWindow(){return this;}
+    public int getJ(){return j;}
+    public void setJ(int index){j = index;}
+    public void setSiguiente(){
+        j++;
     }
 
-    public static void setK(int index){
-        k = index;
-    }
-    public int getK(){
-        return k;
-    }
-    public static int getJ(){
-        return j;
+    public void setNpc(Npc npc) {
+        this.npc = npc;
     }
 
-    public static void setJ(int index){
-        j = index;
-    }
-    public static void setSiguiente(boolean next){
-        siguiente = next;
-    }
 }
