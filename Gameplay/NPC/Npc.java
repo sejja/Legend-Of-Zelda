@@ -28,70 +28,107 @@ import Engine.Input.InputFunction;
 import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
 import Engine.Physics.Components.BoxCollider;
+import Gameplay.Link.*;
+import Gameplay.Link.Player;
+import Gameplay.States.PlayState;
 
 
-public class Npc extends Engine.ECSystem.Types.Actor {
+public class Npc extends Actor {
     private String name;
-    private static String dialogue; //Como que estatico?
-    protected Graphics2D window;
-    private SpriteComponent mAnimation;
-    private ArrayList<String> mdialogueArrayList;
-    private static ArrayList<Npc> npcArrayList = new ArrayList<Npc>(); //Para que?
-    protected BoxCollider mCollider;
-
-
-        /*! Conversion Constructor
-    *
-    *   Constructs a NPC with a name, a sprite, a position, a dialog and gives it a size
-    */ //----------------------------------------------------------------------
-
-    public Npc(String nameNPC, Sprite sprite, Vector2D<Float> position, ArrayList<String> dialogueArrayList, Vector2D<Float> size) {
-        super(position);
-        this.name = nameNPC;
-        //this.dialogue = dialogue;
-        mAnimation = AddComponent(new SpriteComponent(this, sprite));
-        SetScale(size);
-        this.mdialogueArrayList = dialogueArrayList;
-        npcArrayList.add(this);
-        mCollider = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<>(75f,0.f)));
-    }
-
-        /*! Transpose
-    *       @Param  -> BufferedImage 2D Matrix
-    *       ret     -> Transposed BufferedImage 2D Matrix
-    */ //----------------------------------------------------------------------
-    
+    protected BoxCollider boxCollider;
     static boolean interact = false;
     static boolean remove = false;
 
+    
+    private static DialogueWindow dialogueWindow;
+    private ArrayList<String> dialogueArrayList;
+
+    private AnimationMachine animationMachine;
+    private BufferedImage[][] allAnimations;
+
+    /*! Conversion Constructor
+    * Constructs a NPC with a name, a sprite, a position, a dialog and gives it a size
+    */ //----------------------------------------------------------------------
+
+    public Npc(String nameNPC, Spritesheet sprite, Vector2D<Float> position, ArrayList<String> dialogueArrayList, Vector2D<Float> size) {
+        super(position);
+        this.name = nameNPC;
+        
+        allAnimations = transposeMatrix(sprite.GetSpriteArray2D());
+        setSetopAnimationSet(allAnimations, allAnimations[0].length);
+        animationMachine = AddComponent(new AnimationMachine(this, sprite));
+        animationMachine.SetFrames(allAnimations[6]); //La diferencia entre correr a una direction y parase en la misma es un + 4
+        animationMachine.GetAnimation().SetDelay(15);
+
+        SetScale(size);
+        this.dialogueArrayList = dialogueArrayList;
+        boxCollider = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<>(75f,0.f)));
+        dialogueWindow = new DialogueWindow(this);
+        ObjectManager.GetObjectManager().AddEntity(this);
+    }
+        /*! Transpose
+        *
+        * @Param  -> BufferedImage 2D Matrix
+        * ret     -> Transposed BufferedImage 2D Matrix
+        */ //----------------------------------------------------------------------
     public void Update(Vector2D<Float> playerPosition) {
 
         super.Update();
-        if(interact) {
-            AddComponent(new DialogueWindow(this, npcArrayList.get(0)));    
-            interact = false;
-        }else if(remove == true){
-            RemoveComponent(DialogueWindow.getDialgueWindow());
-            remove = false;
+        //interaction();
+
+    }
+    //______________________________________________________________________________________
+    private BufferedImage[][] transposeMatrix(BufferedImage [][] m){
+        BufferedImage[][] temp = new BufferedImage[m[0].length + 4][m.length];
+        for (int i = 0; i < m.length; i++){
+            for (int j = 0; j < m[0].length; j++){
+                temp[j][i] = m[i][j];
+            }
+        }
+        return temp;
+    }
+    private void setSetopAnimationSet(BufferedImage[][] m, int size){
+        for (int i = 0; i < 4; i++){
+            for (int j = 0;  j < m[0].length; j++){
+                m[size+i][j] = m[i][0];
+            }
+        }
+    }
+    //______________________________________________________________________________________
+    
+    public ArrayList<String> getDialoguesArrayList() {return dialogueArrayList;}
+    public static void setInteract(boolean interact1){interact = interact1;}
+    public static void setRemove() {remove = true;}
+    public String getName() {return name;}
+
+    public void interaction(){
+        dialogueWindow.setNpc(this);
+        if (!getmComponents().contains(dialogueWindow)){
+            dialogueWindow.setJ(0);
+            AddComponent(dialogueWindow);
+            Pause();
+        }else{
+            nextDialog();
         }
     }
 
-    public ArrayList<String> getDialoguesArrayList() {
-        return mdialogueArrayList;
+    public void nextDialog(){
+        if(dialogueWindow.getJ() + 1 <=  this.dialogueArrayList.size()-1){ // Si hay siguiente
+            dialogueWindow.setSiguiente();
+        }else{
+            //System.out.println("udbfyhisd");
+            RemoveComponent(dialogueWindow);
+            Player link = (Player) ObjectManager.GetObjectManager().getMapAliveActors().get(Player.class).getFirst();
+            link.removeInteraction();
+            Pause();
+        }
     }
-    public void setdialogue(String dialogue){
-        this.dialogue = dialogue;
-    }
-    public static void setInteract(boolean interact1){
-        interact = interact1;
-    }
-    public static void setRemove(boolean remove1) {
-        remove = remove1;
-    }
-    public String getName() {
-        return name;
-    }
-    public static ArrayList<Npc> getNpcArrayList() {
-        return npcArrayList;
+
+    private void Pause(){
+        if(PlayState.getGameState() == PlayState.getPlayState()){
+            PlayState.setGameState(2);
+        }else if(PlayState.getGameState() == PlayState.getPauseState()){
+            PlayState.setGameState(1);
+        }
     }
 }

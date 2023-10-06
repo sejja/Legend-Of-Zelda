@@ -10,8 +10,10 @@ package Engine.ECSystem.Types;
 
 import java.util.ArrayList;
 
+import Engine.ECSystem.ObjectManager;
 import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
+import Gameplay.Link.Player;
 
 public abstract class Actor extends Entity {
     private ArrayList<Component> mComponents;
@@ -76,5 +78,13 @@ public abstract class Actor extends Entity {
     */ //----------------------------------------------------------------------
     public void SetScale(Vector2D<Float> vec) {
         super.SetScale(vec);
+    }
+
+    public ArrayList<Component> getmComponents() {
+        return mComponents;
+    }
+
+    public void setmComponents(ArrayList<Component> mComponents) {
+        this.mComponents = mComponents;
     }
 }

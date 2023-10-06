@@ -18,6 +18,9 @@ import Engine.Math.Vector2D;
 
 public class GraphicsPipeline {
     private ArrayList<Renderable> mRenderables;
+    private ArrayList<Renderable> mNewRenderables = new ArrayList<>();
+    private ArrayList<Renderable> mOldRenderables = new ArrayList<>();
+
     static private GraphicsPipeline sPipe = new GraphicsPipeline();
     private CameraComponent mCamera;
     private Vector2D<Integer> mDimensions;
@@ -59,7 +62,7 @@ public class GraphicsPipeline {
     *   Adds a Renderable to the pipeline
     */ //----------------------------------------------------------------------
     public void AddRenderable(Renderable r) {
-        mRenderables.add(r);
+        mNewRenderables.add(r);
     }
 
     // ------------------------------------------------------------------------
@@ -69,8 +72,15 @@ public class GraphicsPipeline {
     */ //----------------------------------------------------------------------
     public void Render(Graphics2D g) {
         //Renderable
-        for(Renderable x : mRenderables)
-            x.Render(g, mCamera);
+        for (Renderable r: mRenderables) 
+            r.Render(g, mCamera);
+
+        for(Renderable r: mOldRenderables)
+            mRenderables.remove(r);
+
+        mOldRenderables.clear();
+        mRenderables.addAll(mNewRenderables);
+        mNewRenderables.clear();
     }
 
     // ------------------------------------------------------------------------
@@ -79,6 +89,7 @@ public class GraphicsPipeline {
     *   Removes one renderable
     */ //----------------------------------------------------------------------
     public void RemoveRenderable(Renderable r) {
-        mRenderables.remove(r);
+        mOldRenderables.add(r);
+        
     }
 }
