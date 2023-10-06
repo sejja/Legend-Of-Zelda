@@ -63,10 +63,10 @@ public class PlayState extends State {
         mFont =(FontObject)ObjectManager.GetObjectManager().AddEntity(new FontObject("Content/Fonts/ZeldaFont.png", "THE LEGEND OF ANDONI", 56));
         mFont.SetPosition(new Vector2D<>(100.f, 100.f));
         mFont.SetScale(new Vector2D<>(32.f, 32.f));
-        mNpc1 = (Npc)ObjectManager.GetObjectManager().AddEntity(new Npc("Aelarion", new Sprite("Content/Animations/NPC1.png"), new Vector2D<Float>(1415.f, 725.f), dialogueArrayList, new Vector2D<Float>(50.f, 62.f)) );
-        mNpc2 = (Npc)ObjectManager.GetObjectManager().AddEntity(new Npc("Juan", new Sprite("Content/Animations/NPC1.png"), new Vector2D<Float>(1200f, 725.f), dialogueArrayList2, new Vector2D<Float>(50.f, 62.f)) );
         mPlayer = (Player)ObjectManager.GetObjectManager().AddEntity(new Player(new Spritesheet("Content/Animations/Link/Link.png"), new Vector2D<Float>(700.f, 400.f), new Vector2D<Float>(100.f, 100.f)));
         mPos = new Vector2D<Float>(300.f, 600.f);
+        mNpc1 = (Npc)ObjectManager.GetObjectManager().AddEntity(new Npc("Aelarion", new Spritesheet("Content/Animations/NPC/NPC_boy.png", 64, 64), new Vector2D<Float>(1415.f, 725.f), dialogueArrayList, new Vector2D<Float>(50.f, 62.f)) );
+        mNpc2 = (Npc)ObjectManager.GetObjectManager().AddEntity(new Npc("Juan", new Spritesheet("Content/Animations/NPC/NPC_boy.png", 64, 64), new Vector2D<Float>(1200f, 900.f), dialogueArrayList2, new Vector2D<Float>(50.f, 62.f)) );
         mNpcArrayList.add(mNpc1);
         mNpcArrayList.add(mNpc2);
         Spritesheet esprite = new Spritesheet("Content/Animations/gknight.png",16,28);
@@ -90,8 +90,8 @@ public class PlayState extends State {
     public void Update() {
         if(gameState == playState){
             ObjectManager.GetObjectManager().Update();
-           mEnemy.Update();
-           for(int i=0; i < mNpcArrayList.size();i++){
+           //mEnemy.Update();
+           for(int i=0; i<mNpcArrayList.size();i++){
                mNpcArrayList.get(i).Update(mPlayer.GetPosition());
             //ObjectManager.GetObjectManager().Update();
             }
@@ -138,7 +138,7 @@ public class PlayState extends State {
     public static int getGameState() {
         return gameState;
     }
-
+    
     public static ArrayList<Npc> getNpcArrayList() {
         return mNpcArrayList;
     }
@@ -147,5 +147,4 @@ public class PlayState extends State {
         String nuevoTexto = texto;
         return nuevoTexto;
     }
-    
 }

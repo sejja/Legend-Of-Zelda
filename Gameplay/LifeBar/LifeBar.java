@@ -12,7 +12,7 @@ import Engine.Math.Vector2D;
  *              -> The actor must have healthPoints
  * 
  *      HOW TO add A LIFEBAR TO A ACTOR:
- *              -> Add LifeBarUpdate() in Actor.Update
+ *              -> Add LifeBarUpdate() at the end of Actor.Update()
  *              -> Use setVisible() to show lifeBar or not
  *              -> Use setHealthpoints() to change the healthpoints of the actor in the lifebar
  */

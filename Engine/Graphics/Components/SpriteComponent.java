@@ -87,5 +87,4 @@ public final class SpriteComponent extends Component implements Renderable {
     public void Render(Graphics2D g, CameraComponent camerapos) {
         g.drawImage(mSprite.GetSprite(), (int)(float)GetParent().GetPosition().x - (int)(float)camerapos.GetCoordinates().x, (int)(float)GetParent().GetPosition().y - (int)(float)camerapos.GetCoordinates().y, (int)(float)GetParent().GetScale().x, (int)(float)GetParent().GetScale().y, null);
     }
-    
 }

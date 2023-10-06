@@ -69,8 +69,9 @@ public class GraphicsPipeline {
     */ //----------------------------------------------------------------------
     public void Render(Graphics2D g) {
         //Renderable
-        for(Renderable x : mRenderables)
-            x.Render(g, mCamera);
+        for(int i = 0; i < mRenderables.size(); i++){
+            mRenderables.get(i).Render(g, mCamera);
+        }
     }
 
     // ------------------------------------------------------------------------

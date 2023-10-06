@@ -3,6 +3,8 @@ package Gameplay.Link;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
@@ -82,10 +84,8 @@ public class Player extends Actor {
     //----------------------------------------------------------------------
 
     /* NPC
-     * 
      */
-    private boolean isTouchingNpc = false;
-    private static Npc npcIndex;
+    private Npc currentNPCinteraction;
     //----------------------------------------------------------------------
 
     //Methods______________________________________________________________________________________________________________________________________________________________________________
@@ -203,8 +203,9 @@ public class Player extends Actor {
             public void Execute() {
                 setVelocity(0);
                 stop = true;
-                attack = false;
-                bow =true;
+                if(!attack){ //If not attacking, then shoot
+                    bow = true;
+                }
                 dash = false;
             }
         });
@@ -213,7 +214,6 @@ public class Player extends Actor {
             public void Execute() {
                 setVelocity(0);
                 stop = true;
-                attack = false;
                 bow =false;
             }
         });
@@ -249,43 +249,11 @@ public class Player extends Actor {
                 Pause();
             }
         });
+        ///* 
         InputManager.SubscribePressed(KeyEvent.VK_E, new InputFunction() {
-
-            boolean firstDialogue = false;
-            boolean isFinished = false;
-
             @Override
             public void Execute() {
-                if(isTouchingNpc){
-                    if(DialogueWindow.getJ() + 1 >  npcIndex.getDialoguesArrayList().size()-1 ) { //Si no tiene sigueinte dialogo, en el siguiente bucle termina
-                        isFinished = true;
-                    }
-                    if (DialogueWindow.getJ() == 0 && firstDialogue == false){ //Si es el primer dialogo, muestra el primer dialogo
-                        Npc.setInteract(true);
-                        try {Thread.sleep(100);
-                        } catch (InterruptedException e) {}
-                        Npc.setInteract(false);
-                        PlayState.setGameState(2);
-                        firstDialogue = true;
-                    }  else if(isFinished){
-                        PlayState.setGameState(1);
-                        DialogueWindow.setSiguiente(false);
-                        Npc.setInteract(false);
-                        Npc.setRemove(true);
-                        DialogueWindow.setJ(0);
-                        isFinished = false;
-                        firstDialogue = false;
-                        isTouchingNpc = false;
-                    }
-                    else if(DialogueWindow.getJ() + 1 <=  PlayState.getNpcArrayList().get(1).getDialoguesArrayList().size() -1){ // Si tiene siguiente dialogo, borra el anterior y dibuja el nuevo
-                        Npc.setRemove(true);
-                        DialogueWindow.setJ(DialogueWindow.getJ()+1);
-                        Npc.setInteract(true);
-                        try {Thread.sleep(100);} catch (InterruptedException e) {}
-                        Npc.setRemove(false);
-                        PlayState.setGameState(2);
-                    }
-                }
+                interact();
             }
         });
     }
@@ -360,6 +328,7 @@ public class Player extends Actor {
     @Override
     public void Update() { 
         super.Update();
+        //System.out.println("iasufgbiujd");
         playerStateMachine();
         Animate();
         if(able_to_takeDamage){
@@ -377,23 +346,21 @@ public class Player extends Actor {
         else
         {
             if(mAnimation.finised_Animation){ //When a special animation has finished
-                //System.out.println("Animacion ha terminando : " + mAnimation.finised_Animation + ", Animacion debe continuar: " + mAnimation.getMust_Complete());
-                //System.out.println(actionToString());
                 if (falling) //Finished falling animation
                 {
                     linkHasFalled();
                 }
                 else if (nArrows != 0 && bow) //Spawn Arrow
                 {
+                    //System.out.println("Dispara");
                     shootArrow();
-                    attack = false;
                     bow = false;
                 }
                 else if (attack) //Finished Attack (attack && !bow)
                 {
-                    bow = false;
-                    System.out.println("ataca");
+                    //sSystem.out.println("ataca");
                     Attack();
+                    bow = false;
                     attack = false;
                 }
                  mAnimation.finised_Animation = false;
@@ -410,7 +377,8 @@ public class Player extends Actor {
     public boolean SolveCollisions(Vector2D<Integer> dif) {
         CollisionResult res = mCollider.GetBounds().collisionTile(dif.x, dif.y);
         falling = res == CollisionResult.Hole;
-        return res == CollisionResult.None;
+        //return res == CollisionResult.None;
+        return true;
     }
 
     /*! Move
@@ -543,7 +511,8 @@ public class Player extends Actor {
                     enemy.KnockBack(this.GetPosition());
                 }
             } 
-            //Change solution
+            //Change solution  
+            /*    
             else if(allEntities.get(i) instanceof Npc){
                 Npc npc = (Npc) allEntities.get(i);
                 if (npc.GetPosition().getModuleDistance(this.GetPosition()) < this.GetScale().y/2){
@@ -553,6 +522,7 @@ public class Player extends Actor {
                     //isTouchingNpc = false;
                 }
             }
+            */
         }
     }
     //------------------------------------------------------------------------
@@ -570,7 +540,9 @@ public class Player extends Actor {
     public int getHealthPoints(){return this.healthPoints;}
     private Player getPlayer (){return this;}
     public boolean isAble_to_takeDamage() {return able_to_takeDamage;}
-    public static Npc getNpcIndex(){return npcIndex;}
+    //_____________________________________________________
+    //public static Npc getNpcIndex(){return npcIndex;}
+    //_____________________________________________________
     //------------------------------------------------------------------------
 
     /* Setters
@@ -679,6 +651,32 @@ public class Player extends Actor {
             }
         }
     }
+    private void interact(){
+        if(currentNPCinteraction == null){
+            currentNPCinteraction = nearestNPC();
+        }
+        try {
+            currentNPCinteraction.interaction();
+        } catch (java.lang.NullPointerException e) {
+            System.err.println("No npc found");
+            this.currentNPCinteraction = null;
+        }
+    }
+
+    private Npc nearestNPC (){
+        LinkedList<Actor> NPCs = ObjectManager.GetObjectManager().getMapAliveActors().get(Npc.class);
+        Actor min = NPCs.getFirst();
+        for (Actor npc: NPCs){
+            if (GetPosition().getModuleDistance(npc.GetPosition()) < GetPosition().getModuleDistance(min.GetPosition())){
+                min = npc;
+            }
+        }
+        if (GetPosition().getModuleDistance(min.GetPosition()) > (GetScale().getModule()/2)){ //Magic number to ajust
+            return null;
+        }
+        return (Npc) min;
+    }
+
     public DIRECTION getAttackDirection(Vector2D<Float> vector) { 
         if (Math.abs(vector.x) > Math.abs(vector.y)) {
             if (vector.x > 0) {
@@ -719,7 +717,7 @@ public class Player extends Actor {
     /* To pause the gameplay
      * 
      */
-    private void Pause(){
+    public void Pause(){
         if(PlayState.getGameState() == PlayState.getPlayState()){
             PlayState.setGameState(2);
         }else if(PlayState.getGameState() == PlayState.getPauseState()){
@@ -743,5 +741,9 @@ public class Player extends Actor {
         this.direction = DIRECTION.DOWN;
         setToSpawnPoint();
         mCollider.Reset();
+    }
+
+    public void removeInteraction(){
+        currentNPCinteraction = null;
     }
 }
