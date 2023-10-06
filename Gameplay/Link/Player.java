@@ -301,8 +301,8 @@ public class Player extends Actor {
     public boolean SolveCollisions(Vector2D<Integer> dif) {
         CollisionResult res = mCollider.GetBounds().collisionTile(dif.x, dif.y);
         falling = res == CollisionResult.Hole;
-        //return res == CollisionResult.None;
-        return true;
+        return res == CollisionResult.None;
+        //return true;
     }
     // ------------------------------------------------------------------------
     
