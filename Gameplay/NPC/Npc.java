@@ -46,23 +46,37 @@ public class Npc extends Actor {
     private AnimationMachine animationMachine;
     private BufferedImage[][] allAnimations;
 
+    private final int speed = 1;
+    private int direction;
+    private float xInicial;
+    private float yInicial;
+
+    private final int DOWN = 0;
+    private final int LEFT = 1;
+    private final int RIGHT= 2;
+    private final int UP = 3;
+
     /*! Conversion Constructor
     * Constructs a NPC with a name, a sprite, a position, a dialog and gives it a size
     */ //----------------------------------------------------------------------
 
-    public Npc(String nameNPC, Spritesheet sprite, Vector2D<Float> position, ArrayList<String> dialogueArrayList, Vector2D<Float> size) {
+    public Npc(String nameNPC, Spritesheet sprite, Vector2D<Float> position, ArrayList<String> dialogueArrayList, Vector2D<Float> size, int numberStartAnimation) {
         super(position);
         this.name = nameNPC;
         
         allAnimations = transposeMatrix(sprite.GetSpriteArray2D());
         setSetopAnimationSet(allAnimations, allAnimations[0].length);
         animationMachine = AddComponent(new AnimationMachine(this, sprite));
-        animationMachine.SetFrames(allAnimations[6]); //La diferencia entre correr a una direction y parase en la misma es un + 4
-        animationMachine.GetAnimation().SetDelay(15);
+        animationMachine.SetFrames(allAnimations[numberStartAnimation]); //La diferencia entre correr a una direction y parase en la misma es un + 4
+        animationMachine.GetAnimation().SetDelay(40);
+
+        direction = numberStartAnimation;
+        xInicial = position.x;
+        yInicial = position.y;
 
         SetScale(size);
         this.dialogueArrayList = dialogueArrayList;
-        boxCollider = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<>(75f,0.f)));
+        boxCollider = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<>(55f,0.f)));
         dialogueWindow = new DialogueWindow(this);
         ObjectManager.GetObjectManager().AddEntity(this);
     }
@@ -74,7 +88,7 @@ public class Npc extends Actor {
     public void Update(Vector2D<Float> playerPosition) {
 
         super.Update();
-        //interaction();
+        movement();
 
     }
     //______________________________________________________________________________________
@@ -105,6 +119,7 @@ public class Npc extends Actor {
         dialogueWindow.setNpc(this);
         if (!getmComponents().contains(dialogueWindow)){
             AddComponent(dialogueWindow);
+            dialogueWindow.setJ(0);
             Pause();
         }else{
             nextDialog();
@@ -115,9 +130,7 @@ public class Npc extends Actor {
         if(dialogueWindow.getJ() + 1 <=  this.dialogueArrayList.size()-1){ // Si hay siguiente
             dialogueWindow.setSiguiente();
         }else{
-            //System.out.println("udbfyhisd");
             RemoveComponent(dialogueWindow);
-            dialogueWindow.setJ(0);
             Player link = (Player) ObjectManager.GetObjectManager().getMapAliveActors().get(Player.class).getFirst();
             link.removeInteraction();
             Pause();
@@ -130,5 +143,38 @@ public class Npc extends Actor {
         }else if(PlayState.getGameState() == PlayState.getPauseState()){
             PlayState.setGameState(1);
         }
+    }
+
+    private void movement() {
+        Vector2D<Float> pos = GetPosition();
+        Vector2D<Float> distance = new Vector2D<Float>(100.f, 100.f);
+        if(pos.y == yInicial + distance.y && pos.x == xInicial){
+            animationMachine.SetFrames(allAnimations[LEFT]);
+            direction = LEFT;
+            yInicial = pos.y;
+        }else if(pos.x == xInicial - distance.x && pos.y == yInicial){
+            animationMachine.SetFrames(allAnimations[UP]);
+            direction = UP;
+            xInicial = pos.x;
+        }else if(pos.y == yInicial - distance.x && pos.x == xInicial){
+            animationMachine.SetFrames(allAnimations[RIGHT]);
+            direction = RIGHT;
+            yInicial = pos.y;
+        }else if(pos.x == xInicial + distance.x && pos.y == yInicial){
+            animationMachine.SetFrames(allAnimations[DOWN]);
+            direction = DOWN;
+            xInicial = pos.x;
+        }
+        if (direction == UP){
+            pos.y -= speed;
+        }else if(direction == DOWN) {
+            pos.y += speed;
+        }else if(direction == LEFT) {
+            pos.x -= speed;
+        }else if(direction == RIGHT) {
+            pos.x += speed;
+        }
+
+        SetPosition(pos);
     }
 }

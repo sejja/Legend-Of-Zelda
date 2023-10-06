@@ -111,7 +111,7 @@ public class Player extends Actor {
         //---------------------------------------------------------------------
         lifeBar = new LifeBar(getPlayer(), getHealthPoints());
         //---------------------------------------------------------------------
-        mCollider = (BoxCollider)AddComponent(new BoxCollider(this));
+        mCollider = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<>(90f,0.f)));
     }
     // ------------------------------------------------------------------------
 

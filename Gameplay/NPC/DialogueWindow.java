@@ -23,20 +23,19 @@ import Gameplay.States.PlayState;
 
 public class DialogueWindow extends Component implements Renderable{
     
-    private DialogueWindow g;
-    private int y;
-    private int x;
-    private int width;
-    private int height;
+    private DialogueWindow window;
+    private int x; //the x position of the DialogueWindow
+    private int y; //the y position of the DialogueWindow
+    private int width; //the width of the DialogueWindow
+    private int height; //the height of the DialogueWindow
     private static int j = 0; //Index del String del arraylist del dialogo
-    //private int yFinal;
-    private Npc npc;
+    private Npc npc; //the Npc we are interacting with
 
     protected DialogueWindow(Npc npc) {
         super(npc);
         //TODO Auto-generated constructor stub
         this.npc = npc;
-        this.g = this;
+        this.window = this;
     }
     
     @Override
@@ -65,16 +64,15 @@ public class DialogueWindow extends Component implements Renderable{
     }
     @Override
     public void ShutDown() {
-        System.out.println("oefhoiefh");
         // TODO Auto-generated method stub
         GraphicsPipeline.GetGraphicsPipeline().RemoveRenderable(this);
     }
 
     public static void drawSubWindow(int x, int y, int width, int height, Graphics2D g) {
-        Color c = new Color(0,0,0, 160);
+        Color c = new Color(0,0,0, 160); //we set the background color to black with some opacity
         g.setColor(c);
-        g.fillRoundRect(x, y, width, height, 35, 35);
-        c = new Color(255, 255, 255);
+        g.fillRoundRect(x, y, width, height, 35, 35); //we made the rectangel of the textbox
+        c = new Color(255, 255, 255); //se set the outside line color to white
         g.setColor(c);
         g.setStroke(new BasicStroke(5));
         g.drawRoundRect(x+5, y+5, width-10, height-10, 25, 25);
