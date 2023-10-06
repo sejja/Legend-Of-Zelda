@@ -104,6 +104,7 @@ public class Npc extends Actor {
     public void interaction(){
         dialogueWindow.setNpc(this);
         if (!getmComponents().contains(dialogueWindow)){
+            dialogueWindow.setJ(0);
             AddComponent(dialogueWindow);
             Pause();
         }else{
@@ -117,7 +118,6 @@ public class Npc extends Actor {
         }else{
             //System.out.println("udbfyhisd");
             RemoveComponent(dialogueWindow);
-            dialogueWindow.setJ(0);
             Player link = (Player) ObjectManager.GetObjectManager().getMapAliveActors().get(Player.class).getFirst();
             link.removeInteraction();
             Pause();

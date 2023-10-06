@@ -65,8 +65,6 @@ public class DialogueWindow extends Component implements Renderable{
     }
     @Override
     public void ShutDown() {
-        System.out.println("oefhoiefh");
-        // TODO Auto-generated method stub
         GraphicsPipeline.GetGraphicsPipeline().RemoveRenderable(this);
     }
 

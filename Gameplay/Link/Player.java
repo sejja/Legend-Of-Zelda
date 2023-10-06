@@ -5,6 +5,9 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.ListIterator;
+
+import javax.swing.text.html.HTMLDocument.Iterator;
 
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
@@ -271,9 +274,7 @@ public class Player extends Actor {
 
     public void Animate() {
         //System.out.println(actionToString());
-        if (mAnimation.getMust_Complete()){
-            //System.out.println("Is must finised");
-            return;} //Early return, if it is a animation thats has to be complete, do not animaate
+        if (mAnimation.getMust_Complete()){return;} //Early return, if it is a animation thats has to be complete, do not animaate
 
         if (stop)
         {
@@ -328,21 +329,14 @@ public class Player extends Actor {
     @Override
     public void Update() { 
         super.Update();
-        //System.out.println("iasufgbiujd");
         playerStateMachine();
         Animate();
-        if(able_to_takeDamage){
-            takeDamage();
-        }
+        if(able_to_takeDamage){takeDamage();}
         mAnimation.GetAnimation().SetDelay(delay);
         lifeBar.Update();
     }
     public void playerStateMachine(){
-        if(dash)
-        {
-            dash();
-            return;  //Early return dash is mostly the dominate action, so if link is dashing he can not do anything else
-        }
+        if(dash){dash();return;}//Early return dash is mostly the dominate action, so if link is dashing he can not do anything else
         else
         {
             if(mAnimation.finised_Animation){ //When a special animation has finished
@@ -352,24 +346,18 @@ public class Player extends Actor {
                 }
                 else if (nArrows != 0 && bow) //Spawn Arrow
                 {
-                    //System.out.println("Dispara");
                     shootArrow();
                     bow = false;
                 }
                 else if (attack) //Finished Attack (attack && !bow)
                 {
-                    //sSystem.out.println("ataca");
                     Attack();
                     bow = false;
                     attack = false;
                 }
                  mAnimation.finised_Animation = false;
             }
-            else if (!mAnimation.getMust_Complete())
-            {
-                Move();
-            }
-            //System.out.println(actionToString());
+            else if (!mAnimation.getMust_Complete()){Move();}
         }
     }
     // ------------------------------------------------------------------------
@@ -511,18 +499,6 @@ public class Player extends Actor {
                     enemy.KnockBack(this.GetPosition());
                 }
             } 
-            //Change solution  
-            /*    
-            else if(allEntities.get(i) instanceof Npc){
-                Npc npc = (Npc) allEntities.get(i);
-                if (npc.GetPosition().getModuleDistance(this.GetPosition()) < this.GetScale().y/2){
-                    isTouchingNpc = true;
-                    npcIndex = npc;
-                } else{
-                    //isTouchingNpc = false;
-                }
-            }
-            */
         }
     }
     //------------------------------------------------------------------------
@@ -540,9 +516,6 @@ public class Player extends Actor {
     public int getHealthPoints(){return this.healthPoints;}
     private Player getPlayer (){return this;}
     public boolean isAble_to_takeDamage() {return able_to_takeDamage;}
-    //_____________________________________________________
-    //public static Npc getNpcIndex(){return npcIndex;}
-    //_____________________________________________________
     //------------------------------------------------------------------------
 
     /* Setters
@@ -555,10 +528,7 @@ public class Player extends Actor {
         else{
             ThreadInmortal thread = new ThreadInmortal(this);
             thread.start();
-            //System.out.println("Comienza hilo");
-            //HUD
             lifeBar.setHealthPoints(this.healthPoints);
-            //lifeBar.setHearts();
         }
 
     }
@@ -568,15 +538,11 @@ public class Player extends Actor {
     private void setMovement(Action type){
         if (type == null){
             mAnimation.setMust_Complete();
-            if(falling && mCurrentAnimation != FALL || mAnimation.GetAnimation().GetDelay() == -1) { //Enviromental special case
-            SetAnimation(FALL, mAnimation.GetSpriteSheet().GetSpriteArray(FALL), delay);
-            }
+            if(falling && mCurrentAnimation != FALL || mAnimation.GetAnimation().GetDelay() == -1) {SetAnimation(FALL, mAnimation.GetSpriteSheet().GetSpriteArray(FALL), delay);}//Enviromental special case
             return;
         }
 
-        if (type == Action.ATTACK || type == Action.BOW){ //Activate must-end sequence
-            mAnimation.setMust_Complete();
-        }
+        if (type == Action.ATTACK || type == Action.BOW){mAnimation.setMust_Complete();}//Activate must-end sequence
 
 
         int i = type.getID();
@@ -591,7 +557,6 @@ public class Player extends Actor {
                 if(mCurrentAnimation != DOWN+i || mAnimation.GetAnimation().GetDelay() == -1) {
                     SetAnimation(DOWN+i, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN+i), delay);
                 }
-                //System.out.println("Patata");
                 return;
             case RIGHT:
                 if(mCurrentAnimation != RIGHT+i || mAnimation.GetAnimation().GetDelay() == -1) {
@@ -636,18 +601,14 @@ public class Player extends Actor {
          *          If the DIRECTION of the vector Player-Enemy and The DIRECTION of the player is the same
          *             It will called a KnockBack() function of that enemy
          */
-        ArrayList<Entity> allEntities = ObjectManager.GetObjectManager().getmAliveEntities();
-        for (int i = 0; i < allEntities.size(); i++){
-            if (allEntities.get(i) instanceof Enemy){
-                Enemy enemy = (Enemy) allEntities.get(i);
-                Vector2D<Float> enemyPosition = enemy.GetPosition();
-                if (enemyPosition.getModuleDistance(this.GetPosition()) < this.GetScale().y/2+100){ //Each enemy thats can be attacked
-                    if(direction == getAttackDirection(this.GetPosition().getVectorToAnotherActor(enemyPosition))){
-                        System.out.println("Le da");
-                        enemy.setHealthPoints(damage);
-                        enemy.KnockBack(this.GetPosition());
-                    }
-                }
+        LinkedList <Actor> enemies = ObjectManager.GetObjectManager().getMapAliveActors().get(Enemy.class);
+        ListIterator<Actor>iterator = enemies.listIterator();
+        while (iterator.hasNext()){
+            Enemy currentEnemy  = (Enemy) iterator.next();
+            if(currentEnemy.GetPosition().getModuleDistance(GetPosition()) < this.GetScale().getModule()/2){
+                System.out.println( "leda");
+                currentEnemy.setHealthPoints(damage);
+                currentEnemy.KnockBack(this.GetPosition());
             }
         }
     }
@@ -666,7 +627,9 @@ public class Player extends Actor {
     private Npc nearestNPC (){
         LinkedList<Actor> NPCs = ObjectManager.GetObjectManager().getMapAliveActors().get(Npc.class);
         Actor min = NPCs.getFirst();
-        for (Actor npc: NPCs){
+        ListIterator<Actor> iterator = NPCs.listIterator();
+        while  (iterator.hasNext()){
+            Actor npc = iterator.next();
             if (GetPosition().getModuleDistance(npc.GetPosition()) < GetPosition().getModuleDistance(min.GetPosition())){
                 min = npc;
             }
