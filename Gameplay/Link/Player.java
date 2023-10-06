@@ -2,16 +2,11 @@ package Gameplay.Link;
 
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
-import javax.swing.text.html.HTMLDocument.Iterator;
-
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
-import Engine.ECSystem.Types.Entity;
 import Engine.Graphics.Animation;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.AnimationMachine;
@@ -24,7 +19,6 @@ import Engine.Physics.Components.BoxCollider;
 import Gameplay.States.PlayState;
 import Gameplay.Enemies.Enemy;
 import Gameplay.LifeBar.LifeBar;
-import Gameplay.NPC.DialogueWindow;
 import Gameplay.NPC.Npc;
 
 public class Player extends Actor {
@@ -122,63 +116,33 @@ public class Player extends Actor {
      * 
      */
     private void implementsActions (){ // it can be coptimazed
+        int[] stop_run = new int[]{KeyEvent.VK_D, KeyEvent.VK_A, KeyEvent.VK_S, KeyEvent.VK_W};
+        for (int i = 0; i<stop_run.length; i++){
+            InputManager.SubscribeReleased(stop_run[i], new InputFunction() {
+            @Override
+            public void Execute() {
+                setVelocity(0);
+                stop = true;
+                attack = false;
+            }
+            });
+        }
         //RUN______________________________________________________________________________________________
         InputManager.SubscribePressed(KeyEvent.VK_W, new InputFunction() {
             @Override
-            public void Execute() {
-                activateAction(UP);
-             }
+            public void Execute() {activateAction(UP);}
         });
         InputManager.SubscribePressed(KeyEvent.VK_S, new InputFunction() {
             @Override
-            public void Execute() {
-                activateAction(DOWN);
-             }
+            public void Execute() {activateAction(DOWN);}
         });
         InputManager.SubscribePressed(KeyEvent.VK_A, new InputFunction() {
             @Override
-            public void Execute() {
-                activateAction(LEFT);
-             }
+            public void Execute() {activateAction(LEFT);}
         });
         InputManager.SubscribePressed(KeyEvent.VK_D, new InputFunction() {
             @Override
-            public void Execute() {
-                activateAction(RIGHT);
-             }
-        });
-        //STOP______________________________________________________________________________________________
-        InputManager.SubscribeReleased(KeyEvent.VK_W, new InputFunction() {
-            @Override
-            public void Execute() {
-                setVelocity(0);
-                stop = true;
-                attack = false;
-             }
-        });
-        InputManager.SubscribeReleased(KeyEvent.VK_S, new InputFunction() {
-            @Override
-            public void Execute() {
-                setVelocity(0);
-                stop = true;
-                attack = false;
-            }
-        });
-        InputManager.SubscribeReleased(KeyEvent.VK_A, new InputFunction() {
-            @Override
-            public void Execute() {
-                setVelocity(0);
-                stop = true;
-                attack = false;
-            } 
-        });
-        InputManager.SubscribeReleased(KeyEvent.VK_D, new InputFunction() {
-            @Override
-            public void Execute() {
-                setVelocity(0);
-                stop = true;
-                attack = false;
-            }
+            public void Execute() {activateAction(RIGHT);}
         });
         //ATTACK_____________________________________________________________________________________________
         InputManager.SubscribePressed(KeyEvent.VK_J, new InputFunction() {
@@ -236,28 +200,20 @@ public class Player extends Actor {
         //Show LifeBar_______________________________________________________________________________________
         InputManager.SubscribePressed(KeyEvent.VK_M, new InputFunction() {
             @Override
-            public void Execute() {
-                lifeBar.setVisible(true);
-            }
+            public void Execute() {lifeBar.setVisible(true);}
         });
         InputManager.SubscribeReleased(KeyEvent.VK_M, new InputFunction() {
             @Override
-            public void Execute() {
-                lifeBar.setVisible(false);
-            }
+            public void Execute() {lifeBar.setVisible(false);}
         });
         InputManager.SubscribePressed(KeyEvent.VK_P, new InputFunction() { //Pause
             @Override
-            public void Execute() {
-                Pause();
-            }
+            public void Execute() {Pause();}
         });
         ///* 
         InputManager.SubscribePressed(KeyEvent.VK_E, new InputFunction() {
             @Override
-            public void Execute() {
-                interact();
-            }
+            public void Execute() {interact();}
         });
     }
     // ------------------------------------------------------------------------
@@ -272,50 +228,27 @@ public class Player extends Actor {
     }
     // ------------------------------------------------------------------------
 
+    /* Animation StateMachine
+     * 
+     */
     public void Animate() {
         //System.out.println(actionToString());
         if (mAnimation.getMust_Complete()){return;} //Early return, if it is a animation thats has to be complete, do not animaate
-
-        if (stop)
-        {
+        if (stop){
             setMovement(Action.STOP);
-            if (attack)
-            {
-                setMovement(Action.ATTACK);
-            }
-            else
-            {
-                if (bow)
-                {
-                    setMovement(Action.BOW);
-                }
-                else
-                {
-                    setMovement(Action.STOP);
-                }
+            if (attack){setMovement(Action.ATTACK);}
+            else{
+                if (bow){setMovement(Action.BOW);}
+                else{setMovement(Action.STOP);}
             }
         }
-        else
-        {
-            if(attack){
-                setMovement(Action.STOP);
-                setMovement(Action.ATTACK);
-            }
-            else
-            {
-                if(bow)
-                {
-                    setMovement(Action.STOP);
-                    setMovement(Action.BOW);
-                }
-                else
-                {   
-                    if(falling){
-                        setMovement(Action.STOP);
-                        setMovement(null);
-                    }else{
-                        setMovement(Action.RUN);
-                    }
+        else{
+            if(attack){setMovement(Action.STOP);setMovement(Action.ATTACK);}
+            else{
+                if(bow){setMovement(Action.STOP);setMovement(Action.BOW);}
+                else{   
+                    if(falling){setMovement(Action.STOP);setMovement(null);}
+                    else{setMovement(Action.RUN);}
                 }
             }
         }
@@ -361,14 +294,18 @@ public class Player extends Actor {
         }
     }
     // ------------------------------------------------------------------------
-
+    
+    /* Colision
+     * 
+     */
     public boolean SolveCollisions(Vector2D<Integer> dif) {
         CollisionResult res = mCollider.GetBounds().collisionTile(dif.x, dif.y);
         falling = res == CollisionResult.Hole;
         //return res == CollisionResult.None;
         return true;
     }
-
+    // ------------------------------------------------------------------------
+    
     /*! Move
     *
     *   Moves the sprite on a certain direction
@@ -379,20 +316,16 @@ public class Player extends Actor {
         //System.out.println(directionToString());
         switch (direction){
             case UP:
-                if(SolveCollisions(new Vector2D<>(0, -velocity)))
-                    pos.y -= velocity;
+                if(SolveCollisions(new Vector2D<>(0, -velocity))) pos.y -= velocity;
                 break;
             case DOWN:
-                if(SolveCollisions(new Vector2D<>(0, +velocity)))
-                    pos.y += velocity;
+                if(SolveCollisions(new Vector2D<>(0, +velocity))) pos.y += velocity;
                 break;
             case LEFT:
-                if(SolveCollisions(new Vector2D<>(-velocity, 0)))
-                    pos.x -= velocity;
+                if(SolveCollisions(new Vector2D<>(-velocity, 0))) pos.x -= velocity;
                 break;
             case RIGHT:
-                if(SolveCollisions(new Vector2D<>(velocity, 0)))
-                    pos.x += velocity;
+                if(SolveCollisions(new Vector2D<>(+velocity, 0))) pos.x += velocity;
                 break;
         }
 
@@ -400,7 +333,7 @@ public class Player extends Actor {
     }
     // ------------------------------------------------------------------------
 
-    /* Transpose
+    /* Functions to set all animations
     *       @Param  -> BufferedImage 2D Matrix
     *       ret     -> Transposed BufferedImage 2D Matrix
     */ //----------------------------------------------------------------------
@@ -488,17 +421,15 @@ public class Player extends Actor {
         attack = false;
     }
     private void takeDamage(){ //Looking for enemies to take damage
-        //System.out.println("Vida = " + healthPoints);
-        ArrayList<Entity> allEntities = ObjectManager.GetObjectManager().getmAliveEntities();
-        for (int i = 0; i < allEntities.size(); i++){
-            if (allEntities.get(i) instanceof Enemy){
-                Enemy enemy = (Enemy) allEntities.get(i);
-                Vector2D<Float> enemyPosition = enemy.GetPosition();
-                if (enemyPosition.getModuleDistance(this.GetPosition()) < this.GetScale().y/2){
-                    this.setDamage(enemy.getDamage());
-                    enemy.KnockBack(this.GetPosition());
-                }
-            } 
+        LinkedList <Actor> enemies = ObjectManager.GetObjectManager().getMapAliveActors().get(Enemy.class);
+        ListIterator<Actor>iterator = enemies.listIterator();
+        while (iterator.hasNext()){
+            Enemy currentEnemy  = (Enemy) iterator.next();
+            if(currentEnemy.GetPosition().getModuleDistance(GetPosition()) < this.GetScale().getModule()/3){
+                this.setDamage(currentEnemy.getDamage());
+                currentEnemy.KnockBack(this.GetPosition());
+                return;
+            }
         }
     }
     //------------------------------------------------------------------------
@@ -544,7 +475,6 @@ public class Player extends Actor {
 
         if (type == Action.ATTACK || type == Action.BOW){mAnimation.setMust_Complete();}//Activate must-end sequence
 
-
         int i = type.getID();
 
         switch(direction){
@@ -577,10 +507,8 @@ public class Player extends Actor {
      */
     private void shootArrow(){ //Tiene que dar al enemigo
         nArrows--;
-        if(nArrows == 0){
-            //System.out.println("0 Arrows in quiver");
-        }
-        ObjectManager.GetObjectManager().AddEntity(new Arrow(this));
+        if(nArrows == 0){System.out.println("0 Arrows in quiver");}
+        else{ObjectManager.GetObjectManager().AddEntity(new Arrow(this));}
     }
     //------------------------------------------------------------------------
 
@@ -592,11 +520,11 @@ public class Player extends Actor {
     }
     //------------------------------------------------------------------------
     
-    /*  These functions are called when the acttack animation has finished
+    /*  These functions are called when link interact with other entities
      * 
      */
     public void Attack(){
-        /*  This function takes all de Entitys and if any of them is a instance of Enemys it has to ve consider hast potencial objetives to hit
+        /*  This function takes all Enemys
          *      It will calculate a vector to the player position to the enemy position
          *          If the DIRECTION of the vector Player-Enemy and The DIRECTION of the player is the same
          *             It will called a KnockBack() function of that enemy
@@ -623,7 +551,6 @@ public class Player extends Actor {
             this.currentNPCinteraction = null;
         }
     }
-
     private Npc nearestNPC (){
         LinkedList<Actor> NPCs = ObjectManager.GetObjectManager().getMapAliveActors().get(Npc.class);
         Actor min = NPCs.getFirst();
@@ -639,20 +566,16 @@ public class Player extends Actor {
         }
         return (Npc) min;
     }
-
+    public void removeInteraction(){
+        currentNPCinteraction = null;
+    }
     public DIRECTION getAttackDirection(Vector2D<Float> vector) { 
         if (Math.abs(vector.x) > Math.abs(vector.y)) {
-            if (vector.x > 0) {
-                return DIRECTION.RIGHT;
-            } else {
-                return DIRECTION.LEFT;
-            }
+            if (vector.x > 0) {return DIRECTION.RIGHT;} 
+            else {return DIRECTION.LEFT;}
         } else {
-            if (vector.y > 0) {
-                return DIRECTION.DOWN;
-            } else {
-                return DIRECTION.UP;
-            }
+            if (vector.y > 0) {return DIRECTION.DOWN;} 
+            else {return DIRECTION.UP;}
         }
     }
     //------------------------------------------------------------------------
@@ -681,11 +604,8 @@ public class Player extends Actor {
      * 
      */
     public void Pause(){
-        if(PlayState.getGameState() == PlayState.getPlayState()){
-            PlayState.setGameState(2);
-        }else if(PlayState.getGameState() == PlayState.getPauseState()){
-            PlayState.setGameState(1);
-        }
+        if(PlayState.getGameState() == PlayState.getPlayState()){PlayState.setGameState(2);}
+        else if(PlayState.getGameState() == PlayState.getPauseState()){PlayState.setGameState(1);}
     }
     //------------------------------------------------------------------------
 
@@ -697,6 +617,9 @@ public class Player extends Actor {
     }
     //------------------------------------------------------------------------
 
+    /* This function is called when Link fell out or the Border
+     * 
+     */
     private void linkHasFalled(){
         falling = false;
         stop = true;
@@ -705,8 +628,5 @@ public class Player extends Actor {
         setToSpawnPoint();
         mCollider.Reset();
     }
-
-    public void removeInteraction(){
-        currentNPCinteraction = null;
-    }
+    //------------------------------------------------------------------------
 }
