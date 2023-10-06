@@ -56,11 +56,18 @@ public class Npc extends Actor {
     private final int RIGHT= 2;
     private final int UP = 3;
 
+    private int typeOfMovement;
+
+    private final int squareMovement = 4;
+    private final int xLineMovement = 5;
+    private final int yLineMovement = 6;
+    private final int stop = 7;
+
     /*! Conversion Constructor
     * Constructs a NPC with a name, a sprite, a position, a dialog and gives it a size
     */ //----------------------------------------------------------------------
 
-    public Npc(String nameNPC, Spritesheet sprite, Vector2D<Float> position, ArrayList<String> dialogueArrayList, Vector2D<Float> size, int numberStartAnimation) {
+    public Npc(String nameNPC, Spritesheet sprite, Vector2D<Float> position, ArrayList<String> dialogueArrayList, Vector2D<Float> size, int numberStartAnimation, int movement) {
         super(position);
         this.name = nameNPC;
         
@@ -69,6 +76,8 @@ public class Npc extends Actor {
         animationMachine = AddComponent(new AnimationMachine(this, sprite));
         animationMachine.SetFrames(allAnimations[numberStartAnimation]); //La diferencia entre correr a una direction y parase en la misma es un + 4
         animationMachine.GetAnimation().SetDelay(40);
+
+        typeOfMovement = movement;
 
         direction = numberStartAnimation;
         xInicial = position.x;
@@ -148,6 +157,28 @@ public class Npc extends Actor {
     private void movement() {
         Vector2D<Float> pos = GetPosition();
         Vector2D<Float> distance = new Vector2D<Float>(100.f, 100.f);
+        if(typeOfMovement != stop){
+            switch(typeOfMovement){
+                case squareMovement:
+                    squareMovement(pos, distance);
+                case xLineMovement:
+                    xLineMovement(pos, distance);
+                case yLineMovement:
+                    yLineMovement(pos, distance);
+            }
+            if (direction == UP){
+                pos.y -= speed;
+            }else if(direction == DOWN) {
+                pos.y += speed;
+            }else if(direction == LEFT) {
+                pos.x -= speed;
+            }else if(direction == RIGHT) {
+                pos.x += speed;
+            }
+        }
+        SetPosition(pos);
+    }
+    public void squareMovement(Vector2D<Float> pos, Vector2D<Float> distance) {
         if(pos.y == yInicial + distance.y && pos.x == xInicial){
             animationMachine.SetFrames(allAnimations[LEFT]);
             direction = LEFT;
@@ -156,7 +187,7 @@ public class Npc extends Actor {
             animationMachine.SetFrames(allAnimations[UP]);
             direction = UP;
             xInicial = pos.x;
-        }else if(pos.y == yInicial - distance.x && pos.x == xInicial){
+        }else if(pos.y == yInicial - distance.y && pos.x == xInicial){
             animationMachine.SetFrames(allAnimations[RIGHT]);
             direction = RIGHT;
             yInicial = pos.y;
@@ -165,16 +196,29 @@ public class Npc extends Actor {
             direction = DOWN;
             xInicial = pos.x;
         }
-        if (direction == UP){
-            pos.y -= speed;
-        }else if(direction == DOWN) {
-            pos.y += speed;
-        }else if(direction == LEFT) {
-            pos.x -= speed;
-        }else if(direction == RIGHT) {
-            pos.x += speed;
+    }
+    
+    public void xLineMovement(Vector2D<Float> pos, Vector2D<Float> distance){
+        if(pos.x == xInicial - distance.x && pos.y == yInicial){
+            animationMachine.SetFrames(allAnimations[RIGHT]);
+            direction = RIGHT;
+            yInicial = pos.y;
+        }else if(pos.x == xInicial + distance.y && pos.y == yInicial){
+            animationMachine.SetFrames(allAnimations[LEFT]);
+            direction = LEFT;
+            yInicial = pos.y;
         }
+    }
 
-        SetPosition(pos);
+    public void  yLineMovement(Vector2D<Float> pos, Vector2D<Float> distance) {
+        if(pos.y == yInicial - distance.y && pos.x == xInicial){
+            animationMachine.SetFrames(allAnimations[DOWN]);
+            direction = DOWN;
+            xInicial = pos.x;
+        }else if(pos.y == yInicial + distance.y && pos.x == xInicial){
+            animationMachine.SetFrames(allAnimations[UP]);
+            direction = UP;
+            xInicial = pos.x;
+        }
     }
 }
