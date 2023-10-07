@@ -18,9 +18,7 @@ import Gameplay.Enemies.Search.Pair;
 import Gameplay.LifeBar.LifeBar;
 import Gameplay.Link.DIRECTION;
 
-public class Interactive extends Actor{
-
-    protected Vector2D<Float> size = new Vector2D<Float>(64f, 64f);
+public abstract class Interactive extends Actor{
 
     //stats
     protected int healthPoints = 1;
@@ -32,7 +30,7 @@ public class Interactive extends Actor{
     // ------------------------------------------------------------------------
     /*! Conversion Constructor
     *
-    *   Constructs an Enemy with a sprite, a position, and gives it a size
+    *   Constructs in a position,
     */ //----------------------------------------------------------------------
     public Interactive( Vector2D<Float> position) {
         super(position);
@@ -54,7 +52,7 @@ public class Interactive extends Actor{
     *   Adds the needed animation to the Enemy
     */ //----------------------------------------------------------------------
     public void Animate() {
-        
+        SetAnimation(0, mAnimation.GetSpriteSheet().GetSpriteArray(0), -1);
     }
 
     // ------------------------------------------------------------------------
