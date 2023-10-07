@@ -17,10 +17,12 @@ public class DeadAnimation extends AnimatedObject{
         super(position, spritesheet, delay, animationIndex);
     }
 
-    public DeadAnimation(Actor actor, Vector2D<Float> scale){
+    public DeadAnimation(Actor actor){
         super(actor.GetPosition());
+        //super(new Vector2D<Float>(actor.GetPosition().x + offset.x, actor.GetPosition().x + offset.y));
+        delay = 5;
         this.actor = actor;
-        setAnimationMachine(new Spritesheet("Content/Animations/DeadAnimation.png", 17 , 36));
+        setAnimationMachine(new Spritesheet("Content/Animations/DeadAnimation.png", 29 , 36));
         SetScale(actor.GetScale());
         ObjectManager.GetObjectManager().AddEntity(this);
         defaultAnimationIndex = 0;
@@ -31,6 +33,13 @@ public class DeadAnimation extends AnimatedObject{
     @Override
     public void Update (){
         super.Update();
-        System.out.println(animationMachine.GetAnimation().GetDelay());
+       if(animationMachine.GetAnimation().GetFrame() == 3){
+            actor.SetScale(new Vector2D<>(0f, 0f));
+            ObjectManager.GetObjectManager().RemoveEntity(actor);
+       }
+       if(animationMachine.finised_Animation){
+            ObjectManager.GetObjectManager().RemoveEntity(this);
+            SetScale(new Vector2D<>(0f, 0f));
+       }
     }
 }

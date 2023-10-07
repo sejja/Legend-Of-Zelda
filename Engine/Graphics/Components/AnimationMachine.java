@@ -119,11 +119,19 @@ public final class AnimationMachine extends Component implements Renderable {
     public void Update() {
         //System.out.println(must_complete);
         if (mAnimation.Update() && must_complete){ //if Animation has ended
-            mAnimation.SetFrames(previus_frames);
-            must_complete = false;
-            must_end_frames = null;
-            previus_frames = null;
-            finised_Animation = true;
+            if (previus_frames == null){
+                must_complete = false;
+                must_end_frames = null;
+                previus_frames = null;
+                finised_Animation = true;
+                return;
+            }else{
+                mAnimation.SetFrames(previus_frames);
+                must_complete = false;
+                must_end_frames = null;
+                previus_frames = null;
+                finised_Animation = true;
+            }
         }else{
             finised_Animation = false;
         }

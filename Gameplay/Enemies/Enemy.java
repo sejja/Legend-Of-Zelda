@@ -336,7 +336,7 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
 
     private void die() {
         System.out.println("se muere");
-        DeadAnimation deadAnimation = new DeadAnimation(this, new Vector2D<>(80f, 80f));
+        DeadAnimation deadAnimation = new DeadAnimation(this);
     }
 
     @Override
