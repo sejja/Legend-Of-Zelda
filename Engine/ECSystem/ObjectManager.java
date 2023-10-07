@@ -8,6 +8,7 @@ import java.util.TreeSet;
 
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Entity;
+import Gameplay.Enemies.Enemy;
 import Gameplay.NPC.Npc;
 
 public class ObjectManager {
@@ -41,13 +42,25 @@ public class ObjectManager {
         mNewEntities.add(e);
 
         //Map----------------------------------------------------------
-        
         if ((e instanceof Actor)){
-            if ( !mapAliveActors.containsKey(e.getClass())){
+            if (!mapAliveActors.containsKey(e.getClass())){
                 mapAliveActors.put(e.getClass(), new LinkedList<Actor>());
             }
             mapAliveActors.get(e.getClass()).add((Actor)e);
         }
+        //System.out.println(e.getClass());
+        //-------------------------------------------------------------
+        return e;
+    }
+
+    public Entity AddEntity(Enemy e) {
+        mNewEntities.add(e);
+        System.out.println("pataa");
+        //Map----------------------------------------------------------
+        if (!mapAliveActors.containsKey(Enemy.class)){
+            mapAliveActors.put(Enemy.class, new LinkedList<Actor>());
+        }
+        mapAliveActors.get(Enemy.class).add((Actor)e);
         //System.out.println(e.getClass());
         //-------------------------------------------------------------
         return e;

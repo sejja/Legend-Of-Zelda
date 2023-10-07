@@ -15,6 +15,8 @@ import java.util.LinkedList;
 import java.util.Vector;
 
 import Engine.ECSystem.ObjectManager;
+import Engine.ECSystem.Types.Actor;
+import Engine.ECSystem.Types.Entity;
 import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Sprite;
 import Engine.Graphics.Spritesheet;
@@ -49,7 +51,7 @@ public class PlayState extends State {
     private final static int playState = 1;
     private final static int pauseState = 2;
     private boolean mPause = false;
-    private LinkedList<Enemy> mEnemyArrayList = new LinkedList<Enemy>();
+    private LinkedList<Actor> mEnemyArrayList = new LinkedList<Actor>();
     // ------------------------------------------------------------------------
     /*! Constructor
     *
@@ -71,14 +73,10 @@ public class PlayState extends State {
         mNpcArrayList.add(mNpc1);
         mNpcArrayList.add(mNpc2);
         ObjectManager.GetObjectManager().Update();
+
         mEnemy = new GreenKnight(new Vector2D<Float>(450.f, 300.f));
-        SpawnEnemy(mEnemy);
-        //mEnemy2 = (Enemy)ObjectManager.GetObjectManager().AddEntity((Enemy)new GreenKnight(new Vector2D<Float>(600.f, 300.f)));
-        //mEnemy3 = (Enemy)ObjectManager.GetObjectManager().AddEntity((Enemy)new GreenKnight(new Vector2D<Float>(800.f, 800.f)));
-    //for (int i=0; i<10; i++){
-       // Enemy enemy = (Enemy)ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Float>(i*100f, i*100f), new Vector2D<Float>(50.f, 100.f)));
+        Spawn(mEnemy);
         
-    //}
     InputManager.SubscribePressed(KeyEvent.VK_P, new InputFunction() {
             @Override
             public void Execute() {
@@ -87,13 +85,11 @@ public class PlayState extends State {
         });
     }
 
-    private void SpawnEnemy(Enemy enemy){
-        mEnemyArrayList.add(enemy);
-        System.out.println(mEnemyArrayList);
-        for(int i=0; i<mEnemyArrayList.size();i++){
-            System.out.println(mEnemyArrayList.get(i).getClass());
-            System.out.println(mEnemyArrayList.get(i) instanceof Enemy);
-        }
+    private void Spawn(Entity e){
+        ObjectManager.GetObjectManager().AddEntity(e);
+    }
+    private void Spawn(Enemy e){
+        ObjectManager.GetObjectManager().AddEntity(e);
     }
     // ------------------------------------------------------------------------
     /*! Update
