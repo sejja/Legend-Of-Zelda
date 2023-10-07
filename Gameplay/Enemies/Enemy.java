@@ -16,6 +16,7 @@ import Engine.Physics.Components.BoxCollider;
 import Gameplay.Enemies.Search.*;
 import Gameplay.LifeBar.LifeBar;
 import Gameplay.Link.DirectionObject;
+import Gameplay.Link.Arrow;
 import Gameplay.Link.DIRECTION;
 
 public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Renderable{
@@ -60,7 +61,7 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     protected int xoffset = 0;
     protected int yoffset = 0;
 
-    
+    private int delay = 2;
     
     LifeBar lifeBar;
     // ------------------------------------------------------------------------
@@ -77,7 +78,7 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     public void SetAnimation(int i, BufferedImage[] frames, int delay) {
         mCurrentAnimation = i;
         mAnimation.GetAnimation().SetFrames(frames);
-        mAnimation.GetAnimation().SetDelay(delay);
+        mAnimation.GetAnimation().SetDelay(this.delay);
     }
 
     public Animation GetAnimation() {
@@ -126,6 +127,15 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     *   Adds the needed animation to the Enemy
     */ //----------------------------------------------------------------------
     public void Animate() {
+        if(mAnimation.getMust_Complete()){return;}
+
+        if(this.healthPoints == 0){
+            this.delay = 0;
+            this.speed = 0;
+            SetAnimation(DOWN, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN), this.delay);
+            return;
+        }
+
         if(chase){
             switch (direction){
                 case UP:
@@ -187,7 +197,7 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
         GetDirection(normalizedDirection);
         Animate();
         Move();
-        mAnimation.GetAnimation().SetDelay(20);
+        mAnimation.GetAnimation().SetDelay(this.delay);
         //System.out.println(playerPos.x + " " + playerPos.y + " " + normalizedDirection+ " " );
     }
 
@@ -315,11 +325,14 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
             //System.out.println("aibfhdp`");
             mCollision.ShutDown();
             this.SetScale(new Vector2D<Float>(0f,0f));
-            ObjectManager.GetObjectManager().RemoveEntity(this);
+            die();
             path.clear();
         }
         //______________________
         //______________________
+    }
+
+    private void die() {
     }
 
     @Override
