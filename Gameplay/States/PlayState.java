@@ -11,6 +11,7 @@ package Gameplay.States;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Vector;
 
 import Engine.ECSystem.ObjectManager;
@@ -38,8 +39,8 @@ public class PlayState extends State {
     private Npc mNpc2;
     private static ArrayList<Npc> mNpcArrayList = new ArrayList<Npc>();
     private Enemy mEnemy;
-    private Enemy mEnemy2;
-    private Enemy mEnemy3;
+    //private Enemy mEnemy2;
+    //private Enemy mEnemy3;
     private Vector2D<Float> mPos;
     private TileManager mTilemap;
     private ArrayList<String> dialogueArrayList = new ArrayList<String>();
@@ -48,7 +49,7 @@ public class PlayState extends State {
     private final static int playState = 1;
     private final static int pauseState = 2;
     private boolean mPause = false;
-
+    private LinkedList<Enemy> mEnemyArrayList = new LinkedList<Enemy>();
     // ------------------------------------------------------------------------
     /*! Constructor
     *
@@ -70,9 +71,10 @@ public class PlayState extends State {
         mNpcArrayList.add(mNpc1);
         mNpcArrayList.add(mNpc2);
         ObjectManager.GetObjectManager().Update();
-        mEnemy = (Enemy)ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Float>(450.f, 300.f)));
-        mEnemy2 = (Enemy)ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Float>(600.f, 300.f)));
-        mEnemy3 = (Enemy)ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Float>(800.f, 800.f)));
+        mEnemy = new GreenKnight(new Vector2D<Float>(450.f, 300.f));
+        SpawnEnemy(mEnemy);
+        //mEnemy2 = (Enemy)ObjectManager.GetObjectManager().AddEntity((Enemy)new GreenKnight(new Vector2D<Float>(600.f, 300.f)));
+        //mEnemy3 = (Enemy)ObjectManager.GetObjectManager().AddEntity((Enemy)new GreenKnight(new Vector2D<Float>(800.f, 800.f)));
     //for (int i=0; i<10; i++){
        // Enemy enemy = (Enemy)ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Float>(i*100f, i*100f), new Vector2D<Float>(50.f, 100.f)));
         
@@ -83,6 +85,15 @@ public class PlayState extends State {
                 mPause = !mPause;
              }
         });
+    }
+
+    private void SpawnEnemy(Enemy enemy){
+        mEnemyArrayList.add(enemy);
+        System.out.println(mEnemyArrayList);
+        for(int i=0; i<mEnemyArrayList.size();i++){
+            System.out.println(mEnemyArrayList.get(i).getClass());
+            System.out.println(mEnemyArrayList.get(i) instanceof Enemy);
+        }
     }
     // ------------------------------------------------------------------------
     /*! Update

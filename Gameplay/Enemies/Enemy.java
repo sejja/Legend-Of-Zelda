@@ -18,7 +18,7 @@ import Gameplay.LifeBar.LifeBar;
 import Gameplay.Link.DirectionObject;
 import Gameplay.Link.DIRECTION;
 
-public class Enemy extends Engine.ECSystem.Types.Actor implements Renderable{
+public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Renderable{
     protected final int UP = 0;
     protected final int DOWN = 2;
     protected final int RIGHT = 1;
@@ -188,7 +188,6 @@ public class Enemy extends Engine.ECSystem.Types.Actor implements Renderable{
         Animate();
         Move();
         mAnimation.GetAnimation().SetDelay(20);
-        lifeBar.Update();
         //System.out.println(playerPos.x + " " + playerPos.y + " " + normalizedDirection+ " " );
     }
 
@@ -319,7 +318,6 @@ public class Enemy extends Engine.ECSystem.Types.Actor implements Renderable{
             ObjectManager.GetObjectManager().RemoveEntity(this);
             path.clear();
         }
-        lifeBar.setHealthPoints(this.healthPoints);
         //______________________
         //______________________
     }
@@ -364,7 +362,10 @@ public class Enemy extends Engine.ECSystem.Types.Actor implements Renderable{
 
     public int getDamage() {
         return damage;
-    }  
+    }
+    public Enemy getEnemy(){
+        return (Enemy)this;
+    }
     
     
 }

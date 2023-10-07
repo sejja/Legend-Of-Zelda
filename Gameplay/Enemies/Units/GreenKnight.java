@@ -11,11 +11,6 @@ public class GreenKnight extends Enemy{
     
     protected Vector2D<Float> size = new Vector2D<Float>(75f, 100f);
 
-    //stats
-    protected int damage = 2;
-    protected int speed = 2;
-    protected int health = 4;
-
     //animation
     protected int xoffset = 8;
     protected int yoffset = 32;
@@ -26,9 +21,9 @@ public class GreenKnight extends Enemy{
         super(position);
         SetScale(size);
         setOffset(xoffset, yoffset);
-        setDamage(damage);
-        setHp(health);
-        setSpeed(speed);
+        setDamage(2);
+        setHp(4);
+        setSpeed(2);
 
         // TRANSPOSE SPRITE MATRIX
         sprite.flip();

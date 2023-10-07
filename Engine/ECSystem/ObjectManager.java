@@ -43,12 +43,12 @@ public class ObjectManager {
         //Map----------------------------------------------------------
         
         if ((e instanceof Actor)){
-            if ( !mapAliveActors.containsKey(e.getClass()) ){
+            if ( !mapAliveActors.containsKey(e.getClass())){
                 mapAliveActors.put(e.getClass(), new LinkedList<Actor>());
             }
             mapAliveActors.get(e.getClass()).add((Actor)e);
         }
-        //System.out.println(mapAliveActors);
+        //System.out.println(e.getClass());
         //-------------------------------------------------------------
         return e;
     }

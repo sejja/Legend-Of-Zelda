@@ -422,6 +422,7 @@ public class Player extends Actor {
     }
     private void takeDamage(){ //Looking for enemies to take damage
         LinkedList <Actor> enemies = ObjectManager.GetObjectManager().getMapAliveActors().get(Enemy.class);
+        if(enemies == null){return;}
         ListIterator<Actor>iterator = enemies.listIterator();
         while (iterator.hasNext()){
             Enemy currentEnemy  = (Enemy) iterator.next();
@@ -530,6 +531,7 @@ public class Player extends Actor {
          *             It will called a KnockBack() function of that enemy
          */
         LinkedList <Actor> enemies = ObjectManager.GetObjectManager().getMapAliveActors().get(Enemy.class);
+        if(enemies == null){return;}
         ListIterator<Actor>iterator = enemies.listIterator();
         while (iterator.hasNext()){
             Enemy currentEnemy  = (Enemy) iterator.next();
