@@ -1,44 +1,17 @@
 package Gameplay.Enemies.Search;
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.util.*;
-import Engine.ECSystem.ObjectManager;
-import Engine.Graphics.GraphicsPipeline;
-import Engine.Graphics.Components.CameraComponent;
-import Engine.Graphics.Components.Renderable;
 import Engine.Graphics.Tile.*;
 
 
-public class AStarSearch implements Renderable {
-    Stack<Pair> Path = new Stack<>();
+public class AStarSearch{
+    static Stack<Pair> Path = new Stack<>();
     static final int COL = 50;
     static final int ROW = 50;
-    private Stack<Pair> mPath = new Stack<>();
-    public AStarSearch() {
-        GraphicsPipeline.GetGraphicsPipeline().AddRenderable(this);
-    }
 
-
-    // Creating a shortcut for pair<int, pair<int, int>> type
-    static class pPair {
-        double first;
-        Pair second;
-
-        pPair(double first, Pair second) {
-            this.first = first;
-            this.second = second;
-        }
-    }
-
-    // A structure to hold the necessary parameters
-    static class cell {
-        int parent_i, parent_j;
-        double f, g, h;
-    }
 
     // A Utility Function to check whether given cell (Column, Row)
     // is a valid cell or not.
-    static boolean isValid(int Column, int Row) {
+    public boolean isValid(int Column, int Row) {
         // Returns true if Column number and column number
         // is in range
         return (Column >= 0) && (Column < COL) && (Row >= 0) && (Row < ROW);
@@ -46,7 +19,7 @@ public class AStarSearch implements Renderable {
 
     // A Utility Function to check whether the given cell is
     // blocked or not
-    static boolean isUnBlocked(int Column, int Row) {
+    public boolean isUnBlocked(int Column, int Row) {
         // Returns true if the cell is not blocked else false
         if (isValid(Column, Row)){
             Block block = TilemapObject.GetBlockAt(Column, Row);
@@ -62,12 +35,12 @@ public class AStarSearch implements Renderable {
 
     // A Utility Function to check whether destination cell has
     // been reached or not
-    static boolean isDestination(int Column, int Row, Pair dest) {
+    public boolean isDestination(int Column, int Row, Pair dest) {
         return (Column == dest.first && Row == dest.second);
     }
 
     // A Utility Function to calculate the 'h' heuristics.
-    static double calculateHValue(int Column, int Row, Pair dest) {
+    public double calculateHValue(int Column, int Row, Pair dest) {
         return Math.sqrt((Column - dest.first) * (Column - dest.first) + (Row - dest.second) * (Row - dest.second));
     }
 
@@ -343,7 +316,7 @@ public class AStarSearch implements Renderable {
     }
 
     // A utility function to trace the path from the source to the destination.
-    void tracePath(cell cellDetails[][], Pair dest) {
+    static void tracePath(cell cellDetails[][], Pair dest) {
         int Column = dest.first;
         int Row = dest.second;
 
@@ -357,8 +330,6 @@ public class AStarSearch implements Renderable {
             Row = temp_col;
         }
 
-        Path.push(new Pair(Column, Row));
-        mPath = Path;
         /*while (!Path.isEmpty()) {
             Pair p = Path.pop();
             System.out.print("-> (" + p.first + ", " + p.second + ") ");
@@ -366,17 +337,7 @@ public class AStarSearch implements Renderable {
         return;
     }
 
-    @Override
-    public void Render(Graphics2D g, CameraComponent camerapos) {
-        var camcoord = camerapos.GetCoordinates();
-        g.setColor(Color.green);
-        Stack<Pair> stack = (Stack<Pair>)mPath.clone();
 
-        while (!stack.isEmpty()) {
-            Pair p = stack.pop();
-            //g.drawRect(p.first * 64 - (int)(float)camcoord.x, p.second * 64 - (int)(float)camcoord.y, 64, 64);
-        }
-    }
 
     /*public static void main(String[] args) {
         int ][] = new int[][] {

@@ -25,6 +25,7 @@ import Engine.Math.Vector2D;
 import Engine.StateMachine.State;
 import Engine.StateMachine.StateMachine;
 import Gameplay.Enemies.*;
+import Gameplay.Enemies.Units.GreenKnight;
 import Gameplay.Link.Arrow;
 import Gameplay.Link.Player;
 import Gameplay.NPC.Npc;
@@ -68,18 +69,21 @@ public class PlayState extends State {
         mNpc2 = (Npc)ObjectManager.GetObjectManager().AddEntity(new Npc("Juan", new Spritesheet("Content/Animations/NPC/NPC_boy.png", 64, 64), new Vector2D<Float>(1200f, 900.f), dialogueArrayList2, new Vector2D<Float>(50.f, 62.f)) );
         mNpcArrayList.add(mNpc1);
         mNpcArrayList.add(mNpc2);
-        Spritesheet esprite = new Spritesheet("Content/Animations/gknight.png",16,28);
-        ArrayList<Enemy> mEnemies = new ArrayList<Enemy>();
-        mEnemy = (Enemy)ObjectManager.GetObjectManager().AddEntity(new Enemy(esprite, new Vector2D<Float>(450.f, 300.f), new Vector2D<Float>(50.f, 100.f)));
-    
-        InputManager.SubscribePressed(KeyEvent.VK_P, new InputFunction() {
+        ObjectManager.GetObjectManager().Update();
+        mEnemy = (Enemy)ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Float>(450.f, 300.f)));
+        mEnemy2 = (Enemy)ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Float>(600.f, 300.f)));
+        mEnemy3 = (Enemy)ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Float>(800.f, 800.f)));
+    //for (int i=0; i<10; i++){
+       // Enemy enemy = (Enemy)ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Float>(i*100f, i*100f), new Vector2D<Float>(50.f, 100.f)));
+        
+    //}
+    InputManager.SubscribePressed(KeyEvent.VK_P, new InputFunction() {
             @Override
             public void Execute() {
                 mPause = !mPause;
              }
         });
     }
-
     // ------------------------------------------------------------------------
     /*! Update
     *
@@ -89,7 +93,6 @@ public class PlayState extends State {
     public void Update() {
         if(gameState == playState){
             ObjectManager.GetObjectManager().Update();
-           //mEnemy.Update();
            for(int i=0; i<mNpcArrayList.size();i++){
                mNpcArrayList.get(i).Update(mPlayer.GetPosition());
 //            ObjectManager.GetObjectManager().Update();

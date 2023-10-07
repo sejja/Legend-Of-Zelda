@@ -88,6 +88,6 @@ public class BoxCollider extends Component implements Renderable{
     public void Render(Graphics2D g, CameraComponent camerapos) {
         var campos = camerapos.GetCoordinates();
        g.setColor(Color.blue);
-       //g.drawRect((int)(float)(mBounds.GetPosition().x - campos.x), (int)(float)(mBounds.GetPosition().y - campos.y), (int)mBounds.GetWidth() / 2, (int)mBounds.GetHeight());
+       g.drawRect((int)(float)(mBounds.GetPosition().x - campos.x), (int)(float)(mBounds.GetPosition().y - campos.y), (int)mBounds.GetWidth() / 2, (int)mBounds.GetHeight());
     }
 }

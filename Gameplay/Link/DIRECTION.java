@@ -1,6 +1,6 @@
 package Gameplay.Link;
 
-enum DIRECTION{
+public enum DIRECTION{
     UP,
     LEFT,
     RIGHT,

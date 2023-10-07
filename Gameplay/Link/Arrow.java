@@ -148,7 +148,7 @@ public class Arrow extends Actor{
                 if (enemyPosition.getModuleDistance(this.GetPosition()) < this.GetScale().getModule()){ //Each enemy thats can be attacked
                     System.out.println("Le da");
                     enemy.setHealthPoints(damage);
-                    enemy.KnockBack(this.GetPosition());
+                    enemy.KnockBack();
                     endArrow = true;
                     return;
                 }

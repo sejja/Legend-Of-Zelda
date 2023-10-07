@@ -210,4 +210,25 @@ public class Spritesheet {
         this.mSpriteArray = mSpriteArray;
     }
 
+    // ------------------------------------------------------------------------
+    /*! transposeMatrix
+    *
+    *   Utility Function for Transposing a Matrix
+    */ //----------------------------------------------------------------------
+    public void flip(){
+        BufferedImage[][] m = this.GetSpriteArray2D();
+        BufferedImage[][] temp = new BufferedImage[m[0].length + 4][m.length];
+        for (int i = 0; i < m.length; i++){
+            for (int j = 0; j < m[0].length; j++){
+                temp[j][i] = m[i][j];
+            }
+        }
+        for (int i = 0; i < 4; i++){
+            for (int j = 0;  j < temp[0].length; j++){
+                temp[m[0].length+i][j] = temp[i][0];
+            }
+        }
+        this.setmSpriteArray(temp);
+    }
+
 }

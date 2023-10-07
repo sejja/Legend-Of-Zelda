@@ -427,7 +427,7 @@ public class Player extends Actor {
             Enemy currentEnemy  = (Enemy) iterator.next();
             if(currentEnemy.GetPosition().getModuleDistance(GetPosition()) < this.GetScale().getModule()/3){
                 this.setDamage(currentEnemy.getDamage());
-                currentEnemy.KnockBack(this.GetPosition());
+                currentEnemy.KnockBack();
                 return;
             }
         }
@@ -536,7 +536,7 @@ public class Player extends Actor {
             if(currentEnemy.GetPosition().getModuleDistance(GetPosition()) < this.GetScale().getModule()/2){
                 System.out.println( "leda");
                 currentEnemy.setHealthPoints(damage);
-                currentEnemy.KnockBack(this.GetPosition());
+                currentEnemy.KnockBack();
             }
         }
     }
