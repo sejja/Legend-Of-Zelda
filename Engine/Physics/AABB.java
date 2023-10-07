@@ -121,7 +121,7 @@ public class AABB {
 
     public CollisionResult collisionTile(float ax, float ay) {
         for(int c = 0; c < 4; c++) {
-            int xt = (int)((mPosition.x + ax) + (c % 2) * mSize.x / 2) / 64;
+            int xt = (int)((mPosition.x + ax) + (c % 2) * mSize.x) / 64;
             int yt = (int)((mPosition.y + ay) + (int)(c / 2) * mSize.y) / 64;
 
             if(TilemapObject.GetBlockAt(xt, yt) != null) {

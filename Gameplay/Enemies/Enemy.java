@@ -134,7 +134,7 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
         if(this.healthPoints == 0){
             this.delay = 0;
             this.speed = 0;
-            SetAnimation(DOWN, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN), this.delay);
+            //SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), this.delay);
             return;
         }
 
