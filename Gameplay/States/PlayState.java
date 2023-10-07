@@ -39,11 +39,9 @@ public class PlayState extends State {
     private Player mPlayer;
     private Npc mNpc1;
     private Npc mNpc2;
-    private static ArrayList<Npc> mNpcArrayList = new ArrayList<Npc>();
     private Enemy mEnemy;
     //private Enemy mEnemy2;
     //private Enemy mEnemy3;
-    private Vector2D<Float> mPos;
     private TileManager mTilemap;
     private ArrayList<String> dialogueArrayList = new ArrayList<String>();
     private ArrayList<String> dialogueArrayList2 = new ArrayList<String>();
@@ -51,7 +49,6 @@ public class PlayState extends State {
     private final static int playState = 1;
     private final static int pauseState = 2;
     private boolean mPause = false;
-    private LinkedList<Actor> mEnemyArrayList = new LinkedList<Actor>();
     // ------------------------------------------------------------------------
     /*! Constructor
     *
@@ -67,16 +64,13 @@ public class PlayState extends State {
         mFont.SetPosition(new Vector2D<>(100.f, 100.f));
         mFont.SetScale(new Vector2D<>(32.f, 32.f));
         mPlayer = (Player)ObjectManager.GetObjectManager().AddEntity(new Player(new Spritesheet("Content/Animations/Link/Link.png"), new Vector2D<Float>(700.f, 400.f), new Vector2D<Float>(100.f, 100.f)));
-        mPos = new Vector2D<Float>(300.f, 600.f);
         mNpc1 = (Npc)ObjectManager.GetObjectManager().AddEntity(new Npc("Aelarion", new Spritesheet("Content/Animations/NPC/NPC_boy.png", 64, 64), new Vector2D<Float>(1415.f, 725.f), dialogueArrayList, new Vector2D<Float>(50.f, 62.f)) );
         mNpc2 = (Npc)ObjectManager.GetObjectManager().AddEntity(new Npc("Juan", new Spritesheet("Content/Animations/NPC/NPC_boy.png", 64, 64), new Vector2D<Float>(1200f, 900.f), dialogueArrayList2, new Vector2D<Float>(50.f, 62.f)) );
-        mNpcArrayList.add(mNpc1);
-        mNpcArrayList.add(mNpc2);
         ObjectManager.GetObjectManager().Update();
 
         mEnemy = new GreenKnight(new Vector2D<Float>(450.f, 300.f));
         Spawn(mEnemy);
-        
+
     InputManager.SubscribePressed(KeyEvent.VK_P, new InputFunction() {
             @Override
             public void Execute() {
@@ -100,10 +94,6 @@ public class PlayState extends State {
     public void Update() {
         if(gameState == playState){
             ObjectManager.GetObjectManager().Update();
-           for(int i=0; i<mNpcArrayList.size();i++){
-               mNpcArrayList.get(i).Update(mPlayer.GetPosition());
-//            ObjectManager.GetObjectManager().Update();
-            }
             //System.out.println(ObjectManager.GetObjectManager().getmAliveEntities().size());
         } 
         if(gameState == pauseState){
@@ -148,9 +138,6 @@ public class PlayState extends State {
         return gameState;
     }
     
-    public static ArrayList<Npc> getNpcArrayList() {
-        return mNpcArrayList;
-    }
 
     public String saltoDeLinea(String texto){
         String nuevoTexto = texto;
