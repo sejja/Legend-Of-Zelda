@@ -13,6 +13,7 @@ import Engine.Graphics.Components.CameraComponent;
 import Engine.Graphics.Components.Renderable;
 import Engine.Math.Vector2D;
 import Engine.Physics.Components.BoxCollider;
+import Gameplay.AnimatedObject.DeadAnimation;
 import Gameplay.Enemies.Search.*;
 import Gameplay.LifeBar.LifeBar;
 import Gameplay.Link.DirectionObject;
@@ -20,6 +21,7 @@ import Gameplay.Link.Arrow;
 import Gameplay.Link.DIRECTION;
 
 public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Renderable{
+
     protected final int UP = 0;
     protected final int DOWN = 2;
     protected final int RIGHT = 1;
@@ -324,7 +326,7 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
         if (healthPoints <= 0){
             //System.out.println("aibfhdp`");
             mCollision.ShutDown();
-            this.SetScale(new Vector2D<Float>(0f,0f));
+            //this.SetScale(new Vector2D<Float>(0f,0f));
             die();
             path.clear();
         }
@@ -333,6 +335,8 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     }
 
     private void die() {
+        System.out.println("se muere");
+        DeadAnimation deadAnimation = new DeadAnimation(this, new Vector2D<>(80f, 80f));
     }
 
     @Override

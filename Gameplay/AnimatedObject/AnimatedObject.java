@@ -25,27 +25,38 @@ public class AnimatedObject extends Actor{
     protected AnimationMachine animationMachine;
     protected BufferedImage[] animation;
     protected int delay = 5;
-    protected boolean deleteAtTheEnd = false;
+    protected int defaultAnimationIndex;
 
-    public AnimatedObject (Vector2D<Float> position, Spritesheet spritesheet, int delay,int animationIndex ,boolean deleteAtTheEnd){
+    public AnimatedObject (Vector2D<Float> position, Spritesheet spritesheet, int delay,int defaultAnimationIndex){
         super(position);
-        spritesheet.flip();
 
-        animationMachine = AddComponent(new AnimationMachine(this, spritesheet));
-        animationMachine.setMust_Complete(deleteAtTheEnd);
-        this.deleteAtTheEnd = deleteAtTheEnd;
+        setAnimationMachine(spritesheet);
 
-        animation = spritesheet.GetSpriteArray2D()[animationIndex];
+        animation = spritesheet.GetSpriteArray2D()[defaultAnimationIndex];
+        this.defaultAnimationIndex = defaultAnimationIndex;
+
         ObjectManager.GetObjectManager().AddEntity(this);
     }
     public AnimatedObject(Vector2D<Float> position) {
         super(position);
     }
-    
+
     @Override
     public void Update(){
-        if(deleteAtTheEnd && animationMachine.finised_Animation){
-            ObjectManager.GetObjectManager().RemoveEntity(this);
-        }
+        super.Update();
+        Animate(defaultAnimationIndex);
+    }
+
+    public void Animate(int i){
+        animationMachine.SetFrames(animation);
+        this.defaultAnimationIndex = i;
+    }
+
+    public void setAnimationMachine(Spritesheet spritesheet) {
+        spritesheet.flip();
+        animationMachine = AddComponent(new AnimationMachine(this, spritesheet));
+        animationMachine.GetAnimation().SetDelay(delay);
+        animation = spritesheet.GetSpriteArray2D()[defaultAnimationIndex];
+        System.out.println(animation.length);
     }
 }
