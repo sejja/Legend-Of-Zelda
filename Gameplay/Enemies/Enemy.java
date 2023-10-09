@@ -17,6 +17,7 @@ import Engine.Physics.AABB;
 import Engine.Physics.Components.BoxCollider;
 import Gameplay.Enemies.Search.*;
 import Gameplay.Link.DirectionObject;
+import Gameplay.Link.Player;
 
 public class Enemy extends Engine.ECSystem.Types.Actor {
     private final int UP = 0;
@@ -213,7 +214,7 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
     */ //----------------------------------------------------------------------
     public void Update() {
         super.Update();
-        Vector2D<Float> ppos = ObjectManager.GetObjectManager().GetObjectByName("Player").GetPosition();
+        Vector2D<Float> ppos = ObjectManager.GetObjectManager().GetObjectByName(Player.class, "Player").GetPosition();
         GetDirection(ndir);
         Pathfinding(ppos);
         Move();
@@ -255,7 +256,7 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
     public void Move() {
         int posoffset =20;
         Vector2D<Float> pos = GetPosition();
-        Vector2D<Float> ppos = ObjectManager.GetObjectManager().GetObjectByName("Player").GetPosition();
+        Vector2D<Float> ppos = ObjectManager.GetObjectManager().GetObjectByName(Player.class, "Player").GetPosition();
         if(chase){
             speed = 3;
         }

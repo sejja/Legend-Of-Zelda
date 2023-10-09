@@ -532,16 +532,18 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
 
     private void takeDamage(){ //Looking for enemies to take damage
         //System.out.println("Vida = " + healthPoints);
-        ArrayList<Entity> allEntities = ObjectManager.GetObjectManager().getmAliveEntities();
+        ArrayList<Entity> allEntities = ObjectManager.GetObjectManager().GetAllObjectsOfType(Enemy.class);
         for (int i = 0; i < allEntities.size(); i++){
-            if (allEntities.get(i) instanceof Enemy){
                 Enemy enemy = (Enemy) allEntities.get(i);
                 Vector2D<Float> enemyPosition = enemy.GetPosition();
                 if (enemyPosition.getModuleDistance(this.GetPosition()) < this.GetScale().y/2){
                     this.setDamage(enemy.getDamage());
                     enemy.KnockBack(this.GetPosition());
                 }
-            } else if(allEntities.get(i) instanceof Npc){
+        }
+
+        allEntities = ObjectManager.GetObjectManager().GetAllObjectsOfType(Npc.class);
+        for (int i = 0; i < allEntities.size(); i++){
                 Npc npc = (Npc) allEntities.get(i);
                 Vector2D<Float> npcPosition = npc.GetPosition();
                 if (npcPosition.getModuleDistance(this.GetPosition()) < this.GetScale().y/2){
@@ -550,7 +552,6 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
                 } else{
                     //isTouchingNpc = false; El segundo Npc no funciona
                 }
-            }
         }
     }
     //------------------------------------------------------------------------
