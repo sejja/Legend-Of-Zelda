@@ -69,6 +69,15 @@ public class ObjectManager {
     public void RemoveEntity(Entity e) {
         mDeadEntities.add(e);
         if(e instanceof Actor){
+            if(e instanceof Enemy){
+                    try {
+                        mapAliveActors.get(Enemy.class).remove(e);
+                        System.out.println("Se quita");
+                    } catch (java.lang.NullPointerException a) {
+                        //System.err.println(e.getClass() + " Already removed or it does not exist");
+                    }
+                return;
+            }
             try {
                 mapAliveActors.get(e.getClass()).remove(e);
             } catch (java.lang.NullPointerException a) {
