@@ -19,7 +19,7 @@ public class GreenKnight extends Enemy{
     //animation
     protected int xoffset = 8;
     protected int yoffset = 32;
-    protected Spritesheet sprite=new Spritesheet("Content/Animations/gknight.png", 24,28);
+    protected Spritesheet sprite=new Spritesheet("Content/Animations/Enemies/gknight.png", 24,28);
     
 
     public GreenKnight(Vector2D<Float> position) {
@@ -39,6 +39,7 @@ public class GreenKnight extends Enemy{
         // ADD COLLIDER COMPONENT
         mCollision = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<Float>((size.x-25f)*2, size.y*2)));
         SetAnimation(UP, sprite.GetSpriteArray(UP), 2);
+        
 
     }
     

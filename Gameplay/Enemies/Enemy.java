@@ -58,6 +58,9 @@ public class Enemy extends Engine.ECSystem.Types.Actor implements Renderable{
     protected int xoffset = 0;
     protected int yoffset = 0;
 
+    //death animation
+    protected Spritesheet deathsprite =new Spritesheet("Content/Animations/Enemies/enemyDeath.png", 24,28);
+
     
     
     // ------------------------------------------------------------------------
@@ -127,22 +130,22 @@ public class Enemy extends Engine.ECSystem.Types.Actor implements Renderable{
             switch (direction){
                 case UP:
                     if(mCurrentAnimation != UP || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), 2);
+                        SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), 20);
                     }
                     break;
                 case DOWN:
                     if(mCurrentAnimation != DOWN || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(DOWN, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN), 2);
+                        SetAnimation(DOWN, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN), 20);
                     }
                     break;
                 case LEFT:
                     if(mCurrentAnimation != RIGHT || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(RIGHT, mAnimation.GetSpriteSheet().GetSpriteArray(RIGHT), 2);
+                        SetAnimation(RIGHT, mAnimation.GetSpriteSheet().GetSpriteArray(RIGHT), 20);
                     }
                     break;
                 case RIGHT:
                     if(mCurrentAnimation != LEFT || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(LEFT, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT), 2);
+                        SetAnimation(LEFT, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT), 20);
                     }
                     break;
             }
@@ -150,26 +153,27 @@ public class Enemy extends Engine.ECSystem.Types.Actor implements Renderable{
             switch (direction){
                 case UP:
                     if(mCurrentAnimation != UP || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), 2);
+                        SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), 20);
                     }
                     break;
                 case DOWN:
                     if(mCurrentAnimation != DOWN || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(DOWN, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN), 2);
+                        SetAnimation(DOWN, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN), 20);
                     }
                     break;
                 case LEFT:
                     if(mCurrentAnimation != RIGHT || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(RIGHT, mAnimation.GetSpriteSheet().GetSpriteArray(RIGHT), 2);
+                        SetAnimation(RIGHT, mAnimation.GetSpriteSheet().GetSpriteArray(RIGHT), 20);
                     }
                     break;
                 case RIGHT:
                     if(mCurrentAnimation != LEFT || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(LEFT, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT), 2);
+                        SetAnimation(LEFT, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT), 20);
                     }
                     break;
             }
         }
+        
     }
 
     // ------------------------------------------------------------------------
@@ -183,7 +187,6 @@ public class Enemy extends Engine.ECSystem.Types.Actor implements Renderable{
         GetDirection(normalizedDirection);
         Animate();
         Move();
-        mAnimation.GetAnimation().SetDelay(20);
         //System.out.println(playerPos.x + " " + playerPos.y + " " + normalizedDirection+ " " );
     }
 
@@ -309,8 +312,11 @@ public class Enemy extends Engine.ECSystem.Types.Actor implements Renderable{
         this.healthPoints -= damage;
         if (healthPoints <= 0){
             mCollision.ShutDown();
-            this.SetScale(new Vector2D<Float>(0f,0f));
-            ObjectManager.GetObjectManager().RemoveEntity(this);
+            deathsprite.flip();
+            mAnimation.SetAnimationSprite(deathsprite);
+
+            //this.SetScale(new Vector2D<Float>(0f,0f));
+            //ObjectManager.GetObjectManager().RemoveEntity(this);
             path.clear();
         }
     }

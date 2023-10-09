@@ -124,7 +124,7 @@ public final class AnimationMachine extends Component implements Renderable {
             must_end_frames = null;
             previus_frames = null;
             finised_Animation = true;
-        }
+        }else{finised_Animation = false;}
     }
 
     // ------------------------------------------------------------------------
