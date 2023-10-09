@@ -10,8 +10,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Entity;
-import Engine.Graphics.Animation;
 import Engine.Graphics.Spritesheet;
+import Engine.Graphics.Animations.Animation;
+import Engine.Graphics.Animations.AnimationEvent;
 import Engine.Graphics.Components.AnimationMachine;
 import Engine.Graphics.Components.CameraComponent;
 import Engine.Graphics.Components.ZeldaCameraComponent;
@@ -283,6 +284,26 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
                 SetScale(new Vector2D<Float>(100f, 100f));
             }
         });
+
+        mAnimation.AddFinishedListener(new AnimationEvent() {
+
+            @Override
+            public void OnTrigger() {
+                if (nArrows != 0  && bow) //Spawn Arrow
+                {
+                    shootArrow();
+                    bow = false;
+                }else if (attack){
+                    //System.out.println("te rajo primo");
+                    Attack();
+                    attack = false;
+                } else if (falling){
+                    //System.out.println("te rajo primo");
+            
+                    SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), delay);
+                }
+            }
+        });
     }
     // ------------------------------------------------------------------------
 
@@ -302,14 +323,14 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
 
         if(falling && mAnimation.GetAnimation().GetFrame() == 7) {
             SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), delay);   
-            mAnimation.setMust_Complete(false);
+            mAnimation.SetMustComplete(false);
             SetPosition(new Vector2D<>(mPreviousPositionX, mPreviousPositionY));
             mCollider.GetBounds().SetBox(GetPosition(), GetScale());
             falling = false;
         }
 
         //System.out.println(actionToString());
-        if (mAnimation.getMust_Complete()){return;} //Early return, if it is a animation thats has to be complete, do not animaate
+        if (mAnimation.MustComplete()){return;} //Early return, if it is a animation thats has to be complete, do not animaate
 
         if (stop)
         {
@@ -367,27 +388,11 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
         }
         else
         {
-            if (!mAnimation.getMust_Complete())
+            if (!mAnimation.MustComplete())
             {
                 Move();
             }
-            else if (nArrows != 0 && mAnimation.finised_Animation && bow) //Spawn Arrow
-            {
-            shootArrow();
-            bow = false;
-            mAnimation.finised_Animation = false;
-        }else if (mAnimation.finised_Animation && attack){
-            //System.out.println("te rajo primo");
-            Attack();
-            attack = false;
-            mAnimation.finised_Animation = false;
-        } else if (mAnimation.finised_Animation && falling){
-            //System.out.println("te rajo primo");
-            
-            SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), delay);
-            mAnimation.finised_Animation = false;
         }
-    }
 
         Animate();
 
@@ -589,14 +594,14 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
     private void setMovement(Action type){
 
         if (type == Action.ATTACK || type == Action.BOW){ //Activate must-end sequence
-            mAnimation.setMust_Complete();
+            mAnimation.SetMustComplete(true);
         }
 
         int i = type.getID();
 
         if(falling && mCurrentAnimation != FALL+i|| mAnimation.GetAnimation().GetDelay() == -1) {
             SetAnimation(FALL+i, mAnimation.GetSpriteSheet().GetSpriteArray(FALL+i), delay);
-            mAnimation.setMust_Complete();
+            mAnimation.SetMustComplete(true);
             return;
         }
 
@@ -656,7 +661,7 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
          *          If the DIRECTION of the vector Player-Enemy and The DIRECTION of the player is the same
          *             It will called a KnockBack() function of that enemy
          */
-        ArrayList<Entity> allEntities = ObjectManager.GetObjectManager().getmAliveEntities();
+        ArrayList<Entity> allEntities = ObjectManager.GetObjectManager().GetAllObjectsOfType(Enemy.class);
         for (int i = 0; i < allEntities.size(); i++){
             if (allEntities.get(i) instanceof Enemy){
                 Enemy enemy = (Enemy) allEntities.get(i);

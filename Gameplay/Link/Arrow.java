@@ -139,7 +139,7 @@ public class Arrow extends Actor{
          *      It will calculate a vector to the player position to the enemy position
          *             It will called a KnockBack() function of that enemy
          */
-        ArrayList<Entity> allEntities = ObjectManager.GetObjectManager().getmAliveEntities();
+        ArrayList<Entity> allEntities = ObjectManager.GetObjectManager().GetAllObjectsOfType(Enemy.class);
         for (int i = 0; i < allEntities.size(); i++){
             if (allEntities.get(i) instanceof Enemy){
                 Enemy enemy = (Enemy) allEntities.get(i);

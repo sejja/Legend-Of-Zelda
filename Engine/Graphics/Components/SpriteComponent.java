@@ -12,10 +12,10 @@ import java.awt.Graphics2D;
 
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Component;
-import Engine.Graphics.Animation;
 import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Sprite;
 import Engine.Graphics.Spritesheet;
+import Engine.Graphics.Animations.Animation;
 import Engine.Math.Vector2D;
 
 public final class SpriteComponent extends Component implements Renderable {

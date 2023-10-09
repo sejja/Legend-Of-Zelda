@@ -6,7 +6,7 @@
 //	Copyright Deusto © 2023. All Rights reserved
 //
 
-package Engine.Graphics;
+package Engine.Graphics.Animations;
 
 import java.awt.Frame;
 import java.awt.image.BufferedImage;

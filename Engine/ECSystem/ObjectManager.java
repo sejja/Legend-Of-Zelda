@@ -10,15 +10,16 @@ package Engine.ECSystem;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Entity;
 
 //This is a Singleton
 public class ObjectManager {
-    private HashMap<Class<?>, ArrayList<Entity>> mAliveEntities = new HashMap<>();
-    private HashMap<Class<?>, ArrayList<Entity>> mDeadEntities = new HashMap<>();
-    private HashMap<Class<?>, ArrayList<Entity>> mNewEntities = new HashMap<>();
+    private ConcurrentHashMap<Class<?>, ArrayList<Entity>> mAliveEntities = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<Class<?>, ArrayList<Entity>> mDeadEntities = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<Class<?>, ArrayList<Entity>> mNewEntities = new ConcurrentHashMap<>();
     private Actor mPawn = null;
     static private ObjectManager sManager = new ObjectManager();
 
@@ -78,14 +79,14 @@ public class ObjectManager {
         final Class<?> type = e.getClass();
 
         //If we already contain the key, perfect
-        if(mNewEntities.containsKey(type)) {
-            mNewEntities.get(type).add(e);
+        if(mDeadEntities.containsKey(type)) {
+            mDeadEntities.get(type).add(e);
 
         //else
         } else {
             ArrayList<Entity> chunk = new ArrayList<>();
             chunk.add(e);
-            mNewEntities.put(type, chunk);
+            mDeadEntities.put(type, chunk);
         }
     }
 

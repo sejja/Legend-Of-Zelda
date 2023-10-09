@@ -8,8 +8,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicStampedReference;
 
 import Engine.ECSystem.ObjectManager;
-import Engine.Graphics.Animation;
 import Engine.Graphics.Spritesheet;
+import Engine.Graphics.Animations.Animation;
 import Engine.Graphics.Components.AnimationMachine;
 import Engine.Graphics.Tile.*;
 import Engine.Math.Vector2D;

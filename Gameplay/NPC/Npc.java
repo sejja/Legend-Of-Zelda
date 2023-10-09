@@ -14,10 +14,10 @@ import javax.swing.JLabel;
 
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
-import Engine.Graphics.Animation;
 import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Sprite;
 import Engine.Graphics.Spritesheet;
+import Engine.Graphics.Animations.Animation;
 import Engine.Graphics.Components.AnimationMachine;
 import Engine.Graphics.Components.CameraComponent;
 import Engine.Graphics.Components.SpriteComponent;
