@@ -19,5 +19,6 @@ public class TestRoom2 extends Level {
     public TestRoom2(Level right, Level left, Level up, Level down, String tiles, Vector2D<Float> pos) {
         super(right, left, up, down, new TileManager(tiles));
         Init(pos);
+        System.out.println("Created level");
     }
 }
