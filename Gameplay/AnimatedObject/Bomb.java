@@ -15,6 +15,7 @@ public class Bomb extends AnimatedObject {
         this.allAnimtion  = spritesheet.GetSpriteArray2D();
         createChargeAnimation();
     }
+
     private void createChargeAnimation(){
         for ( int i = 0; i < allAnimtion[0].length; i++){
             if (i%2 == 0){
@@ -23,5 +24,10 @@ public class Bomb extends AnimatedObject {
                 allAnimtion[1][i] = allAnimtion[0][1];
             }
         }
+    }
+
+    @Override
+    public void Update(){
+        super.Update();
     }
 }

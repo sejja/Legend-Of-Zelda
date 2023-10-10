@@ -42,8 +42,8 @@ public class Spritesheet {
     */ //----------------------------------------------------------------------
     public Spritesheet(String file, int nrow, int ncol, boolean whatever) {
         mSpriteSheet = LoadSprite(file);  
-        mUCoord = mSpriteSheet.getWidth()/i;
-        mVCoord = mSpriteSheet.getWidth()/j;
+        mUCoord = mSpriteSheet.getWidth()/nrow;
+        mVCoord = mSpriteSheet.getWidth()/ncol;
 
         mWidth = mSpriteSheet.getWidth() / mUCoord;
         mHeight = mSpriteSheet.getHeight() / mVCoord; 
