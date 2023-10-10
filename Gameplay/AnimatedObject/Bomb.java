@@ -43,6 +43,7 @@ public class Bomb extends AnimatedObject {
         if (animationMachine.finised_Animation){
             ObjectManager.GetObjectManager().RemoveEntity(this);
             this.SetScale(new Vector2D<>(0f, 0f));
+            explode();
         }
     }
 

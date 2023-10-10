@@ -41,7 +41,6 @@ public class Spritesheet {
     *   Consntructs an sprite from the filename, the width, and the height
     */ //----------------------------------------------------------------------
     public Spritesheet(String file, int nrow, int ncol, boolean whatever) {
-        System.out.println("DFBJDH");
         mSpriteSheet = LoadSprite(file);  
         mUCoord = mSpriteSheet.getWidth()/nrow;
         mVCoord = mSpriteSheet.getHeight()/ncol;
