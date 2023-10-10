@@ -42,7 +42,6 @@ public abstract class AnimatedObject extends Actor{
     @Override
     public void Update(){
         super.Update();
-        Animate(defaultAnimationIndex);
     }
 
     public void Animate(int i){
@@ -55,6 +54,5 @@ public abstract class AnimatedObject extends Actor{
         animationMachine = AddComponent(new AnimationMachine(this, spritesheet));
         animationMachine.GetAnimation().SetDelay(delay);
         animation = spritesheet.GetSpriteArray2D()[defaultAnimationIndex];
-        System.out.println(animation.length);
     }
 }

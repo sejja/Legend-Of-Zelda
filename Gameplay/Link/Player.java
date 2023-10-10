@@ -17,6 +17,7 @@ import Engine.Math.Vector2D;
 import Engine.Physics.CollisionResult;
 import Engine.Physics.Components.BoxCollider;
 import Gameplay.States.PlayState;
+import Gameplay.AnimatedObject.Bomb;
 import Gameplay.Enemies.Enemy;
 import Gameplay.LifeBar.LifeBar;
 import Gameplay.NPC.Npc;
@@ -197,6 +198,16 @@ public class Player extends Actor {
                 bow =false;
             }
         });
+        InputManager.SubscribeReleased(KeyEvent.VK_B, new InputFunction() {
+            @Override
+            public void Execute() {
+                if(nbombs >= 0){
+                    new Bomb(new Vector2D<Float>(GetPosition().x, GetPosition().y));
+                    nbombs--;
+                }else{System.out.println("Bombs run out");}
+                
+            }
+        });
         //Show LifeBar_______________________________________________________________________________________
         InputManager.SubscribePressed(KeyEvent.VK_M, new InputFunction() {
             @Override
@@ -210,7 +221,7 @@ public class Player extends Actor {
             @Override
             public void Execute() {Pause();}
         });
-        ///* 
+        ///Interaction_______________________________________________________________________________________
         InputManager.SubscribePressed(KeyEvent.VK_E, new InputFunction() {
             @Override
             public void Execute() {interact();}
