@@ -1,42 +1,40 @@
 package Gameplay.AnimatedObject;
 
-import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
-import java.util.LinkedList;
-import java.util.ListIterator;
-
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
-import Engine.Graphics.Animation;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.AnimationMachine;
-import Engine.Graphics.Components.ZeldaCameraComponent;
-import Engine.Input.InputFunction;
-import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
-import Engine.Physics.CollisionResult;
-import Engine.Physics.Components.BoxCollider;
-import Gameplay.States.PlayState;
-import Gameplay.Enemies.Enemy;
-import Gameplay.LifeBar.LifeBar;
-import Gameplay.NPC.Npc;
 
-public class AnimatedObject extends Actor{
+/* This is abstract class thats create a basic object that have no movement and a simple animation
+ *      -> It has a default animation delay = 5
+ *      -> It has to have a position a SpriteSheet
+ *          -> if you provide a actor position it will fixed in the actor
+ */
+
+public abstract class AnimatedObject extends Actor{
     protected AnimationMachine animationMachine;
     protected BufferedImage[] animation;
     protected int delay = 5;
-    protected int defaultAnimationIndex;
+    protected int defaultAnimationIndex = 0;
 
     public AnimatedObject (Vector2D<Float> position, Spritesheet spritesheet, int delay,int defaultAnimationIndex){
         super(position);
-
         setAnimationMachine(spritesheet);
-
+        this.delay = delay;
         animation = spritesheet.GetSpriteArray2D()[defaultAnimationIndex];
         this.defaultAnimationIndex = defaultAnimationIndex;
-
         ObjectManager.GetObjectManager().AddEntity(this);
     }
+
+    public AnimatedObject (Vector2D<Float> position, Spritesheet spritesheet){
+        super(position);
+        setAnimationMachine(spritesheet);
+        animation = spritesheet.GetSpriteArray2D()[defaultAnimationIndex];
+        ObjectManager.GetObjectManager().AddEntity(this);
+    }
+
     public AnimatedObject(Vector2D<Float> position) {
         super(position);
     }
