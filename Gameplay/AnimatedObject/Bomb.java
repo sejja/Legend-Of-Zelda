@@ -16,7 +16,7 @@ public class Bomb extends AnimatedObject {
     private BufferedImage[][] allAnimtion;
 
     private int counter = 0;
-    final private int limit = 100;
+    final private int limit = 90;
 
     public Bomb(Vector2D<Float> position) {
         super(position);
@@ -72,19 +72,20 @@ public class Bomb extends AnimatedObject {
                 //System.out.println(enemyPosition.getModuleDistance(this.GetPosition()));
                 if (enemyPosition.getModuleDistance(this.GetPosition()) < this.GetScale().getModule()){ //Each enemy thats can be attacked
                     System.out.println("Le da");
-                    enemy.setHealthPoints(1);
-                    enemy.KnockBack();
+                    enemy.setHealthPoints(4);
+                    enemy.KnockBack(this.GetPosition());
                     return;
                 }
-            }else if (allEntities.get(i) instanceof Rock){
+            }
+            if (allEntities.get(i) instanceof Rock){
                 Rock rock = (Rock) allEntities.get(i);
                 Vector2D<Float> rockPosition = rock.GetPosition();
                 //System.out.println(enemyPosition.getModuleDistance(this.GetPosition()));
-                //if (rockPosition.getModuleDistance(this.GetPosition()) < this.GetScale().getModule()){
-                    System.out.println("Le da");
+                if (rockPosition.getModuleDistance(this.GetPosition()) < this.GetScale().getModule()){
+                    System.out.println("Peta");
                     rock.setHealthPoints(1);
                     return;
-                //}
+                }
                 
             }
         }

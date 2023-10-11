@@ -319,6 +319,14 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
         pos.y -= normalizedDirection.y * 60;
         SetPosition(pos);
     }
+
+    public void KnockBack(Vector2D<Float> attackerPos) {
+        Vector2D<Float> dir = pos.getVectorToAnotherActor(attackerPos);
+        normalizedDirection=Normalize(dir);
+        pos.x -= normalizedDirection.x * 60;
+        pos.y -= normalizedDirection.y * 60;
+        SetPosition(pos);
+    }
     
 
     public void setHealthPoints(int damage){
@@ -383,6 +391,8 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     public Enemy getEnemy(){
         return (Enemy)this;
     }
+
+    
     
     
 }
