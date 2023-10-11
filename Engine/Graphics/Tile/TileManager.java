@@ -42,8 +42,6 @@ public class TileManager extends ECObject implements Renderable {
     *   Constructs an empty array of layers
     */ //----------------------------------------------------------------------
     public TileManager() {
-        mLayers = new ArrayList<>();
-        GraphicsPipeline.GetGraphicsPipeline().AddRenderable(this); 
     }
 
     // ------------------------------------------------------------------------
@@ -52,9 +50,7 @@ public class TileManager extends ECObject implements Renderable {
     *   Takes a path, and generates a whole TileManager from it
     */ //----------------------------------------------------------------------
     public TileManager(String path) {
-        mLayers = new ArrayList<>();
         mPath = path;
-        GraphicsPipeline.GetGraphicsPipeline().AddRenderable(this);
     }
 
     // ------------------------------------------------------------------------
@@ -72,6 +68,8 @@ public class TileManager extends ECObject implements Renderable {
         int tileColumns;
         int layers = 0;
         Spritesheet sprite;
+        mPosition = position;
+        mLayers = new ArrayList<>();
 
         String[] data = new String[10];
 
@@ -117,13 +115,14 @@ public class TileManager extends ECObject implements Renderable {
                 data[i] = eElement.getElementsByTagName("data").item(0).getTextContent();
 
                 if(i >= 1) {
-                    mLayers.add(new TilemapNorm(position, data[i], sprite, width, height, blockwith, blockheigh, tileColumns));
+                    mLayers.add(new TilemapNorm(mPosition, data[i], sprite, width, height, blockwith, blockheigh, tileColumns));
                 } else {
-                    mLayers.add(new TilemapObject(position, data[i], sprite, width, height, blockwith, blockheigh, tileColumns));
+                    mLayers.add(new TilemapObject(mPosition, data[i], sprite, width, height, blockwith, blockheigh, tileColumns));
                 }
             }
 
-            mBounds = new AABB(position, new Vector2D<Float>((float)(width * blockwith), (float)(height * blockheigh)));
+            mBounds = new AABB(mPosition, new Vector2D<Float>((float)(width * blockwith), (float)(height * blockheigh)));
+            GraphicsPipeline.GetGraphicsPipeline().AddRenderableBottom(this);
 
         } catch(Exception e) {
             System.out.println("ERROR - TILEMANAGER: can not read tilemap:");
@@ -189,7 +188,7 @@ public class TileManager extends ECObject implements Renderable {
 
     public void Render(Graphics2D g, CameraComponent camerapos) {
         for(int i= 0; i < mLayers.size(); i++) {
-            mLayers.get(i).Render(g, camerapos);
+            mLayers.get(i).Render(g, camerapos, mPosition);
         }
     }
 }

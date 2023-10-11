@@ -33,7 +33,6 @@ public class ZeldaCameraComponent extends CameraComponent {
         Vector2D<Float> temp = new Vector2D<>();
         temp.x = Math.max(Math.min(pos.x, mBottomLeft.x), mTopRight.x) - camera.x / 2;
         temp.y = Math.max(Math.min(pos.y, mBottomLeft.y), mTopRight.y) - camera.y / 2;
-
-        return pos;
+        return temp;
     }
 }

@@ -32,8 +32,9 @@ public class PlayState extends State {
     *   Just assigns the statemachine child
     */ //----------------------------------------------------------------------
     public PlayState() {
-        var t = new TestRoom2(null, null, null, null, "Content/TiledProject/StressTest.tmx", new Vector2D<>(0.f, 0.f));
+        var t = new TestRoom2(null, null, null, null, "Content/TiledProject/StressTest.tmx");
         mTestLevel = new TestRoom(t, null, null, null, "Content/TiledProject/TestRoom2.tmx", new Vector2D<>(0.f, 0.f));
+        t.SetLeftlevel(mTestLevel);
     }
 
     // ------------------------------------------------------------------------

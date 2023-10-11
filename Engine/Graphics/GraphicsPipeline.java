@@ -62,6 +62,10 @@ public class GraphicsPipeline {
         mRenderables.add(r);
     }
 
+    public void AddRenderableBottom(Renderable r) {
+        mRenderables.add(0, r);
+    }
+
     // ------------------------------------------------------------------------
     /*! Render
     *

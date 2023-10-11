@@ -33,7 +33,6 @@ public class Level {
 
     public void Update() {
         Actor p = ObjectManager.GetObjectManager().GetPawn();
-
         var position = p.GetPosition();
         
         if(!GetBounds().Collides(new AABB(position, new Vector2D<>(1.f, 1.f)))) {
@@ -44,7 +43,7 @@ public class Level {
 
             //RIGHT
             if(position.x < (GetBounds().GetPosition().x) && mLeft != null) {
-                var b = mRight.mTilemap.EstimateBounds(64, 64);
+                var b = mLeft.mTilemap.EstimateBounds(64, 64);
                 Vector2D<Float> scale = new Vector2D<>(b.GetWidth(), b.GetHeight());
                 var pos = GetBounds().GetPosition();
                 pos.x -= scale.x;
@@ -53,7 +52,7 @@ public class Level {
             }
             //UP
             if(position.y < (GetBounds().GetPosition().y) && mUpper != null) {
-                var b = mRight.mTilemap.EstimateBounds(64, 64);
+                var b = mUpper.mTilemap.EstimateBounds(64, 64);
                 Vector2D<Float> scale = new Vector2D<>(b.GetWidth(), b.GetHeight());
                 var pos = GetBounds().GetPosition();
                 pos.y -= scale.y;
@@ -69,20 +68,36 @@ public class Level {
 
     void ShutDown() {}
 
-    Level GetRightLevel() {
+    public Level GetRightLevel() {
         return mRight;
     }
 
-    Level GetLeftLevel() {
+    public Level GetLeftLevel() {
         return mLeft;
     }
 
-    Level GetUpperLevel() {
+    public Level GetUpperLevel() {
         return mUpper;
     }
 
-    Level GetLowerLevel() {
+    public Level GetLowerLevel() {
         return mLower;
+    }
+
+    public void SetRightLevel(Level l) {
+        mRight = l;
+    }
+
+    public void SetUpperLevel(Level l) {
+        mUpper = l;
+    }
+
+    public void SetLowerLevel(Level l) {
+        mLower = l;
+    }
+
+    public void SetLeftlevel(Level l) {
+        mLeft = l;
     }
 
     protected void SpawnEntity(Entity e) {
