@@ -72,6 +72,8 @@ public class PlayState extends State {
         mEnemy = new GreenKnight(new Vector2D<Float>(450.f, 300.f));
         Spawn(mEnemy);
         Spawn(new Rock(new Vector2D<Float>(448.f, 448.f)));
+        Spawn(new Rock(new Vector2D<Float>(448.f-64, 448.f-64)));
+        Spawn(new Rock(new Vector2D<Float>(448.f, 448.f+64f)));
 
     InputManager.SubscribePressed(KeyEvent.VK_P, new InputFunction() {
             @Override

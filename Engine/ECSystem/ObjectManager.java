@@ -56,7 +56,6 @@ public class ObjectManager {
 
     public Entity AddEntity(Enemy e) {
         mNewEntities.add(e);
-        System.out.println("pataa");
         //Map----------------------------------------------------------
         if (!mapAliveActors.containsKey(Enemy.class)){
             mapAliveActors.put(Enemy.class, new LinkedList<Actor>());

@@ -74,7 +74,6 @@ public class Bomb extends AnimatedObject {
                     System.out.println("Le da");
                     enemy.setHealthPoints(4);
                     enemy.KnockBack(this.GetPosition());
-                    return;
                 }
             }
             if (allEntities.get(i) instanceof Rock){
@@ -84,10 +83,10 @@ public class Bomb extends AnimatedObject {
                 if (rockPosition.getModuleDistance(this.GetPosition()) < this.GetScale().getModule()){
                     System.out.println("Peta");
                     rock.setHealthPoints(1);
-                    return;
+                    
                 }
-                
             }
         }
+        return;
     }
 }
