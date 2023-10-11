@@ -19,8 +19,8 @@ public class GreenKnight extends Enemy{
 
     public GreenKnight(Vector2D<Float> position) {
         super(position);
+        setPseudoPosition(new Vector2D<>(position.x + xoffset, position.y+yoffset));
         SetScale(size);
-        setOffset(xoffset, yoffset);
         setDamage(2);
         setHp(4);
         setSpeed(2);
