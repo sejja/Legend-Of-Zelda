@@ -25,6 +25,7 @@ import Engine.Graphics.Tile.TileManager;
 import Engine.Input.InputFunction;
 import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
+import Engine.Physics.Components.ColliderManager;
 import Engine.StateMachine.State;
 import Engine.StateMachine.StateMachine;
 import Gameplay.Enemies.*;
@@ -79,7 +80,7 @@ public class PlayState extends State {
             @Override
             public void Execute() {
                 mPause = !mPause;
-             }
+            }
         });
     }
 

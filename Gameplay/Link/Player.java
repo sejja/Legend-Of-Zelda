@@ -16,6 +16,7 @@ import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
 import Engine.Physics.CollisionResult;
 import Engine.Physics.Components.BoxCollider;
+import Engine.Physics.Components.ColliderManager;
 import Gameplay.States.PlayState;
 import Gameplay.AnimatedObject.Bomb;
 import Gameplay.Enemies.Enemy;
@@ -114,8 +115,8 @@ public class Player extends Actor {
 
         setPseudoPosition(50f, 50f);
         setPseudoPositionVisible();
-
         hitbox = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<Float>(55f, 60f), true));
+        ColliderManager.GetColliderManager().addCollider(hitbox, true);
     }
     // ------------------------------------------------------------------------
 

@@ -135,12 +135,12 @@ public abstract class Actor extends Entity implements ClassClasifier{
     }
 
     public void setPseudoPositionVisible (){
-        System.out.println(this.getClass());
+        //System.out.println(this.getClass());
         mCollider = new BoxCollider(this);
         mCollider.GetBounds().SetBox(pseudoPosition, new Vector2D<>(5f,5f));
         mCollider.setColor(Color.RED);
         AddComponent(mCollider);
-        System.out.println(mComponents);
+        //System.out.println(mComponents);
     }
 
     public Class GetSuperClass(){return Actor.class;}
