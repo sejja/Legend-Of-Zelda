@@ -8,14 +8,19 @@
 
 package Engine.ECSystem.Types;
 
+import java.awt.Color;
 import java.util.ArrayList;
 
 import Engine.ECSystem.ObjectManager;
+import Engine.Graphics.Spritesheet;
 import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
+import Engine.Physics.Components.BoxCollider;
 import Gameplay.Enemies.Search.Pair;
+import Gameplay.Interactives.Blocks.Rock;
 import Gameplay.LifeBar.Heart;
 import Gameplay.LifeBar.LifeBar;
+import Gameplay.Link.Arrow;
 import Gameplay.Link.Player;
 
 public abstract class Actor extends Entity {
@@ -24,8 +29,7 @@ public abstract class Actor extends Entity {
     private Vector2D<Float> pseudoPosition;
     private Float differenceX;
     private Float differenceY;
-
-    private Heart heart;  //To visualize the pseudoPosition
+    private BoxCollider mCollider;
 
     // ------------------------------------------------------------------------
     /*! Add Component
@@ -76,16 +80,16 @@ public abstract class Actor extends Entity {
     */ //----------------------------------------------------------------------
     public void Update() {
         //Update every component
-        for(Component x : mComponents)
-            x.Update();
-
-
         try{
             pseudoPosition.x = differenceX + GetPosition().x;
             pseudoPosition.y = differenceY + GetPosition().y;
         }catch(java.lang.NullPointerException e){
             //System.err.println(this.getClass() + ": Pseudoposition not difined");
         }
+
+        for(Component x : mComponents)
+            x.Update();
+            
     }
 
     // ------------------------------------------------------------------------
@@ -134,9 +138,10 @@ public abstract class Actor extends Entity {
     }
 
     public void setPseudoPositionVisible (boolean VISIBLE){
-        if (heart == null){
-            heart = new Heart(pseudoPosition);
-            heart.SetScale(new Vector2D<Float>(10f, 10f));
-        }
+        //System.out.println("ifdh");
+        mCollider = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<>(40f,50f)));
+        mCollider.GetBounds().SetBox(pseudoPosition, new Vector2D<>(5f,5f));
+        mCollider.setColor(Color.RED);
+        //System.out.println(mComponents);
     }
 }
