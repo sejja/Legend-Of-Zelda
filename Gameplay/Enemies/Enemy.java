@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.Stack;
 import Engine.ECSystem.ObjectManager;
+import Engine.ECSystem.Types.Actor;
 import Engine.Graphics.Animation;
 import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Spritesheet;
@@ -385,7 +386,6 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
         return (Enemy)this;
     }
 
-    
-    
-    
+    @Override 
+    public Class GetSuperClass(){return Enemy.class;}
 }

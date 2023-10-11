@@ -24,7 +24,7 @@ import Gameplay.LifeBar.LifeBar;
 import Gameplay.Link.Arrow;
 import Gameplay.Link.Player;
 
-public abstract class Actor extends Entity {
+public abstract class Actor extends Entity implements ClassClasifier{
     private ArrayList<Component> mComponents;
 
     private Vector2D<Float> pseudoPosition;
@@ -142,4 +142,6 @@ public abstract class Actor extends Entity {
         AddComponent(mCollider);
         System.out.println(mComponents);
     }
+
+    public Class GetSuperClass(){return Actor.class;}
 }

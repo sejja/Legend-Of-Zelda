@@ -131,4 +131,7 @@ public class Npc extends Actor {
             PlayState.setGameState(1);
         }
     }
+
+    @Override 
+    public Class GetSuperClass(){return Npc.class;}
 }

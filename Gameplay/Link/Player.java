@@ -110,7 +110,7 @@ public class Player extends Actor {
         //---------------------------------------------------------------------
         lifeBar = new LifeBar(getPlayer(), getHealthPoints());
         //---------------------------------------------------------------------
-        mCollider = (BoxCollider)AddComponent(new BoxCollider(this));
+        //mCollider = (BoxCollider)AddComponent(new BoxCollider(this));
 
         setPseudoPosition(50f, 50f);
         setPseudoPositionVisible();
@@ -648,4 +648,7 @@ public class Player extends Actor {
         hitbox.Reset();
     }
     //------------------------------------------------------------------------
+
+    @Override 
+    public Class GetSuperClass(){return Player.class;}
 }

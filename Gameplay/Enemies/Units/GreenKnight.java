@@ -37,5 +37,4 @@ public class GreenKnight extends Enemy{
 
         setPseudoPositionVisible();
     }
-    
 }

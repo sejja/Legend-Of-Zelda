@@ -21,7 +21,7 @@ import Engine.Graphics.Components.Renderable;
 import Engine.Math.Vector2D;
 import Engine.Physics.AABB;
 /* Hitbox Implementation
- *      -> Add a hitbox properties to the actor
+ *      -> Add a hitbox properties in the Actor
  *      -> Use BoxCollider(Actor parent,Vector2D<Float> scale, boolean itCollides) 
  *          -> set itCollides true in case of it has Collision
  *      -> Add hitBox.Update() at the end of the Actor.Update()
@@ -119,4 +119,5 @@ public class BoxCollider extends Component implements Renderable{
        g.setColor(color);
        g.drawRect((int)(float)(mBounds.GetPosition().x - campos.x), (int)(float)(mBounds.GetPosition().y - campos.y), (int)mBounds.GetWidth(), (int)mBounds.GetHeight());
     }
+
 }

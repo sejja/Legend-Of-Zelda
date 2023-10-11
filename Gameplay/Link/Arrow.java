@@ -158,4 +158,7 @@ public class Arrow extends Actor{
             }
         }
     }
+
+    @Override 
+    public Class GetSuperClass(){return Arrow.class;}
 }

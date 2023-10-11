@@ -17,6 +17,7 @@ import Gameplay.Enemies.Search.AStarSearch;
 import Gameplay.Enemies.Search.Pair;
 import Gameplay.LifeBar.LifeBar;
 import Gameplay.Link.DIRECTION;
+import Gameplay.NPC.Npc;
 
 public abstract class Interactive extends Actor{
 
@@ -102,4 +103,6 @@ public abstract class Interactive extends Actor{
     public int getHealthPoints() {
         return healthPoints; 
     }
+    @Override
+    public Class GetSuperClass(){return Interactive.class;}
 }
