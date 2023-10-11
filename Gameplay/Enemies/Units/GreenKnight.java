@@ -19,11 +19,11 @@ public class GreenKnight extends Enemy{
 
     public GreenKnight(Vector2D<Float> position) {
         super(position);
+        setPseudoPosition(50f,50f);
         SetScale(size);
-        setOffset(xoffset, yoffset);
         setDamage(2);
         setHp(4);
-        setSpeed(2);
+        setSpeed(0);
 
         // TRANSPOSE SPRITE MATRIX
         sprite.flip();
@@ -32,9 +32,10 @@ public class GreenKnight extends Enemy{
         mAnimation = AddComponent(new AnimationMachine(this, sprite));
         
         // ADD COLLIDER COMPONENT
-        mCollision = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<Float>((size.x-25f)*2, size.y*2)));
+        mCollision = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<Float>(size.x, size.y)));
         SetAnimation(UP, sprite.GetSpriteArray(UP), 2);
 
+        setPseudoPositionVisible();
     }
     
 }

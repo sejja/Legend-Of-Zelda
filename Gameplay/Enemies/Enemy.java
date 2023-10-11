@@ -43,6 +43,7 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     protected Pair currentDestination;
     protected Stack<Pair> path = new Stack<Pair>();
     protected Vector2D<Float> pos = GetPosition();
+    protected Vector2D<Float> pseudoPos = getPSeudoPosition();
     protected Vector2D<Float> playerPos = ObjectManager.GetObjectManager().GetObjectByName("Player").GetPosition();
     protected float xlowerBound;
     protected float xupperBound;
@@ -58,10 +59,6 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     protected int mCurrentAnimation;
     protected AnimationMachine mAnimation;
     protected BoxCollider mCollision;
-
-    //offsets of position
-    protected int xoffset = 0;
-    protected int yoffset = 0;
 
     private int delay = 2;
     
@@ -134,7 +131,7 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
         if(this.healthPoints == 0){
             this.delay = 0;
             this.speed = 0;
-            SetAnimation(DOWN, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN), this.delay);
+            //SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), this.delay);
             return;
         }
 
@@ -209,7 +206,7 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     *   Calculates the path to the player if the path is unblocked and is not the same as the last time A* was called
     */ //----------------------------------------------------------------------
     public void Pathfinding() {
-        Pair enemyTile = PositionToPair(pos);
+        Pair enemyTile = PositionToPair(getPSeudoPosition());
         finalDestination = PositionToPair(playerPos);
         if(isDestinationChanged() && isDestinationReachable()){
             lastFinalDestination = finalDestination;
@@ -224,7 +221,7 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     */ //----------------------------------------------------------------------
     public Pair PositionToPair(Vector2D<Float> position) {
         int divisior = 64;
-        Pair pair = new Pair(Math.round((position.x +xoffset)/divisior), Math.round((position.y +yoffset)/divisior));
+        Pair pair = new Pair(Math.round((position.x/divisior)), Math.round((position.y/divisior)));
         return pair;
     }
 
@@ -264,7 +261,7 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     *   Calculates the movement of the Enemy
     */ //----------------------------------------------------------------------
     public void MovementVector() {
-        Vector2D<Float> dir = new Vector2D<Float>(playerPos.x - (pos.x +xoffset), playerPos.y - (pos.y +yoffset));
+        Vector2D<Float> dir = new Vector2D<Float>(playerPos.x - pseudoPos.x, playerPos.y - pseudoPos.x);
         normalizedDirection=Normalize(dir);
     }
 
@@ -289,16 +286,16 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
             yupperBound = currentDestination.getSecond()*64 + 3;
 
             //If currentDestination reached, pop next destination
-            if(((((xlowerBound <= pos.x+xoffset) && (pos.x+xoffset <= xupperBound)) && ((ylowerBound <= pos.y+yoffset) && (pos.y+yoffset <= yupperBound)))) && (currentDestination != finalDestination) && !path.isEmpty()){
+            if(((((xlowerBound <= pseudoPos.x) && (pseudoPos.x <= xupperBound)) && ((ylowerBound <= pseudoPos.y) && (pseudoPos.y <= yupperBound)))) && (currentDestination != finalDestination) && !path.isEmpty()){
                 path.pop();
                 if(!path.isEmpty()){
                     currentDestination = path.peek();
                 }
-                normalizedDirection = Normalize(new Vector2D<Float>(currentDestination.getFirst()*64 - (pos.x+xoffset), currentDestination.getSecond()*64 - (pos.y+yoffset)));
+                normalizedDirection = Normalize(new Vector2D<Float>(currentDestination.getFirst()*64 - (pseudoPos.x), currentDestination.getSecond()*64 - (pseudoPos.y)));
                 pos.x += normalizedDirection.x * speed;
                 pos.y += normalizedDirection.y * speed;
             }else{
-                normalizedDirection = Normalize(new Vector2D<Float>(currentDestination.getFirst()*64 - (pos.x+xoffset), currentDestination.getSecond()*64 - (pos.y+yoffset)));
+                normalizedDirection = Normalize(new Vector2D<Float>(currentDestination.getFirst()*64 - (pseudoPos.x), currentDestination.getSecond()*64 - (pseudoPos.y)));
                 pos.x += normalizedDirection.x * speed;
                 pos.y += normalizedDirection.y * speed;
             }
@@ -314,6 +311,14 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     
     public void KnockBack() {
         Vector2D<Float> dir = pos.getVectorToAnotherActor(playerPos);
+        normalizedDirection=Normalize(dir);
+        pos.x -= normalizedDirection.x * 60;
+        pos.y -= normalizedDirection.y * 60;
+        SetPosition(pos);
+    }
+
+    public void KnockBack(Vector2D<Float> attackerPos) {
+        Vector2D<Float> dir = pos.getVectorToAnotherActor(attackerPos);
         normalizedDirection=Normalize(dir);
         pos.x -= normalizedDirection.x * 60;
         pos.y -= normalizedDirection.y * 60;
@@ -352,10 +357,6 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     }
 
     // Getters and Setters
-    public void setOffset(int x, int y){
-        xoffset = x;
-        yoffset = y;
-    }
 
     public void setDamage(int damage) {
         this.damage = damage;
@@ -383,6 +384,8 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     public Enemy getEnemy(){
         return (Enemy)this;
     }
+
+    
     
     
 }

@@ -40,6 +40,17 @@ public class Spritesheet {
     *
     *   Consntructs an sprite from the filename, the width, and the height
     */ //----------------------------------------------------------------------
+    public Spritesheet(String file, int nrow, int ncol, boolean whatever) {
+        mSpriteSheet = LoadSprite(file);  
+        mUCoord = mSpriteSheet.getWidth()/nrow;
+        mVCoord = mSpriteSheet.getHeight()/ncol;
+
+        mWidth = mSpriteSheet.getWidth() / mUCoord;
+        mHeight = mSpriteSheet.getHeight() / mVCoord; 
+        LoadSpriteArray();
+    }
+
+
     public Spritesheet(String file, int w, int h) {
         mUCoord = w;
         mVCoord = h;
@@ -226,7 +237,7 @@ public class Spritesheet {
     */ //----------------------------------------------------------------------
     public void flip(){
         BufferedImage[][] m = this.GetSpriteArray2D();
-        BufferedImage[][] temp = new BufferedImage[m[0].length][m.length];
+        BufferedImage[][] temp = new BufferedImage[m[0].length+4][m.length];
         for (int i = 0; i < m.length; i++){
             for (int j = 0; j < m[0].length; j++){
                 temp[j][i] = m[i][j];

@@ -17,6 +17,7 @@ import Engine.Math.Vector2D;
 import Engine.Physics.CollisionResult;
 import Engine.Physics.Components.BoxCollider;
 import Gameplay.States.PlayState;
+import Gameplay.AnimatedObject.Bomb;
 import Gameplay.Enemies.Enemy;
 import Gameplay.LifeBar.LifeBar;
 import Gameplay.NPC.Npc;
@@ -74,6 +75,7 @@ public class Player extends Actor {
     protected int healthPoints = 10;
     private ZeldaCameraComponent mCamera;
     protected BoxCollider mCollider;
+    protected BoxCollider hitbox;
     final private  int damage = 2;
     private int velocity = 0;
     final int default_velocity = 10;
@@ -109,6 +111,11 @@ public class Player extends Actor {
         lifeBar = new LifeBar(getPlayer(), getHealthPoints());
         //---------------------------------------------------------------------
         mCollider = (BoxCollider)AddComponent(new BoxCollider(this));
+
+        setPseudoPosition(50f, 50f);
+        setPseudoPositionVisible();
+
+        hitbox = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<Float>(55f, 60f), true));
     }
     // ------------------------------------------------------------------------
 
@@ -197,6 +204,16 @@ public class Player extends Actor {
                 bow =false;
             }
         });
+        InputManager.SubscribeReleased(KeyEvent.VK_B, new InputFunction() {
+            @Override
+            public void Execute() {
+                if(nbombs >= 0){
+                    new Bomb(new Vector2D<Float>(GetPosition().x, GetPosition().y));
+                    nbombs--;
+                }else{System.out.println("Bombs run out");}
+                
+            }
+        });
         //Show LifeBar_______________________________________________________________________________________
         InputManager.SubscribePressed(KeyEvent.VK_M, new InputFunction() {
             @Override
@@ -210,7 +227,7 @@ public class Player extends Actor {
             @Override
             public void Execute() {Pause();}
         });
-        ///* 
+        ///Interaction_______________________________________________________________________________________
         InputManager.SubscribePressed(KeyEvent.VK_E, new InputFunction() {
             @Override
             public void Execute() {interact();}
@@ -265,7 +282,6 @@ public class Player extends Actor {
         playerStateMachine();
         Animate();
         if(able_to_takeDamage){takeDamage();}
-        mAnimation.GetAnimation().SetDelay(delay);
         lifeBar.Update();
     }
     public void playerStateMachine(){
@@ -299,7 +315,7 @@ public class Player extends Actor {
      * 
      */
     public boolean SolveCollisions(Vector2D<Integer> dif) {
-        CollisionResult res = mCollider.GetBounds().collisionTile(dif.x, dif.y);
+        CollisionResult res = hitbox.GetBounds().collisionTile(dif.x, dif.y);
         falling = res == CollisionResult.Hole;
         return res == CollisionResult.None;
         //return true;
@@ -328,7 +344,6 @@ public class Player extends Actor {
                 if(SolveCollisions(new Vector2D<>(+velocity, 0))) pos.x += velocity;
                 break;
         }
-
         SetPosition(pos);
     }
     // ------------------------------------------------------------------------
@@ -628,7 +643,7 @@ public class Player extends Actor {
         setDamage(2);
         this.direction = DIRECTION.DOWN;
         setToSpawnPoint();
-        mCollider.Reset();
+        hitbox.Reset();
     }
     //------------------------------------------------------------------------
 }

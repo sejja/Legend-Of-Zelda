@@ -8,6 +8,7 @@ import java.util.TreeSet;
 
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Entity;
+import Engine.Math.Vector2D;
 import Gameplay.Enemies.Enemy;
 import Gameplay.NPC.Npc;
 
@@ -55,7 +56,6 @@ public class ObjectManager {
 
     public Entity AddEntity(Enemy e) {
         mNewEntities.add(e);
-        System.out.println("pataa");
         //Map----------------------------------------------------------
         if (!mapAliveActors.containsKey(Enemy.class)){
             mapAliveActors.put(Enemy.class, new LinkedList<Actor>());
@@ -68,7 +68,19 @@ public class ObjectManager {
 
     public void RemoveEntity(Entity e) {
         mDeadEntities.add(e);
+
+        e.SetScale(new Vector2D<>(0f,0f));
+
         if(e instanceof Actor){
+            if(e instanceof Enemy){
+                    try {
+                        mapAliveActors.get(Enemy.class).remove(e);
+                        System.out.println("Se quita");
+                    } catch (java.lang.NullPointerException a) {
+                        //System.err.println(e.getClass() + " Already removed or it does not exist");
+                    }
+                return;
+            }
             try {
                 mapAliveActors.get(e.getClass()).remove(e);
             } catch (java.lang.NullPointerException a) {
