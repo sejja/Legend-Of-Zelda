@@ -8,7 +8,6 @@
 
 package Engine.Graphics.Animations;
 
-import java.awt.Frame;
 import java.awt.image.BufferedImage;
 
 public class Animation {
@@ -25,9 +24,8 @@ public class Animation {
     *   Creates an animation from an array of frames
     */ //----------------------------------------------------------------------
     public Animation(BufferedImage[] frames) {
-        mTimesPlayed = 0;
+        initialValues();
         SetFrames(frames);
-        mDelay = 2;
     }
 
      // ------------------------------------------------------------------------
@@ -36,6 +34,15 @@ public class Animation {
     *   Resets the time played
     */ //----------------------------------------------------------------------
     public Animation() {
+        initialValues();
+    }
+
+    // ------------------------------------------------------------------------
+    /*! Initial Values
+    *
+    *   Initiates the values to some default state
+    */ //----------------------------------------------------------------------
+    private void initialValues() {
         mTimesPlayed = 0;
         mDelay = 2;
     }
