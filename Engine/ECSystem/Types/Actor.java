@@ -14,6 +14,8 @@ import Engine.ECSystem.ObjectManager;
 import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
 import Gameplay.Enemies.Search.Pair;
+import Gameplay.LifeBar.Heart;
+import Gameplay.LifeBar.LifeBar;
 import Gameplay.Link.Player;
 
 public abstract class Actor extends Entity {
@@ -22,6 +24,8 @@ public abstract class Actor extends Entity {
     private Vector2D<Float> pseudoPosition;
     private Float differenceX;
     private Float differenceY;
+
+    private Heart heart;  //To visualize the pseudoPosition
 
     // ------------------------------------------------------------------------
     /*! Add Component
@@ -74,6 +78,8 @@ public abstract class Actor extends Entity {
         //Update every component
         for(Component x : mComponents)
             x.Update();
+
+
         try{
             pseudoPosition.x = differenceX + GetPosition().x;
             pseudoPosition.y = differenceY + GetPosition().y;
@@ -111,7 +117,26 @@ public abstract class Actor extends Entity {
         differenceY = pseudoPosition.y - GetPosition().y;
     }
 
+    public void setPseudoPosition(Float x, Float y){
+        this.pseudoPosition = new Vector2D<Float>(GetPosition());
+        differenceX = x;
+        differenceY = y;
+        pseudoPosition.x = differenceX + GetPosition().x;
+        pseudoPosition.y = differenceY + GetPosition().y;
+    }
+
     public Vector2D<Float> getPSeudoPosition(){
-        return this.pseudoPosition;
+        if (pseudoPosition == null){
+            return GetPosition();
+        }else{
+            return pseudoPosition;
+        }
+    }
+
+    public void setPseudoPositionVisible (boolean VISIBLE){
+        if (heart == null){
+            heart = new Heart(pseudoPosition);
+            heart.SetScale(new Vector2D<Float>(10f, 10f));
+        }
     }
 }
