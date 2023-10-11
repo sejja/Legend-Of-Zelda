@@ -4,6 +4,7 @@ import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.AnimationMachine;
 import Engine.Math.Vector2D;
 import Engine.Physics.Components.BoxCollider;
+import Engine.Physics.Components.ColliderManager;
 import Gameplay.Interactives.Interactive;
 
 public class Rock extends Interactive{
@@ -22,6 +23,7 @@ public class Rock extends Interactive{
         
         // ADD COLLIDER COMPONENT
         mCollision = (BoxCollider)AddComponent(new BoxCollider(this));
+        ColliderManager.GetColliderManager().addCollider(mCollision, true);
         SetAnimation(0, sprite.GetSpriteArray(0), 2);
     }
 }

@@ -1,9 +1,10 @@
 package Engine.Physics.Components;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import Gameplay.Enemies.Enemy;
+import Engine.ECSystem.Types.Actor;
 
 public class ColliderManager {
     private static ColliderManager colliderManager = new ColliderManager();
@@ -36,7 +37,6 @@ public class ColliderManager {
             }
             else{return;}
         }
-        System.out.println(mapAllCollider);
     }
 
     public void removeCollider(BoxCollider collider){
@@ -55,4 +55,8 @@ public class ColliderManager {
     public HashMap<Class, LinkedList<BoxCollider>> getMapAllCollider() {return mapAllCollider;}
     public HashMap<Class, LinkedList<BoxCollider>> getMapAllCollision() {return mapAllCollision;}
     public HashMap<Class, LinkedList<BoxCollider>> getMapAllNonCollision() {return mapAllNonCollision;}
+
+    public ArrayList<Actor> getCollision(){
+        return null;
+    }
 }
