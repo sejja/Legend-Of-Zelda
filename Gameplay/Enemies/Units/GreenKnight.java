@@ -23,7 +23,7 @@ public class GreenKnight extends Enemy{
         SetScale(size);
         setDamage(2);
         setHp(4);
-        setSpeed(2);
+        setSpeed(0);
 
         // TRANSPOSE SPRITE MATRIX
         sprite.flip();

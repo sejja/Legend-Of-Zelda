@@ -2,6 +2,8 @@ package Gameplay.Link;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.ListIterator;
 
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
@@ -139,19 +141,17 @@ public class Arrow extends Actor{
          *      It will calculate a vector to the player position to the enemy position
          *             It will called a KnockBack() function of that enemy
          */
-        ArrayList<Entity> allEntities = ObjectManager.GetObjectManager().getmAliveEntities();
-        for (int i = 0; i < allEntities.size(); i++){
-            if (allEntities.get(i) instanceof Enemy){
-                Enemy enemy = (Enemy) allEntities.get(i);
-                Vector2D<Float> enemyPosition = enemy.GetPosition();
-                //System.out.println(enemyPosition.getModuleDistance(this.GetPosition()));
-                if (enemyPosition.getModuleDistance(this.GetPosition()) < this.GetScale().getModule()){ //Each enemy thats can be attacked
-                    System.out.println("Le da");
-                    enemy.setHealthPoints(damage);
-                    enemy.KnockBack();
-                    endArrow = true;
-                    return;
-                }
+        LinkedList <Actor> enemies = ObjectManager.GetObjectManager().getMapAliveActors().get(Enemy.class);
+        if(enemies == null){return;}
+        ListIterator<Actor>iterator = enemies.listIterator();
+        while (iterator.hasNext()){
+            Enemy currentEnemy  = (Enemy) iterator.next();
+            if(currentEnemy.getPSeudoPosition().getModuleDistance(GetPosition()) < this.GetScale().getModule()-20){
+                System.out.println( "leda");
+                currentEnemy.setHealthPoints(damage);
+                currentEnemy.KnockBack();
+                endArrow = true;
+                return;
             }
         }
     }
