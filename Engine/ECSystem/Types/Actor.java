@@ -19,6 +19,10 @@ import Gameplay.Link.Player;
 public abstract class Actor extends Entity {
     private ArrayList<Component> mComponents;
 
+    private Vector2D<Float> pseudoPosition;
+    private Float differenceX;
+    private Float differenceY;
+
     // ------------------------------------------------------------------------
     /*! Add Component
     *
@@ -70,6 +74,12 @@ public abstract class Actor extends Entity {
         //Update every component
         for(Component x : mComponents)
             x.Update();
+        try{
+            pseudoPosition.x = differenceX + GetPosition().x;
+            pseudoPosition.y = differenceY + GetPosition().y;
+        }catch(java.lang.NullPointerException e){
+            //System.err.println(this.getClass() + ": Pseudoposition not difined");
+        }
     }
 
     // ------------------------------------------------------------------------
@@ -93,5 +103,15 @@ public abstract class Actor extends Entity {
 
     public void setmComponents(ArrayList<Component> mComponents) {
         this.mComponents = mComponents;
+    }
+
+    public void setPseudoPosition(Vector2D<Float> pseudoPosition){
+        this.pseudoPosition = pseudoPosition;
+        differenceX = pseudoPosition.x - GetPosition().x;
+        differenceY = pseudoPosition.y - GetPosition().y;
+    }
+
+    public Vector2D<Float> getPSeudoPosition(){
+        return this.pseudoPosition;
     }
 }
