@@ -50,6 +50,15 @@ public class Spritesheet {
         LoadSpriteArray();
     }
 
+    public Spritesheet(String file, int i, int j, boolean perSprite) {
+        mSpriteSheet = LoadSprite(file);
+        mUCoord = mSpriteSheet.getWidth()/i;
+        mVCoord = mSpriteSheet.getHeight()/j;
+
+        mWidth = mSpriteSheet.getWidth() / mUCoord;
+        mHeight = mSpriteSheet.getHeight() / mVCoord; 
+        LoadSpriteArray();
+    }
     // ------------------------------------------------------------------------
     /*! Constructor
     *
