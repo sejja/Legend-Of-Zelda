@@ -31,7 +31,7 @@ import Engine.Physics.AABB;
 public class BoxCollider extends Component implements Renderable{
 
     private AABB mBounds;
-    private boolean itCollides;
+    private boolean hasCollision;
 
     private Color color = Color.BLUE;
     // ------------------------------------------------------------------------
@@ -54,13 +54,13 @@ public class BoxCollider extends Component implements Renderable{
         mBounds = new AABB(parent.GetPosition(), scale);
     }
 
-    public BoxCollider(Actor parent,Vector2D<Float> scale, boolean itCollides){ //This construct will bild a Hitbox
+    public BoxCollider(Actor parent,Vector2D<Float> scale, boolean hasCollides){ //This construct will bild a Hitbox
         super(parent);
         Vector2D<Float> drawnPoint = new Vector2D<Float>(parent.getPSeudoPosition().x-(scale.x/2), parent.getPSeudoPosition().y-(scale.y/2));
         mBounds = new AABB(drawnPoint, scale);
         color = Color.magenta;
-        this.itCollides = itCollides;
-        if (itCollides){
+        this.hasCollision = hasCollides;
+        if (hasCollision){
 
         }
     }
@@ -83,7 +83,7 @@ public class BoxCollider extends Component implements Renderable{
     public void Update() {
         //mBounds.SetHeight(this.GetBounds().GetWidth()); Para que sirve esto???
         //mBounds.SetWidth(this.GetBounds().GetHeight());
-        if(itCollides){
+        if(hasCollision){
             mBounds.SetPosition(new Vector2D<Float>(super.GetParent().getPSeudoPosition().x-(mBounds.GetWidth()/2), super.GetParent().getPSeudoPosition().y-(mBounds.GetHeight()/2)));
         }
     }

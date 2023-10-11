@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import javax.swing.Box;
+
 import Engine.ECSystem.Types.Actor;
 
 public class ColliderManager {
@@ -21,33 +23,36 @@ public class ColliderManager {
     public static ColliderManager GetColliderManager (){return colliderManager;}
 
     public void addCollider(BoxCollider collider, boolean itCollides){
-        if(!mapAllCollider.containsKey(collider.GetParent().GetSuperClass())){
-            mapAllCollider.put(collider.GetParent().GetSuperClass(), new LinkedList<BoxCollider>());
-            mapAllCollision.put(collider.GetParent().GetSuperClass(), new LinkedList<BoxCollider>());
-            mapAllNonCollision.put(collider.GetParent().GetSuperClass(), new LinkedList<BoxCollider>());
+        Class CLASS = collider.GetParent().GetSuperClass();
+        if(!mapAllCollider.containsKey(CLASS)){
+            mapAllCollider.put(CLASS, new LinkedList<BoxCollider>());
+            mapAllCollision.put(CLASS, new LinkedList<BoxCollider>());
+            mapAllNonCollision.put(CLASS, new LinkedList<BoxCollider>());
             addCollider(collider, itCollides);
         }else{
-            if(!mapAllCollider.get(collider.GetParent().GetSuperClass()).contains(collider)){
-                mapAllCollider.get(collider.GetParent().GetSuperClass()).add(collider);
+            if(!mapAllCollider.get(CLASS).contains(collider)){
+                mapAllCollider.get(CLASS).add(collider);
                 if(itCollides){
-                    mapAllCollision.get(collider.GetParent().GetSuperClass()).add(collider);
+                    mapAllCollision.get(CLASS).add(collider);
                 }else{
-                    mapAllNonCollision.get(collider.GetParent().GetSuperClass()).add(collider);
+                    mapAllNonCollision.get(CLASS).add(collider);
                 }
             }
             else{return;}
         }
+        //System.out.println(mapAllCollider);
     }
 
     public void removeCollider(BoxCollider collider){
-        if(!mapAllCollider.containsKey(collider.GetParent().GetSuperClass())){
+        Class CLASS = collider.GetParent().GetSuperClass();
+        if(!mapAllCollider.containsKey(CLASS)){
             return;
         }else{
-            if(!mapAllCollider.get(collider.GetParent().GetSuperClass()).contains(collider)){return;}
+            if(!mapAllCollider.get(CLASS).contains(collider)){return;}
             else{
-                mapAllCollider.get(collider.GetParent().GetSuperClass()).remove(collider);
-                mapAllCollision.get(collider.GetParent().GetSuperClass()).remove(collider);
-                mapAllNonCollision.get(collider.GetParent().GetSuperClass()).remove(collider);
+                mapAllCollider.get(CLASS).remove(collider);
+                mapAllCollision.get(CLASS).remove(collider);
+                mapAllNonCollision.get(CLASS).remove(collider);
             }
         }
     }
@@ -56,7 +61,12 @@ public class ColliderManager {
     public HashMap<Class, LinkedList<BoxCollider>> getMapAllCollision() {return mapAllCollision;}
     public HashMap<Class, LinkedList<BoxCollider>> getMapAllNonCollision() {return mapAllNonCollision;}
 
-    public ArrayList<Actor> getCollision(){
+    public ArrayList<Actor> getCollision(BoxCollider collider, Class objective, boolean hasCollision){
+        if(hasCollision){
+            
+        }else{
+
+        }
         return null;
     }
 }
