@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import Engine.ECSystem.ObjectManager;
 import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
+import Gameplay.Enemies.Search.Pair;
 import Gameplay.Link.Player;
 
 public abstract class Actor extends Entity {
@@ -88,6 +89,12 @@ public abstract class Actor extends Entity {
     */ //----------------------------------------------------------------------
     public void SetScale(Vector2D<Float> vec) {
         super.SetScale(vec);
+    }
+
+    public Pair PositionToPair(Vector2D<Float> position) { // position needs the offset to be on the middle of the actor (pseudoposition)
+        int divisior = 64;
+        Pair pair = new Pair(Math.round((position.x)/divisior), Math.round((position.y)/divisior));
+        return pair;
     }
 
     public ArrayList<Component> getmComponents() {
