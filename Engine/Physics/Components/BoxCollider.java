@@ -20,11 +20,18 @@ import Engine.Graphics.Components.CameraComponent;
 import Engine.Graphics.Components.Renderable;
 import Engine.Math.Vector2D;
 import Engine.Physics.AABB;
-
+/* Hitbox Implementation
+ *      -> Add a hitbox properties to the actor
+ *      -> Use BoxCollider(Actor parent,Vector2D<Float> scale, boolean itCollides) 
+ *          -> set itCollides true in case of it has Collision
+ *      -> Add hitBox.Update() at the end of the Actor.Update()
+ *      -> Add pseudoPositionUpdate() at the end of the Actor.Update()
+ * 
+ */
 public class BoxCollider extends Component implements Renderable{
 
     private AABB mBounds;
-    private boolean isHitbox;
+    private boolean itCollides;
 
     private Color color = Color.BLUE;
     // ------------------------------------------------------------------------
@@ -52,7 +59,7 @@ public class BoxCollider extends Component implements Renderable{
         Vector2D<Float> drawnPoint = new Vector2D<Float>(parent.getPSeudoPosition().x-(scale.x/2), parent.getPSeudoPosition().y-(scale.y/2));
         mBounds = new AABB(drawnPoint, scale);
         color = Color.magenta;
-        isHitbox = itCollides;
+        this.itCollides = itCollides;
         if (itCollides){
 
         }
@@ -76,7 +83,7 @@ public class BoxCollider extends Component implements Renderable{
     public void Update() {
         //mBounds.SetHeight(this.GetBounds().GetWidth()); Para que sirve esto???
         //mBounds.SetWidth(this.GetBounds().GetHeight());
-        if( isHitbox){
+        if(itCollides){
             mBounds.SetPosition(new Vector2D<Float>(super.GetParent().getPSeudoPosition().x-(mBounds.GetWidth()/2), super.GetParent().getPSeudoPosition().y-(mBounds.GetHeight()/2)));
         }
     }
