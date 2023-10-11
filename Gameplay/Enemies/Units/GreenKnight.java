@@ -35,7 +35,7 @@ public class GreenKnight extends Enemy{
         mCollision = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<Float>(size.x, size.y)));
         SetAnimation(UP, sprite.GetSpriteArray(UP), 2);
 
-        setPseudoPositionVisible(true);
+        setPseudoPositionVisible();
     }
     
 }

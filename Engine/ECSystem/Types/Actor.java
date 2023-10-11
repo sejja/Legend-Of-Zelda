@@ -137,7 +137,7 @@ public abstract class Actor extends Entity {
         }
     }
 
-    public void setPseudoPositionVisible (boolean VISIBLE){
+    public void setPseudoPositionVisible (){
         //System.out.println("ifdh");
         mCollider = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<>(40f,50f)));
         mCollider.GetBounds().SetBox(pseudoPosition, new Vector2D<>(5f,5f));

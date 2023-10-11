@@ -112,7 +112,7 @@ public class Player extends Actor {
         mCollider = (BoxCollider)AddComponent(new BoxCollider(this));
 
         setPseudoPosition(50f, 50f);
-        setPseudoPositionVisible(true);
+        setPseudoPositionVisible();
     }
     // ------------------------------------------------------------------------
 
