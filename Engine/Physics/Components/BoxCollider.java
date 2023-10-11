@@ -21,6 +21,9 @@ import Engine.Physics.AABB;
 
 public class BoxCollider extends Component implements Renderable{
     private AABB mBounds;
+
+
+    private Color color = Color.BLUE;
     // ------------------------------------------------------------------------
     /*! Conversion Constructor
     *
@@ -84,10 +87,13 @@ public class BoxCollider extends Component implements Renderable{
         return mBounds;
     }
 
+    public void setColor (Color color ){
+        this.color = color;
+    }
     @Override
     public void Render(Graphics2D g, CameraComponent camerapos) {
         var campos = camerapos.GetCoordinates();
-       g.setColor(Color.blue);
+       g.setColor(color);
        g.drawRect((int)(float)(mBounds.GetPosition().x - campos.x), (int)(float)(mBounds.GetPosition().y - campos.y), (int)mBounds.GetWidth(), (int)mBounds.GetHeight());
     }
 }
