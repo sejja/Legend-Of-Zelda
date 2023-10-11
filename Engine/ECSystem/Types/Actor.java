@@ -81,12 +81,6 @@ public abstract class Actor extends Entity {
     */ //----------------------------------------------------------------------
     public void Update() {
         //Update every component
-        try{
-            pseudoPosition.x = differenceX + GetPosition().x;
-            pseudoPosition.y = differenceY + GetPosition().y;
-        }catch(java.lang.NullPointerException e){
-            //System.err.println(this.getClass() + ": Pseudoposition not difined");
-        }
         for(Component x : mComponents)
             x.Update();
     }
@@ -124,8 +118,7 @@ public abstract class Actor extends Entity {
         this.pseudoPosition = new Vector2D<Float>(GetPosition());
         differenceX = x;
         differenceY = y;
-        pseudoPosition.x = differenceX + GetPosition().x;
-        pseudoPosition.y = differenceY + GetPosition().y;
+        pseudoPositionUpdate();
     }
 
     public Vector2D<Float> getPSeudoPosition(){
@@ -134,6 +127,11 @@ public abstract class Actor extends Entity {
         }else{
             return pseudoPosition;
         }
+    }
+
+    protected void pseudoPositionUpdate(){
+        pseudoPosition.x = differenceX + GetPosition().x;
+        pseudoPosition.y = differenceY + GetPosition().y;
     }
 
     public void setPseudoPositionVisible (){

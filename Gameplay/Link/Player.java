@@ -283,6 +283,8 @@ public class Player extends Actor {
         Animate();
         if(able_to_takeDamage){takeDamage();}
         lifeBar.Update();
+        pseudoPositionUpdate();
+        hitbox.Update();
     }
     public void playerStateMachine(){
         if(dash){dash();return;}//Early return dash is mostly the dominate action, so if link is dashing he can not do anything else
