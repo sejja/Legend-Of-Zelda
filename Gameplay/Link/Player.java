@@ -110,6 +110,9 @@ public class Player extends Actor {
         lifeBar = new LifeBar(getPlayer(), getHealthPoints());
         //---------------------------------------------------------------------
         mCollider = (BoxCollider)AddComponent(new BoxCollider(this));
+
+        setPseudoPosition(new Vector2D<Float>(GetPosition().x+10000, GetPosition().y+50));
+        setPseudoPositionVisible(true);
     }
     // ------------------------------------------------------------------------
 
