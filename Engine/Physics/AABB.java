@@ -35,7 +35,12 @@ public class AABB {
     public Vector2D<Float> GetPosition() {
         return mPosition;
     }
-
+    public void SetPosition (Vector2D<Float> position){
+        this.mPosition = position;
+    }
+    public Vector2D<Float> GetScale(){
+        return this.mSize;
+    }
     // ------------------------------------------------------------------------
     /*! Get Height
     *

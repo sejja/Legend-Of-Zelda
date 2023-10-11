@@ -16,6 +16,7 @@ import Engine.Graphics.Spritesheet;
 import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
 import Engine.Physics.Components.BoxCollider;
+import Engine.Physics.Components.ColliderManager;
 import Gameplay.Enemies.Search.Pair;
 import Gameplay.Interactives.Blocks.Rock;
 import Gameplay.LifeBar.Heart;
@@ -86,10 +87,8 @@ public abstract class Actor extends Entity {
         }catch(java.lang.NullPointerException e){
             //System.err.println(this.getClass() + ": Pseudoposition not difined");
         }
-
         for(Component x : mComponents)
             x.Update();
-            
     }
 
     // ------------------------------------------------------------------------
@@ -139,9 +138,9 @@ public abstract class Actor extends Entity {
 
     public void setPseudoPositionVisible (){
         //System.out.println("ifdh");
-        mCollider = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<>(40f,50f)));
+        mCollider = (BoxCollider)AddComponent(new BoxCollider(this));
         mCollider.GetBounds().SetBox(pseudoPosition, new Vector2D<>(5f,5f));
         mCollider.setColor(Color.RED);
-        //System.out.println(mComponents);
+        System.out.println(mComponents);
     }
 }
