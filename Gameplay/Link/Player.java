@@ -11,6 +11,7 @@ import Engine.Graphics.Animation;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.AnimationMachine;
 import Engine.Graphics.Components.ZeldaCameraComponent;
+import Engine.Graphics.Tile.Block;
 import Engine.Input.InputFunction;
 import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
@@ -20,6 +21,7 @@ import Engine.Physics.Components.ColliderManager;
 import Gameplay.States.PlayState;
 import Gameplay.AnimatedObject.Bomb;
 import Gameplay.Enemies.Enemy;
+import Gameplay.Interactives.Interactive;
 import Gameplay.LifeBar.LifeBar;
 import Gameplay.NPC.Npc;
 
@@ -233,6 +235,12 @@ public class Player extends Actor {
             @Override
             public void Execute() {interact();}
         });
+        InputManager.SubscribePressed(KeyEvent.VK_T, new InputFunction() {
+            @Override
+            public void Execute() {
+                System.out.println(ColliderManager.GetColliderManager().getCollision(hitbox, Interactive.class, true));
+            }
+        });
     }
     // ------------------------------------------------------------------------
 
@@ -315,13 +323,12 @@ public class Player extends Actor {
     // ------------------------------------------------------------------------
     
     /* Colision
-     * 
+     *      -> True if there is no collision
      */
-    public boolean SolveCollisions(Vector2D<Integer> dif) {
+    public boolean SolveCollisions(Vector2D<Integer> dif) { 
         CollisionResult res = hitbox.GetBounds().collisionTile(dif.x, dif.y);
         falling = res == CollisionResult.Hole;
-        return res == CollisionResult.None;
-        //return true;
+        return (res == CollisionResult.None);
     }
     // ------------------------------------------------------------------------
     

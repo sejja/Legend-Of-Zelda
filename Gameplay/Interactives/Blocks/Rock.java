@@ -25,5 +25,8 @@ public class Rock extends Interactive{
         mCollision = (BoxCollider)AddComponent(new BoxCollider(this));
         ColliderManager.GetColliderManager().addCollider(mCollision, true);
         SetAnimation(0, sprite.GetSpriteArray(0), 2);
+
+        setPseudoPosition(GetScale().x/2, GetScale().y/2);
+        setPseudoPositionVisible();
     }
 }
