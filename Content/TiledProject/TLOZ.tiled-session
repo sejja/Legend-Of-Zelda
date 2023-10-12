@@ -16,24 +16,32 @@
             "scale": 0.75,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1128,
-                "y": 517.3333333333334
+                "x": 400,
+                "y": 399.33333333333326
             }
         },
         "Test.xml": {
             "scale": 0.75,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 445.3333333333333,
-                "y": 399.33333333333326
+                "x": 442.6666666666666,
+                "y": 397.33333333333337
             }
         },
         "TestRoom.tmx": {
-            "scale": 1.05925,
+            "scale": 1.5,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 321.9258909605853,
-                "y": 254.42530092046258
+                "x": 598.6666666666666,
+                "y": 190.66666666666669
+            }
+        },
+        "TestRoom2.tmx": {
+            "scale": 2,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 206.5,
+                "y": 208.5
             }
         }
     },
@@ -47,13 +55,15 @@
         "Test.xml",
         "DungeonCastle.tsx",
         "StressTest.tmx",
-        "TestRoom.tmx"
+        "TestRoom.tmx",
+        "TestRoom2.tmx"
     ],
     "project": "TLOZ.tiled-project",
     "recentFiles": [
         "Test.xml",
         "DungeonCastle.tsx",
         "StressTest.tmx",
+        "TestRoom2.tmx",
         "TestRoom.tmx"
     ],
     "tileset.lastUsedFormat": "tsx",

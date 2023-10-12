@@ -22,7 +22,7 @@ public class AStarSearch{
     public boolean isUnBlocked(int Column, int Row) {
         // Returns true if the cell is not blocked else false
         if (isValid(Column, Row)){
-            Block block = TilemapObject.GetBlockAt(Column, Row);
+            Block block = TileManager.sLevelObjects.GetBlockAt(Column, Row);
             //System.out.println(Column + " " + Row);
             if(block instanceof HoleBlock || block instanceof ObjectBlock) return false;
             return true;

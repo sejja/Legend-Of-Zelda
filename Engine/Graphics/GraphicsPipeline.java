@@ -65,6 +65,10 @@ public class GraphicsPipeline {
         mNewRenderables.add(r);
     }
 
+    public void AddRenderableBottom(Renderable r) {
+        mRenderables.add(0, r);
+    }
+
     // ------------------------------------------------------------------------
     /*! Render
     *
@@ -91,5 +95,9 @@ public class GraphicsPipeline {
     public void RemoveRenderable(Renderable r) {
         mOldRenderables.add(r);
         
+    }
+
+    public CameraComponent GetCamera() {
+        return mCamera;
     }
 }

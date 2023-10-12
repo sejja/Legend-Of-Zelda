@@ -5,9 +5,9 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.Stack;
 import Engine.ECSystem.ObjectManager;
-import Engine.Graphics.Animation;
 import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Spritesheet;
+import Engine.Graphics.Animations.Animation;
 import Engine.Graphics.Components.AnimationMachine;
 import Engine.Graphics.Components.CameraComponent;
 import Engine.Graphics.Components.Renderable;
@@ -17,6 +17,7 @@ import Gameplay.Enemies.Search.*;
 import Gameplay.LifeBar.LifeBar;
 import Gameplay.Link.DirectionObject;
 import Gameplay.Link.DIRECTION;
+import Gameplay.Link.Player;
 
 public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Renderable{
     protected final int UP = 0;
@@ -26,7 +27,7 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
 
     //direction and normalized direction vector
     protected DIRECTION direction = DIRECTION.RIGHT;
-    protected Vector2D<Float> normalizedDirection = new Vector2D(0f,0f);
+    protected Vector2D<Float> normalizedDirection = new Vector2D<Float>(0f,0f);
 
     //player detected
     protected boolean chase = false;
@@ -40,7 +41,7 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     protected Pair currentDestination;
     protected Stack<Pair> path = new Stack<Pair>();
     protected Vector2D<Float> pos = GetPosition();
-    protected Vector2D<Float> playerPos = ObjectManager.GetObjectManager().GetObjectByName("Player").GetPosition();
+    protected Vector2D<Float> playerPos;
     protected float xlowerBound;
     protected float xupperBound;
     protected float ylowerBound;
@@ -181,6 +182,7 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     *   Adds Behavior to the Enemy
     */ //----------------------------------------------------------------------
     public void Update() {
+        playerPos = ObjectManager.GetObjectManager().GetObjectByName(Player.class, "Player").GetPosition();
         //System.out.println("pdsofhiusf");
         super.Update();
         Pathfinding();

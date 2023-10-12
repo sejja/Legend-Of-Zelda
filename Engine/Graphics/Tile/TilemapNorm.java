@@ -19,9 +19,15 @@ import Engine.Physics.AABB;
 public class TilemapNorm extends Tilemap {
 
     private Block[] mBlocks;
+    private int mTileWidth;
+    private int mTileHeight;
+    private int mHeight;
 
-    public TilemapNorm(String data, Spritesheet sprite, int width , int height, int tilewidth, int tileheight, int tilecolumns) {
+    public TilemapNorm(Vector2D<Float> position, String data, Spritesheet sprite, int width , int height, int tilewidth, int tileheight, int tilecolumns) {
         mBlocks = new Block[width * height];
+        mTileHeight = tileheight;
+        mTileWidth = tilewidth;
+        mHeight = height;
 
         String[] block = data.split(",");
 
@@ -30,17 +36,25 @@ public class TilemapNorm extends Tilemap {
 
             if(temp != 0) {
 
-                mBlocks[i] = new Normblock(sprite.GetSprite((int) ((temp - 1) % tilecolumns), (int) ((temp - 1) / tilecolumns)), new Vector2D<Integer>((int) (i % width) * tilewidth, (int) (i / height) * tileheight), tilewidth, tileheight);
+                Vector2D<Integer> positiontemp = new Vector2D<Integer>((int) (i % width) * tilewidth, (int) (i / height) * tileheight);
+                positiontemp.x += (int)(float)position.x;
+                positiontemp.y += (int)(float)position.y;
+                mBlocks[i] = new Normblock(sprite.GetSprite((int) ((temp - 1) % tilecolumns), (int) ((temp - 1) / tilecolumns)), positiontemp, tilewidth, tileheight);
             }
         }
     }
 
-    public void Render(Graphics2D g, CameraComponent camerapos) {
-        Vector2D<Float> camcoord = camerapos.GetCoordinates();
+    public void Render(Graphics2D g, CameraComponent camerapos, Vector2D<Float> tilemappos) {
+        var cameracoord = camerapos.GetCoordinates();
 
-        for(int i = 0; i < mBlocks.length; i++) {
-            if(mBlocks[i] != null && camerapos.OnBounds(new AABB(new Vector2D<>((float)mBlocks[i].mPosition.x, (float)mBlocks[i].mPosition.y), new Vector2D<>((float)mBlocks[i].mWidth, (float)mBlocks[i].mHeight))))
-                mBlocks[i].Render(g, camcoord);
+        int x = (int) ((cameracoord.x - tilemappos.x) / mTileWidth);
+        int y = (int) ((cameracoord.y - tilemappos.y) / mTileHeight);
+
+        for(int i = x; i < x + (camerapos.GetDimensions().x / mTileWidth) + 1; i++) {
+            for(int j = y; j < y + (camerapos.GetDimensions().y / mTileHeight) + 2; j++) {
+                if(i + (j * mHeight) > -1 && i + (j * mHeight) < mBlocks.length && mBlocks[i + (j * mHeight)] != null)
+                    mBlocks[i + (j * mHeight)].Render(g, cameracoord);
+            }
         }
     }
 }

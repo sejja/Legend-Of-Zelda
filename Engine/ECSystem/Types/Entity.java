@@ -8,7 +8,6 @@
 
 package Engine.ECSystem.Types;
 
-import Engine.ECSystem.ObjectManager;
 import Engine.Math.Transform;
 import Engine.Math.Vector2D;
 
@@ -33,7 +32,7 @@ public abstract class Entity implements Base{
     *   Sets the position of the actor
     */ //----------------------------------------------------------------------
     public void SetPosition(Vector2D<Float> p) {
-        this.mTransform.mPosition = p;
+        mTransform.mPosition = p;
     }
 
     // ------------------------------------------------------------------------
@@ -62,7 +61,6 @@ public abstract class Entity implements Base{
     protected Entity() {
         mName = "No name";
         mTransform = new Transform();
-        mTransform.mScale = new Vector2D<Float>(1.f, 1.f);
     }
 
     // ------------------------------------------------------------------------

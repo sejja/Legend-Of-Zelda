@@ -9,9 +9,6 @@
 package Engine.ECSystem.Types;
 
 import java.util.ArrayList;
-
-import Engine.ECSystem.ObjectManager;
-import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
 import Gameplay.Link.Player;
 
@@ -66,18 +63,7 @@ public abstract class Actor extends Entity {
     *   Updates the Animation
     */ //----------------------------------------------------------------------
     public void Update() {
-        //Update every component
-        for(Component x : mComponents)
-            x.Update();
-    }
-
-    // ------------------------------------------------------------------------
-    /*! Set Size
-    *
-    *   Sets the Size of the Actor
-    */ //----------------------------------------------------------------------
-    public void SetScale(Vector2D<Float> vec) {
-        super.SetScale(vec);
+        mComponents.stream().forEach((x) -> {x.Update();});
     }
 
     public ArrayList<Component> getmComponents() {

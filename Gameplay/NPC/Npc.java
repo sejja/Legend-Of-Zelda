@@ -14,10 +14,10 @@ import javax.swing.JLabel;
 
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
-import Engine.Graphics.Animation;
 import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Sprite;
 import Engine.Graphics.Spritesheet;
+import Engine.Graphics.Animations.Animation;
 import Engine.Graphics.Components.AnimationMachine;
 import Engine.Graphics.Components.CameraComponent;
 import Engine.Graphics.Components.SpriteComponent;
@@ -28,6 +28,7 @@ import Engine.Input.InputFunction;
 import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
 import Engine.Physics.Components.BoxCollider;
+import Engine.Window.GameLoop;
 import Gameplay.Link.*;
 import Gameplay.Link.Player;
 import Gameplay.States.PlayState;
@@ -118,17 +119,13 @@ public class Npc extends Actor {
         }else{
             //System.out.println("udbfyhisd");
             RemoveComponent(dialogueWindow);
-            Player link = (Player) ObjectManager.GetObjectManager().getMapAliveActors().get(Player.class).getFirst();
+            Player link = (Player) ObjectManager.GetObjectManager().GetPawn();
             link.removeInteraction();
             Pause();
         }
     }
 
     private void Pause(){
-        if(PlayState.getGameState() == PlayState.getPlayState()){
-            PlayState.setGameState(2);
-        }else if(PlayState.getGameState() == PlayState.getPauseState()){
-            PlayState.setGameState(1);
-        }
+        GameLoop.SetPaused(!GameLoop.IsPaused());
     }
 }

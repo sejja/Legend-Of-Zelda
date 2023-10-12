@@ -10,13 +10,15 @@ package Engine.Graphics.Components;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Component;
 import Engine.ECSystem.Types.Entity;
-import Engine.Graphics.Animation;
 import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Spritesheet;
+import Engine.Graphics.Animations.Animation;
+import Engine.Graphics.Animations.AnimationEvent;
 import Engine.Math.Vector2D;
 import Engine.Physics.AABB;
 
@@ -32,10 +34,10 @@ public final class AnimationMachine extends Component implements Renderable {
      *          -> Externally code will be more clean because each setAnimation in each actor has to consider if it must be ended
      *          -> No change in other codes of simple actors such as normal enemies or npcs
      */
-    private boolean must_complete = false;
-    private BufferedImage[] must_end_frames;
-    private BufferedImage[] previus_frames;
-    public boolean finised_Animation = true; //It turns true when the animation is finished
+    private boolean mAnimationLocked = false;
+    private BufferedImage[] mBlendFrames;
+    private BufferedImage[] mBaseFrames;
+    private ArrayList<AnimationEvent> mFinishedEvent;
 
     // ------------------------------------------------------------------------
     /*! Animation Machine
@@ -46,6 +48,7 @@ public final class AnimationMachine extends Component implements Renderable {
         super(parent);
         mSprite = sprite;
         mAnimation = new Animation();
+        mFinishedEvent = new ArrayList<>();
     }
 
     // ------------------------------------------------------------------------
@@ -83,20 +86,21 @@ public final class AnimationMachine extends Component implements Renderable {
      */
     public void SetFrames(BufferedImage[] frames){ 
         //System.out.println(must_complete);
-        if (must_complete && must_end_frames == null)
-        {
-            previus_frames = mAnimation.GetFrames();
-            must_end_frames = frames;
-            mAnimation.SetFrames(must_end_frames);
-        }
-        else if (must_complete && must_end_frames != null)
-        {   
-            //System.out.println("Continue must complete animation");
-            return;
-        }
-        else
-        {
-            must_complete = false;
+
+        //If the animation has been locked and we don't have frames to blend with
+        if (mAnimationLocked && mBlendFrames == null) {
+            mBaseFrames = mAnimation.GetFrames();
+            mBlendFrames = frames;
+            mAnimation.SetFrames(mBlendFrames);
+        
+        //If we have locked blend frames, unlock the animation
+        } else if (!mAnimationLocked && mBlendFrames != null) {   
+            mAnimationLocked = false;
+            mAnimation.SetFrames(frames);
+
+        //Else, proceed nomally
+        } else {
+            mAnimationLocked = false;
             mAnimation.SetFrames(frames);
         }
     }
@@ -117,15 +121,18 @@ public final class AnimationMachine extends Component implements Renderable {
     */ //----------------------------------------------------------------------
     @Override
     public void Update() {
-        //System.out.println(must_complete);
-        if (mAnimation.Update() && must_complete){ //if Animation has ended
-            mAnimation.SetFrames(previus_frames);
-            must_complete = false;
-            must_end_frames = null;
-            previus_frames = null;
-            finised_Animation = true;
-        }else{
-            finised_Animation = false;
+        final int mPreviousFrame = mAnimation.GetFrame();
+
+        //If we update and we change the frame
+        if (mAnimation.Update() && mAnimationLocked){
+            mAnimation.SetFrames(mBaseFrames);
+            mAnimationLocked = false;
+            mBlendFrames = null;
+            mBaseFrames = null;
+
+            //Trigger the Finished events
+            if(mAnimation.GetFrame() == 0 && mPreviousFrame != 0)
+                mFinishedEvent.stream().forEach(x -> x.OnTrigger());
         }
     }
 
@@ -146,21 +153,40 @@ public final class AnimationMachine extends Component implements Renderable {
     */ //----------------------------------------------------------------------
     @Override
     public void Render(Graphics2D g, CameraComponent camerapos) {
-        Vector2D<Float> camcoord = camerapos.GetCoordinates();
-        var scale = GetParent().GetScale();
+        final Vector2D<Float> camcoord = camerapos.GetCoordinates();
+        final Entity parent = GetParent();
+        final Vector2D<Float> scale = parent.GetScale();
+        final Vector2D<Float> position = parent.GetPosition();
 
-        if(camerapos.OnBounds(new AABB(GetParent().GetPosition(), GetParent().GetScale())))
-            g.drawImage(mAnimation.GetCurrentFrame(), (int)(float)GetParent().GetPosition().x - (int)(float)camcoord.x - (int)(scale.x / 4), (int)(float)GetParent().GetPosition().y - (int)(float)camcoord.y, (int)(float)GetParent().GetScale().x, (int)(float)GetParent().GetScale().y, null);
+        //If we are on bounds, render
+        if(camerapos.OnBounds(new AABB(position, scale)))
+            g.drawImage(mAnimation.GetCurrentFrame(), (int)(float)position.x - (int)(float)camcoord.x - (int)(scale.x / 4), (int)(float)position.y - (int)(float)camcoord.y, (int)(float)scale.x, (int)(float)scale.y, null);
     }
-    //Call this function before adding the animation
-    public void setMust_Complete(boolean b){
-        must_complete = b;
+    
+    // ------------------------------------------------------------------------
+    /*! Set Must Complete
+    *
+    *   Sets wether this animation should be completed or not
+    */ //----------------------------------------------------------------------
+    public void SetMustComplete(boolean b){
+        mAnimationLocked = b;
     }
 
-    public void setMust_Complete(){
-        must_complete = true;
+    // ------------------------------------------------------------------------
+    /*! Must Complete
+    *
+    *   Returns wether the animation must complete or not
+    */ //----------------------------------------------------------------------
+    public boolean MustComplete(){
+        return mAnimationLocked;
     }
-    public boolean getMust_Complete(){
-        return must_complete;
+
+    // ------------------------------------------------------------------------
+    /*! Add Finished Listener
+    *
+    *   Adds a Listener for finished animation events
+    */ //----------------------------------------------------------------------
+    public void AddFinishedListener(AnimationEvent e) {
+        mFinishedEvent.add(e);
     }
 }

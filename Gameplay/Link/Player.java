@@ -2,13 +2,17 @@ package Gameplay.Link;
 
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
+import Engine.ECSystem.Level;
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
-import Engine.Graphics.Animation;
+import Engine.ECSystem.Types.Entity;
 import Engine.Graphics.Spritesheet;
+import Engine.Graphics.Animations.Animation;
+import Engine.Graphics.Animations.AnimationEvent;
 import Engine.Graphics.Components.AnimationMachine;
 import Engine.Graphics.Components.ZeldaCameraComponent;
 import Engine.Input.InputFunction;
@@ -16,9 +20,12 @@ import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
 import Engine.Physics.CollisionResult;
 import Engine.Physics.Components.BoxCollider;
+import Engine.Window.GameLoop;
 import Gameplay.States.PlayState;
 import Gameplay.Enemies.Enemy;
+import Gameplay.Enemies.Units.GreenKnight;
 import Gameplay.LifeBar.LifeBar;
+import Gameplay.NPC.DialogueWindow;
 import Gameplay.NPC.Npc;
 
 public class Player extends Actor {
@@ -84,6 +91,8 @@ public class Player extends Actor {
      */
     private Npc currentNPCinteraction;
     //----------------------------------------------------------------------
+    protected boolean isTouchingNpc;
+    private Vector2D<Float> npcIndex;
 
     //Methods______________________________________________________________________________________________________________________________________________________________________________
 
@@ -101,7 +110,6 @@ public class Player extends Actor {
         mAnimation = AddComponent(new AnimationMachine(this, sprite));
         mCamera = AddComponent(new ZeldaCameraComponent(this));
         mCamera.Bind();
-        mCamera.SetBounds(new Vector2D<>(800.f, 600.f), new Vector2D<>(75 * 32.f, 75 * 32.f));
         SetAnimation(RIGHT, sprite.GetSpriteArray(RIGHT), delay);
         implementsActions();
         this.SetName("Player");
@@ -109,6 +117,7 @@ public class Player extends Actor {
         lifeBar = new LifeBar(getPlayer(), getHealthPoints());
         //---------------------------------------------------------------------
         mCollider = (BoxCollider)AddComponent(new BoxCollider(this));
+        ObjectManager.GetObjectManager().SetPawn(this);
     }
     // ------------------------------------------------------------------------
 
@@ -197,7 +206,7 @@ public class Player extends Actor {
                 bow =false;
             }
         });
-        //Show LifeBar_______________________________________________________________________________________
+
         InputManager.SubscribePressed(KeyEvent.VK_M, new InputFunction() {
             @Override
             public void Execute() {lifeBar.setVisible(true);}
@@ -214,6 +223,28 @@ public class Player extends Actor {
         InputManager.SubscribePressed(KeyEvent.VK_E, new InputFunction() {
             @Override
             public void Execute() {interact();}
+        });
+
+        mAnimation.AddFinishedListener(new AnimationEvent() {
+
+            @Override
+            public void OnTrigger() {
+                if (falling) //Finished falling animation
+                {
+                    linkHasFalled();
+                }
+                else if (nArrows != 0 && bow) //Spawn Arrow
+                {
+                    shootArrow();
+                    bow = false;
+                }
+                else if (attack) //Finished Attack (attack && !bow)
+                {
+                    Attack();
+                    bow = false;
+                    attack = false;
+                }
+            }
         });
     }
     // ------------------------------------------------------------------------
@@ -232,8 +263,8 @@ public class Player extends Actor {
      * 
      */
     public void Animate() {
-        //System.out.println(actionToString());
-        if (mAnimation.getMust_Complete()){return;} //Early return, if it is a animation thats has to be complete, do not animaate
+
+        if (mAnimation.MustComplete()){return;} //Early return, if it is a animation thats has to be complete, do not animaate
         if (stop){
             setMovement(Action.STOP);
             if (attack){setMovement(Action.ATTACK);}
@@ -272,25 +303,8 @@ public class Player extends Actor {
         if(dash){dash();return;}//Early return dash is mostly the dominate action, so if link is dashing he can not do anything else
         else
         {
-            if(mAnimation.finised_Animation){ //When a special animation has finished
-                if (falling) //Finished falling animation
-                {
-                    linkHasFalled();
-                }
-                else if (nArrows != 0 && bow) //Spawn Arrow
-                {
-                    shootArrow();
-                    bow = false;
-                }
-                else if (attack) //Finished Attack (attack && !bow)
-                {
-                    Attack();
-                    bow = false;
-                    attack = false;
-                }
-                 mAnimation.finised_Animation = false;
-            }
-            else if (!mAnimation.getMust_Complete()){Move();}
+
+            if (!mAnimation.MustComplete()){Move();}
         }
     }
     // ------------------------------------------------------------------------
@@ -299,7 +313,10 @@ public class Player extends Actor {
      * 
      */
     public boolean SolveCollisions(Vector2D<Integer> dif) {
-        CollisionResult res = mCollider.GetBounds().collisionTile(dif.x, dif.y);
+        CollisionResult res = mCollider.GetBounds().collisionTile(
+            dif.x - Level.mCurrentLevel.GetBounds().GetPosition().x, 
+            dif.y - Level.mCurrentLevel.GetBounds().GetPosition().y);
+        
         falling = res == CollisionResult.Hole;
         return res == CollisionResult.None;
         //return true;
@@ -421,16 +438,29 @@ public class Player extends Actor {
         attack = false;
     }
     private void takeDamage(){ //Looking for enemies to take damage
-        LinkedList <Actor> enemies = ObjectManager.GetObjectManager().getMapAliveActors().get(Enemy.class);
-        if(enemies == null){return;}
-        ListIterator<Actor>iterator = enemies.listIterator();
-        while (iterator.hasNext()){
-            Enemy currentEnemy  = (Enemy) iterator.next();
-            if(currentEnemy.GetPosition().getModuleDistance(GetPosition()) < this.GetScale().getModule()/3){
-                this.setDamage(currentEnemy.getDamage());
-                currentEnemy.KnockBack();
-                return;
+        //System.out.println("Vida = " + healthPoints);
+        ArrayList<Entity> allEntities = ObjectManager.GetObjectManager().GetAllObjectsOfType(GreenKnight.class);
+
+        if(allEntities != null)
+            for (int i = 0; i < allEntities.size(); i++){
+                Enemy enemy = (Enemy) allEntities.get(i);
+                Vector2D<Float> enemyPosition = enemy.GetPosition();
+                if (enemyPosition.getModuleDistance(this.GetPosition()) < this.GetScale().y/2){
+                    this.setDamage(enemy.getDamage());
+                    enemy.KnockBack();
+                }
             }
+
+        allEntities = ObjectManager.GetObjectManager().GetAllObjectsOfType(Npc.class);
+        for (int i = 0; i < allEntities.size(); i++){
+                Npc npc = (Npc) allEntities.get(i);
+                Vector2D<Float> npcPosition = npc.GetPosition();
+                if (npcPosition.getModuleDistance(this.GetPosition()) < this.GetScale().y/2){
+                    isTouchingNpc = true;
+                    npcIndex = npc.GetPosition();
+                } else{
+                    //isTouchingNpc = false; El segundo Npc no funciona
+                }
         }
     }
     //------------------------------------------------------------------------
@@ -468,15 +498,28 @@ public class Player extends Actor {
     public void setAttack(boolean attack) {this.attack = attack;}
     public void setAble_to_takeDamage(boolean able_to_takeDamage) {this.able_to_takeDamage = able_to_takeDamage;}
     private void setMovement(Action type){
+
         if (type == null){
-            mAnimation.setMust_Complete();
+            mAnimation.SetMustComplete(true);
             if(falling && mCurrentAnimation != FALL || mAnimation.GetAnimation().GetDelay() == -1) {SetAnimation(FALL, mAnimation.GetSpriteSheet().GetSpriteArray(FALL), delay);}//Enviromental special case
             return;
         }
 
-        if (type == Action.ATTACK || type == Action.BOW){mAnimation.setMust_Complete();}//Activate must-end sequence
+        if (type == Action.ATTACK || type == Action.BOW){ //Activate must-end sequence
+            mAnimation.SetMustComplete(true);
+        }
 
         int i = type.getID();
+
+        if(falling && mCurrentAnimation != FALL+i|| mAnimation.GetAnimation().GetDelay() == -1) {
+            SetAnimation(FALL+i, mAnimation.GetSpriteSheet().GetSpriteArray(FALL+i), delay);
+            mAnimation.SetMustComplete(true);
+            return;
+        }
+
+        if (type == Action.ATTACK || type == Action.BOW){mAnimation.SetMustComplete(true);}//Activate must-end sequence
+
+        i = type.getID();
 
         switch(direction){
             case UP:
@@ -530,15 +573,18 @@ public class Player extends Actor {
          *          If the DIRECTION of the vector Player-Enemy and The DIRECTION of the player is the same
          *             It will called a KnockBack() function of that enemy
          */
-        LinkedList <Actor> enemies = ObjectManager.GetObjectManager().getMapAliveActors().get(Enemy.class);
-        if(enemies == null){return;}
-        ListIterator<Actor>iterator = enemies.listIterator();
-        while (iterator.hasNext()){
-            Enemy currentEnemy  = (Enemy) iterator.next();
-            if(currentEnemy.GetPosition().getModuleDistance(GetPosition()) < this.GetScale().getModule()/2){
-                System.out.println( "leda");
-                currentEnemy.setHealthPoints(damage);
-                currentEnemy.KnockBack();
+        ArrayList<Entity> allEntities = ObjectManager.GetObjectManager().GetAllObjectsOfType(GreenKnight.class);
+        for (int i = 0; i < allEntities.size(); i++){
+            if (allEntities.get(i) instanceof Enemy){
+                Enemy enemy = (Enemy) allEntities.get(i);
+                Vector2D<Float> enemyPosition = enemy.GetPosition();
+                if (enemyPosition.getModuleDistance(this.GetPosition()) < this.GetScale().y/2+100){ //Each enemy thats can be attacked
+                    if(direction == getAttackDirection(this.GetPosition().getVectorToAnotherActor(enemyPosition))){
+                        System.out.println("Le da");
+                        enemy.setHealthPoints(damage);
+                        enemy.KnockBack();
+                    }
+                }
             }
         }
     }
@@ -554,13 +600,12 @@ public class Player extends Actor {
         }
     }
     private Npc nearestNPC (){
-        LinkedList<Actor> NPCs = ObjectManager.GetObjectManager().getMapAliveActors().get(Npc.class);
-        Actor min = NPCs.getFirst();
-        ListIterator<Actor> iterator = NPCs.listIterator();
-        while  (iterator.hasNext()){
-            Actor npc = iterator.next();
-            if (GetPosition().getModuleDistance(npc.GetPosition()) < GetPosition().getModuleDistance(min.GetPosition())){
-                min = npc;
+        ArrayList<Entity> NPCs = ObjectManager.GetObjectManager().GetAllObjectsOfType(Npc.class);
+        Entity min = NPCs.get(0);
+
+        for(Entity x : NPCs) {
+            if (GetPosition().getModuleDistance(x.GetPosition()) < GetPosition().getModuleDistance(min.GetPosition())){
+                min = x;
             }
         }
         if (GetPosition().getModuleDistance(min.GetPosition()) > (GetScale().getModule()/2)){ //Magic number to ajust

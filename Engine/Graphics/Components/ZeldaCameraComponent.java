@@ -8,6 +8,8 @@
 
 package Engine.Graphics.Components;
 
+import java.beans.beancontext.BeanContextChildSupport;
+
 import Engine.ECSystem.Types.Actor;
 import Engine.Graphics.GraphicsPipeline;
 import Engine.Math.Vector2D;
@@ -27,13 +29,20 @@ public class ZeldaCameraComponent extends CameraComponent {
         mBottomLeft = bottomleft;
     }
 
+    public Vector2D<Float> GetTopRightBound() {
+        return mTopRight;
+    }
+
+    public Vector2D<Float> GetBottomLeftBound() {
+        return mBottomLeft;
+    }
+
     public Vector2D<Float> GetCoordinates() {
         Vector2D<Float> pos = GetParent().GetPosition();
         Vector2D<Integer> camera = GraphicsPipeline.GetGraphicsPipeline().GetDimensions();
         Vector2D<Float> temp = new Vector2D<>();
         temp.x = Math.max(Math.min(pos.x, mBottomLeft.x), mTopRight.x) - camera.x / 2;
         temp.y = Math.max(Math.min(pos.y, mBottomLeft.y), mTopRight.y) - camera.y / 2;
-
         return temp;
     }
 }

@@ -12,10 +12,10 @@ import java.awt.Graphics2D;
 
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Component;
-import Engine.Graphics.Animation;
 import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Sprite;
 import Engine.Graphics.Spritesheet;
+import Engine.Graphics.Animations.Animation;
 import Engine.Math.Vector2D;
 
 public final class SpriteComponent extends Component implements Renderable {
@@ -84,7 +84,7 @@ public final class SpriteComponent extends Component implements Renderable {
     *   Renders the animation
     */ //----------------------------------------------------------------------
     @Override
-    public void Render(Graphics2D g, CameraComponent camerapos) {
-        g.drawImage(mSprite.GetSprite(), (int)(float)GetParent().GetPosition().x - (int)(float)camerapos.GetCoordinates().x, (int)(float)GetParent().GetPosition().y - (int)(float)camerapos.GetCoordinates().y, (int)(float)GetParent().GetScale().x, (int)(float)GetParent().GetScale().y, null);
+    public void Render(Graphics2D g, CameraComponent camera) {
+        g.drawImage(mSprite.GetSprite(), (int)(float)GetParent().GetPosition().x - (int)(float)camera.GetCoordinates().x, (int)(float)GetParent().GetPosition().y - (int)(float)camera.GetCoordinates().y, (int)(float)GetParent().GetScale().x, (int)(float)GetParent().GetScale().y, null);
     }
 }
