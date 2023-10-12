@@ -22,7 +22,7 @@ public class Rock extends Interactive{
         mAnimation = AddComponent(new AnimationMachine(this, sprite));
         
         // ADD COLLIDER COMPONENT
-        mCollision = (BoxCollider)AddComponent(new BoxCollider(this));
+        mCollision = (BoxCollider)AddComponent(new BoxCollider(this,size,true));
         ColliderManager.GetColliderManager().addCollider(mCollision, true);
         SetAnimation(0, sprite.GetSpriteArray(0), 2);
 

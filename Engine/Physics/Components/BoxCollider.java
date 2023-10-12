@@ -60,9 +60,7 @@ public class BoxCollider extends Component implements Renderable{
         mBounds = new AABB(drawnPoint, scale);
         color = Color.magenta;
         this.hasCollision = hasCollides;
-        if (hasCollision){
-
-        }
+        ColliderManager.GetColliderManager().addCollider(this, hasCollides);
     }
     // ------------------------------------------------------------------------
     /*! Init
