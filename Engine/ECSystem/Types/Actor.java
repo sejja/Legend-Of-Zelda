@@ -110,7 +110,7 @@ public abstract class Actor extends Entity implements ClassClasifier{
         pseudoPositionUpdate();
     }
 
-    public Vector2D<Float> getPSeudoPosition(){
+    public Vector2D<Float> getPseudoPosition(){
         if (pseudoPosition == null){
             return GetPosition();
         }else{

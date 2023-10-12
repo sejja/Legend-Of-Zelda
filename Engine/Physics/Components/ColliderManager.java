@@ -91,7 +91,7 @@ public class ColliderManager {
             ListIterator<BoxCollider> iterator = listActors.listIterator();
             while(iterator.hasNext()){
                 BoxCollider otherCollider = iterator.next();
-                Float pseudoPositionDistance = collider.GetParent().getPSeudoPosition().getModuleDistance(otherCollider.GetParent().getPSeudoPosition()); //This is the distance between the 2 pseudopositions
+                Float pseudoPositionDistance = collider.GetParent().getPseudoPosition().getModuleDistance(otherCollider.GetParent().getPseudoPosition()); //This is the distance between the 2 pseudopositions
                 Float limit = (collider.GetBounds().GetScale().getModule() + otherCollider.GetBounds().GetScale().getModule())/2;
                 if (pseudoPositionDistance < limit){
                     if(hasCollided(collider, otherCollider)){
@@ -104,14 +104,14 @@ public class ColliderManager {
     }
 
     private boolean hasCollided(BoxCollider colliderA, BoxCollider colliderB){
-        DIRECTION direction = colliderA.GetParent().getPSeudoPosition().getTargetDirection(colliderB.GetParent().getPSeudoPosition());
+        DIRECTION direction = colliderA.GetParent().getPseudoPosition().getTargetDirection(colliderB.GetParent().getPseudoPosition());
         //System.out.println( direction );
         if(direction == DIRECTION.UP || direction == DIRECTION.DOWN){
-            Float distanceY = Math.abs(colliderA.GetParent().getPSeudoPosition().getVectorToAnotherActor(colliderB.GetParent().getPSeudoPosition()).y); //Horizontal limits
+            Float distanceY = Math.abs(colliderA.GetParent().getPseudoPosition().getVectorToAnotherActor(colliderB.GetParent().getPseudoPosition()).y); //Horizontal limits
             Float limit = (colliderA.GetBounds().GetScale().y + colliderB.GetBounds().GetScale().y)/2;
             return distanceY < limit;
         }else{                                                                                                                                       //Vertical limits
-            Float distanceX = Math.abs(colliderA.GetParent().getPSeudoPosition().getVectorToAnotherActor(colliderB.GetParent().getPSeudoPosition()).x);
+            Float distanceX = Math.abs(colliderA.GetParent().getPseudoPosition().getVectorToAnotherActor(colliderB.GetParent().getPseudoPosition()).x);
             Float limit = (colliderA.GetBounds().GetScale().x + colliderB.GetBounds().GetScale().x)/2;
             return distanceX < limit;
         }

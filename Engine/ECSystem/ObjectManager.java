@@ -55,10 +55,11 @@ public class ObjectManager {
     *   Adds an entity to the Object Manager, classifying it
     */ //----------------------------------------------------------------------
     public Entity AddEntity(Entity e) {
-        final Class<?> type = e.getClass();
+        final Class<?> type = e.GetSuperClass();
 
         //If we already contain the key, perfect
-        if(mNewEntities.containsKey(type)) {
+        if(mAliveEntities.containsKey(type)) {
+            //System.out.println(type);
             mNewEntities.get(type).add(e);
 
         //else, create a new chunk
@@ -77,7 +78,7 @@ public class ObjectManager {
     *   Removes an entity from the object manager
     */ //----------------------------------------------------------------------
     public void RemoveEntity(Entity e) {
-        final Class<?> type = e.getClass();
+        final Class<?> type = e.GetSuperClass();
 
         //If we already contain the key, perfect
         if(mDeadEntities.containsKey(type)) {
@@ -142,6 +143,7 @@ public class ObjectManager {
             mNewEntities.get(x).stream().forEach( y -> chunk.add(y));
         });
 
-        mNewEntities.clear();
+        //mNewEntities.clear();
+        mNewEntities.values().stream().forEach(x -> x.clear());
     }
 }

@@ -1,5 +1,6 @@
 package Gameplay.Link;
 
+import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -71,6 +72,8 @@ public class Arrow extends Actor{
         animationMachine.GetAnimation().SetDelay(1);
         boxCollider = (BoxCollider)AddComponent(new BoxCollider(this));
         Animate();
+
+        setPseudoPosition(GetScale().x/2, GetScale().y/2);
     }
 
     public void Move(){
@@ -116,13 +119,13 @@ public class Arrow extends Actor{
         if (!(distance >= range)){
             Animate();
         }else{ //Delete arrow
-            System.out.println("Eliminado flecha");
+            //System.out.println("Eliminado flecha");
             animationMachine.SetFrames(allAnimation[4]);
             boxCollider.ShutDown();
             ObjectManager.GetObjectManager().RemoveEntity(this);
         }
         if( endArrow ){
-            System.out.println("Eliminado flecha");
+            //System.out.println("Eliminado flecha");
             animationMachine.SetFrames(allAnimation[4]);
             boxCollider.ShutDown();
             ObjectManager.GetObjectManager().RemoveEntity(this);
@@ -152,7 +155,7 @@ public class Arrow extends Actor{
                 Enemy enemy = (Enemy) allEntities.get(i);
                 Vector2D<Float> enemyPosition = enemy.GetPosition();//System.out.println(enemyPosition.getModuleDistance(this.GetPosition()));
                 if (enemyPosition.getModuleDistance(this.GetPosition()) < this.GetScale().getModule()){ //Each enemy thats can be attacked
-                    System.out.println("Le da");
+                    //System.out.println("Le da");
                     enemy.setHealthPoints(damage);
                     enemy.KnockBack();
                     endArrow = true;

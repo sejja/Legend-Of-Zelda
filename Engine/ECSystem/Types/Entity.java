@@ -11,7 +11,7 @@ package Engine.ECSystem.Types;
 import Engine.Math.Transform;
 import Engine.Math.Vector2D;
 
-public abstract class Entity implements Base{
+public abstract class Entity implements Base,ClassClasifier{
     private String mName;
     private Transform mTransform;
     
@@ -91,4 +91,6 @@ public abstract class Entity implements Base{
         assert(name != "");
         mName = name;
     }
+
+    public Class GetSuperClass(){return Entity.class;}
 }

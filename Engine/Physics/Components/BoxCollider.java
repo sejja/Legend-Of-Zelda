@@ -56,7 +56,7 @@ public class BoxCollider extends Component implements Renderable{
 
     public BoxCollider(Actor parent,Vector2D<Float> scale, boolean hasCollides){ //This construct will bild a Hitbox
         super(parent);
-        Vector2D<Float> drawnPoint = new Vector2D<Float>(parent.getPSeudoPosition().x-(scale.x/2), parent.getPSeudoPosition().y-(scale.y/2));
+        Vector2D<Float> drawnPoint = new Vector2D<Float>(parent.getPseudoPosition().x-(scale.x/2), parent.getPseudoPosition().y-(scale.y/2));
         mBounds = new AABB(drawnPoint, scale);
         color = Color.magenta;
         this.hasCollision = hasCollides;
@@ -82,7 +82,7 @@ public class BoxCollider extends Component implements Renderable{
         //mBounds.SetHeight(this.GetBounds().GetWidth()); Para que sirve esto???
         //mBounds.SetWidth(this.GetBounds().GetHeight());
         if(hasCollision){
-            mBounds.SetPosition(new Vector2D<Float>(super.GetParent().getPSeudoPosition().x-(mBounds.GetWidth()/2), super.GetParent().getPSeudoPosition().y-(mBounds.GetHeight()/2)));
+            mBounds.SetPosition(new Vector2D<Float>(super.GetParent().getPseudoPosition().x-(mBounds.GetWidth()/2), super.GetParent().getPseudoPosition().y-(mBounds.GetHeight()/2)));
         }
     }
 

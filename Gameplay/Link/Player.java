@@ -223,7 +223,8 @@ public class Player extends Actor {
                 if(nbombs >= 0){
                     new Bomb(new Vector2D<Float>(GetPosition().x, GetPosition().y));
                     nbombs--;
-                }else{System.out.println("Bombs run out");}
+                }else{
+                    System.out.println("Bombs run out");}
                 
             }
         });
@@ -265,7 +266,7 @@ public class Player extends Actor {
                     bow = false;
                     attack = false;
                 }
-            
+                //mAnimation.setMustComplete(false);
             }
         });
 
@@ -331,9 +332,7 @@ public class Player extends Actor {
     }
     public void playerStateMachine(){
         if(dash){dash();return;}//Early return dash is mostly the dominate action, so if link is dashing he can not do anything else
-        else
-        {
-
+        else{
             if (!mAnimation.MustComplete()){Move();}
         }
     }
@@ -343,7 +342,7 @@ public class Player extends Actor {
      *      -> True if there is no collision
      */
     public boolean SolveCollisions(Vector2D<Integer> dif) {
-        CollisionResult res = mCollider.GetBounds().collisionTile(
+        CollisionResult res = hitbox.GetBounds().collisionTile(
             dif.x - Level.mCurrentLevel.GetBounds().GetPosition().x, 
             dif.y - Level.mCurrentLevel.GetBounds().GetPosition().y);
         
@@ -467,7 +466,7 @@ public class Player extends Actor {
     }
     private void takeDamage(){ //Looking for enemies to take damage
         //System.out.println("Vida = " + healthPoints);
-        ArrayList<Entity> allEntities = ObjectManager.GetObjectManager().GetAllObjectsOfType(GreenKnight.class);
+        ArrayList<Entity> allEntities = ObjectManager.GetObjectManager().GetAllObjectsOfType(Enemy.class);
 
         if(allEntities != null)
             for (int i = 0; i < allEntities.size(); i++){
@@ -478,18 +477,6 @@ public class Player extends Actor {
                     enemy.KnockBack();
                 }
             }
-
-        allEntities = ObjectManager.GetObjectManager().GetAllObjectsOfType(Npc.class);
-        for (int i = 0; i < allEntities.size(); i++){
-                Npc npc = (Npc) allEntities.get(i);
-                Vector2D<Float> npcPosition = npc.GetPosition();
-                if (npcPosition.getModuleDistance(this.GetPosition()) < this.GetScale().y/2){
-                    isTouchingNpc = true;
-                    npcIndex = npc.GetPosition();
-                } else{
-                    //isTouchingNpc = false; El segundo Npc no funciona
-                }
-        }
     }
     //------------------------------------------------------------------------
 
@@ -597,25 +584,23 @@ public class Player extends Actor {
      */
     public void Attack(){
         /*  This function takes all Enemys
-         *      It will calculate a vector to the player position to the enemy position
-         *          If the DIRECTION of the vector Player-Enemy and The DIRECTION of the player is the same
-         *             It will called a KnockBack() function of that enemy
-         */
-        ArrayList<Entity> allEntities = ObjectManager.GetObjectManager().GetAllObjectsOfType(GreenKnight.class);
-        for (int i = 0; i < allEntities.size(); i++){
-            if (allEntities.get(i) instanceof Enemy){
-                Enemy enemy = (Enemy) allEntities.get(i);
-                Vector2D<Float> enemyPosition = enemy.GetPosition();
-                if (enemyPosition.getModuleDistance(this.GetPosition()) < this.GetScale().y/2+100){ //Each enemy thats can be attacked
-                    if(direction == getAttackDirection(this.GetPosition().getVectorToAnotherActor(enemyPosition))){
-                        System.out.println("Le da");
-                        enemy.setHealthPoints(damage);
-                        enemy.KnockBack();
-                    }
-                }
+                
+        It will calculate a vector to the player position to the enemy position
+        If the DIRECTION of the vector Player-Enemy and The DIRECTION of the player is the same
+        It will called a KnockBack() function of that enemy
+        */
+        ArrayList<Entity> enemies = ObjectManager.GetObjectManager().GetAllObjectsOfType(Enemy.class);
+        if(enemies == null){return;}
+        for(Entity entity : enemies){
+            Enemy currentEnemy = (Enemy) entity;
+            if(currentEnemy.getPseudoPosition().getModuleDistance(getPseudoPosition()) < this.GetScale().getModule()-40){
+                System.out.println( "leda");
+                currentEnemy.setHealthPoints(damage);
+                currentEnemy.KnockBack();
             }
         }
     }
+
     private void interact(){
         if(currentNPCinteraction == null){
             currentNPCinteraction = nearestNPC();
@@ -699,7 +684,9 @@ public class Player extends Actor {
         this.direction = DIRECTION.DOWN;
         setToSpawnPoint();
         hitbox.Reset();
+        mAnimation.SetFrames(mAnimation.GetSpriteSheet().GetSpriteArray2D()[DOWN+Action.STOP.getID()]);
     }
+    public void setBow(boolean bow) {this.bow = bow;}
     //------------------------------------------------------------------------
 
     @Override 

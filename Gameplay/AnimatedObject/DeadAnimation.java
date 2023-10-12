@@ -26,7 +26,7 @@ public class DeadAnimation extends AnimatedObject{
         SetScale(actor.GetScale());
         ObjectManager.GetObjectManager().AddEntity(this);
         defaultAnimationIndex = 0;
-        animationMachine.setMust_Complete();
+        animationMachine.setMustComplete(true);
         Animate(0);
     }
 
@@ -37,7 +37,7 @@ public class DeadAnimation extends AnimatedObject{
             actor.SetScale(new Vector2D<>(0f, 0f));
             ObjectManager.GetObjectManager().RemoveEntity(actor);
        }
-       if(animationMachine.finised_Animation){
+       if(animationMachine.GetAnimation().GetFrame() == 5){
             ObjectManager.GetObjectManager().RemoveEntity(this);
             SetScale(new Vector2D<>(0f, 0f));
        }

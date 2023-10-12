@@ -45,8 +45,9 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     protected Pair currentDestination;
     protected Stack<Pair> path = new Stack<Pair>();
     protected Vector2D<Float> pos = GetPosition();
-    protected Vector2D<Float> pseudoPos = getPSeudoPosition();
-    protected Vector2D<Float> playerPos = ObjectManager.GetObjectManager().GetObjectByName(Player.class, "Player").GetPosition();
+    protected Vector2D<Float> pseudoPos = getPseudoPosition();
+    protected Player player = (Player) ObjectManager.GetObjectManager().GetObjectByName(Player.class, "Player");
+    protected Vector2D<Float> playerPos = player.getPseudoPosition();
     protected float xlowerBound;
     protected float xupperBound;
     protected float ylowerBound;
@@ -209,7 +210,7 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     *   Calculates the path to the player if the path is unblocked and is not the same as the last time A* was called
     */ //----------------------------------------------------------------------
     public void Pathfinding() {
-        Pair enemyTile = PositionToPair(getPSeudoPosition());
+        Pair enemyTile = PositionToPair(getPseudoPosition());
         finalDestination = PositionToPair(playerPos);
         if(isDestinationChanged() && isDestinationReachable()){
             lastFinalDestination = finalDestination;

@@ -7,8 +7,10 @@ import java.util.ArrayList;
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Entity;
 import Engine.Graphics.Spritesheet;
+import Engine.Graphics.Animations.AnimationEvent;
 import Engine.Math.Vector2D;
 import Gameplay.Enemies.Enemy;
+import Gameplay.Interactives.Interactive;
 import Gameplay.Interactives.Blocks.Rock;
 
 public class Bomb extends AnimatedObject {
@@ -28,6 +30,19 @@ public class Bomb extends AnimatedObject {
         animationMachine.SetFrames(allAnimtion[1]);
         this.SetScale(new Vector2D<Float>(100f,100f));
         ObjectManager.GetObjectManager().AddEntity(this);
+
+        var reference = this;
+        animationMachine.AddFinishedListener(new AnimationEvent() {
+
+            @Override
+            public void OnTrigger() {
+                //System.out.println("Ha terminado");
+                ObjectManager.GetObjectManager().RemoveEntity(reference);
+                reference.SetScale(new Vector2D<>(0f,0f));
+                
+            }
+            
+        });
     }
 
     private void createChargeAnimation(){
@@ -44,16 +59,12 @@ public class Bomb extends AnimatedObject {
     public void Update(){
         super.Update();
         countDown();
-        if (animationMachine.finised_Animation){
-            ObjectManager.GetObjectManager().RemoveEntity(this);
-            this.SetScale(new Vector2D<>(0f, 0f));
-        }
     }
 
     public void countDown(){
         if(counter == limit){
+            animationMachine.setMustComplete(true);
             animationMachine.SetFrames(allAnimtion[0]);
-            animationMachine.setMust_Complete();
             delay = 3;
             explode();
             counter = 0;
@@ -63,30 +74,32 @@ public class Bomb extends AnimatedObject {
     }
 
     public void explode(){
-        System.out.println("Ha explotado");
-        ArrayList<Entity> allEntities = ObjectManager.GetObjectManager().getmAliveEntities();
-        for (int i = 0; i < allEntities.size(); i++){
-            if (allEntities.get(i) instanceof Enemy){
-                Enemy enemy = (Enemy) allEntities.get(i);
-                Vector2D<Float> enemyPosition = enemy.GetPosition();
-                //System.out.println(enemyPosition.getModuleDistance(this.GetPosition()));
-                if (enemyPosition.getModuleDistance(this.GetPosition()) < this.GetScale().getModule()){ //Each enemy thats can be attacked
-                    System.out.println("Le da");
-                    enemy.setHealthPoints(4);
-                    enemy.KnockBack(this.GetPosition());
-                }
-            }
-            if (allEntities.get(i) instanceof Rock){
-                Rock rock = (Rock) allEntities.get(i);
-                Vector2D<Float> rockPosition = rock.GetPosition();
-                //System.out.println(enemyPosition.getModuleDistance(this.GetPosition()));
-                if (rockPosition.getModuleDistance(this.GetPosition()) < this.GetScale().getModule()){
-                    System.out.println("Peta");
-                    rock.setHealthPoints(1);
-                    
-                }
+        //System.out.println("Ha explotado");
+        ArrayList<Entity> enemies = ObjectManager.GetObjectManager().GetAllObjectsOfType(Enemy.class);
+        ArrayList<Entity> rocks = ObjectManager.GetObjectManager().GetAllObjectsOfType(Interactive.class);
+        if (enemies == null || rocks == null){
+            return;
+        }
+        for (int i = 0; i < enemies.size(); i++){
+            Enemy enemy = (Enemy) enemies.get(i);
+            Vector2D<Float> enemyPosition = enemy.GetPosition();
+            //System.out.println(enemyPosition.getModuleDistance(this.GetPosition()));
+            if (enemyPosition.getModuleDistance(this.GetPosition()) < this.GetScale().getModule()){ //Each enemy thats can be attacked
+                //System.out.println("Le da");
+                enemy.setHealthPoints(1);
+                enemy.KnockBack(this.GetPosition());
             }
         }
-        return;
+
+        for (int i = 0;  i < rocks.size(); i++){
+            Rock rock = (Rock) rocks.get(i);
+            Vector2D<Float> rockPosition = rock.GetPosition();
+            //System.out.println(enemyPosition.getModuleDistance(this.GetPosition()));
+            if (rockPosition.getModuleDistance(this.GetPosition()) < this.GetScale().getModule()){
+                //System.out.println("Peta");
+                rock.setHealthPoints(1);
+                    
+            }
+        }
     }
 }
