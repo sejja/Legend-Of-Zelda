@@ -61,7 +61,7 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     protected AnimationMachine mAnimation;
     protected BoxCollider mCollision;
 
-    private int delay = 2;
+    private int delay = 10;
     
     LifeBar lifeBar;
     // ------------------------------------------------------------------------
@@ -140,22 +140,22 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
             switch (direction){
                 case UP:
                     if(mCurrentAnimation != UP || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), 2);
+                        SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), this.delay);
                     }
                     break;
                 case DOWN:
                     if(mCurrentAnimation != DOWN || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(DOWN, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN), 2);
+                        SetAnimation(DOWN, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN), this.delay);
                     }
                     break;
                 case LEFT:
                     if(mCurrentAnimation != RIGHT || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(RIGHT, mAnimation.GetSpriteSheet().GetSpriteArray(RIGHT), 2);
+                        SetAnimation(RIGHT, mAnimation.GetSpriteSheet().GetSpriteArray(RIGHT), this.delay);
                     }
                     break;
                 case RIGHT:
                     if(mCurrentAnimation != LEFT || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(LEFT, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT), 2);
+                        SetAnimation(LEFT, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT), this.delay);
                     }
                     break;
             }
@@ -163,22 +163,22 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
             switch (direction){
                 case UP:
                     if(mCurrentAnimation != UP || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), 2);
+                        SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), this.delay);
                     }
                     break;
                 case DOWN:
                     if(mCurrentAnimation != DOWN || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(DOWN, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN), 2);
+                        SetAnimation(DOWN, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN), this.delay);
                     }
                     break;
                 case LEFT:
                     if(mCurrentAnimation != RIGHT || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(RIGHT, mAnimation.GetSpriteSheet().GetSpriteArray(RIGHT), 2);
+                        SetAnimation(RIGHT, mAnimation.GetSpriteSheet().GetSpriteArray(RIGHT), this.delay);
                     }
                     break;
                 case RIGHT:
                     if(mCurrentAnimation != LEFT || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(LEFT, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT), 2);
+                        SetAnimation(LEFT, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT), this.delay);
                     }
                     break;
             }
@@ -197,7 +197,7 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
         GetDirection(normalizedDirection);
         Animate();
         Move();
-        mAnimation.GetAnimation().SetDelay(this.delay);
+        pseudoPositionUpdate();
         //System.out.println(playerPos.x + " " + playerPos.y + " " + normalizedDirection+ " " );
     }
 
