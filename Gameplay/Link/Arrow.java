@@ -127,6 +127,7 @@ public class Arrow extends Actor{
             ObjectManager.GetObjectManager().RemoveEntity(this);
         }
         Attack();
+        pseudoPositionUpdate();
     }
     public void Animate(){
         switch(direction)

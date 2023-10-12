@@ -66,7 +66,8 @@ public class Vector2D<T> {
         return new Vector2D<>(xf, yf);
     }
 
-    public DIRECTION getObjectiveDirection(Vector2D<Float> vector) { 
+    public DIRECTION getTargetDirection(Vector2D<Float> targetVector) { 
+        Vector2D<Float> vector = this.getVectorToAnotherActor(targetVector);
         if (Math.abs(vector.x) > Math.abs(vector.y)) {
             if (vector.x > 0) {return DIRECTION.RIGHT;} 
             else {return DIRECTION.LEFT;}
