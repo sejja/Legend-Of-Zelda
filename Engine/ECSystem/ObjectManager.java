@@ -13,6 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Entity;
+import Engine.Math.Vector2D;
 import Gameplay.Enemies.Enemy;
 import Gameplay.NPC.Npc;
 
@@ -67,7 +68,6 @@ public class ObjectManager {
             mNewEntities.put(type, chunk);
             mAliveEntities.put(type, new ArrayList<>());
         }
-
         return e;
     }
 

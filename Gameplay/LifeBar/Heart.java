@@ -30,7 +30,6 @@ public class Heart extends Actor {
         super(position);
         this.animationMachine = AddComponent(new AnimationMachine(this ,new Spritesheet("Content/Animations/HeartSpriteSheet.png", 19 , 14)));
         allAnimations = animationMachine.GetSpriteSheet().GetSpriteArray2D();
-
         animationMachine.SetFrames(allAnimations[0]);
         SetScale( new Vector2D<Float>(15f,11f));
         animationMachine.GetAnimation().SetDelay(1);
@@ -46,8 +45,9 @@ public class Heart extends Actor {
     @Override
     public void Update(){
         Animate();
-        popFromObjectManager();
+        //popFromObjectManager();
     }
+
     public int getHealthPoints() {
         return healthPoints;
     }

@@ -25,7 +25,7 @@ public abstract class Component implements Base {
     *
     *   Gets the Parent of the Component (an actor)
     */ //----------------------------------------------------------------------
-    public Entity GetParent() {
+    public Actor GetParent() {
         return mParent;
     }
     

@@ -15,15 +15,19 @@ import Engine.Graphics.Animations.Animation;
 import Engine.Graphics.Animations.AnimationEvent;
 import Engine.Graphics.Components.AnimationMachine;
 import Engine.Graphics.Components.ZeldaCameraComponent;
+import Engine.Graphics.Tile.Block;
 import Engine.Input.InputFunction;
 import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
 import Engine.Physics.CollisionResult;
 import Engine.Physics.Components.BoxCollider;
 import Engine.Window.GameLoop;
+import Engine.Physics.Components.ColliderManager;
 import Gameplay.States.PlayState;
+import Gameplay.AnimatedObject.Bomb;
 import Gameplay.Enemies.Enemy;
 import Gameplay.Enemies.Units.GreenKnight;
+import Gameplay.Interactives.Interactive;
 import Gameplay.LifeBar.LifeBar;
 import Gameplay.NPC.DialogueWindow;
 import Gameplay.NPC.Npc;
@@ -81,6 +85,7 @@ public class Player extends Actor {
     protected int healthPoints = 10;
     private ZeldaCameraComponent mCamera;
     protected BoxCollider mCollider;
+    protected BoxCollider hitbox;
     final private  int damage = 2;
     private int velocity = 0;
     final int default_velocity = 10;
@@ -116,7 +121,12 @@ public class Player extends Actor {
         //---------------------------------------------------------------------
         lifeBar = new LifeBar(getPlayer(), getHealthPoints());
         //---------------------------------------------------------------------
-        mCollider = (BoxCollider)AddComponent(new BoxCollider(this));
+        //mCollider = (BoxCollider)AddComponent(new BoxCollider(this));
+
+        setPseudoPosition(50f, 50f);
+        setPseudoPositionVisible();
+        hitbox = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<Float>(55f, 60f), true));
+        ColliderManager.GetColliderManager().addCollider(hitbox, true);
         ObjectManager.GetObjectManager().SetPawn(this);
     }
     // ------------------------------------------------------------------------
@@ -207,6 +217,17 @@ public class Player extends Actor {
             }
         });
 
+        InputManager.SubscribeReleased(KeyEvent.VK_B, new InputFunction() {
+            @Override
+            public void Execute() {
+                if(nbombs >= 0){
+                    new Bomb(new Vector2D<Float>(GetPosition().x, GetPosition().y));
+                    nbombs--;
+                }else{System.out.println("Bombs run out");}
+                
+            }
+        });
+        //Show LifeBar_______________________________________________________________________________________
         InputManager.SubscribePressed(KeyEvent.VK_M, new InputFunction() {
             @Override
             public void Execute() {lifeBar.setVisible(true);}
@@ -219,7 +240,7 @@ public class Player extends Actor {
             @Override
             public void Execute() {Pause();}
         });
-        ///* 
+        ///Interaction_______________________________________________________________________________________
         InputManager.SubscribePressed(KeyEvent.VK_E, new InputFunction() {
             @Override
             public void Execute() {interact();}
@@ -244,6 +265,14 @@ public class Player extends Actor {
                     bow = false;
                     attack = false;
                 }
+            
+            }
+        });
+
+        InputManager.SubscribePressed(KeyEvent.VK_T, new InputFunction() {
+            @Override
+            public void Execute() {
+                System.out.println(ColliderManager.GetColliderManager().getCollision(hitbox, Interactive.class, true));
             }
         });
     }
@@ -296,8 +325,9 @@ public class Player extends Actor {
         playerStateMachine();
         Animate();
         if(able_to_takeDamage){takeDamage();}
-        mAnimation.GetAnimation().SetDelay(delay);
         lifeBar.Update();
+        pseudoPositionUpdate();
+        hitbox.Update();
     }
     public void playerStateMachine(){
         if(dash){dash();return;}//Early return dash is mostly the dominate action, so if link is dashing he can not do anything else
@@ -310,7 +340,7 @@ public class Player extends Actor {
     // ------------------------------------------------------------------------
     
     /* Colision
-     * 
+     *      -> True if there is no collision
      */
     public boolean SolveCollisions(Vector2D<Integer> dif) {
         CollisionResult res = mCollider.GetBounds().collisionTile(
@@ -318,8 +348,7 @@ public class Player extends Actor {
             dif.y - Level.mCurrentLevel.GetBounds().GetPosition().y);
         
         falling = res == CollisionResult.Hole;
-        return res == CollisionResult.None;
-        //return true;
+        return (res == CollisionResult.None);
     }
     // ------------------------------------------------------------------------
     
@@ -345,7 +374,6 @@ public class Player extends Actor {
                 if(SolveCollisions(new Vector2D<>(+velocity, 0))) pos.x += velocity;
                 break;
         }
-
         SetPosition(pos);
     }
     // ------------------------------------------------------------------------
@@ -500,24 +528,24 @@ public class Player extends Actor {
     private void setMovement(Action type){
 
         if (type == null){
-            mAnimation.SetMustComplete(true);
+            mAnimation.setMustComplete(true);
             if(falling && mCurrentAnimation != FALL || mAnimation.GetAnimation().GetDelay() == -1) {SetAnimation(FALL, mAnimation.GetSpriteSheet().GetSpriteArray(FALL), delay);}//Enviromental special case
             return;
         }
 
         if (type == Action.ATTACK || type == Action.BOW){ //Activate must-end sequence
-            mAnimation.SetMustComplete(true);
+            mAnimation.setMustComplete(true);
         }
 
         int i = type.getID();
 
         if(falling && mCurrentAnimation != FALL+i|| mAnimation.GetAnimation().GetDelay() == -1) {
             SetAnimation(FALL+i, mAnimation.GetSpriteSheet().GetSpriteArray(FALL+i), delay);
-            mAnimation.SetMustComplete(true);
+            mAnimation.setMustComplete(true);
             return;
         }
 
-        if (type == Action.ATTACK || type == Action.BOW){mAnimation.SetMustComplete(true);}//Activate must-end sequence
+        if (type == Action.ATTACK || type == Action.BOW){mAnimation.setMustComplete(true);}//Activate must-end sequence
 
         i = type.getID();
 
@@ -645,16 +673,13 @@ public class Player extends Actor {
         dash = false;
         able_to_takeDamage = true;
     }
-    //------------------------------------------------------------------------
     
     /* To pause the gameplay
      * 
      */
-    public void Pause(){
-        if(PlayState.getGameState() == PlayState.getPlayState()){PlayState.setGameState(2);}
-        else if(PlayState.getGameState() == PlayState.getPauseState()){PlayState.setGameState(1);}
+    private void Pause(){
+        GameLoop.SetPaused(!GameLoop.IsPaused());
     }
-    //------------------------------------------------------------------------
 
     /* This function set the player position to the spawn Point
      * 
@@ -673,7 +698,10 @@ public class Player extends Actor {
         setDamage(2);
         this.direction = DIRECTION.DOWN;
         setToSpawnPoint();
-        mCollider.Reset();
+        hitbox.Reset();
     }
     //------------------------------------------------------------------------
+
+    @Override 
+    public Class GetSuperClass(){return Player.class;}
 }

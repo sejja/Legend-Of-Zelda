@@ -20,10 +20,14 @@ import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.ZeldaCameraComponent;
 import Engine.Graphics.Tile.TileManager;
 import Engine.Math.Vector2D;
+import Engine.Physics.Components.ColliderManager;
 import Engine.StateMachine.State;
 import Gameplay.Enemies.*;
 import Gameplay.Levels.TestRoom;
 import Gameplay.Levels.TestRoom2;
+import Gameplay.Enemies.Units.GreenKnight;
+import Gameplay.Interactives.Blocks.Rock;
+import Gameplay.Link.Arrow;
 import Gameplay.Link.Player;
 import Gameplay.NPC.Npc;
 
@@ -44,6 +48,9 @@ public class PlayState extends State {
         Vector2D<Float> topright = new Vector2D<>(mTestLevel.GetBounds().GetPosition().x + 1280.f / 2, mTestLevel.GetBounds().GetPosition().y + 720.f / 2);
         Vector2D<Float> bottomleft = new Vector2D<>(mTestLevel.GetBounds().GetPosition().x + mTestLevel.GetBounds().GetWidth() - 1280.f / 2, mTestLevel.GetBounds().GetPosition().y + mTestLevel.GetBounds().GetHeight() - 760.f / 2);
         z.SetBounds(topright, bottomleft); 
+    }
+    private void Spawn(Entity e){
+        ObjectManager.GetObjectManager().AddEntity(e);
     }
     // ------------------------------------------------------------------------
     /*! Update

@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.Stack;
 import Engine.ECSystem.ObjectManager;
+import Engine.ECSystem.Types.Actor;
 import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Animations.Animation;
@@ -13,13 +14,16 @@ import Engine.Graphics.Components.CameraComponent;
 import Engine.Graphics.Components.Renderable;
 import Engine.Math.Vector2D;
 import Engine.Physics.Components.BoxCollider;
+import Gameplay.AnimatedObject.DeadAnimation;
 import Gameplay.Enemies.Search.*;
 import Gameplay.LifeBar.LifeBar;
 import Gameplay.Link.DirectionObject;
+import Gameplay.Link.Arrow;
 import Gameplay.Link.DIRECTION;
 import Gameplay.Link.Player;
 
 public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Renderable{
+
     protected final int UP = 0;
     protected final int DOWN = 2;
     protected final int RIGHT = 1;
@@ -41,7 +45,8 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     protected Pair currentDestination;
     protected Stack<Pair> path = new Stack<Pair>();
     protected Vector2D<Float> pos = GetPosition();
-    protected Vector2D<Float> playerPos;
+    protected Vector2D<Float> pseudoPos = getPSeudoPosition();
+    protected Vector2D<Float> playerPos = ObjectManager.GetObjectManager().GetObjectByName(Player.class, "Player").GetPosition();
     protected float xlowerBound;
     protected float xupperBound;
     protected float ylowerBound;
@@ -57,11 +62,7 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     protected AnimationMachine mAnimation;
     protected BoxCollider mCollision;
 
-    //offsets of position
-    protected int xoffset = 0;
-    protected int yoffset = 0;
-
-    
+    private int delay = 10;
     
     LifeBar lifeBar;
     // ------------------------------------------------------------------------
@@ -78,7 +79,7 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     public void SetAnimation(int i, BufferedImage[] frames, int delay) {
         mCurrentAnimation = i;
         mAnimation.GetAnimation().SetFrames(frames);
-        mAnimation.GetAnimation().SetDelay(delay);
+        mAnimation.GetAnimation().SetDelay(this.delay);
     }
 
     public Animation GetAnimation() {
@@ -127,26 +128,35 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     *   Adds the needed animation to the Enemy
     */ //----------------------------------------------------------------------
     public void Animate() {
+        if(mAnimation.MustComplete()){return;}
+
+        if(this.healthPoints == 0){
+            this.delay = 0;
+            this.speed = 0;
+            //SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), this.delay);
+            return;
+        }
+
         if(chase){
             switch (direction){
                 case UP:
                     if(mCurrentAnimation != UP || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), 2);
+                        SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), this.delay);
                     }
                     break;
                 case DOWN:
                     if(mCurrentAnimation != DOWN || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(DOWN, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN), 2);
+                        SetAnimation(DOWN, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN), this.delay);
                     }
                     break;
                 case LEFT:
                     if(mCurrentAnimation != RIGHT || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(RIGHT, mAnimation.GetSpriteSheet().GetSpriteArray(RIGHT), 2);
+                        SetAnimation(RIGHT, mAnimation.GetSpriteSheet().GetSpriteArray(RIGHT), this.delay);
                     }
                     break;
                 case RIGHT:
                     if(mCurrentAnimation != LEFT || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(LEFT, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT), 2);
+                        SetAnimation(LEFT, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT), this.delay);
                     }
                     break;
             }
@@ -154,22 +164,22 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
             switch (direction){
                 case UP:
                     if(mCurrentAnimation != UP || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), 2);
+                        SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), this.delay);
                     }
                     break;
                 case DOWN:
                     if(mCurrentAnimation != DOWN || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(DOWN, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN), 2);
+                        SetAnimation(DOWN, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN), this.delay);
                     }
                     break;
                 case LEFT:
                     if(mCurrentAnimation != RIGHT || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(RIGHT, mAnimation.GetSpriteSheet().GetSpriteArray(RIGHT), 2);
+                        SetAnimation(RIGHT, mAnimation.GetSpriteSheet().GetSpriteArray(RIGHT), this.delay);
                     }
                     break;
                 case RIGHT:
                     if(mCurrentAnimation != LEFT || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(LEFT, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT), 2);
+                        SetAnimation(LEFT, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT), this.delay);
                     }
                     break;
             }
@@ -189,7 +199,7 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
         GetDirection(normalizedDirection);
         Animate();
         Move();
-        mAnimation.GetAnimation().SetDelay(20);
+        pseudoPositionUpdate();
         //System.out.println(playerPos.x + " " + playerPos.y + " " + normalizedDirection+ " " );
     }
 
@@ -199,7 +209,7 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     *   Calculates the path to the player if the path is unblocked and is not the same as the last time A* was called
     */ //----------------------------------------------------------------------
     public void Pathfinding() {
-        Pair enemyTile = PositionToPair(pos);
+        Pair enemyTile = PositionToPair(getPSeudoPosition());
         finalDestination = PositionToPair(playerPos);
         if(isDestinationChanged() && isDestinationReachable()){
             lastFinalDestination = finalDestination;
@@ -214,7 +224,7 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     */ //----------------------------------------------------------------------
     public Pair PositionToPair(Vector2D<Float> position) {
         int divisior = 64;
-        Pair pair = new Pair(Math.round((position.x +xoffset)/divisior), Math.round((position.y +yoffset)/divisior));
+        Pair pair = new Pair(Math.round((position.x/divisior)), Math.round((position.y/divisior)));
         return pair;
     }
 
@@ -254,7 +264,7 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     *   Calculates the movement of the Enemy
     */ //----------------------------------------------------------------------
     public void MovementVector() {
-        Vector2D<Float> dir = new Vector2D<Float>(playerPos.x - (pos.x +xoffset), playerPos.y - (pos.y +yoffset));
+        Vector2D<Float> dir = new Vector2D<Float>(playerPos.x - pseudoPos.x, playerPos.y - pseudoPos.x);
         normalizedDirection=Normalize(dir);
     }
 
@@ -279,16 +289,16 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
             yupperBound = currentDestination.getSecond()*64 + 3;
 
             //If currentDestination reached, pop next destination
-            if(((((xlowerBound <= pos.x+xoffset) && (pos.x+xoffset <= xupperBound)) && ((ylowerBound <= pos.y+yoffset) && (pos.y+yoffset <= yupperBound)))) && (currentDestination != finalDestination) && !path.isEmpty()){
+            if(((((xlowerBound <= pseudoPos.x) && (pseudoPos.x <= xupperBound)) && ((ylowerBound <= pseudoPos.y) && (pseudoPos.y <= yupperBound)))) && (currentDestination != finalDestination) && !path.isEmpty()){
                 path.pop();
                 if(!path.isEmpty()){
                     currentDestination = path.peek();
                 }
-                normalizedDirection = Normalize(new Vector2D<Float>(currentDestination.getFirst()*64 - (pos.x+xoffset), currentDestination.getSecond()*64 - (pos.y+yoffset)));
+                normalizedDirection = Normalize(new Vector2D<Float>(currentDestination.getFirst()*64 - (pseudoPos.x), currentDestination.getSecond()*64 - (pseudoPos.y)));
                 pos.x += normalizedDirection.x * speed;
                 pos.y += normalizedDirection.y * speed;
             }else{
-                normalizedDirection = Normalize(new Vector2D<Float>(currentDestination.getFirst()*64 - (pos.x+xoffset), currentDestination.getSecond()*64 - (pos.y+yoffset)));
+                normalizedDirection = Normalize(new Vector2D<Float>(currentDestination.getFirst()*64 - (pseudoPos.x), currentDestination.getSecond()*64 - (pseudoPos.y)));
                 pos.x += normalizedDirection.x * speed;
                 pos.y += normalizedDirection.y * speed;
             }
@@ -309,6 +319,14 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
         pos.y -= normalizedDirection.y * 60;
         SetPosition(pos);
     }
+
+    public void KnockBack(Vector2D<Float> attackerPos) {
+        Vector2D<Float> dir = pos.getVectorToAnotherActor(attackerPos);
+        normalizedDirection=Normalize(dir);
+        pos.x -= normalizedDirection.x * 60;
+        pos.y -= normalizedDirection.y * 60;
+        SetPosition(pos);
+    }
     
 
     public void setHealthPoints(int damage){
@@ -316,12 +334,17 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
         if (healthPoints <= 0){
             //System.out.println("aibfhdp`");
             mCollision.ShutDown();
-            this.SetScale(new Vector2D<Float>(0f,0f));
-            ObjectManager.GetObjectManager().RemoveEntity(this);
+            //this.SetScale(new Vector2D<Float>(0f,0f));
+            die();
             path.clear();
         }
         //______________________
         //______________________
+    }
+
+    private void die() {
+        System.out.println("se muere");
+        DeadAnimation deadAnimation = new DeadAnimation(this);
     }
 
     @Override
@@ -337,10 +360,6 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     }
 
     // Getters and Setters
-    public void setOffset(int x, int y){
-        xoffset = x;
-        yoffset = y;
-    }
 
     public void setDamage(int damage) {
         this.damage = damage;
@@ -368,6 +387,7 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     public Enemy getEnemy(){
         return (Enemy)this;
     }
-    
-    
+
+    @Override 
+    public Class GetSuperClass(){return Enemy.class;}
 }

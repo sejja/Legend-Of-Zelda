@@ -128,4 +128,7 @@ public class Npc extends Actor {
     private void Pause(){
         GameLoop.SetPaused(!GameLoop.IsPaused());
     }
+
+    @Override 
+    public Class GetSuperClass(){return Npc.class;}
 }

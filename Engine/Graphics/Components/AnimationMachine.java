@@ -158,17 +158,17 @@ public final class AnimationMachine extends Component implements Renderable {
         final Vector2D<Float> scale = parent.GetScale();
         final Vector2D<Float> position = parent.GetPosition();
 
-        //If we are on bounds, render
-        if(camerapos.OnBounds(new AABB(position, scale)))
-            g.drawImage(mAnimation.GetCurrentFrame(), (int)(float)position.x - (int)(float)camcoord.x - (int)(scale.x / 4), (int)(float)position.y - (int)(float)camcoord.y, (int)(float)scale.x, (int)(float)scale.y, null);
-    }
-    
+        if(camerapos.OnBounds(new AABB(GetParent().GetPosition(), GetParent().GetScale())))
+            //g.drawImage(mAnimation.GetCurrentFrame(), (int)(float)GetParent().GetPosition().x - (int)(float)camcoord.x - (int)(scale.x / 4), (int)(float)GetParent().GetPosition().y - (int)(float)camcoord.y, (int)(float)GetParent().GetScale().x, (int)(float)GetParent().GetScale().y, null);
+            g.drawImage(mAnimation.GetCurrentFrame(), (int)(float)GetParent().GetPosition().x - (int)(float)camcoord.x, (int)(float)GetParent().GetPosition().y - (int)(float)camcoord.y, (int)(float)GetParent().GetScale().x, (int)(float)GetParent().GetScale().y, null);
+        }
+
+        
     // ------------------------------------------------------------------------
     /*! Set Must Complete
-    *
-    *   Sets wether this animation should be completed or not
-    */ //----------------------------------------------------------------------
-    public void SetMustComplete(boolean b){
+    *Sets wether this animation should be completed or not*/ 
+    //----------------------------------------------------------------------
+    public void setMustComplete(boolean b){
         mAnimationLocked = b;
     }
 

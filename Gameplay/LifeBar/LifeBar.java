@@ -31,6 +31,7 @@ public class LifeBar {
         createHearts();
         setVisible(VISIBLE);
     }
+
     public void setVisible(boolean b){
         this.VISIBLE = b;
         if (b)
