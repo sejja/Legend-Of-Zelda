@@ -31,10 +31,11 @@ import Engine.Math.Vector2D;
 import Engine.Physics.AABB;
 
 public class TileManager extends ECObject implements Renderable {
-    public static ArrayList<Tilemap>  mLayers;
+    public ArrayList<Tilemap>  mLayers;
     private String mPath;
     private Vector2D<Float> mPosition;
     private AABB mBounds;
+    public static TilemapObject sLevelObjects;
 
     // ------------------------------------------------------------------------
     /*! Default Constructor
@@ -118,6 +119,7 @@ public class TileManager extends ECObject implements Renderable {
                     mLayers.add(new TilemapNorm(mPosition, data[i], sprite, width, height, blockwith, blockheigh, tileColumns));
                 } else {
                     mLayers.add(new TilemapObject(mPosition, data[i], sprite, width, height, blockwith, blockheigh, tileColumns));
+                    sLevelObjects = (TilemapObject)mLayers.get(mLayers.size() - 1);
                 }
             }
 

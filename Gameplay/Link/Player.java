@@ -7,6 +7,7 @@ import java.security.AllPermission;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import Engine.ECSystem.Level;
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Entity;
@@ -404,11 +405,13 @@ public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size
     // ------------------------------------------------------------------------
 
     public boolean SolveCollisions(Vector2D<Integer> dif) {
-        CollisionResult res = mCollider.GetBounds().collisionTile(dif.x, dif.y);
+        CollisionResult res = mCollider.GetBounds().collisionTile(
+            dif.x - Level.mCurrentLevel.GetBounds().GetPosition().x, 
+            dif.y - Level.mCurrentLevel.GetBounds().GetPosition().y);
         
-        //falling = res == CollisionResult.Hole;
+        falling = res == CollisionResult.Hole;
 
-        return true;// res == CollisionResult.None;
+        return res == CollisionResult.None;
     }
 
     /*! Move

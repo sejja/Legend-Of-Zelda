@@ -12,8 +12,10 @@ import java.util.ArrayList;
 
 import Engine.ECSystem.Level;
 import Engine.ECSystem.ObjectManager;
+import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Sprite;
 import Engine.Graphics.Spritesheet;
+import Engine.Graphics.Components.ZeldaCameraComponent;
 import Engine.Graphics.Tile.TileManager;
 import Engine.Math.Vector2D;
 import Engine.StateMachine.State;
@@ -32,9 +34,16 @@ public class PlayState extends State {
     *   Just assigns the statemachine child
     */ //----------------------------------------------------------------------
     public PlayState() {
-        var t = new TestRoom2(null, null, null, null, "Content/TiledProject/StressTest.tmx");
-        mTestLevel = new TestRoom(t, null, null, null, "Content/TiledProject/TestRoom2.tmx", new Vector2D<>(0.f, 0.f));
+        var t = new TestRoom2(null, null, null, null, "Content/TiledProject/TestRoom2.tmx");
+        mTestLevel = new TestRoom(t, null, null, null, "Content/TiledProject/TestRoom.tmx", new Vector2D<>(0.f, 0.f));
         t.SetLeftlevel(mTestLevel);
+
+        var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetCamera();
+
+         Vector2D<Float> topright = new Vector2D<>(mTestLevel.GetBounds().GetPosition().x + 1280.f / 2, mTestLevel.GetBounds().GetPosition().y + 720.f / 2);
+
+        Vector2D<Float> bottomleft = new Vector2D<>(mTestLevel.GetBounds().GetPosition().x + mTestLevel.GetBounds().GetWidth() - 1280.f / 2, mTestLevel.GetBounds().GetPosition().y + mTestLevel.GetBounds().GetHeight() - 760.f / 2);
+        z.SetBounds(topright, bottomleft); 
     }
 
     // ------------------------------------------------------------------------
@@ -44,7 +53,6 @@ public class PlayState extends State {
     */ //----------------------------------------------------------------------
     @Override
     public void Update() {
-        Level.mCurrentLevel.Update();
         ObjectManager.GetObjectManager().Update();
     }
 }

@@ -1,5 +1,6 @@
 package Engine.Window;
 
+import Engine.ECSystem.Level;
 import Engine.Input.InputManager;
 import Engine.StateMachine.StateMachine;
 
@@ -66,7 +67,7 @@ public class GameLoop extends Thread {
 
         //While the window is present
         for(long frametime = System.nanoTime(); mRunning; frametime = System.nanoTime()) {
-            
+            Level.mCurrentLevel.Update();
             if(!mPause) Update();
             mTargetBuffer.Render();
             mTargetBuffer.Present();

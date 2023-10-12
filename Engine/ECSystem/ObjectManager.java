@@ -9,7 +9,6 @@
 package Engine.ECSystem;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import Engine.ECSystem.Types.Actor;

@@ -19,11 +19,11 @@ import Engine.Graphics.Tile.TilemapObject;
 
 public class TilemapObject extends Tilemap {
 
-    public static Block[] mBlocks;
+    public Block[] mBlocks;
     private int mTileWidth;
     private int mTileHeight;
-    private static int mHeight;
-    private int mWidth;
+    public int mHeight;
+    public int mWidth;
 
     public TilemapObject(Vector2D<Float> position, String data, Spritesheet sprite, int width , int height, int tilewidth, int tileheight, int tilecolumns) {
         Block temp;
@@ -54,7 +54,7 @@ public class TilemapObject extends Tilemap {
         }
     }
 
-    public static Block GetBlockAt(int x, int y) {
+    public Block GetBlockAt(int x, int y) {
         return mBlocks[x + (y * mHeight)];
     }
 
