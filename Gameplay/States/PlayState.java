@@ -69,7 +69,7 @@ public class PlayState extends State {
         dialogueArrayList.add("Ahora embarcate en una nueva aventura junto a tu espada y tu \narco");
         dialogueArrayList2.add("Muy buenas caballero] mi nombre es Juan] y estoy aqui protegiendo \nla puerta de acceso al palacio");
         dialogueArrayList2.add("A si que abandona este lugar por favor");
-        mTilemap = new TileManager("Content/TiledProject/TestRoom.tmx");
+        mTilemap = new TileManager("Content/TiledProject/OverWorld.tmx");
         mFont =(FontObject)ObjectManager.GetObjectManager().AddEntity(new FontObject("Content/Fonts/ZeldaFont.png", "THE LEGEND OF ANDONI", 56));
         mFont.SetPosition(new Vector2D<>(100.f, 100.f));
         mFont.SetScale(new Vector2D<>(32.f, 32.f));
