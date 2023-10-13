@@ -6,8 +6,8 @@ import java.awt.image.BufferedImage;
 
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
-import Engine.Graphics.Animation;
 import Engine.Graphics.GraphicsPipeline;
+import Engine.Graphics.Animations.Animation;
 import Engine.Graphics.Components.AnimationMachine;
 import Engine.Graphics.Components.CameraComponent;
 import Engine.Math.Vector2D;

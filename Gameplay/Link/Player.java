@@ -3,8 +3,6 @@ package Gameplay.Link;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.ListIterator;
 
 import Engine.ECSystem.Level;
 import Engine.ECSystem.ObjectManager;
@@ -15,7 +13,6 @@ import Engine.Graphics.Animations.Animation;
 import Engine.Graphics.Animations.AnimationEvent;
 import Engine.Graphics.Components.AnimationMachine;
 import Engine.Graphics.Components.ZeldaCameraComponent;
-import Engine.Graphics.Tile.Block;
 import Engine.Input.InputFunction;
 import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
@@ -23,13 +20,10 @@ import Engine.Physics.CollisionResult;
 import Engine.Physics.Components.BoxCollider;
 import Engine.Window.GameLoop;
 import Engine.Physics.Components.ColliderManager;
-import Gameplay.States.PlayState;
 import Gameplay.AnimatedObject.Bomb;
 import Gameplay.Enemies.Enemy;
-import Gameplay.Enemies.Units.GreenKnight;
 import Gameplay.Interactives.Interactive;
 import Gameplay.LifeBar.LifeBar;
-import Gameplay.NPC.DialogueWindow;
 import Gameplay.NPC.Npc;
 
 public class Player extends Actor {
@@ -96,8 +90,6 @@ public class Player extends Actor {
      */
     private Npc currentNPCinteraction;
     //----------------------------------------------------------------------
-    protected boolean isTouchingNpc;
-    private Vector2D<Float> npcIndex;
 
     //Methods______________________________________________________________________________________________________________________________________________________________________________
 
@@ -332,9 +324,7 @@ public class Player extends Actor {
     }
     public void playerStateMachine(){
         if(dash){dash();return;}//Early return dash is mostly the dominate action, so if link is dashing he can not do anything else
-        else{
-            if (!mAnimation.MustComplete()){Move();}
-        }
+        if (!mAnimation.MustComplete()){Move();}
     }
     // ------------------------------------------------------------------------
     
@@ -357,8 +347,6 @@ public class Player extends Actor {
     */ //----------------------------------------------------------------------
     public void Move() {
         Vector2D<Float> pos = GetPosition();
-
-        //System.out.println(directionToString());
         switch (direction){
             case UP:
                 if(SolveCollisions(new Vector2D<>(0, -velocity))) pos.y -= velocity;
@@ -519,22 +507,9 @@ public class Player extends Actor {
             if(falling && mCurrentAnimation != FALL || mAnimation.GetAnimation().GetDelay() == -1) {SetAnimation(FALL, mAnimation.GetSpriteSheet().GetSpriteArray(FALL), delay);}//Enviromental special case
             return;
         }
-
-        if (type == Action.ATTACK || type == Action.BOW){ //Activate must-end sequence
-            mAnimation.setMustComplete(true);
-        }
-
         int i = type.getID();
 
-        if(falling && mCurrentAnimation != FALL+i|| mAnimation.GetAnimation().GetDelay() == -1) {
-            SetAnimation(FALL+i, mAnimation.GetSpriteSheet().GetSpriteArray(FALL+i), delay);
-            mAnimation.setMustComplete(true);
-            return;
-        }
-
         if (type == Action.ATTACK || type == Action.BOW){mAnimation.setMustComplete(true);}//Activate must-end sequence
-
-        i = type.getID();
 
         switch(direction){
             case UP:

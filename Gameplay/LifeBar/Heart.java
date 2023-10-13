@@ -10,7 +10,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Entity;
-import Engine.Graphics.Animation;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.AnimationMachine;
 import Engine.Graphics.Components.CameraComponent;
@@ -58,6 +57,6 @@ public class Heart extends Actor {
         ObjectManager.GetObjectManager().RemoveEntity(this);
     }
     public boolean isInObjectManager(){
-        return ObjectManager.GetObjectManager().getmAliveEntities().contains(this);
+        return ObjectManager.GetObjectManager().GetAllObjectsOfType(GetSuperClass()).contains(this);
     }
 }
