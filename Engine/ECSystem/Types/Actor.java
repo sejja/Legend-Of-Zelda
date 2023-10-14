@@ -52,6 +52,9 @@ public abstract class Actor extends Entity implements ClassClasifier{
         mComponents.remove(comp);
         comp.ShutDown();
     }
+    public void RemoveAllComponent() {
+        for(Component c: mComponents)c.ShutDown();
+    }
 
     // ------------------------------------------------------------------------
     /*! Custom Constructor
