@@ -16,7 +16,7 @@ public interface StaticPlayerCollision {
         if(!ColliderManager.GetColliderManager().getCollision(thisHitmox, Player.class,true).isEmpty()){
              Player link = (Player)ColliderManager.GetColliderManager().getMapAllCollision().get(Player.class).getFirst().GetParent();
             Vector2D<Float> currentPosition = link.GetPosition();
-            Float difference = link.getVelocity()+1f;
+            Float difference = link.getVelocity()+2f;
             switch(link.getDirection()){
                 case UP :
                     link.SetPosition(new Vector2D<Float>(currentPosition.x, currentPosition.y + difference));
