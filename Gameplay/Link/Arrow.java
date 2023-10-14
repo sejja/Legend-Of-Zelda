@@ -76,7 +76,7 @@ public class Arrow extends Actor{
         }
         SetScale(new Vector2D<Float>(100f,100f));
         animationMachine.GetAnimation().SetDelay(1);
-        boxCollider = (BoxCollider)AddComponent(new BoxCollider(this));
+        hitbox = (BoxCollider)AddComponent(new BoxCollider(this));
         Animate();
 
         setPseudoPosition(GetScale().x/2, GetScale().y/2);

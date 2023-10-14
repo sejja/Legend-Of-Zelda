@@ -5,10 +5,13 @@ import java.nio.Buffer;
 import java.util.ArrayList;
 
 import Engine.ECSystem.ObjectManager;
+import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Entity;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Animations.AnimationEvent;
 import Engine.Math.Vector2D;
+import Engine.Physics.Components.BoxCollider;
+import Engine.Physics.Components.ColliderManager;
 import Gameplay.Enemies.Enemy;
 import Gameplay.Interactives.Interactive;
 import Gameplay.Interactives.Blocks.Rock;
@@ -19,6 +22,9 @@ public class Bomb extends AnimatedObject {
 
     private int counter = 0;
     final private int limit = 90;
+    final private int damage = 1;
+
+    private BoxCollider hitbox;
 
     public Bomb(Vector2D<Float> position) {
         super(position);
@@ -43,6 +49,9 @@ public class Bomb extends AnimatedObject {
             }
             
         });
+        setDefaultPseudoPosition();
+        setPseudoPositionVisible();
+        hitbox = (BoxCollider)AddComponent(new BoxCollider(this, this.GetScale(), false));
     }
 
     private void createChargeAnimation(){
@@ -74,31 +83,19 @@ public class Bomb extends AnimatedObject {
     }
 
     public void explode(){
-        //System.out.println("Ha explotado");
-        ArrayList<Entity> enemies = ObjectManager.GetObjectManager().GetAllObjectsOfType(Enemy.class);
-        ArrayList<Entity> rocks = ObjectManager.GetObjectManager().GetAllObjectsOfType(Interactive.class);
-        if (enemies == null || rocks == null){
-            return;
-        }
-        for (int i = 0; i < enemies.size(); i++){
-            Enemy enemy = (Enemy) enemies.get(i);
-            Vector2D<Float> enemyPosition = enemy.GetPosition();
-            //System.out.println(enemyPosition.getModuleDistance(this.GetPosition()));
-            if (enemyPosition.getModuleDistance(this.GetPosition()) < this.GetScale().getModule()){ //Each enemy thats can be attacked
-                //System.out.println("Le da");
-                enemy.setHealthPoints(1);
-                enemy.KnockBack(this.GetPosition());
+        ArrayList<Actor> enemies = ColliderManager.GetColliderManager().getCollision(hitbox, Enemy.class, true);
+        ArrayList<Actor> interactives = ColliderManager.GetColliderManager().getCollision(hitbox, Interactive.class, true);
+        if (!enemies.isEmpty()){
+            for(int i = 0; i<enemies.size(); i++){
+                Enemy enemy = (Enemy)enemies.get(i);
+                enemy.setHealthPoints(damage);
+                enemy.KnockBack();
             }
         }
-
-        for (int i = 0;  i < rocks.size(); i++){
-            Rock rock = (Rock) rocks.get(i);
-            Vector2D<Float> rockPosition = rock.GetPosition();
-            //System.out.println(enemyPosition.getModuleDistance(this.GetPosition()));
-            if (rockPosition.getModuleDistance(this.GetPosition()) < this.GetScale().getModule()){
-                //System.out.println("Peta");
-                rock.setHealthPoints(1);
-                    
+        if(!interactives.isEmpty()){
+            for(int i = 0; i<interactives.size(); i++){
+                Rock rock = (Rock)interactives.get(i);
+                rock.setHealthPoints(damage);
             }
         }
     }

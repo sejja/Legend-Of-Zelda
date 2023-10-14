@@ -107,9 +107,15 @@ public abstract class Actor extends Entity implements ClassClasifier{
     }
 
     public void setPseudoPosition(Float x, Float y){
-        this.pseudoPosition = new Vector2D<Float>(GetPosition());
+        this.pseudoPosition = new Vector2D<Float>(GetPosition().x, GetPosition().y);
         differenceX = x;
         differenceY = y;
+        pseudoPositionUpdate();
+    }
+    public void setDefaultPseudoPosition(){
+        this.pseudoPosition = new Vector2D<Float>(GetPosition().x, GetPosition().y);
+        differenceX = GetScale().x/2;
+        differenceY = GetScale().y/2;
         pseudoPositionUpdate();
     }
 
@@ -127,12 +133,10 @@ public abstract class Actor extends Entity implements ClassClasifier{
     }
 
     public void setPseudoPositionVisible (){
-        //System.out.println(this.getClass());
         mCollider = new BoxCollider(this);
         mCollider.GetBounds().SetBox(pseudoPosition, new Vector2D<>(5f,5f));
         mCollider.setColor(Color.RED);
         AddComponent(mCollider);
-        //System.out.println(mComponents);
     }
 
     public Class GetSuperClass(){return Actor.class;}
