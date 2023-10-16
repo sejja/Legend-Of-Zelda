@@ -22,7 +22,7 @@ public class DeadAnimation extends AnimatedObject{
         //super(new Vector2D<Float>(actor.GetPosition().x + offset.x, actor.GetPosition().x + offset.y));
         delay = 5;
         this.actor = actor;
-        setAnimationMachine(new Spritesheet("Content/Animations/DeadAnimation.png", 29 , 36));
+        setAnimationMachine(new Spritesheet("Content/Animations/DeadAnimation.png",6, 1, true));
         SetScale(actor.GetScale());
         ObjectManager.GetObjectManager().AddEntity(this);
         defaultAnimationIndex = 0;

@@ -15,9 +15,13 @@ import Engine.Math.Vector2D;
 import Engine.Physics.AABB;
 
 public class Normblock extends Block {
+    protected boolean blocked = false;
 
     public Normblock(BufferedImage img, Vector2D<Integer> position, int w, int h) {
         super(img, position, w, h);
+    }
+    public void setBlocked(boolean b){
+        blocked = b;
     }
 
     @Override

@@ -77,7 +77,7 @@ public class GameLoop extends Thread {
             for(Thread.yield(); frametime - lastRenderTime < TBU; frametime = System.nanoTime()) {
                 //Sleeping the tread is not safe, add a try/catch
                 try {
-                    Thread.sleep(((long)TBU - (frametime - lastRenderTime)) / 1000000);
+                    Thread.sleep(((long)TBU - (frametime - lastRenderTime)) / 1000000000);
                 } catch(Exception e) {
                     e.printStackTrace();
                 }

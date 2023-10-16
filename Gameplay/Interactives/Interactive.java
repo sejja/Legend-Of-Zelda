@@ -10,6 +10,7 @@ import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Animations.Animation;
 import Engine.Graphics.Components.AnimationMachine;
 import Engine.Graphics.Components.CameraComponent;
+import Engine.Graphics.Tile.*;
 import Engine.Math.Vector2D;
 import Engine.Physics.Components.BoxCollider;
 import Gameplay.Enemies.Enemy;
@@ -20,6 +21,8 @@ import Gameplay.Link.DIRECTION;
 import Gameplay.NPC.Npc;
 
 public abstract class Interactive extends Actor{
+
+    protected Pair mPositionPair;
 
     //stats
     protected int healthPoints = 1;
@@ -35,6 +38,11 @@ public abstract class Interactive extends Actor{
     */ //----------------------------------------------------------------------
     public Interactive( Vector2D<Float> position) {
         super(position);
+        mPositionPair = PositionToPair(position);
+        Block block = TileManager.sLevelObjects.GetBlockAt(mPositionPair.getFirst(),mPositionPair.getSecond());
+        if (block instanceof Normblock){
+            ((Normblock) block).setBlocked(true);
+        }
     }
 
     public void SetAnimation(int i, BufferedImage[] frames, int delay) {
