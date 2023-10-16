@@ -12,9 +12,9 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+import Engine.Assets.Asset;
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Component;
-import Engine.ECSystem.Types.Entity;
 import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Animations.Animation;
@@ -44,9 +44,9 @@ public final class AnimationMachine extends Component implements Renderable {
     *
     *   Creates an Animation Machine with a parent and a sprite
     */ //----------------------------------------------------------------------
-    public AnimationMachine(Actor parent, Spritesheet sprite) {
+    public AnimationMachine(Actor parent, Spritesheet sp) {
         super(parent);
-        mSprite = sprite;
+        mSprite = sp;
         mAnimation = new Animation();
         mFinishedEvent = new ArrayList<>();
     }
@@ -154,9 +154,6 @@ public final class AnimationMachine extends Component implements Renderable {
     @Override
     public void Render(Graphics2D g, CameraComponent camerapos) {
         final Vector2D<Float> camcoord = camerapos.GetCoordinates();
-        final Entity parent = GetParent();
-        final Vector2D<Float> scale = parent.GetScale();
-        final Vector2D<Float> position = parent.GetPosition();
 
         if(camerapos.OnBounds(new AABB(GetParent().GetPosition(), GetParent().GetScale())))
             //g.drawImage(mAnimation.GetCurrentFrame(), (int)(float)GetParent().GetPosition().x - (int)(float)camcoord.x - (int)(scale.x / 4), (int)(float)GetParent().GetPosition().y - (int)(float)camcoord.y, (int)(float)GetParent().GetScale().x, (int)(float)GetParent().GetScale().y, null);

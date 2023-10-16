@@ -10,13 +10,16 @@ package Engine.Graphics;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.nio.Buffer;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
+
+import Engine.Assets.Asset;
+import Engine.Assets.AssetManager;
 import Engine.Math.Vector2D;
 
-public class Sprite {
-    protected BufferedImage mSpriteSheet = null;
-    protected BufferedImage[][] mSpriteArray;
+public class Sprite { 
+    protected Asset mSpriteSheet = null;
     protected int mWidth;
     protected int mHeight;
 
@@ -27,8 +30,8 @@ public class Sprite {
     */ //----------------------------------------------------------------------
     public Sprite(String file) {
         mSpriteSheet = LoadSprite(file);
-        mWidth = mSpriteSheet.getWidth();
-        mHeight = mSpriteSheet.getHeight();
+        mWidth = ((BufferedImage)mSpriteSheet.Raw()).getWidth();
+        mHeight = ((BufferedImage)mSpriteSheet.Raw()).getHeight();
     }
 
     // ------------------------------------------------------------------------
@@ -36,17 +39,8 @@ public class Sprite {
     *
     *   Loads an sprite from the fisk and uploads it as a bufferedimage
     */ //----------------------------------------------------------------------
-    protected BufferedImage LoadSprite(String file) {
-        BufferedImage sprite = null;
-
-        //Add a try/catch clause, as it might fail to get the resource in question
-        try {
-            sprite = ImageIO.read(getClass().getClassLoader().getResourceAsStream(file));
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-
-        return sprite;
+    protected Asset LoadSprite(String file) {
+        return AssetManager.Instance().GetResource(file);
     }
 
     // ------------------------------------------------------------------------
@@ -54,7 +48,7 @@ public class Sprite {
     *
     *   Returns the Sprite Sheet, as an Image
     */ //----------------------------------------------------------------------
-    public BufferedImage GetSprite() {
+    public Asset GetSprite() {
         return mSpriteSheet;
     }
 }
