@@ -57,8 +57,9 @@ public class Npc extends Actor {
         
         allAnimations = transposeMatrix(sprite.GetSpriteArray2D());
         setSetopAnimationSet(allAnimations, allAnimations[0].length);
+        sprite.setmSpriteArray(allAnimations);
         animationMachine = AddComponent(new AnimationMachine(this, sprite));
-        animationMachine.SetFrames(allAnimations[6]); //La diferencia entre correr a una direction y parase en la misma es un + 4
+        animationMachine.SetFrameTrack(1); //La diferencia entre correr a una direction y parase en la misma es un + 4
         animationMachine.GetAnimation().SetDelay(15);
 
         SetScale(size);

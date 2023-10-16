@@ -276,7 +276,7 @@ public class Player extends Actor {
      */
     public void SetAnimation(int i, BufferedImage[] frames, int delay) {
         mCurrentAnimation = i;
-        mAnimation.SetFrames(frames);
+        mAnimation.SetFrameTrack(i);
         mAnimation.GetAnimation().SetDelay(delay);
     }
     // ------------------------------------------------------------------------
@@ -661,7 +661,7 @@ public class Player extends Actor {
         this.direction = DIRECTION.DOWN;
         setToSpawnPoint();
         hitbox.Reset();
-        mAnimation.SetFrames(mAnimation.GetSpriteSheet().GetSpriteArray2D()[DOWN+Action.STOP.getID()]);
+        mAnimation.SetFrameTrack(DOWN+Action.STOP.getID());
     }
     public void setBow(boolean bow) {this.bow = bow;}
     //------------------------------------------------------------------------

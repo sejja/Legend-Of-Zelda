@@ -141,10 +141,10 @@ public class Arrow extends Actor{
     public void Animate(){
         switch(direction)
         {
-            case UP: animationMachine.SetFrames(allAnimation[3]) ;return;
-            case DOWN: animationMachine.SetFrames(allAnimation[2]) ;return;
-            case LEFT: animationMachine.SetFrames(allAnimation[1]) ;return;
-            case RIGHT: animationMachine.SetFrames(allAnimation[0]) ;return;
+            case UP: animationMachine.SetFrameTrack(3); ;return;
+            case DOWN: animationMachine.SetFrameTrack(2) ;return;
+            case LEFT: animationMachine.SetFrameTrack(1) ;return;
+            case RIGHT: animationMachine.SetFrameTrack(0) ;return;
         }
     }
     public int damage(){return damage;}

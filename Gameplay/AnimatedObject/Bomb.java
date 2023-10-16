@@ -33,7 +33,7 @@ public class Bomb extends AnimatedObject {
         setAnimationMachine(spritesheet);
         this.allAnimtion  = spritesheet.GetSpriteArray2D();
         createChargeAnimation();
-        animationMachine.SetFrames(allAnimtion[1]);
+        animationMachine.SetFrameTrack(1);
         this.SetScale(new Vector2D<Float>(100f,100f));
         ObjectManager.GetObjectManager().AddEntity(this);
 
@@ -73,7 +73,7 @@ public class Bomb extends AnimatedObject {
     public void countDown(){
         if(counter == limit){
             animationMachine.setMustComplete(true);
-            animationMachine.SetFrames(allAnimtion[0]);
+            animationMachine.SetFrameTrack(0);
             delay = 3;
             explode();
             counter = 0;

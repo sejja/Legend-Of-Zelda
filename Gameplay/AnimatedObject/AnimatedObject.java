@@ -45,7 +45,7 @@ public abstract class AnimatedObject extends Actor{
     }
 
     public void Animate(int i){
-        animationMachine.SetFrames(animation);
+        animationMachine.SetFrameTrack(defaultAnimationIndex);
         this.defaultAnimationIndex = i;
     }
 
