@@ -95,7 +95,7 @@ public class TileManager extends ECObject implements Renderable {
             tileWidth = Integer.parseInt(element2.getAttribute("tilewidth"));
             tileHeight = Integer.parseInt(element2.getAttribute("tileheight"));
             tileColumns = Integer.parseInt(element2.getAttribute("columns"));
-            
+
             sprite = new Spritesheet("Content/Tiles/" + imagePath, tileWidth, tileHeight);
 
             list = doc.getElementsByTagName("layer");
