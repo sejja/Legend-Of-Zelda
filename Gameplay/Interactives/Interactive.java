@@ -103,6 +103,11 @@ public abstract class Interactive extends Actor{
     public int getHealthPoints() {
         return healthPoints; 
     }
+    
+    public BoxCollider getmCollision() {
+        return mCollision;
+    }
+
     @Override
     public Class GetSuperClass(){return Interactive.class;}
 }

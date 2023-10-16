@@ -76,8 +76,8 @@ public class ColliderManager {
      *      -> objective <- Tha class that are searched to chech if some object of that class has collisioned with the currend collider
      *      -> hasCollision <-True if the target thats is being searching has collision mecanics (For exameple, torchs or bats have colliders but not collision )
      */
-    public ArrayList<Actor> getCollision(BoxCollider collider, Class targerClass, boolean hasCollision){
-        if(hasCollision){
+    public ArrayList<Actor> getCollision(BoxCollider collider, Class targerClass, boolean targetHasCollision){
+        if(targetHasCollision){
             return (searchCollisionActors(collider, mapAllCollision.get(targerClass)));
         }else{
             return (searchCollisionActors(collider, mapAllNonCollision.get(targerClass)));

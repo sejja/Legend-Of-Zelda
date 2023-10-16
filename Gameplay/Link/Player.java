@@ -481,8 +481,9 @@ public class Player extends Actor {
     public int getHealthPoints(){return this.healthPoints;}
     private Player getPlayer (){return this;}
     public boolean isAble_to_takeDamage() {return able_to_takeDamage;}
-    //------------------------------------------------------------------------
+    public BoxCollider getHitbox() {return hitbox;}
 
+    //------------------------------------------------------------------------
     /* Setters
      * 
      */
@@ -575,7 +576,6 @@ public class Player extends Actor {
             }
         }
     }
-
     private void interact(){
         if(currentNPCinteraction == null){
             currentNPCinteraction = nearestNPC();
@@ -633,6 +633,7 @@ public class Player extends Actor {
         dash = false;
         able_to_takeDamage = true;
     }
+    //------------------------------------------------------------------------
     
     /* To pause the gameplay
      * 
@@ -640,6 +641,7 @@ public class Player extends Actor {
     private void Pause(){
         GameLoop.SetPaused(!GameLoop.IsPaused());
     }
+    //------------------------------------------------------------------------
 
     /* This function set the player position to the spawn Point
      * 

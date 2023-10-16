@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
+import javax.lang.model.element.ModuleElement.DirectiveKind;
+
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Entity;
@@ -14,8 +16,10 @@ import Engine.Graphics.Components.AnimationMachine;
 import Engine.Math.Vector2D;
 import Engine.Physics.CollisionResult;
 import Engine.Physics.Components.BoxCollider;
+import Engine.Physics.Components.ColliderManager;
 import Gameplay.Enemies.Enemy;
 import Gameplay.Enemies.Units.GreenKnight;
+import Gameplay.Interactives.Interactive;
 
 public class Arrow extends Actor{
 
@@ -27,7 +31,7 @@ public class Arrow extends Actor{
     private float range = 350;
     private Float distance = 0f;
     private DIRECTION direction;
-    private BoxCollider boxCollider;
+    private BoxCollider hitbox;
     private boolean endArrow;
 
     public Arrow(Player Link){
@@ -37,16 +41,18 @@ public class Arrow extends Actor{
         allAnimation = animationMachine.GetSpriteSheet().GetSpriteArray2D();
 
         direction = Link.getDirection();
-
-        //SetPosition(new Vector2D<Float>(Link.GetPosition().x + 28, Link.GetPosition().y + 45)); //Magic numbers because of the hitbox waiting to be fixed
-        //SetPosition(Link.GetPosition());
+        
         SetScale( new Vector2D<Float>(44f,40f));
         animationMachine.GetAnimation().SetDelay(1);
-        boxCollider = (BoxCollider)AddComponent(new BoxCollider(this));
         Animate();
 
         setPseudoPosition(GetScale().x/2, GetScale().y/2);
         setPseudoPositionVisible();
+        if (direction == DIRECTION.UP || direction == DIRECTION.DOWN){
+            hitbox = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<>(20f,40f), true));
+        }else{
+            hitbox = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<>(40f,20f), true));
+        }
     }
 
     public Arrow (Player Link, Spritesheet spritesheet, float speed, float range, boolean fixed){ //This is actually a dash XD
@@ -70,7 +76,7 @@ public class Arrow extends Actor{
         }
         SetScale(new Vector2D<Float>(100f,100f));
         animationMachine.GetAnimation().SetDelay(1);
-        boxCollider = (BoxCollider)AddComponent(new BoxCollider(this));
+        hitbox = (BoxCollider)AddComponent(new BoxCollider(this));
         Animate();
 
         setPseudoPosition(GetScale().x/2, GetScale().y/2);
@@ -83,28 +89,28 @@ public class Arrow extends Actor{
         switch (direction){
             case UP:
                 currentPosition = pos.y;
-                if(boxCollider.GetBounds().collisionTile(0, -speed) == CollisionResult.None){
+                if(hitbox.GetBounds().collisionTile(0, -speed) == CollisionResult.None){
                     pos.y -= speed;
                 }else{endArrow = true;}
                 distance += Math.abs(currentPosition - pos.y);
                 return;
             case DOWN:
                 currentPosition = pos.y;
-                if(boxCollider.GetBounds().collisionTile(0, +speed) == CollisionResult.None){
+                if(hitbox.GetBounds().collisionTile(0, +speed) == CollisionResult.None){
                     pos.y += speed;
                 }else{endArrow = true;}
                 distance += Math.abs(currentPosition - pos.y);
                 return;
             case LEFT:
                 currentPosition = pos.x;
-                if(boxCollider.GetBounds().collisionTile(-speed, 0) == CollisionResult.None){
+                if(hitbox.GetBounds().collisionTile(-speed, 0) == CollisionResult.None){
                     pos.x -= speed;
                 }else{endArrow = true;}
                 distance += Math.abs(currentPosition - pos.x);
                 return;
             case RIGHT:
                 currentPosition = pos.x;
-                if(boxCollider.GetBounds().collisionTile(+speed, 0) == CollisionResult.None){
+                if(hitbox.GetBounds().collisionTile(+speed, 0) == CollisionResult.None){
                     pos.x += speed;
                 }else{endArrow = true;}
                 distance += Math.abs(currentPosition - pos.x);
@@ -120,18 +126,17 @@ public class Arrow extends Actor{
             Animate();
         }else{ //Delete arrow
             //System.out.println("Eliminado flecha");
-            animationMachine.SetFrames(allAnimation[4]);
-            boxCollider.ShutDown();
+            hitbox.ShutDown();
             ObjectManager.GetObjectManager().RemoveEntity(this);
         }
         if( endArrow ){
             //System.out.println("Eliminado flecha");
-            animationMachine.SetFrames(allAnimation[4]);
-            boxCollider.ShutDown();
+            hitbox.ShutDown();
             ObjectManager.GetObjectManager().RemoveEntity(this);
         }
         Attack();
         pseudoPositionUpdate();
+        hitbox.Update();
     }
     public void Animate(){
         switch(direction)
@@ -145,22 +150,12 @@ public class Arrow extends Actor{
     public int damage(){return damage;}
     public float getVelocity(){return speed;}
     public void Attack(){
-        /*  This function takes all de Entitys and if any of them is a instance of Enemys it has to ve consider hast potencial objetives to hit
-                
-        It will calculate a vector to the player position to the enemy position
-        It will called a KnockBack() function of that enemy*/
-        ArrayList<Entity> allEntities = ObjectManager.GetObjectManager().GetAllObjectsOfType(Enemy.class);
-        for (int i = 0; i < allEntities.size(); i++){
-            if (allEntities.get(i) instanceof Enemy){
-                Enemy enemy = (Enemy) allEntities.get(i);
-                Vector2D<Float> enemyPosition = enemy.GetPosition();//System.out.println(enemyPosition.getModuleDistance(this.GetPosition()));
-                if (enemyPosition.getModuleDistance(this.GetPosition()) < this.GetScale().getModule()){ //Each enemy thats can be attacked
-                    //System.out.println("Le da");
-                    enemy.setHealthPoints(damage);
-                    enemy.KnockBack();
-                    endArrow = true;
-                    return;}
-            }
+        ArrayList<Actor> enemies;
+        if(!(enemies = ColliderManager.GetColliderManager().getCollision(hitbox, Enemy.class, true)).isEmpty()){
+            Enemy enemy = (Enemy)enemies.get(0);
+            enemy.setHealthPoints(damage);
+            enemy.KnockBack();
+            endArrow = true;
         }
     }
 
