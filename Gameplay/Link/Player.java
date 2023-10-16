@@ -481,8 +481,9 @@ public class Player extends Actor {
     public int getHealthPoints(){return this.healthPoints;}
     private Player getPlayer (){return this;}
     public boolean isAble_to_takeDamage() {return able_to_takeDamage;}
-    //------------------------------------------------------------------------
+    public BoxCollider getHitbox() {return hitbox;}
 
+    //------------------------------------------------------------------------
     /* Setters
      * 
      */

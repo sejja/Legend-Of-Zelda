@@ -54,13 +54,15 @@ public class BoxCollider extends Component implements Renderable{
         mBounds = new AABB(parent.GetPosition(), scale);
     }
 
-    public BoxCollider(Actor parent,Vector2D<Float> scale, boolean hasCollides){ //This construct will bild a Hitbox
+    public BoxCollider(Actor parent,Vector2D<Float> scale, boolean hasCollision){ //This construct will bild a Hitbox
         super(parent);
         Vector2D<Float> drawnPoint = new Vector2D<Float>(parent.getPseudoPosition().x-(scale.x/2), parent.getPseudoPosition().y-(scale.y/2));
         mBounds = new AABB(drawnPoint, scale);
-        color = Color.magenta;
-        this.hasCollision = hasCollides;
-        ColliderManager.GetColliderManager().addCollider(this, hasCollides);
+        if(hasCollision){
+            color = Color.MAGENTA;
+        }
+        this.hasCollision = hasCollision;
+        ColliderManager.GetColliderManager().addCollider(this, hasCollision);
     }
     // ------------------------------------------------------------------------
     /*! Init

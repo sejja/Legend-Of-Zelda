@@ -76,4 +76,15 @@ public class Vector2D<T> {
             else {return DIRECTION.UP;}
         }
     }
+
+    public Vector2D<Float> getNormalVector (){
+        return new Vector2D<Float>((Float)this.x/getModule(), (Float)this.y/getModule());
+    }
+
+    public Vector2D<Float> sumVector (Vector2D<Float> sum){
+        return new Vector2D<Float>((Float)this.x + sum.x, (Float)this.y + sum.x);
+    }
+    public Vector2D<Float> diffVector (Vector2D<Float> sum){
+        return new Vector2D<Float>((Float)this.x - sum.x, (Float)this.y - sum.x);
+    }
 }

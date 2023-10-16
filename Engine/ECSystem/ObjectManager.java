@@ -80,10 +80,12 @@ public class ObjectManager {
     public void RemoveEntity(Entity e) {
         final Class<?> type = e.GetSuperClass();
 
+        if (e instanceof Actor){((Actor)e).RemoveAllComponent();}
+
         //If we already contain the key, perfect
         if(mDeadEntities.containsKey(type)) {
             mDeadEntities.get(type).add(e);
-
+            e.SetScale(new Vector2D<>(0f,0f));
         //else
         } else {
             ArrayList<Entity> chunk = new ArrayList<>();

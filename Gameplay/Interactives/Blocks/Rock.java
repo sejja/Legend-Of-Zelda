@@ -37,6 +37,6 @@ public class Rock extends Interactive implements StaticPlayerCollision{
 
     public void Update(){
         super.Update();
-        playerCollision(mCollision);
+        playerCollision();
     }
 }
