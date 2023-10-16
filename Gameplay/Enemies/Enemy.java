@@ -201,6 +201,7 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
         Animate();
         Move();
         pseudoPositionUpdate();
+        mCollision.Update();
         //System.out.println(playerPos.x + " " + playerPos.y + " " + normalizedDirection+ " " );
     }
 

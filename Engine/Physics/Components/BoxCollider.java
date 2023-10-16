@@ -81,7 +81,7 @@ public class BoxCollider extends Component implements Renderable{
     */ //----------------------------------------------------------------------
     @Override
     public void Update() {
-        //mBounds.SetHeight(this.GetBounds().GetWidth()); Para que sirve esto???
+        //mBounds.SetHeight(this.GetBounds().GetWidth()); Para que sirve esto??? --> Idk bro
         //mBounds.SetWidth(this.GetBounds().GetHeight());
         if(hasCollision){
             mBounds.SetPosition(new Vector2D<Float>(super.GetParent().getPseudoPosition().x-(mBounds.GetWidth()/2), super.GetParent().getPseudoPosition().y-(mBounds.GetHeight()/2)));

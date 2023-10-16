@@ -8,17 +8,17 @@ import Gameplay.Enemies.*;
 
 public class GreenKnight extends Enemy{
     
-    protected Vector2D<Float> size = new Vector2D<Float>(75f, 100f);
+    protected Vector2D<Float> size = new Vector2D<Float>(50f, 100f);
 
     //animation
     protected int xoffset = 8;
     protected int yoffset = 32;
-    protected Spritesheet sprite=new Spritesheet("Content/Animations/gknight.png", 24,28);
+    protected Spritesheet sprite=new Spritesheet("Content/Animations/gknight.png", 16,28);
     
 
     public GreenKnight(Vector2D<Float> position) {
         super(position);
-        setPseudoPosition(50f,50f);
+        setPseudoPosition(25f, 50f);
         SetScale(size);
         setDamage(2);
         setHp(4);
