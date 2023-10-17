@@ -48,6 +48,7 @@ public class Npc extends Actor {
 
     private final int speed = 1;
     private int direction;
+    private int currentDirection;
     private float xInicial;
     private float yInicial;
 
@@ -124,14 +125,30 @@ public class Npc extends Actor {
     public static void setRemove() {remove = true;}
     public String getName() {return name;}
 
-    public void interaction(){
+    public void interaction(Vector2D<Float> playerPosition){
         dialogueWindow.setNpc(this);
+        currentDirection = this.getDirection(); 
+        lookAtPLayer(playerPosition);
         if (!getmComponents().contains(dialogueWindow)){
             AddComponent(dialogueWindow);
             dialogueWindow.setJ(0);
             Pause();
         }else{
             nextDialog();
+        }
+    }
+
+    public void lookAtPLayer(Vector2D<Float> playerPosition){
+        Vector2D<Float> vector = playerPosition.getVectorToAnotherActor(this.GetPosition());
+        System.out.println(vector);
+        if((playerPosition.x > this.GetPosition().x) && (vector.x < vector.y)){
+            animationMachine.SetFrames(allAnimations[RIGHT]);
+        } else if(playerPosition.x < this.GetPosition().x && (vector.x > vector.y)){
+            animationMachine.SetFrames(allAnimations[LEFT]);
+        } else if(playerPosition.y < this.GetPosition().y && (vector.x < vector.y)){
+            animationMachine.SetFrames(allAnimations[UP]);
+        } else if(playerPosition.y > this.GetPosition().y && (vector.x > vector.y)){
+            animationMachine.SetFrames(allAnimations[DOWN]);
         }
     }
 
@@ -142,6 +159,7 @@ public class Npc extends Actor {
             RemoveComponent(dialogueWindow);
             Player link = (Player) ObjectManager.GetObjectManager().getMapAliveActors().get(Player.class).getFirst();
             link.removeInteraction();
+            animationMachine.SetFrames(allAnimations[currentDirection]);
             Pause();
         }
     }
@@ -221,4 +239,12 @@ public class Npc extends Actor {
             xInicial = pos.x;
         }
     }
+    public int getDirection() {
+        return direction;
+    }
+    public void setDirection(int direction) {
+        this.direction = direction;
+    }
+
+    
 }

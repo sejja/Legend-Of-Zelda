@@ -656,7 +656,7 @@ public class Player extends Actor {
             currentNPCinteraction = nearestNPC();
         }
         try {
-            currentNPCinteraction.interaction();
+            currentNPCinteraction.interaction(this.GetPosition());
         } catch (java.lang.NullPointerException e) {
             System.err.println("No npc found");
             this.currentNPCinteraction = null;
