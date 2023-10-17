@@ -50,6 +50,9 @@ public class TilemapObject extends Tilemap {
                 }
 
                 mBlocks[i] = temp;
+            }else{
+                System.out.print("No block at: " + i);
+                mBlocks[i] = new Normblock(sprite.GetSprite((int) ((172 - 1) % tilecolumns), (int) ((172 - 1) / tilecolumns)), positiontemp, tilewidth, tileheight);
             }
         }
     }

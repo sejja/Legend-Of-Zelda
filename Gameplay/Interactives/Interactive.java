@@ -77,7 +77,7 @@ public abstract class Interactive extends Actor{
     */ //----------------------------------------------------------------------
     public Pair PositionToPair(Vector2D<Float> position) {
         int divisior = 64;
-        Pair pair = new Pair(Math.round(position.x/divisior), Math.round(position.y/divisior));
+        Pair pair = new Pair((int)Math.floor(position.x/divisior), (int)Math.floor(position.y/divisior));
         return pair;
     }
 
@@ -90,18 +90,7 @@ public abstract class Interactive extends Actor{
         
     }
 
-    public void setHealthPoints(int damage){
-        this.healthPoints -= damage;
-        if (healthPoints <= 0){
-            die();
-        }       
-    }
 
-    public void die(){
-        mCollision.ShutDown();
-        this.SetScale(new Vector2D<Float>(0f,0f));
-        ObjectManager.GetObjectManager().RemoveEntity(this);
-    }
 
     public int getHealthPoints() {
         return healthPoints; 

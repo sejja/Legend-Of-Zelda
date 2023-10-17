@@ -35,6 +35,8 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
 
     //player detected
     protected boolean chase = false;
+    protected boolean knockback=false;
+    protected int knockbackCounter=0;
 
     //A* search
     protected static AStarSearch aStarSearch = new AStarSearch();
@@ -193,11 +195,11 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     *   Adds Behavior to the Enemy
     */ //----------------------------------------------------------------------
     public void Update() {
-        playerPos = ObjectManager.GetObjectManager().GetObjectByName(Player.class, "Player").GetPosition();
         //System.out.println("pdsofhiusf");
         super.Update();
-        Pathfinding();
+        if(!knockback){Pathfinding();
         GetDirection(normalizedDirection);
+        }else{KnockbackRepeat();}
         Animate();
         Move();
         pseudoPositionUpdate();
@@ -266,7 +268,7 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     *   Calculates the movement of the Enemy
     */ //----------------------------------------------------------------------
     public void MovementVector() {
-        Vector2D<Float> dir = new Vector2D<Float>(playerPos.x - pseudoPos.x, playerPos.y - pseudoPos.x);
+        Vector2D<Float> dir = new Vector2D<Float>(playerPos.x - pseudoPos.x, playerPos.y - pseudoPos.y);
         normalizedDirection=Normalize(dir);
     }
 
@@ -291,16 +293,16 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
             yupperBound = currentDestination.getSecond()*64 + 3;
 
             //If currentDestination reached, pop next destination
-            if(((((xlowerBound <= pseudoPos.x) && (pseudoPos.x <= xupperBound)) && ((ylowerBound <= pseudoPos.y) && (pseudoPos.y <= yupperBound)))) && (currentDestination != finalDestination) && !path.isEmpty()){
+            if(((((xlowerBound <= pseudoPos.x) && (pseudoPos.x <= xupperBound)) && ((ylowerBound <= pseudoPos.y+GetScale().y/2) && (pseudoPos.y+GetScale().y/2 <= yupperBound)))) && (currentDestination != finalDestination) && !path.isEmpty()){
                 path.pop();
                 if(!path.isEmpty()){
                     currentDestination = path.peek();
                 }
-                normalizedDirection = Normalize(new Vector2D<Float>(currentDestination.getFirst()*64 - (pseudoPos.x), currentDestination.getSecond()*64 - (pseudoPos.y)));
+                normalizedDirection = Normalize(pseudoPosToDest());
                 pos.x += normalizedDirection.x * speed;
                 pos.y += normalizedDirection.y * speed;
             }else{
-                normalizedDirection = Normalize(new Vector2D<Float>(currentDestination.getFirst()*64 - (pseudoPos.x), currentDestination.getSecond()*64 - (pseudoPos.y)));
+                normalizedDirection = Normalize(pseudoPosToDest());
                 pos.x += normalizedDirection.x * speed;
                 pos.y += normalizedDirection.y * speed;
             }
@@ -312,22 +314,40 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
         }
 
         SetPosition(pos);
-    } 
+    }
+    
+    public Vector2D<Float> pseudoPosToDest(){
+        return new Vector2D<Float>(currentDestination.getFirst()*64 - (pseudoPos.x), currentDestination.getSecond()*64 - (pseudoPos.y+GetScale().y/2));
+    }
     
     public void KnockBack() {
+        knockback=true;
         Vector2D<Float> dir = pos.getVectorToAnotherActor(playerPos);
         normalizedDirection=Normalize(dir);
-        pos.x -= normalizedDirection.x * 60;
-        pos.y -= normalizedDirection.y * 60;
+        
+    }
+    
+    public void KnockbackRepeat(){
+        if (aStarSearch.isUnBlocked(PositionToPair(getPseudoPosition()).getFirst(),PositionToPair(getPseudoPosition()).getSecond())){
+            pos.x -= normalizedDirection.x * 7;
+            pos.y -= normalizedDirection.y * 7;
+        }else{
+            pos.x += normalizedDirection.x * 7;
+            pos.y += normalizedDirection.y * 7;
+        }
+        
+        knockbackCounter++;
         SetPosition(pos);
+        if(knockbackCounter==10){
+            knockback=false;
+            knockbackCounter=0;
+        }
     }
 
     public void KnockBack(Vector2D<Float> attackerPos) {
+        knockback=true;
         Vector2D<Float> dir = pos.getVectorToAnotherActor(attackerPos);
         normalizedDirection=Normalize(dir);
-        pos.x -= normalizedDirection.x * 60;
-        pos.y -= normalizedDirection.y * 60;
-        SetPosition(pos);
     }
     
 

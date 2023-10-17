@@ -33,6 +33,8 @@ public class TestRoom extends Level {
         ObjectManager.GetObjectManager().AddEntity(new Player(new Spritesheet("Content/Animations/Link/Link.png"), new Vector2D<Float>(700.f, 400.f), new Vector2D<Float>(100.f, 100.f)));
         ObjectManager.GetObjectManager().Update();
         ObjectManager.GetObjectManager().AddEntity(new Rock(new Vector2D<>(448f, 448f)));
+        ObjectManager.GetObjectManager().AddEntity(new Rock(new Vector2D<>(8*64f, 8*64f)));
+        ObjectManager.GetObjectManager().AddEntity(new Rock(new Vector2D<>(8*64f, 8*64f)));
         ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Float>(450.f, 300.f)));
         ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Float>(550.f, 300.f)));
         ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Float>(650.f, 300.f)));
