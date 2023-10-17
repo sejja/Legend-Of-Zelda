@@ -99,6 +99,11 @@ public class BoxCollider extends Component implements Renderable{
     @Override
     public void ShutDown() {
         GraphicsPipeline.GetGraphicsPipeline().RemoveRenderable(this);
+        try{
+            ColliderManager.GetColliderManager().removeCollider(this);
+        }catch(NullPointerException e){
+            //System.err.print("Already removed");
+        }
     }
 
     // ------------------------------------------------------------------------

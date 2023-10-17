@@ -29,12 +29,13 @@ import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
 import Engine.Physics.Components.BoxCollider;
 import Engine.Window.GameLoop;
+import Gameplay.Interactive;
 import Gameplay.Link.*;
 import Gameplay.Link.Player;
 import Gameplay.States.PlayState;
 
 
-public class Npc extends Actor {
+public class Npc extends Actor implements Interactive{
     private String name;
     protected BoxCollider boxCollider;
     static boolean interact = false;

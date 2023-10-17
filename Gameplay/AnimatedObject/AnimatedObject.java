@@ -45,7 +45,9 @@ public abstract class AnimatedObject extends Actor{
     }
 
     public void Animate(int i){
+        animation = animationMachine.GetSpriteSheet().GetSpriteArray(i);
         animationMachine.SetFrames(animation);
+        animationMachine.GetAnimation().SetDelay(delay);
         this.defaultAnimationIndex = i;
     }
 

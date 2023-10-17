@@ -49,7 +49,7 @@ public class ColliderManager {
             }
             else{return;}
         }
-        //System.out.println(mapAllCollider);
+        //System.out.println(mapAllCollision);
     }
 
     public void removeCollider(BoxCollider collider){
