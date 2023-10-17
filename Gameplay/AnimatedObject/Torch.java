@@ -1,7 +1,9 @@
 package Gameplay.AnimatedObject;
 
 import Engine.ECSystem.ObjectManager;
+import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Spritesheet;
+import Engine.Graphics.Animations.AnimationEvent;
 import Engine.Math.Vector2D;
 import Engine.Physics.Components.BoxCollider;
 import Gameplay.Interaction;
@@ -21,6 +23,15 @@ public class Torch extends AnimatedObject implements Interaction{
         this.setDefaultPseudoPosition();
         setPseudoPositionVisible();
         hitbox = (BoxCollider)AddComponent(new BoxCollider(this, GetScale(), true));
+
+        animationMachine.AddFinishedListener(new AnimationEvent() {
+
+            @Override
+            public void OnTrigger() {
+                iluminate();
+            }
+            
+        });
     }
 
     public void Update(){
@@ -31,21 +42,28 @@ public class Torch extends AnimatedObject implements Interaction{
 
     @Override
     public void interaction() {
-        System.out.println("Ha interactuado");
-
-        if (isIluminating){
-            turnOff();
-        }else{
-
+        if(!animationMachine.MustComplete()){
+           if (isIluminating){
+                turnOff();
+            }else{
+                turnON();
+            }
         }
-
         ((Player)ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).getFirst()).removeInteraction();
     }
     
-    private void iluminate(){
-        System.out.println("SUN BLESS YOU");
+    private void turnON(){
+        animationMachine.setMustComplete(true);
+        delay = 8;
+        Animate(1);
     }
 
+    private void iluminate(){
+        delay = 18;
+        isIluminating = true;
+        Animate(0);
+        System.out.println("Sun bless you");
+    }
 
     private void turnOff(){
         delay = -1;

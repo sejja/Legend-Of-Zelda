@@ -11,6 +11,7 @@ package Engine.Graphics.Tile;
 import Engine.Math.Vector2D;
 import Engine.Physics.AABB;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 

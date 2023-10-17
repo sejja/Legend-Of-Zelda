@@ -114,7 +114,7 @@ public class Player extends Actor {
         //---------------------------------------------------------------------
         lifeBar = new LifeBar(getPlayer(), getHealthPoints());
         //---------------------------------------------------------------------
-        //mCollider = (BoxCollider)AddComponent(new BoxCollider(this));
+        mCollider = (BoxCollider)AddComponent(new BoxCollider(this));
 
         setPseudoPosition(50f, 50f);
         setPseudoPositionVisible();
@@ -591,7 +591,7 @@ public class Player extends Actor {
     private Interaction nearestNPC (){
         ArrayList<Actor> allInteraction;
         try{
-            allInteraction =ColliderManager.GetColliderManager().getCollision(hitbox, Npc.class, true);
+            allInteraction =ColliderManager.GetColliderManager().getCollision(mCollider, Npc.class, true);
             return (Interaction)allInteraction.get(0);
         }catch(java.lang.IndexOutOfBoundsException e){
             System.err.println("No interaction in hitbox");

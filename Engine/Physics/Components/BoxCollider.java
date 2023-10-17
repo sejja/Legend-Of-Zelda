@@ -64,6 +64,11 @@ public class BoxCollider extends Component implements Renderable{
         this.hasCollision = hasCollision;
         ColliderManager.GetColliderManager().addCollider(this, hasCollision);
     }
+
+    public void setHitboxScale(Vector2D <Float> scale){
+        Vector2D<Float> drawnPoint = new Vector2D<Float>(GetParent().getPseudoPosition().x-(scale.x/2), GetParent().getPseudoPosition().y-(scale.y/2));
+        mBounds = new AABB(drawnPoint, scale);
+    }
     // ------------------------------------------------------------------------
     /*! Init
     *
