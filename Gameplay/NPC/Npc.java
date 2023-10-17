@@ -7,6 +7,7 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Stack;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -20,6 +21,7 @@ import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Animations.Animation;
 import Engine.Graphics.Components.AnimationMachine;
 import Engine.Graphics.Components.CameraComponent;
+import Engine.Graphics.Components.Renderable;
 import Engine.Graphics.Components.SpriteComponent;
 import Engine.Graphics.Objects.FontObject;
 import Engine.Graphics.Tile.TileManager;
@@ -27,14 +29,18 @@ import Engine.Graphics.Tile.Tilemap;
 import Engine.Input.InputFunction;
 import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
+import Engine.Physics.StaticPlayerCollision;
 import Engine.Physics.Components.BoxCollider;
+import Engine.Physics.Components.ColliderManager;
 import Engine.Window.GameLoop;
+import Gameplay.Enemies.Search.Pair;
+import Gameplay.Interactives.Interactive;
 import Gameplay.Link.*;
 import Gameplay.Link.Player;
 import Gameplay.States.PlayState;
 
 
-public class Npc extends Actor {
+public class Npc extends Actor implements StaticPlayerCollision{
     private String name;
     protected BoxCollider boxCollider;
     static boolean interact = false;
@@ -87,21 +93,24 @@ public class Npc extends Actor {
 
         SetScale(size);
         this.dialogueArrayList = dialogueArrayList;
-        boxCollider = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<>(55f,0.f)));
+        boxCollider = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<Float>(50f,50f), true));
+        
         dialogueWindow = new DialogueWindow(this);
         ObjectManager.GetObjectManager().AddEntity(this);
+
+        setDefaultPseudoPosition();
     }
         /*! Transpose
         *
         * @Param  -> BufferedImage 2D Matrix
         * ret     -> Transposed BufferedImage 2D Matrix
         */ //----------------------------------------------------------------------
-    public void Update(Vector2D<Float> playerPosition) {
+    public void Update() {
 
         super.Update();
-        System.out.println("as");
         movement();
-
+        boxCollider.Update();
+        pseudoPositionUpdate();
     }
     //______________________________________________________________________________________
     private BufferedImage[][] transposeMatrix(BufferedImage [][] m){
