@@ -9,8 +9,11 @@
 package Engine.ECSystem.Types;
 
 public class ECObject extends Entity {
+    // ------------------------------------------------------------------------
+    /*! Update
+    *
+    *   EMPTY FUNCTION
+    */ //----------------------------------------------------------------------
     @Override
-    public void Update() {
-
-    }
+    public void Update() {}
 }

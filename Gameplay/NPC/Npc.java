@@ -14,10 +14,10 @@ import javax.swing.JLabel;
 
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
-import Engine.Graphics.Animation;
 import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Sprite;
 import Engine.Graphics.Spritesheet;
+import Engine.Graphics.Animations.Animation;
 import Engine.Graphics.Components.AnimationMachine;
 import Engine.Graphics.Components.CameraComponent;
 import Engine.Graphics.Components.SpriteComponent;
@@ -28,6 +28,7 @@ import Engine.Input.InputFunction;
 import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
 import Engine.Physics.Components.BoxCollider;
+import Engine.Window.GameLoop;
 import Gameplay.Link.*;
 import Gameplay.Link.Player;
 import Gameplay.States.PlayState;
@@ -98,6 +99,7 @@ public class Npc extends Actor {
     public void Update(Vector2D<Float> playerPosition) {
 
         super.Update();
+        System.out.println("as");
         movement();
 
     }
@@ -130,6 +132,7 @@ public class Npc extends Actor {
         currentDirection = this.getDirection(); 
         lookAtPLayer(playerPosition);
         if (!getmComponents().contains(dialogueWindow)){
+            dialogueWindow.setJ(0);
             AddComponent(dialogueWindow);
             dialogueWindow.setJ(0);
             Pause();
@@ -157,7 +160,7 @@ public class Npc extends Actor {
             dialogueWindow.setSiguiente();
         }else{
             RemoveComponent(dialogueWindow);
-            Player link = (Player) ObjectManager.GetObjectManager().getMapAliveActors().get(Player.class).getFirst();
+            Player link = (Player) ObjectManager.GetObjectManager().GetPawn();
             link.removeInteraction();
             animationMachine.SetFrames(allAnimations[currentDirection]);
             Pause();
@@ -165,11 +168,7 @@ public class Npc extends Actor {
     }
 
     private void Pause(){
-        if(PlayState.getGameState() == PlayState.getPlayState()){
-            PlayState.setGameState(2);
-        }else if(PlayState.getGameState() == PlayState.getPauseState()){
-            PlayState.setGameState(1);
-        }
+        GameLoop.SetPaused(!GameLoop.IsPaused());
     }
 
     private void movement() {
@@ -247,4 +246,6 @@ public class Npc extends Actor {
     }
 
     
+    @Override 
+    public Class GetSuperClass(){return Npc.class;}
 }

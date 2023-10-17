@@ -8,6 +8,8 @@
 
 package Engine.Math;
 
+import Gameplay.Link.DIRECTION;
+
 public class Vector2D<T> {
     public T x;
     public T y;
@@ -62,5 +64,27 @@ public class Vector2D<T> {
         Float xf = -((Float)this.x - enemyPosition.x);
         Float yf = -((Float)this.y - enemyPosition.y);
         return new Vector2D<>(xf, yf);
+    }
+
+    public DIRECTION getTargetDirection(Vector2D<Float> targetVector) { 
+        Vector2D<Float> vector = this.getVectorToAnotherActor(targetVector);
+        if (Math.abs(vector.x) > Math.abs(vector.y)) {
+            if (vector.x > 0) {return DIRECTION.RIGHT;} 
+            else {return DIRECTION.LEFT;}
+        } else {
+            if (vector.y > 0) {return DIRECTION.DOWN;} 
+            else {return DIRECTION.UP;}
+        }
+    }
+
+    public Vector2D<Float> getNormalVector (){
+        return new Vector2D<Float>((Float)this.x/getModule(), (Float)this.y/getModule());
+    }
+
+    public Vector2D<Float> sumVector (Vector2D<Float> sum){
+        return new Vector2D<Float>((Float)this.x + sum.x, (Float)this.y + sum.x);
+    }
+    public Vector2D<Float> diffVector (Vector2D<Float> sum){
+        return new Vector2D<Float>((Float)this.x - sum.x, (Float)this.y - sum.x);
     }
 }

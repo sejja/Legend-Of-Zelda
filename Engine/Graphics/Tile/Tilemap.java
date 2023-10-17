@@ -14,5 +14,5 @@ import Engine.Graphics.Components.CameraComponent;
 import Engine.Math.Vector2D;
 
 public abstract class Tilemap {
-    public abstract void Render(Graphics2D g, CameraComponent camerapos);
+    public abstract void Render(Graphics2D g, CameraComponent camerapos, Vector2D<Float> tilemappos);
 }

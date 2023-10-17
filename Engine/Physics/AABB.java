@@ -10,6 +10,7 @@ package Engine.Physics;
 
 import Engine.Graphics.Tile.Block;
 import Engine.Graphics.Tile.HoleBlock;
+import Engine.Graphics.Tile.TileManager;
 import Engine.Graphics.Tile.TilemapObject;
 import Engine.Math.Vector2D;
 
@@ -35,7 +36,12 @@ public class AABB {
     public Vector2D<Float> GetPosition() {
         return mPosition;
     }
-
+    public void SetPosition (Vector2D<Float> position){
+        this.mPosition = position;
+    }
+    public Vector2D<Float> GetScale(){
+        return this.mSize;
+    }
     // ------------------------------------------------------------------------
     /*! Get Height
     *
@@ -121,11 +127,12 @@ public class AABB {
 
     public CollisionResult collisionTile(float ax, float ay) {
         for(int c = 0; c < 4; c++) {
-            int xt = (int)((mPosition.x + ax) + (c % 2) * mSize.x / 2) / 64;
+            int xt = (int)((mPosition.x + ax) + (c % 2) * mSize.x) / 64;
             int yt = (int)((mPosition.y + ay) + (int)(c / 2) * mSize.y) / 64;
 
-            if(TilemapObject.GetBlockAt(xt, yt) != null) {
-                Block block = TilemapObject.GetBlockAt(xt, yt);
+            if(TileManager.sLevelObjects.GetBlockAt(xt, yt) != null
+                && xt < TileManager.sLevelObjects.mWidth && yt < TileManager.sLevelObjects.mHeight) {
+                Block block = TileManager.sLevelObjects.GetBlockAt(xt, yt);
                 if(block instanceof HoleBlock) {
                     return collisionHole(ax, ay, xt, yt, block) ? CollisionResult.Hole : CollisionResult.None;
                 }
@@ -141,8 +148,8 @@ public class AABB {
         int nextYT = (int)((mPosition.y + ay) / 64 + mSize.y / 64);
 
         if((nextYT == yt + 1) || (nextYT == xt + 1)) {
-            if(TilemapObject.GetBlockAt(nextXT, nextYT) != null) {
-                Block neighbour = TilemapObject.GetBlockAt(nextXT, nextYT);
+            if(TileManager.sLevelObjects.GetBlockAt(nextXT, nextYT) != null) {
+                Block neighbour = TileManager.sLevelObjects.GetBlockAt(nextXT, nextYT);
                 return neighbour.Update(this);
             }
         } else {

@@ -1,63 +1,69 @@
 package Gameplay.Enemies;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.Stack;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicStampedReference;
-
 import Engine.ECSystem.ObjectManager;
-import Engine.Graphics.Animation;
+import Engine.ECSystem.Types.Actor;
+import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Spritesheet;
+import Engine.Graphics.Animations.Animation;
 import Engine.Graphics.Components.AnimationMachine;
-import Engine.Graphics.Tile.*;
+import Engine.Graphics.Components.CameraComponent;
+import Engine.Graphics.Components.Renderable;
 import Engine.Math.Vector2D;
-import Engine.Physics.AABB;
 import Engine.Physics.Components.BoxCollider;
+import Gameplay.AnimatedObject.DeadAnimation;
 import Gameplay.Enemies.Search.*;
 import Gameplay.LifeBar.LifeBar;
 import Gameplay.Link.DirectionObject;
+import Gameplay.Link.Arrow;
+import Gameplay.Link.DIRECTION;
+import Gameplay.Link.Player;
 
-public class Enemy extends Engine.ECSystem.Types.Actor {
-    private final int UP = 0;
-    private final int DOWN = 2;
-    private final int RIGHT = 1;
-    private final int LEFT = 3;
+public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Renderable{
 
-    //directions
-    protected boolean up = true;
-    protected boolean down = false;
-    protected boolean right = false;
-    protected boolean left = false;
-    //public DIRECTION direction;
-    protected DirectionObject direction = new DirectionObject(up, left, right, down);
+    protected final int UP = 0;
+    protected final int DOWN = 2;
+    protected final int RIGHT = 1;
+    protected final int LEFT = 3;
+
+    //direction and normalized direction vector
+    protected DIRECTION direction = DIRECTION.RIGHT;
+    protected Vector2D<Float> normalizedDirection = new Vector2D<Float>(0f,0f);
 
     //player detected
     protected boolean chase = false;
 
+    //A* search
+    protected static AStarSearch aStarSearch = new AStarSearch();
+
     //Pathfinding variables
     protected Pair finalDestination;
+    protected Pair lastFinalDestination= new Pair(0, 0);
     protected Pair currentDestination;
-    protected Stack<Pair> path;
-    protected AStarSearch Pathfinding = new AStarSearch();
-
-
+    protected Stack<Pair> path = new Stack<Pair>();
+    protected Vector2D<Float> pos = GetPosition();
+    protected Vector2D<Float> pseudoPos = getPseudoPosition();
+    protected Player player = (Player) ObjectManager.GetObjectManager().GetObjectByName(Player.class, "Player");
+    protected Vector2D<Float> playerPos = player.getPseudoPosition();
+    protected float xlowerBound;
+    protected float xupperBound;
+    protected float ylowerBound;
+    protected float yupperBound;
 
     //stats
-    protected int healthPoints = 4;
-    protected int damage = 1; //magic number, it has to be defined in a constructor
-
+    protected int healthPoints = 1;
+    protected int damage = 1;
     protected float speed = 1;
-    protected Vector2D ndir = new Vector2D(0f,0f);
 
     //components
     protected int mCurrentAnimation;
     protected AnimationMachine mAnimation;
     protected BoxCollider mCollision;
-    
-    //ID
-    static int idx = 0;
+
+    private int delay = 10;
     
     LifeBar lifeBar;
     // ------------------------------------------------------------------------
@@ -65,56 +71,20 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
     *
     *   Constructs an Enemy with a sprite, a position, and gives it a size
     */ //----------------------------------------------------------------------
-    public Enemy(Spritesheet originalsprite, Vector2D<Float> position, Vector2D<Float> size) {
-
+    public Enemy( Vector2D<Float> position) {
         super(position);
-        SetScale(size);
-        Spritesheet sprite=new Spritesheet(originalsprite, "Content/Animations/gknight.png");
-
-        // TRANSPOSE SPRITE MATRIX
-        sprite.setmSpriteArray(transposeMatrix(sprite.GetSpriteArray2D()));
-
-        // ADD ANIMATION COMPONENT
-        mAnimation = AddComponent(new AnimationMachine(this, sprite));
-        
-        // ADD COLLIDER COMPONENT
-        mCollision = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<Float>(100f, 200f)));
-        SetAnimation(UP, sprite.GetSpriteArray(UP), 2);
-        SetName("Enemy " + idx);
-        idx++;
-
-        lifeBar = new LifeBar(this, healthPoints);
-        lifeBar.setVisible(false);
+        //Render path (add to pipeline)
+        GraphicsPipeline.GetGraphicsPipeline().AddRenderable(this);
     }
 
     public void SetAnimation(int i, BufferedImage[] frames, int delay) {
         mCurrentAnimation = i;
         mAnimation.GetAnimation().SetFrames(frames);
-        mAnimation.GetAnimation().SetDelay(delay);
+        mAnimation.GetAnimation().SetDelay(this.delay);
     }
 
     public Animation GetAnimation() {
         return mAnimation.GetAnimation();
-    }
-
-    // ------------------------------------------------------------------------
-    /*! transposeMatrix
-    *
-    *   Utility Function for Transposing a Matrix
-    */ //----------------------------------------------------------------------
-    private BufferedImage[][] transposeMatrix(BufferedImage [][] m){
-        BufferedImage[][] temp = new BufferedImage[m[0].length + 4][m.length];
-        for (int i = 0; i < m.length; i++){
-            for (int j = 0; j < m[0].length; j++){
-                temp[j][i] = m[i][j];
-            }
-        }
-        for (int i = 0; i < 4; i++){
-            for (int j = 0;  j < temp[0].length; j++){
-                temp[m[0].length+i][j] = temp[i][0];
-            }
-        }
-        return temp;
     }
 
     // ------------------------------------------------------------------------
@@ -136,34 +106,21 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
     *
     *   Utility Function for Getting the Direction of a Vector
     */ //----------------------------------------------------------------------
-    public void GetDirection(Vector2D<Float> vector) { // hay que cambiar esto por direction
+    public void GetDirection(Vector2D<Float> vector) {
 
         if (Math.abs(vector.x) > Math.abs(vector.y)) {
-            if (vector.x > 0) {
-                setUp(false);
-                setDown(false);
-                setLeft(false);
-                setRight(true);
+            if (vector.x < 0) {
+                this.direction=DIRECTION.RIGHT;
             } else {
-                setUp(false);
-                setDown(false);
-                setLeft(true);
-                setRight(false);
+                this.direction=DIRECTION.LEFT;
             }
         } else {
             if (vector.y < 0) {
-                setUp(false);
-                setDown(true);
-                setLeft(false);
-                setRight(false);
+                this.direction=DIRECTION.DOWN;
             } else {
-                setUp(true);
-                setDown(false);
-                setLeft(false);
-                setRight(false);
+                this.direction=DIRECTION.UP;
             }
         }
-        direction = new DirectionObject(up, left, right, down);
     }
 
     // ------------------------------------------------------------------------
@@ -172,41 +129,60 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
     *   Adds the needed animation to the Enemy
     */ //----------------------------------------------------------------------
     public void Animate() {
+        if(mAnimation.MustComplete()){return;}
+
+        if(this.healthPoints == 0){
+            this.delay = 0;
+            this.speed = 0;
+            //SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), this.delay);
+            return;
+        }
+
         if(chase){
-            if(up) {
-                if(mCurrentAnimation != UP || mAnimation.GetAnimation().GetDelay() == -1) {
-                    SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), 2);
-                }
-            } else if(down) {
-                if(mCurrentAnimation != DOWN || mAnimation.GetAnimation().GetDelay() == -1) {
-                    SetAnimation(DOWN, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN), 2);
-                }
-            } else if(right) {
-                if(mCurrentAnimation != RIGHT || mAnimation.GetAnimation().GetDelay() == -1) {
-                    SetAnimation(RIGHT, mAnimation.GetSpriteSheet().GetSpriteArray(RIGHT), 2);
-                }
-            } else {
-                if(mCurrentAnimation != LEFT || mAnimation.GetAnimation().GetDelay() == -1) {
-                    SetAnimation(LEFT, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT), 2);
-                }
+            switch (direction){
+                case UP:
+                    if(mCurrentAnimation != UP || mAnimation.GetAnimation().GetDelay() == -1) {
+                        SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), this.delay);
+                    }
+                    break;
+                case DOWN:
+                    if(mCurrentAnimation != DOWN || mAnimation.GetAnimation().GetDelay() == -1) {
+                        SetAnimation(DOWN, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN), this.delay);
+                    }
+                    break;
+                case LEFT:
+                    if(mCurrentAnimation != RIGHT || mAnimation.GetAnimation().GetDelay() == -1) {
+                        SetAnimation(RIGHT, mAnimation.GetSpriteSheet().GetSpriteArray(RIGHT), this.delay);
+                    }
+                    break;
+                case RIGHT:
+                    if(mCurrentAnimation != LEFT || mAnimation.GetAnimation().GetDelay() == -1) {
+                        SetAnimation(LEFT, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT), this.delay);
+                    }
+                    break;
             }
         }else{
-            if(up) {
-                if(mCurrentAnimation != UP || mAnimation.GetAnimation().GetDelay() == -1) {
-                    SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), 2);
-                }
-            } else if(down) {
-                if(mCurrentAnimation != DOWN || mAnimation.GetAnimation().GetDelay() == -1) {
-                   SetAnimation(DOWN, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN), 2);
-                }
-            } else if(right) {
-                if(mCurrentAnimation != RIGHT || mAnimation.GetAnimation().GetDelay() == -1) {
-                    SetAnimation(RIGHT, mAnimation.GetSpriteSheet().GetSpriteArray(RIGHT), 2);
-                }
-            } else {
-                if(mCurrentAnimation != LEFT || mAnimation.GetAnimation().GetDelay() == -1) {
-                    SetAnimation(LEFT, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT), 2);
-                }
+            switch (direction){
+                case UP:
+                    if(mCurrentAnimation != UP || mAnimation.GetAnimation().GetDelay() == -1) {
+                        SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), this.delay);
+                    }
+                    break;
+                case DOWN:
+                    if(mCurrentAnimation != DOWN || mAnimation.GetAnimation().GetDelay() == -1) {
+                        SetAnimation(DOWN, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN), this.delay);
+                    }
+                    break;
+                case LEFT:
+                    if(mCurrentAnimation != RIGHT || mAnimation.GetAnimation().GetDelay() == -1) {
+                        SetAnimation(RIGHT, mAnimation.GetSpriteSheet().GetSpriteArray(RIGHT), this.delay);
+                    }
+                    break;
+                case RIGHT:
+                    if(mCurrentAnimation != LEFT || mAnimation.GetAnimation().GetDelay() == -1) {
+                        SetAnimation(LEFT, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT), this.delay);
+                    }
+                    break;
             }
         }
     }
@@ -217,40 +193,80 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
     *   Adds Behavior to the Enemy
     */ //----------------------------------------------------------------------
     public void Update() {
+        playerPos = ObjectManager.GetObjectManager().GetObjectByName(Player.class, "Player").GetPosition();
         //System.out.println("pdsofhiusf");
         super.Update();
-        Vector2D<Float> ppos = ObjectManager.GetObjectManager().GetObjectByName("Player").GetPosition();
-        GetDirection(ndir);
-        Pathfinding(ppos);
-        Move();
+        Pathfinding();
+        GetDirection(normalizedDirection);
         Animate();
-        mAnimation.GetAnimation().SetDelay(20);
-        //System.out.println(ppos.x + " " + ppos.y + " " + ndir+ " " );
-        lifeBar.Update();
+        Move();
+        pseudoPositionUpdate();
+        //System.out.println(playerPos.x + " " + playerPos.y + " " + normalizedDirection+ " " );
     }
+
     // ------------------------------------------------------------------------
     /*! Pathfinding
     *
-    *   Checks if the Enemy can chase player
+    *   Calculates the path to the player if the path is unblocked and is not the same as the last time A* was called
     */ //----------------------------------------------------------------------
-    public void Pathfinding(Vector2D<Float> playerPos) { //Maagic numbers to change the start and ending of the pathfinding to the center of the enemy and the center of the player
-        int divisior = 64;
-        Vector2D pos = GetPosition();
-        Pair src = new Pair((int)Math.round(((float)pos.x + 16)/divisior), (int)Math.round(((float)pos.y+32)/divisior));
-        finalDestination = new Pair((int)Math.round((playerPos.x +16)/divisior), (int)Math.round((playerPos.y +16)/divisior));
-        path = Pathfinding.aStarSearch(src, finalDestination); 
-
+    public void Pathfinding() {
+        Pair enemyTile = PositionToPair(getPseudoPosition());
+        finalDestination = PositionToPair(playerPos);
+        if(isDestinationChanged() && isDestinationReachable()){
+            lastFinalDestination = finalDestination;
+            path = aStarSearch.aStarSearch(enemyTile, finalDestination);
+        }
     }
+
+    // ------------------------------------------------------------------------
+    /*! PositionToPair
+    *
+    *   Changes the position given to a Pair
+    */ //----------------------------------------------------------------------
+    public Pair PositionToPair(Vector2D<Float> position) {
+        int divisior = 64;
+        Pair pair = new Pair(Math.round((position.x/divisior)), Math.round((position.y/divisior)));
+        return pair;
+    }
+
+
+
+    // ------------------------------------------------------------------------
+    /*! isDestinationChanged
+    *
+    *   Checks if the destination (Player) has changed of Tile
+    */ //----------------------------------------------------------------------
+    public boolean isDestinationChanged() {
+        if(lastFinalDestination.getFirst() != finalDestination.getFirst() || lastFinalDestination.getSecond() != finalDestination.getSecond()){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    // ------------------------------------------------------------------------
+    /*! isDestinationReachable
+    *
+    *   Checks if the destination is reachable by the Enemy
+    */ //----------------------------------------------------------------------
+    public boolean isDestinationReachable() {
+        if(aStarSearch.isUnBlocked(finalDestination.getFirst(), finalDestination.getSecond())){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+
 
     // ------------------------------------------------------------------------
     /*! MovementVector
     *
     *   Calculates the movement of the Enemy
     */ //----------------------------------------------------------------------
-    public void MovementVector(Vector2D<Float> playerPos) {
-        Vector2D<Float> pos = GetPosition();
-        Vector2D<Float> dir = new Vector2D<Float>((float)playerPos.x - (pos.x +16), (float)playerPos.y - (pos.y +16));
-        ndir=Normalize(dir);
+    public void MovementVector() {
+        Vector2D<Float> dir = new Vector2D<Float>(playerPos.x - pseudoPos.x, playerPos.y - pseudoPos.x);
+        normalizedDirection=Normalize(dir);
     }
 
 
@@ -260,88 +276,119 @@ public class Enemy extends Engine.ECSystem.Types.Actor {
     *   Receives the movements in a stack and sets the movement of the Enemy with the A* search
     */ //----------------------------------------------------------------------
     public void Move() {
-        int posoffset =20;
-        Vector2D<Float> pos = GetPosition();
-        Vector2D<Float> ppos = ObjectManager.GetObjectManager().GetObjectByName("Player").GetPosition();
         if(chase){
             speed = 3;
         }
         if(!path.isEmpty()){
-            path.pop();
             if(!path.isEmpty()){
                 currentDestination = path.peek();
             }
             // Margin of error for the movement
-            float xlowerBound = currentDestination.getFirst()*64 - 3;
-            float xupperBound = currentDestination.getFirst()*64 + 3;
-            float ylowerBound = currentDestination.getSecond()*64 - 3;
-            float yupperBound = currentDestination.getSecond()*64 + 3;
+            xlowerBound = currentDestination.getFirst()*64 - 3;
+            xupperBound = currentDestination.getFirst()*64 + 3;
+            ylowerBound = currentDestination.getSecond()*64 - 3;
+            yupperBound = currentDestination.getSecond()*64 + 3;
 
             //If currentDestination reached, pop next destination
-            if(((((xlowerBound <= pos.x+posoffset) && (pos.x+posoffset <= xupperBound)) && ((ylowerBound <= pos.y+posoffset) && (pos.y+posoffset <= yupperBound)))) && (currentDestination != finalDestination) && !path.isEmpty()){
+            if(((((xlowerBound <= pseudoPos.x) && (pseudoPos.x <= xupperBound)) && ((ylowerBound <= pseudoPos.y) && (pseudoPos.y <= yupperBound)))) && (currentDestination != finalDestination) && !path.isEmpty()){
                 path.pop();
                 if(!path.isEmpty()){
                     currentDestination = path.peek();
                 }
-                ndir = Normalize(new Vector2D<Float>((float)currentDestination.getFirst()*64 - (pos.x+posoffset), (float)currentDestination.getSecond()*64 - (pos.y+posoffset)));
-                pos.x += (float)ndir.x * speed;
-                pos.y += (float)ndir.y * speed;
+                normalizedDirection = Normalize(new Vector2D<Float>(currentDestination.getFirst()*64 - (pseudoPos.x), currentDestination.getSecond()*64 - (pseudoPos.y)));
+                pos.x += normalizedDirection.x * speed;
+                pos.y += normalizedDirection.y * speed;
             }else{
-                ndir = Normalize(new Vector2D<Float>((float)currentDestination.getFirst()*64 - (pos.x+posoffset), (float)currentDestination.getSecond()*64 - (pos.y+posoffset)));
-                pos.x += (float)ndir.x * speed;
-                pos.y += (float)ndir.y * speed;
+                normalizedDirection = Normalize(new Vector2D<Float>(currentDestination.getFirst()*64 - (pseudoPos.x), currentDestination.getSecond()*64 - (pseudoPos.y)));
+                pos.x += normalizedDirection.x * speed;
+                pos.y += normalizedDirection.y * speed;
             }
         //If finalDestination reached, chase player directly
-        }else if((int)currentDestination.getFirst() == (int)finalDestination.getFirst() && (int)currentDestination.getSecond() == (int)finalDestination.getSecond()){
-                MovementVector(ppos);
-                pos.x += (float)ndir.x * speed;
-                pos.y += (float)ndir.y * speed;
+        }else if(currentDestination.getFirst() == finalDestination.getFirst() && currentDestination.getSecond() == finalDestination.getSecond()){
+                MovementVector();
+                pos.x += normalizedDirection.x * speed;
+                pos.y += normalizedDirection.y * speed;
         }
 
         SetPosition(pos);
     } 
     
-    public void KnockBack(Vector2D<Float> playerPos) {
-        lifeBar.setVisible(true);
-        Vector2D<Float> pos = GetPosition();
+    public void KnockBack() {
         Vector2D<Float> dir = pos.getVectorToAnotherActor(playerPos);
-        ndir=Normalize(dir);
-        pos.x -= (float)ndir.x * 60;
-        pos.y -= (float)ndir.y * 60;
+        normalizedDirection=Normalize(dir);
+        pos.x -= normalizedDirection.x * 60;
+        pos.y -= normalizedDirection.y * 60;
+        SetPosition(pos);
+    }
+
+    public void KnockBack(Vector2D<Float> attackerPos) {
+        Vector2D<Float> dir = pos.getVectorToAnotherActor(attackerPos);
+        normalizedDirection=Normalize(dir);
+        pos.x -= normalizedDirection.x * 60;
+        pos.y -= normalizedDirection.y * 60;
         SetPosition(pos);
     }
     
-    private void setRight(boolean b) {
-        this.right = b;
-    }
-
-    private void setLeft(boolean b) {
-        this.left = b;
-    }
-
-    private void setDown(boolean b) {
-        this.down = b;
-    }
-
-    private void setUp(boolean b) {
-        this.up = b;
-    }
-    
-    public int getDamage() {
-        return damage;
-    }  
 
     public void setHealthPoints(int damage){
         this.healthPoints -= damage;
         if (healthPoints <= 0){
             //System.out.println("aibfhdp`");
             mCollision.ShutDown();
-            this.SetScale(new Vector2D<Float>(0f,0f));
-            ObjectManager.GetObjectManager().RemoveEntity(this);
+            //this.SetScale(new Vector2D<Float>(0f,0f));
+            die();
             path.clear();
         }
-        lifeBar.setHealthPoints(this.healthPoints);
         //______________________
         //______________________
     }
+
+    private void die() {
+        System.out.println("se muere");
+        DeadAnimation deadAnimation = new DeadAnimation(this);
+    }
+
+    @Override
+    public void Render(Graphics2D g, CameraComponent camerapos) {
+        var camcoord = camerapos.GetCoordinates();
+        g.setColor(Color.green);
+        Stack<Pair> mPath = (Stack<Pair>)path.clone();
+
+        while (!mPath.isEmpty()) {
+            Pair p = mPath.pop();
+            g.drawRect(p.getFirst() * 64 - (int)(float)camcoord.x, p.getSecond() * 64 - (int)(float)camcoord.y, 64, 64);
+        }
+    }
+
+    // Getters and Setters
+
+    public void setDamage(int damage) {
+        this.damage = damage;
+    }
+
+    public void setSpeed(float speed) {
+        this.speed = speed;
+    }
+
+    public void setHp(int hp){
+        this.healthPoints = hp;
+    }
+
+    public int getHealthPoints() {
+        return healthPoints;
+    }
+
+    public float getSpeed() {
+        return speed;
+    }
+
+    public int getDamage() {
+        return damage;
+    }
+    public Enemy getEnemy(){
+        return (Enemy)this;
+    }
+
+    @Override 
+    public Class GetSuperClass(){return Enemy.class;}
 }

@@ -12,10 +12,13 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
+
+import Engine.Assets.Asset;
+import Engine.Assets.AssetManager;
 import Engine.Math.Vector2D;
 
 public class Spritesheet {
-    protected BufferedImage mSpriteSheet = null;
+    protected Asset mSpriteSheet = null;
     protected BufferedImage[][] mSpriteArray;
     protected int mUCoord;
     protected int mVCoord;
@@ -30,8 +33,8 @@ public class Spritesheet {
     public Spritesheet(String file) {
         mVCoord = mUCoord = 32;
         mSpriteSheet = LoadSprite(file);
-        mWidth = mSpriteSheet.getWidth() / mUCoord;
-        mHeight = mSpriteSheet.getHeight() / mVCoord;
+        mWidth = ((BufferedImage)mSpriteSheet.Raw()).getWidth() / mUCoord;
+        mHeight = ((BufferedImage)mSpriteSheet.Raw()).getHeight() / mVCoord;
         LoadSpriteArray();
     }
 
@@ -40,16 +43,26 @@ public class Spritesheet {
     *
     *   Consntructs an sprite from the filename, the width, and the height
     */ //----------------------------------------------------------------------
+    public Spritesheet(String file, int nrow, int ncol, boolean whatever) {
+        mSpriteSheet = LoadSprite(file);  
+        mUCoord = ((BufferedImage)mSpriteSheet.Raw()).getWidth()/nrow;
+        mVCoord = ((BufferedImage)mSpriteSheet.Raw()).getHeight()/ncol;
+
+        mWidth = ((BufferedImage)mSpriteSheet.Raw()).getWidth() / mUCoord;
+        mHeight = ((BufferedImage)mSpriteSheet.Raw()).getHeight() / mVCoord; 
+        LoadSpriteArray();
+    }
+
+
     public Spritesheet(String file, int w, int h) {
         mUCoord = w;
         mVCoord = h;
 
         mSpriteSheet = LoadSprite(file);
-        mWidth = mSpriteSheet.getWidth() / mUCoord;
-        mHeight = mSpriteSheet.getHeight() / mVCoord; 
+        mWidth = ((BufferedImage)mSpriteSheet.Raw()).getWidth() / mUCoord;
+        mHeight = ((BufferedImage)mSpriteSheet.Raw()).getHeight() / mVCoord; 
         LoadSpriteArray();
     }
-
     // ------------------------------------------------------------------------
     /*! Constructor
     *
@@ -117,17 +130,8 @@ public class Spritesheet {
     *
     *   Loads an sprite from the fisk and uploads it as a bufferedimage
     */ //----------------------------------------------------------------------
-    protected BufferedImage LoadSprite(String file) {
-        BufferedImage sprite = null;
-
-        //Add a try/catch clause, as it might fail to get the resource in question
-        try {
-            sprite = ImageIO.read(getClass().getClassLoader().getResourceAsStream(file));
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-
-        return sprite;
+    protected Asset LoadSprite(String file) {
+        return AssetManager.Instance().GetResource(file);
     }
 
     // ------------------------------------------------------------------------
@@ -152,7 +156,7 @@ public class Spritesheet {
     *
     *   Returns the Sprite Sheet, as an Image
     */ //----------------------------------------------------------------------
-    public BufferedImage GetSpriteSheet() {
+    public Asset GetSpriteSheet() {
         return mSpriteSheet;
     }
 
@@ -162,7 +166,7 @@ public class Spritesheet {
     *   Given an UV coordinate, returns the sprite located at a point in the spritesheet
     */ //----------------------------------------------------------------------
     public BufferedImage GetSprite(int x, int y) {
-        return mSpriteSheet.getSubimage(x * mUCoord, y * mVCoord, mUCoord, mVCoord);
+        return ((BufferedImage)mSpriteSheet.Raw()).getSubimage(x * mUCoord, y * mVCoord, mUCoord, mVCoord);
     }
 
     // ------------------------------------------------------------------------
@@ -208,6 +212,22 @@ public class Spritesheet {
         
     public void setmSpriteArray(BufferedImage[][] mSpriteArray) {
         this.mSpriteArray = mSpriteArray;
+    }
+
+    // ------------------------------------------------------------------------
+    /*! transposeMatrix
+    *
+    *   Utility Function for Transposing a Matrix
+    */ //----------------------------------------------------------------------
+    public void flip(){
+        BufferedImage[][] m = this.GetSpriteArray2D();
+        BufferedImage[][] temp = new BufferedImage[m[0].length+4][m.length];
+        for (int i = 0; i < m.length; i++){
+            for (int j = 0; j < m[0].length; j++){
+                temp[j][i] = m[i][j];
+            }
+        }
+        this.setmSpriteArray(temp);
     }
 
 }

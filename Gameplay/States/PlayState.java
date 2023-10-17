@@ -12,42 +12,30 @@ import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import java.util.Vector;
 
+import Engine.ECSystem.Level;
 import Engine.ECSystem.ObjectManager;
+import Engine.ECSystem.Types.Actor;
+import Engine.ECSystem.Types.Entity;
 import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Sprite;
 import Engine.Graphics.Spritesheet;
-import Engine.Graphics.Objects.FontObject;
+import Engine.Graphics.Components.ZeldaCameraComponent;
 import Engine.Graphics.Tile.TileManager;
-import Engine.Input.InputFunction;
-import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
+import Engine.Physics.Components.ColliderManager;
 import Engine.StateMachine.State;
-import Engine.StateMachine.StateMachine;
 import Gameplay.Enemies.*;
+import Gameplay.Levels.TestRoom;
+import Gameplay.Levels.TestRoom2;
+import Gameplay.Enemies.Units.GreenKnight;
+import Gameplay.Interactives.Blocks.Rock;
 import Gameplay.Link.Arrow;
 import Gameplay.Link.Player;
 import Gameplay.NPC.Npc;
 
 public class PlayState extends State {
-    private FontObject mFont;
-    private FontObject mFont2;
-    private Player mPlayer;
-    private Npc mNpc1;
-    private Npc mNpc2;
-    private static ArrayList<Npc> mNpcArrayList = new ArrayList<Npc>();
-    private Enemy mEnemy;
-    private Enemy mEnemy2;
-    private Enemy mEnemy3;
-    private Vector2D<Float> mPos;
-    private TileManager mTilemap;
-    private ArrayList<String> dialogueArrayList = new ArrayList<String>();
-    private ArrayList<String> dialogueArrayList2 = new ArrayList<String>();
-    private static int gameState = 1;
-    private final static int playState = 1;
-    private final static int pauseState = 2;
-    private boolean mPause = false;
+    Level mTestLevel;
 
     private final int DOWN = 0;
     private final int LEFT = 1;
@@ -65,32 +53,18 @@ public class PlayState extends State {
     *   Just assigns the statemachine child
     */ //----------------------------------------------------------------------
     public PlayState() {
-        dialogueArrayList.add("En un mundo muy lejano] vivia una princesa que buscaba a su \nprincipe] y para logralo] llamo a todos los principes del reino \nademas deberas vuscar todos los artefactos de las piedras para \necuperar el poder de hyrule");
-        dialogueArrayList.add("Ahora embarcate en una nueva aventura junto a tu espada y tu \narco");
-        dialogueArrayList2.add("Muy buenas caballero] mi nombre es Juan] y estoy aqui protegiendo \nla puerta de acceso al palacio");
-        dialogueArrayList2.add("A si que abandona este lugar por favor");
-        mTilemap = new TileManager("Content/TiledProject/TestRoom.tmx");
-        mFont =(FontObject)ObjectManager.GetObjectManager().AddEntity(new FontObject("Content/Fonts/ZeldaFont.png", "THE LEGEND OF ANDONI", 56));
-        mFont.SetPosition(new Vector2D<>(100.f, 100.f));
-        mFont.SetScale(new Vector2D<>(32.f, 32.f));
-        mPlayer = (Player)ObjectManager.GetObjectManager().AddEntity(new Player(new Spritesheet("Content/Animations/Link/Link.png"), new Vector2D<Float>(700.f, 400.f), new Vector2D<Float>(100.f, 100.f)));
-        mPos = new Vector2D<Float>(300.f, 600.f);
-        mNpc1 = (Npc)ObjectManager.GetObjectManager().AddEntity(new Npc("Aelarion", new Spritesheet("Content/Animations/NPC/NPC_old.png", 68, 72), new Vector2D<Float>(1415.f, 725.f), dialogueArrayList, new Vector2D<Float>(78.f, 78.f), DOWN, squareMovement) );
-        mNpc2 = (Npc)ObjectManager.GetObjectManager().AddEntity(new Npc("Juan", new Spritesheet("Content/Animations/NPC/NPC_boy.png", 64, 64), new Vector2D<Float>(1200f, 900.f), dialogueArrayList2, new Vector2D<Float>(78.f, 78.f),DOWN, yLineMovement) );
-        mNpcArrayList.add(mNpc1);
-        mNpcArrayList.add(mNpc2);
-        Spritesheet esprite = new Spritesheet("Content/Animations/gknight.png",16,28);
-        ArrayList<Enemy> mEnemies = new ArrayList<Enemy>();
-        mEnemy = (Enemy)ObjectManager.GetObjectManager().AddEntity(new Enemy(esprite, new Vector2D<Float>(450.f, 300.f), new Vector2D<Float>(50.f, 100.f)));
-    
-        InputManager.SubscribePressed(KeyEvent.VK_P, new InputFunction() {
-            @Override
-            public void Execute() {
-                mPause = !mPause;
-             }
-        });
-    }
+        var t = new TestRoom2(null, null, null, null, "Content/TiledProject/TestRoom2.tmx");
+        mTestLevel = new TestRoom(t, null, null, null, "Content/TiledProject/TestRoom.tmx", new Vector2D<>(0.f, 0.f));
+        t.SetLeftlevel(mTestLevel);
 
+        var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetCamera();
+        Vector2D<Float> topright = new Vector2D<>(mTestLevel.GetBounds().GetPosition().x + 1280.f / 2, mTestLevel.GetBounds().GetPosition().y + 720.f / 2);
+        Vector2D<Float> bottomleft = new Vector2D<>(mTestLevel.GetBounds().GetPosition().x + mTestLevel.GetBounds().GetWidth() - 1280.f / 2, mTestLevel.GetBounds().GetPosition().y + mTestLevel.GetBounds().GetHeight() - 760.f / 2);
+        z.SetBounds(topright, bottomleft); 
+    }
+    private void Spawn(Entity e){
+        ObjectManager.GetObjectManager().AddEntity(e);
+    }
     // ------------------------------------------------------------------------
     /*! Update
     *
@@ -98,63 +72,6 @@ public class PlayState extends State {
     */ //----------------------------------------------------------------------
     @Override
     public void Update() {
-        if(gameState == playState){
-            ObjectManager.GetObjectManager().Update();
-           //mEnemy.Update();
-           for(int i=0; i<mNpcArrayList.size();i++){
-               mNpcArrayList.get(i).Update(mPlayer.GetPosition());
-            //ObjectManager.GetObjectManager().Update();
-            }
-            //System.out.println(ObjectManager.GetObjectManager().getmAliveEntities().size());
-        } 
-        if(gameState == pauseState){
-            //Nothing
-        }
-    }
-
-    // ------------------------------------------------------------------------
-    /*! Input
-    *
-    *   EMPTY FUNCTION
-    */ //----------------------------------------------------------------------
-//    @Override
-//    public void Input(InputManager inputmanager) {
-//    }
-
-    // ------------------------------------------------------------------------
-    /*! Render
-    *
-    *   Renders onto the screen
-    */ //----------------------------------------------------------------------
-//    @Override
-//    public void Render(Graphics2D g) {
-//        GraphicsPipeline.GetGraphicsPipeline().Render(g);
-//        if(!mPause) {
-//            ObjectManager.GetObjectManager().Update();
-//        }
-//   }
-    public static void setGameState(int state){
-        gameState = state;
-    }
-
-    public static int getPlayState() {
-        return playState;
-    }
-
-    public static int getPauseState() {
-        return pauseState;
-    }
-
-    public static int getGameState() {
-        return gameState;
-    }
-    
-    public static ArrayList<Npc> getNpcArrayList() {
-        return mNpcArrayList;
-    }
-
-    public String saltoDeLinea(String texto){
-        String nuevoTexto = texto;
-        return nuevoTexto;
+        ObjectManager.GetObjectManager().Update();
     }
 }
