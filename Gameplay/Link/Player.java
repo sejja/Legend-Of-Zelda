@@ -20,6 +20,7 @@ import Engine.Physics.CollisionResult;
 import Engine.Physics.Components.BoxCollider;
 import Engine.Window.GameLoop;
 import Engine.Physics.Components.ColliderManager;
+import Gameplay.Interaction;
 import Gameplay.AnimatedObject.Bomb;
 import Gameplay.Enemies.Enemy;
 import Gameplay.Interactives.Interactive;
@@ -88,7 +89,7 @@ public class Player extends Actor {
 
     /* NPC
      */
-    private Npc currentNPCinteraction;
+    private Interaction currentNPCinteraction;
     //----------------------------------------------------------------------
 
     //Methods______________________________________________________________________________________________________________________________________________________________________________
@@ -587,19 +588,15 @@ public class Player extends Actor {
             this.currentNPCinteraction = null;
         }
     }
-    private Npc nearestNPC (){
-        ArrayList<Entity> NPCs = ObjectManager.GetObjectManager().GetAllObjectsOfType(Npc.class);
-        Entity min = NPCs.get(0);
-
-        for(Entity x : NPCs) {
-            if (GetPosition().getModuleDistance(x.GetPosition()) < GetPosition().getModuleDistance(min.GetPosition())){
-                min = x;
-            }
+    private Interaction nearestNPC (){
+        ArrayList<Actor> allInteraction;
+        try{
+            allInteraction =ColliderManager.GetColliderManager().getCollision(hitbox, Npc.class, true);
+            return (Interaction)allInteraction.get(0);
+        }catch(java.lang.IndexOutOfBoundsException e){
+            System.err.println("No interaction in hitbox");
+            return(null);
         }
-        if (GetPosition().getModuleDistance(min.GetPosition()) > (GetScale().getModule()/2)){ //Magic number to ajust
-            return null;
-        }
-        return (Npc) min;
     }
     public void removeInteraction(){
         currentNPCinteraction = null;

@@ -1,5 +1,5 @@
 package Gameplay;
 
-public interface Interactive{
+public interface Interaction{
     public void interaction();
 }
