@@ -4,6 +4,9 @@ import javax.xml.catalog.CatalogFeatures.Feature;
 
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.AnimationMachine;
+import Engine.Graphics.Tile.Block;
+import Engine.Graphics.Tile.Normblock;
+import Engine.Graphics.Tile.TileManager;
 import Engine.Math.Vector2D;
 import Engine.Physics.StaticPlayerCollision;
 import Engine.Physics.Components.BoxCollider;
@@ -32,6 +35,14 @@ public class Rock extends Interactive implements StaticPlayerCollision{
 
         setPseudoPosition(GetScale().x/2, GetScale().y/2);
         setPseudoPositionVisible();
+
+        mPositionPair = PositionToPair(getPseudoPosition());
+        Block block = TileManager.sLevelObjects.GetBlockAt(mPositionPair.getFirst(),mPositionPair.getSecond());
+        System.out.println(block);
+        if (block instanceof Normblock){
+            ((Normblock) block).setBlocked(true);
+            System.out.println(((Normblock) block).isBlocked());
+        }
     }
     @Override
 

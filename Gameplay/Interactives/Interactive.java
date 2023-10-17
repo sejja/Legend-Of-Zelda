@@ -38,11 +38,6 @@ public abstract class Interactive extends Actor{
     */ //----------------------------------------------------------------------
     public Interactive( Vector2D<Float> position) {
         super(position);
-        mPositionPair = PositionToPair(position);
-        Block block = TileManager.sLevelObjects.GetBlockAt(mPositionPair.getFirst(),mPositionPair.getSecond());
-        if (block instanceof Normblock){
-            ((Normblock) block).setBlocked(true);
-        }
     }
 
     public void SetAnimation(int i, BufferedImage[] frames, int delay) {

@@ -24,6 +24,10 @@ public class Normblock extends Block {
         blocked = b;
     }
 
+    public boolean isBlocked(){
+        return blocked;
+    }
+
     @Override
     public boolean Update(AABB p) {
        return false;
