@@ -647,7 +647,7 @@ public class Player extends Actor {
      * 
      */
     private void setToSpawnPoint(){
-        SetPosition(new Vector2D<Float>(700.f, 400.f));
+        SetPosition(new Vector2D<Float>(1350.f, 800.f));
     }
     //------------------------------------------------------------------------
 

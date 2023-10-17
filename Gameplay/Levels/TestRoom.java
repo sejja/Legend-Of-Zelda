@@ -32,8 +32,8 @@ public class TestRoom extends Level {
     public TestRoom(Level right, Level left, Level up, Level down, String tiles, Vector2D<Float> pos) {
         super(right, left, up, down, new TileManager(tiles));
         Init(pos);
-        ObjectManager.GetObjectManager().AddEntity(new Player(new Spritesheet("Content/Animations/Link/Link.png"), new Vector2D<Float>(700.f, 400.f), new Vector2D<Float>(100.f, 100.f)));
-        /*ArrayList<String> dialogueArrayList = new ArrayList<String>();
+        ObjectManager.GetObjectManager().AddEntity(new Player(new Spritesheet("Content/Animations/Link/Link.png"), new Vector2D<Float>(1350f, 800.f), new Vector2D<Float>(100.f, 100.f)));
+        ArrayList<String> dialogueArrayList = new ArrayList<String>();
         ArrayList<String> dialogueArrayList2 = new ArrayList<String>();
         
         dialogueArrayList.add("En un mundo muy lejano] vivia una princesa que buscaba a su \nprincipe] y para logralo] llamo a todos los principes del reino \nademas deberas vuscar todos los artefactos de las piedras para \necuperar el poder de hyrule");
@@ -41,9 +41,10 @@ public class TestRoom extends Level {
         dialogueArrayList2.add("Muy buenas caballero] mi nombre es Juan] y estoy aqui protegiendo \nla puerta de acceso al palacio");
         dialogueArrayList2.add("A si que abandona este lugar por favor");
         ObjectManager.GetObjectManager().AddEntity(new Npc("Aelarion", new Spritesheet("Content/Animations/NPC/NPC_old.png", 68, 72), new Vector2D<Float>(1415.f, 725.f), dialogueArrayList, new Vector2D<Float>(78.f, 78.f), DOWN, squareMovement) );
-        ObjectManager.GetObjectManager().AddEntity(new Npc("Juan", new Spritesheet("Content/Animations/NPC/NPC_boy.png", 64, 64), new Vector2D<Float>(1200f, 900.f), dialogueArrayList2, new Vector2D<Float>(78.f, 78.f),DOWN, yLineMovement) );        ObjectManager.GetObjectManager().AddEntity(new Player(new Spritesheet("Content/Animations/Link/Link.png"), new Vector2D<Float>(700.f, 400.f), new Vector2D<Float>(100.f, 100.f)));
+        ObjectManager.GetObjectManager().AddEntity(new Npc("Juan", new Spritesheet("Content/Animations/NPC/NPC_boy.png", 64, 64), new Vector2D<Float>(1200f, 900.f), dialogueArrayList2, new Vector2D<Float>(78.f, 78.f),DOWN, yLineMovement) );
         ObjectManager.GetObjectManager().Update();
         ObjectManager.GetObjectManager().AddEntity(new Rock(new Vector2D<>(500f, 500f)));
+        /*
         ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Float>(450.f, 300.f)));
         ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Float>(550.f, 300.f)));
         ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Float>(650.f, 300.f)));*/

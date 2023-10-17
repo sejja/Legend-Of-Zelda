@@ -109,8 +109,8 @@ public class Npc extends Actor implements StaticPlayerCollision{
 
         super.Update();
         movement();
-        boxCollider.Update();
         pseudoPositionUpdate();
+        boxCollider.Update();
     }
     //______________________________________________________________________________________
     private BufferedImage[][] transposeMatrix(BufferedImage [][] m){

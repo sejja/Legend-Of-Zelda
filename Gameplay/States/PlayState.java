@@ -37,16 +37,6 @@ import Gameplay.NPC.Npc;
 public class PlayState extends State {
     Level mTestLevel;
 
-    private final int DOWN = 0;
-    private final int LEFT = 1;
-    private final int RIGHT= 2;
-    private final int UP = 3;
-
-    private final int squareMovement = 4;
-    private final int xLineMovement = 5;
-    private final int yLineMovement = 6;
-    private final int stop = 7;
-
     // ------------------------------------------------------------------------
     /*! Constructor
     *
@@ -54,7 +44,7 @@ public class PlayState extends State {
     */ //----------------------------------------------------------------------
     public PlayState() {
         var t = new TestRoom2(null, null, null, null, "Content/TiledProject/TestRoom2.tmx");
-        mTestLevel = new TestRoom(t, null, null, null, "Content/TiledProject/OverWorld.tmx", new Vector2D<>(0.f, 0.f));
+        mTestLevel = new TestRoom(t, null, null, null, "Content/TiledProject/OverWorld1.tmx", new Vector2D<>(0.f, 0.f));
         t.SetLeftlevel(mTestLevel);
 
         var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetCamera();
