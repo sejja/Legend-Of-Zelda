@@ -41,7 +41,7 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     //A* search
     protected static AStarSearch aStarSearch = new AStarSearch();
 
-    //Pathfinding variables
+    //pathfinding variables
     protected Pair finalDestination;
     protected Pair lastFinalDestination= new Pair(0, 0);
     protected Pair currentDestination;
@@ -90,11 +90,11 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     }
 
     // ------------------------------------------------------------------------
-    /*! Normalize
+    /*! normalize
     *
     *   Utility Function for Normalizing a Vector
     */ //----------------------------------------------------------------------
-    public Vector2D<Float> Normalize(Vector2D<Float> vector) {
+    public Vector2D<Float> normalize(Vector2D<Float> vector) {
         float magnitude = (float) Math.sqrt(vector.x * vector.x + vector.y * vector.y);
         if (magnitude > 0) {
             return new Vector2D<Float>(vector.x / magnitude, vector.y / magnitude);
@@ -104,11 +104,11 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     }
 
     // ------------------------------------------------------------------------
-    /*! GetDirection
+    /*! getDirection
     *
     *   Utility Function for Getting the Direction of a Vector
     */ //----------------------------------------------------------------------
-    public void GetDirection(Vector2D<Float> vector) {
+    public void getDirection(Vector2D<Float> vector) {
 
         if (Math.abs(vector.x) > Math.abs(vector.y)) {
             if (vector.x < 0) {
@@ -125,12 +125,30 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
         }
     }
 
+    public DIRECTION getDirection(Vector2D<Float> vector, boolean patata) {
+        DIRECTION dir;
+        if (Math.abs(vector.x) > Math.abs(vector.y)) {
+            if (vector.x < 0) {
+                dir=DIRECTION.RIGHT;
+            } else {
+                dir=DIRECTION.LEFT;
+            }
+        } else {
+            if (vector.y < 0) {
+                dir=DIRECTION.DOWN;
+            } else {
+                dir=DIRECTION.UP;
+            }
+        }
+        return dir;
+    }
+
     // ------------------------------------------------------------------------
-    /*! Animate
+    /*! animate
     *
     *   Adds the needed animation to the Enemy
     */ //----------------------------------------------------------------------
-    public void Animate() {
+    public void animate() {
         if(mAnimation.MustComplete()){return;}
 
         if(this.healthPoints == 0){
@@ -197,24 +215,26 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     public void Update() {
         //System.out.println("pdsofhiusf");
         super.Update();
-        if(!knockback){Pathfinding();
-        GetDirection(normalizedDirection);
-        }else{KnockbackRepeat();}
-        Animate();
-        Move();
+        System.out.println(vision());
+        if(!knockback){
+            pathfinding();
+            getDirection(normalizedDirection);
+        }else{knockbackRepeat();}
+        animate();
+        move();
         pseudoPositionUpdate();
         mCollision.Update();
         //System.out.println(playerPos.x + " " + playerPos.y + " " + normalizedDirection+ " " );
     }
 
     // ------------------------------------------------------------------------
-    /*! Pathfinding
+    /*! pathfinding
     *
     *   Calculates the path to the player if the path is unblocked and is not the same as the last time A* was called
     */ //----------------------------------------------------------------------
-    public void Pathfinding() {
-        Pair enemyTile = PositionToPair(getPseudoPosition());
-        finalDestination = PositionToPair(playerPos);
+    public void pathfinding() {
+        Pair enemyTile = positionToPair(getPseudoPosition());
+        finalDestination = positionToPair(playerPos);
         if(isDestinationChanged() && isDestinationReachable()){
             lastFinalDestination = finalDestination;
             path = aStarSearch.aStarSearch(enemyTile, finalDestination);
@@ -222,11 +242,11 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     }
 
     // ------------------------------------------------------------------------
-    /*! PositionToPair
+    /*! positionToPair
     *
     *   Changes the position given to a Pair
     */ //----------------------------------------------------------------------
-    public Pair PositionToPair(Vector2D<Float> position) {
+    public Pair positionToPair(Vector2D<Float> position) {
         int divisior = 64;
         Pair pair = new Pair(Math.round((position.x/divisior)), Math.round((position.y/divisior)));
         return pair;
@@ -263,22 +283,22 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
 
 
     // ------------------------------------------------------------------------
-    /*! MovementVector
+    /*! movementVector
     *
     *   Calculates the movement of the Enemy
     */ //----------------------------------------------------------------------
-    public void MovementVector() {
+    public void movementVector() {
         Vector2D<Float> dir = new Vector2D<Float>(playerPos.x - pseudoPos.x, playerPos.y - pseudoPos.y);
-        normalizedDirection=Normalize(dir);
+        normalizedDirection=normalize(dir);
     }
 
 
     // ------------------------------------------------------------------------
-    /*! Move
+    /*! move
     *
     *   Receives the movements in a stack and sets the movement of the Enemy with the A* search
     */ //----------------------------------------------------------------------
-    public void Move() {
+    public void move() {
         if(chase){
             speed = 3;
         }
@@ -298,17 +318,17 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
                 if(!path.isEmpty()){
                     currentDestination = path.peek();
                 }
-                normalizedDirection = Normalize(pseudoPosToDest());
+                normalizedDirection = normalize(pseudoPosToDest());
                 pos.x += normalizedDirection.x * speed;
                 pos.y += normalizedDirection.y * speed;
             }else{
-                normalizedDirection = Normalize(pseudoPosToDest());
+                normalizedDirection = normalize(pseudoPosToDest());
                 pos.x += normalizedDirection.x * speed;
                 pos.y += normalizedDirection.y * speed;
             }
         //If finalDestination reached, chase player directly
         }else if(currentDestination.getFirst() == finalDestination.getFirst() && currentDestination.getSecond() == finalDestination.getSecond()){
-                MovementVector();
+                movementVector();
                 pos.x += normalizedDirection.x * speed;
                 pos.y += normalizedDirection.y * speed;
         }
@@ -320,15 +340,15 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
         return new Vector2D<Float>(currentDestination.getFirst()*64 - (pseudoPos.x), currentDestination.getSecond()*64 - (pseudoPos.y+GetScale().y/2));
     }
     
-    public void KnockBack() {
+    public void knockBack() {
         knockback=true;
         Vector2D<Float> dir = pos.getVectorToAnotherActor(playerPos);
-        normalizedDirection=Normalize(dir);
+        normalizedDirection=normalize(dir);
         
     }
     
-    public void KnockbackRepeat(){
-        if (aStarSearch.isUnBlocked(PositionToPair(getPseudoPosition()).getFirst(),PositionToPair(getPseudoPosition()).getSecond())){
+    public void knockbackRepeat(){
+        if (aStarSearch.isUnBlocked(positionToPair(getPseudoPosition()).getFirst(),positionToPair(getPseudoPosition()).getSecond())){
             pos.x -= normalizedDirection.x * 7;
             pos.y -= normalizedDirection.y * 7;
         }else{
@@ -344,19 +364,17 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
         }
     }
 
-    public void KnockBack(Vector2D<Float> attackerPos) {
+    public void knockBack(Vector2D<Float> attackerPos) {
         knockback=true;
         Vector2D<Float> dir = pos.getVectorToAnotherActor(attackerPos);
-        normalizedDirection=Normalize(dir);
+        normalizedDirection=normalize(dir);
     }
     
 
     public void setHealthPoints(int damage){
         this.healthPoints -= damage;
         if (healthPoints <= 0){
-            //System.out.println("aibfhdp`");
             mCollision.ShutDown();
-            //this.SetScale(new Vector2D<Float>(0f,0f));
             die();
             path.clear();
         }
@@ -365,8 +383,18 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     }
 
     private void die() {
-        System.out.println("se muere");
         DeadAnimation deadAnimation = new DeadAnimation(this);
+    }
+
+    private boolean vision(){
+        Vector2D<Float> dir = pseudoPos.getVectorToAnotherActor(playerPos);
+        float distance = dir.getModule();
+        if ((getDirection(dir, true) == direction)){
+            return true;
+        }else{
+            return false;
+        }
+        
     }
 
     @Override
