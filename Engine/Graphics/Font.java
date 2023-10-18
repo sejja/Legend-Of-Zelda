@@ -104,8 +104,8 @@ public final class Font extends Spritesheet {
     *
     *   Draws text
     */ //----------------------------------------------------------------------
-    public void Render(Graphics2D g, String word, Vector2D<Float> pos, Vector2D<Integer> scale, Vector2D<Integer> offset) {
-        word.chars().forEach(new IntConsumer() {
+    public void Render(final Graphics2D g, final String string, Vector2D<Float> pos, final Vector2D<Integer> scale, final Vector2D<Integer> offset) {
+        string.chars().forEach(new IntConsumer() {
             @Override
             public void accept(int value) {
                 if(value != ' ')

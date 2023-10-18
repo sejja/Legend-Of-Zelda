@@ -12,10 +12,20 @@ import Engine.Assets.Asset;
 public class Sound {
     private Asset mAudio;
     private boolean mIsPaused;
+    private Long mCurrentFrame;
 
     public Sound(Asset audio) {
         mAudio = audio;
         mIsPaused = true;
+        mCurrentFrame = 0L;
+    }
+
+    public void SetCurrentFrame(Long frame) {
+        mCurrentFrame = frame;
+    }
+
+    public Long GetCurrentFrame() {
+        return mCurrentFrame;
     }
 
     public void SetLoopCount(int times) {
@@ -24,5 +34,13 @@ public class Sound {
 
     public boolean IsPaused() {
         return mIsPaused;
+    }
+
+    public void SetIsPaused(boolean isPaused) {
+        mIsPaused = isPaused;
+    }
+
+    public Asset GetWaveformat() {
+        return mAudio;
     }
 }
