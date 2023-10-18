@@ -1,5 +1,6 @@
 package Gameplay.Enemies.Units;
 
+import Engine.Assets.AssetManager;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.AnimationMachine;
 import Engine.Math.Vector2D;
@@ -13,7 +14,7 @@ public class GreenKnight extends Enemy{
     //animation
     protected int xoffset = 8;
     protected int yoffset = 32;
-    protected Spritesheet sprite=new Spritesheet("Content/Animations/gknight.png", 24,28);
+    protected Spritesheet sprite=new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/gknight.png"), new Vector2D<>(24, 28));
     
 
     public GreenKnight(Vector2D<Float> position) {

@@ -10,15 +10,17 @@ package Engine.Graphics;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.util.function.IntConsumer;
+import Engine.Assets.Asset;
 import Engine.Math.Vector2D;
 
-public class Font extends Spritesheet {
+public final class Font extends Spritesheet {
     // ------------------------------------------------------------------------
     /*! Constructor
     *
     *   Constructs an Sprite from the filename
     */ //----------------------------------------------------------------------
-    public Font(String file) {
+    public Font(final Asset file) {
         super(file);
     }
 
@@ -27,8 +29,8 @@ public class Font extends Spritesheet {
     *
     *   Consntructs an sprite from the filename, the width, and the height
     */ //----------------------------------------------------------------------
-    public Font(String file, int w, int h) {
-        super(file, w, h);
+    public Font(final Asset file, final Vector2D<Integer> dimensions) {
+        super(file, dimensions);
     }
 
     // ------------------------------------------------------------------------
@@ -36,9 +38,8 @@ public class Font extends Spritesheet {
     *
     *   Sets the size of a Sprite
     */ //----------------------------------------------------------------------
-    public void SetBearing(int width, int height) {
-        mUCoord = width;
-        mVCoord = height;
+    public void SetBearing(final Vector2D<Integer> dimensions) {
+        mUVCoord = dimensions;
     }
 
     // ------------------------------------------------------------------------
@@ -46,8 +47,8 @@ public class Font extends Spritesheet {
     *
     *   Sets the Width of an sprite
     */ //----------------------------------------------------------------------
-    public void SetWidth(int i) {
-        mUCoord = i;
+    public void SetWidth(final int i) {
+        mUVCoord.x = i;
     }
 
     // ------------------------------------------------------------------------
@@ -55,8 +56,8 @@ public class Font extends Spritesheet {
     *
     *   Sets the Height of an Sprite
     */ //----------------------------------------------------------------------
-    public void SetHeight(int h) {
-        mVCoord = h;
+    public void SetHeight(final int h) {
+        mUVCoord.y = h;
     }
 
     // ------------------------------------------------------------------------
@@ -65,7 +66,7 @@ public class Font extends Spritesheet {
     *   Returns the width of an sprite
     */ //----------------------------------------------------------------------
     public int GetWidth() {
-        return mUCoord;
+        return mUVCoord.x;
     }
 
     // ------------------------------------------------------------------------
@@ -73,8 +74,8 @@ public class Font extends Spritesheet {
     *
     *   Returns the height in pixels
     */ //----------------------------------------------------------------------
-    public int getHeight() {
-        return mVCoord;
+    public int GetHeight() {
+        return mUVCoord.y;
     }
 
     // ------------------------------------------------------------------------
@@ -82,17 +83,8 @@ public class Font extends Spritesheet {
     *
     *   Returns the Sprite Sheet, as an Image
     */ //----------------------------------------------------------------------
-    public BufferedImage GetFontSheet() {
+    public Asset GetFontSheet() {
         return mSpriteSheet;
-    }
-
-    // ------------------------------------------------------------------------
-    /*! Get Sprite
-    *
-    *   Given an UV coordinate, returns the sprite located at a point in the spritesheet
-    */ //----------------------------------------------------------------------
-    public BufferedImage GetLetter(int x, int y) {
-        return ((BufferedImage)mSpriteSheet.Raw()).getSubimage(x * mUCoord, y * mVCoord, mUCoord, mVCoord);
     }
 
     // ------------------------------------------------------------------------
@@ -100,19 +92,11 @@ public class Font extends Spritesheet {
     *
     *   Returns the image of the letter from the font itself. It crops a subimage
     */ //----------------------------------------------------------------------
-    public BufferedImage GetFont(char c) {
+    private BufferedImage GetFont(final char c) {
         final int value = c - (int)'A';
 
-        return GetLetter(value % mWidth, value / mWidth);
-    }
-
-    // ------------------------------------------------------------------------
-    /*! Get Sprite Array 2D
-    *
-    *   Returns the 2D Array reference of the sprite sheet
-    */ //----------------------------------------------------------------------
-    public BufferedImage[][] GetSpriteArray2D() {
-        return mSpriteArray;
+        return ((BufferedImage)mSpriteSheet.Raw()).getSubimage((value % mWidth) * mUVCoord.x, 
+            (value / mWidth) * mUVCoord.y, mUVCoord.x, mUVCoord.y);
     }
 
     // ------------------------------------------------------------------------
@@ -120,19 +104,16 @@ public class Font extends Spritesheet {
     *
     *   Draws text
     */ //----------------------------------------------------------------------
-    public void Render(Graphics2D g, String word, Vector2D<Float> pos, int width, int height, int xOffset, int yOffset) {
-        float x = (float)pos.x;
-        float y = (float)pos.y;
-
-        //For every letter of the word, draw the sprites separately
-        for(int i = 0; i < word.length(); i++) {
-
-            //If it's not a white space
-            if(word.charAt(i) != ' ')
-                g.drawImage(GetFont(word.charAt(i)), (int)x, (int)y, width, height, null);
-        
-            x += xOffset;
-            y += yOffset;
-        }
+    public void Render(Graphics2D g, String word, Vector2D<Float> pos, Vector2D<Integer> scale, Vector2D<Integer> offset) {
+        word.chars().forEach(new IntConsumer() {
+            @Override
+            public void accept(int value) {
+                if(value != ' ')
+                    g.drawImage(GetFont((char)value), (int)(float)pos.x, (int)(float)pos.y, scale.x, scale.y, null);
+            
+                pos.x += offset.x;
+                pos.y += offset.y;
+            }
+        });
     }
 }

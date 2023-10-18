@@ -22,6 +22,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import Engine.Assets.AssetManager;
 import Engine.ECSystem.Types.ECObject;
 import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Spritesheet;
@@ -100,7 +101,7 @@ public class TileManager extends ECObject implements Renderable {
             tileHeight = Integer.parseInt(element2.getAttribute("tileheight"));
             tileColumns = Integer.parseInt(element2.getAttribute("columns"));
             
-            sprite = new Spritesheet("Content/Tiles/" + imagePath, tileWidth, tileHeight);
+            sprite = new Spritesheet(AssetManager.Instance().GetResource("Content/Tiles/" + imagePath), new Vector2D<>(tileWidth, tileHeight));
 
             list = doc.getElementsByTagName("layer");
             layers = list.getLength();

@@ -2,6 +2,7 @@ package Gameplay.AnimatedObject;
 
 import java.util.Vector;
 
+import Engine.Assets.AssetManager;
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
 import Engine.Graphics.Spritesheet;
@@ -22,7 +23,7 @@ public class DeadAnimation extends AnimatedObject{
         //super(new Vector2D<Float>(actor.GetPosition().x + offset.x, actor.GetPosition().x + offset.y));
         delay = 5;
         this.actor = actor;
-        setAnimationMachine(new Spritesheet("Content/Animations/DeadAnimation.png", 29 , 36));
+        setAnimationMachine(new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/DeadAnimation.png"), new Vector2D<>(29, 36)));
         SetScale(actor.GetScale());
         ObjectManager.GetObjectManager().AddEntity(this);
         defaultAnimationIndex = 0;

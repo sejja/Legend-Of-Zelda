@@ -10,6 +10,7 @@ package Engine.Graphics.Components;
 
 import java.awt.Graphics2D;
 
+import Engine.Assets.Asset;
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Component;
 import Engine.Graphics.Font;
@@ -19,7 +20,6 @@ import Engine.Math.Vector2D;
 import Engine.Physics.AABB;
 
 public class FontComponent extends Component implements Renderable {
-    private static final int Vector2D = 0;
     private Font mFont;
     private String mString;
     private Transform mOffset;
@@ -30,7 +30,7 @@ public class FontComponent extends Component implements Renderable {
     *
     *   Creates an Animation Machine with a parent and a sprite
     */ //----------------------------------------------------------------------
-    public FontComponent(Actor parent, String fontsheet) {
+    public FontComponent(Actor parent, Asset fontsheet) {
         super(parent);
         mFont = new Font(fontsheet, 16, 16);
         mOffset = new Transform();
@@ -39,18 +39,29 @@ public class FontComponent extends Component implements Renderable {
         mGlyph = new Vector2D<>(56, 0);
     }
 
-    public void SetGlyph(Vector2D<Integer> vec) {
-        mGlyph = vec;
-    }
-
+    // ------------------------------------------------------------------------
+    /*! Set String
+    *
+    *   Sets the String to be displayed by the Font Component
+    */ //----------------------------------------------------------------------
     public void SetString(String string) {
         mString = string;
     } 
 
+    // ------------------------------------------------------------------------
+    /*! Get String
+    *
+    *   Gets the current string that will be displayed by the Font Component
+    */ //----------------------------------------------------------------------
     public String GetString() {
         return mString;
     }
 
+    // ------------------------------------------------------------------------
+    /*! Set Position
+    *
+    *   Unbinds the Camera from the Graphics Pipeline
+    */ //----------------------------------------------------------------------
     public void SetPosition(Vector2D<Float> vec) {
         mOffset.mPosition = vec;
     }
