@@ -21,7 +21,7 @@ public class DeadAnimation extends AnimatedObject{
         super(actor.GetPosition());
         delay = 5;
         this.actor = actor;
-        setAnimationMachine(new Spritesheet("Content/Animations/DeadAnimation.png", 29 , 36));
+        setAnimationMachine(new Spritesheet("Content/Animations/DeadAnimation.png",6, 1, true));
         SetScale(actor.GetScale());
         ObjectManager.GetObjectManager().AddEntity(this);
         defaultAnimationIndex = 0;

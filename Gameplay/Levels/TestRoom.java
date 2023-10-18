@@ -8,6 +8,7 @@ import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Sprite;
 import Engine.Graphics.Components.ZeldaCameraComponent;
 import Engine.Graphics.Spritesheet;
+import Engine.Graphics.Tile.Normblock;
 import Engine.Graphics.Tile.TileManager;
 import Engine.Math.Vector2D;
 import Gameplay.AnimatedObject.Torch;
@@ -32,7 +33,9 @@ public class TestRoom extends Level {
         ObjectManager.GetObjectManager().AddEntity(new Npc("Juan", new Spritesheet("Content/Animations/NPC/NPC_boy.png", 64, 64), new Vector2D<Float>(1200f, 900.f), dialogueArrayList2, new Vector2D<Float>(50.f, 62.f)) );
         ObjectManager.GetObjectManager().AddEntity(new Player(new Spritesheet("Content/Animations/Link/Link.png"), new Vector2D<Float>(700.f, 400.f), new Vector2D<Float>(100.f, 100.f)));
         ObjectManager.GetObjectManager().Update();
-        ObjectManager.GetObjectManager().AddEntity(new Rock(new Vector2D<>(500f, 500f)));
+        ObjectManager.GetObjectManager().AddEntity(new Rock(new Vector2D<>(448f, 448f)));
+        ObjectManager.GetObjectManager().AddEntity(new Rock(new Vector2D<>(8*64f, 8*64f)));
+        ObjectManager.GetObjectManager().AddEntity(new Rock(new Vector2D<>(8*64f, 8*64f)));
         ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Float>(450.f, 300.f)));
         ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Float>(550.f, 300.f)));
         ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Float>(650.f, 300.f)));
@@ -44,5 +47,6 @@ public class TestRoom extends Level {
         Vector2D<Float> bottomleft = new Vector2D<>(GetBounds().GetPosition().x + GetBounds().GetWidth() - 1280.f / 2, GetBounds().GetPosition().y + GetBounds().GetHeight() - 760.f / 2);
 
         z.SetBounds(topright, bottomleft);
+        //System.out.println(((Normblock)TileManager.sLevelObjects.GetBlockAt(7,7)).isBlocked());
     }
 }

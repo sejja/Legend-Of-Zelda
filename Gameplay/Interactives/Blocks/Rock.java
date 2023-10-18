@@ -2,8 +2,12 @@ package Gameplay.Interactives.Blocks;
 
 import javax.xml.catalog.CatalogFeatures.Feature;
 
+import Engine.ECSystem.ObjectManager;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.AnimationMachine;
+import Engine.Graphics.Tile.Block;
+import Engine.Graphics.Tile.Normblock;
+import Engine.Graphics.Tile.TileManager;
 import Engine.Math.Vector2D;
 import Engine.Physics.StaticPlayerCollision;
 import Engine.Physics.Components.BoxCollider;
@@ -16,6 +20,7 @@ public class Rock extends Interactive implements StaticPlayerCollision{
 
     //animation
     protected Spritesheet sprite=new Spritesheet("Content/Animations/rock.png", 16,16);
+    protected Block block;
     
 
     public Rock(Vector2D<Float> position) {
@@ -32,11 +37,33 @@ public class Rock extends Interactive implements StaticPlayerCollision{
 
         setPseudoPosition(GetScale().x/2, GetScale().y/2);
         setPseudoPositionVisible();
+
+        mPositionPair = PositionToPair(getPseudoPosition());
+        block = TileManager.sLevelObjects.GetBlockAt(mPositionPair.getFirst(),mPositionPair.getSecond());
+        System.out.println(block);
+        if (block instanceof Normblock){
+            ((Normblock) block).setBlocked(true);
+            System.out.println(((Normblock) block).isBlocked());
+        }
     }
     @Override
 
     public void Update(){
         super.Update();
         playerCollision();
+    }
+
+    public void setHealthPoints(int damage){
+        this.healthPoints -= damage;
+        if (healthPoints <= 0){
+            die();
+        }       
+    }
+
+    public void die(){
+        mCollision.ShutDown();
+        ((Normblock) block).setBlocked(false);
+        this.SetScale(new Vector2D<Float>(0f,0f));
+        ObjectManager.GetObjectManager().RemoveEntity(this);
     }
 }
