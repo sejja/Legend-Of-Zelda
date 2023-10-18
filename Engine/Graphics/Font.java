@@ -83,7 +83,7 @@ public class Font extends Spritesheet {
     *   Returns the Sprite Sheet, as an Image
     */ //----------------------------------------------------------------------
     public BufferedImage GetFontSheet() {
-        return mSpriteSheet;
+        return (BufferedImage)mSpriteSheet.Raw();
     }
 
     // ------------------------------------------------------------------------

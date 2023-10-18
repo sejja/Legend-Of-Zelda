@@ -9,6 +9,7 @@
 package Engine.Graphics.Components;
 
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Component;
@@ -85,6 +86,6 @@ public final class SpriteComponent extends Component implements Renderable {
     */ //----------------------------------------------------------------------
     @Override
     public void Render(Graphics2D g, CameraComponent camera) {
-        g.drawImage(mSprite.GetSprite(), (int)(float)GetParent().GetPosition().x - (int)(float)camera.GetCoordinates().x, (int)(float)GetParent().GetPosition().y - (int)(float)camera.GetCoordinates().y, (int)(float)GetParent().GetScale().x, (int)(float)GetParent().GetScale().y, null);
+        g.drawImage((BufferedImage)mSprite.GetSprite().Raw(), (int)(float)GetParent().GetPosition().x - (int)(float)camera.GetCoordinates().x, (int)(float)GetParent().GetPosition().y - (int)(float)camera.GetCoordinates().y, (int)(float)GetParent().GetScale().x, (int)(float)GetParent().GetScale().y, null);
     }
 }
