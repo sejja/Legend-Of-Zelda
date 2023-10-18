@@ -3,23 +3,13 @@ package Gameplay.NPC;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Component;
 import Engine.Graphics.Font;
 import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Components.CameraComponent;
 import Engine.Graphics.Components.Renderable;
-import Engine.Graphics.Objects.FontObject;
 import Engine.Graphics.Tile.Block;
-import Engine.Input.InputFunction;
-import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
-import Engine.Window.PresentBuffer;
-import Engine.Window.Window;
-import Gameplay.Link.Player;
-import Gameplay.States.PlayState;
 
 public class DialogueWindow extends Component implements Renderable{
     

@@ -1,9 +1,6 @@
 package Gameplay.LifeBar;
 
-import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
-import Engine.ECSystem.Types.Entity;
-import Engine.Graphics.Components.AnimationMachine;
 import Engine.Math.Vector2D;
 
 /*  This is a class that allow to show a LifeBar

@@ -12,7 +12,6 @@ import Engine.Math.Vector2D;
  *      -> It has to have a position a SpriteSheet
  *          -> if you provide a actor position it will fixed in the actor
  */
-
 public abstract class AnimatedObject extends Actor{
     protected AnimationMachine animationMachine;
     protected BufferedImage[] animation;
@@ -25,14 +24,14 @@ public abstract class AnimatedObject extends Actor{
         this.delay = delay;
         animation = spritesheet.GetSpriteArray2D()[defaultAnimationIndex];
         this.defaultAnimationIndex = defaultAnimationIndex;
-        ObjectManager.GetObjectManager().AddEntity(this);
+        spawn();
     }
 
     public AnimatedObject (Vector2D<Float> position, Spritesheet spritesheet){
         super(position);
         setAnimationMachine(spritesheet);
         animation = spritesheet.GetSpriteArray2D()[defaultAnimationIndex];
-        ObjectManager.GetObjectManager().AddEntity(this);
+        spawn();
     }
 
     public AnimatedObject(Vector2D<Float> position) {
