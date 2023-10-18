@@ -19,7 +19,7 @@ public interface StaticPlayerCollision {
         if(!ColliderManager.GetColliderManager().getCollision(staticalObject.getmCollision(), Player.class,true).isEmpty()){
             Player link = (Player)ColliderManager.GetColliderManager().getMapAllCollision().get(Player.class).getFirst().GetParent();
             Vector2D<Float> currentPosition = link.GetPosition();
-            Float difference = 5f;
+            Float difference = 1f;
             switch(link.getPseudoPosition().getTargetDirection(staticalObject.getPseudoPosition())){
                 case UP :
                     difference += Math.abs(staticalObject.GetScale().y/2 + link.getHitbox().GetBounds().GetScale().y/2 - staticalObject.getPseudoPosition().getModuleDistance(link.getPseudoPosition()));

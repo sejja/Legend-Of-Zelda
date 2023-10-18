@@ -45,8 +45,8 @@ public class TilemapNorm extends Tilemap {
     }
 
     public void Render(Graphics2D g, CameraComponent camerapos, Vector2D<Float> tilemappos) {
+        //if(true){return;}
         var cameracoord = camerapos.GetCoordinates();
-
         int x = (int) ((cameracoord.x - tilemappos.x) / mTileWidth);
         int y = (int) ((cameracoord.y - tilemappos.y) / mTileHeight);
 
