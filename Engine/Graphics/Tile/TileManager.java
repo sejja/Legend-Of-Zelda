@@ -96,6 +96,7 @@ public class TileManager extends ECObject implements Renderable {
             Element element3 = (Element) node3;
 
             imagePath = element3.getAttribute("source");
+            int spacing = Integer.parseInt(element2.getAttribute("spacing"));
             tileWidth = Integer.parseInt(element2.getAttribute("tilewidth"));
             tileHeight = Integer.parseInt(element2.getAttribute("tileheight"));
             tileColumns = Integer.parseInt(element2.getAttribute("columns"));
