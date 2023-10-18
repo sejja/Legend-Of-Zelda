@@ -126,11 +126,11 @@ public class Arrow extends Actor{
             Animate();
         }else{ //Delete arrow
             //System.out.println("Eliminado flecha");
-            ObjectManager.GetObjectManager().RemoveEntity(this);
+            despawn();
         }
         if( endArrow ){
             //System.out.println("Eliminado flecha");
-            ObjectManager.GetObjectManager().RemoveEntity(this);
+            despawn();
         }
         Attack();
         pseudoPositionUpdate();
@@ -155,7 +155,7 @@ public class Arrow extends Actor{
             enemy.knockBack();
             endArrow = true;
             if (damage ==0 ){return;}
-            else{ObjectManager.GetObjectManager().RemoveEntity(this);}
+            else{despawn();}
         }
     }
 

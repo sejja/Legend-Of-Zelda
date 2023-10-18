@@ -8,6 +8,7 @@
 
 package Engine.ECSystem.Types;
 
+import Engine.ECSystem.ObjectManager;
 import Engine.Math.Transform;
 import Engine.Math.Vector2D;
 
@@ -92,5 +93,10 @@ public abstract class Entity implements Base,ClassClasifier{
         mName = name;
     }
 
+    /* despawn
+     *      Remove this entity
+     */
+    protected void despawn(){ObjectManager.GetObjectManager().RemoveEntity(this);}
+    protected void spawn(){ObjectManager.GetObjectManager().AddEntity(this);}
     public Class GetSuperClass(){return Entity.class;}
 }

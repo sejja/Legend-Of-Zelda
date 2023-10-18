@@ -54,7 +54,7 @@ public class Heart extends Actor {
         ObjectManager.GetObjectManager().AddEntity(this);
     }
     public void popFromObjectManager(){
-        ObjectManager.GetObjectManager().RemoveEntity(this);
+        despawn();
     }
     public boolean isInObjectManager(){
         return ObjectManager.GetObjectManager().GetAllObjectsOfType(GetSuperClass()).contains(this);
