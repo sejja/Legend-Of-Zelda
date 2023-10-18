@@ -126,12 +126,10 @@ public class Arrow extends Actor{
             Animate();
         }else{ //Delete arrow
             //System.out.println("Eliminado flecha");
-            hitbox.ShutDown();
             ObjectManager.GetObjectManager().RemoveEntity(this);
         }
         if( endArrow ){
             //System.out.println("Eliminado flecha");
-            hitbox.ShutDown();
             ObjectManager.GetObjectManager().RemoveEntity(this);
         }
         Attack();
@@ -155,7 +153,8 @@ public class Arrow extends Actor{
             Enemy enemy = (Enemy)enemies.get(0);
             enemy.setHealthPoints(damage);
             enemy.KnockBack();
-            endArrow = true;
+            if (damage ==0 ){return;}
+            else{ObjectManager.GetObjectManager().RemoveEntity(this);}
         }
     }
 
