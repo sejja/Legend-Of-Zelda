@@ -57,13 +57,13 @@ public class Rock extends Interactive implements StaticPlayerCollision{
         this.healthPoints -= damage;
         if (healthPoints <= 0){
             die();
-        }       
+        }      
     }
 
     public void die(){
         mCollision.ShutDown();
         ((Normblock) block).setBlocked(false);
         this.SetScale(new Vector2D<Float>(0f,0f));
-        ObjectManager.GetObjectManager().RemoveEntity(this);
+        despawn();
     }
 }
