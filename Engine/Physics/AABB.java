@@ -130,7 +130,7 @@ public class AABB {
             int xt = (int)((mPosition.x + ax) + (c % 2) * mSize.x) / 64;
             int yt = (int)((mPosition.y + ay) + (int)(c / 2) * mSize.y) / 64;
 
-            if(TileManager.sLevelObjects.GetBlockAt(xt, yt) != null
+            if(TileManager.sLevelObjects != null && TileManager.sLevelObjects.GetBlockAt(xt, yt) != null
                 && xt < TileManager.sLevelObjects.mWidth && yt < TileManager.sLevelObjects.mHeight) {
                 Block block = TileManager.sLevelObjects.GetBlockAt(xt, yt);
                 if(block instanceof HoleBlock) {
