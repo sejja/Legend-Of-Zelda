@@ -462,7 +462,7 @@ public class Player extends Actor {
                 Vector2D<Float> enemyPosition = enemy.GetPosition();
                 if (enemyPosition.getModuleDistance(this.GetPosition()) < this.GetScale().y/2){
                     this.setDamage(enemy.getDamage());
-                    enemy.KnockBack();
+                    enemy.knockBack();
                 }
             }
     }
@@ -563,7 +563,7 @@ public class Player extends Actor {
                 
         It will calculate a vector to the player position to the enemy position
         If the DIRECTION of the vector Player-Enemy and The DIRECTION of the player is the same
-        It will called a KnockBack() function of that enemy
+        It will called a knockBack() function of that enemy
         */
         ArrayList<Entity> enemies = ObjectManager.GetObjectManager().GetAllObjectsOfType(Enemy.class);
         if(enemies == null){return;}
@@ -572,7 +572,7 @@ public class Player extends Actor {
             if(currentEnemy.getPseudoPosition().getModuleDistance(getPseudoPosition()) < this.GetScale().getModule()-40){
                 System.out.println( "leda");
                 currentEnemy.setHealthPoints(damage);
-                currentEnemy.KnockBack();
+                currentEnemy.knockBack();
             }
         }
     }
