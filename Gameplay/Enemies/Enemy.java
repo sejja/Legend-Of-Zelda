@@ -213,9 +213,8 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     *   Adds Behavior to the Enemy
     */ //----------------------------------------------------------------------
     public void Update() {
-        //System.out.println("pdsofhiusf");
         super.Update();
-        System.out.println(vision());
+        //System.out.println(vision());
         if(!knockback){
             pathfinding();
             getDirection(normalizedDirection);
