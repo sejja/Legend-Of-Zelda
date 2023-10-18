@@ -152,7 +152,8 @@ public class Arrow extends Actor{
         if(!(enemies = ColliderManager.GetColliderManager().getCollision(hitbox, Enemy.class, true)).isEmpty()){
             Enemy enemy = (Enemy)enemies.get(0);
             enemy.setHealthPoints(damage);
-            enemy.KnockBack();
+            enemy.knockBack();
+            endArrow = true;
             if (damage ==0 ){return;}
             else{despawn();}
         }

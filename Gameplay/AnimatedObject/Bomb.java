@@ -89,7 +89,7 @@ public class Bomb extends AnimatedObject {
             for(int i = 0; i<enemies.size(); i++){
                 Enemy enemy = (Enemy)enemies.get(i);
                 enemy.setHealthPoints(damage);
-                enemy.KnockBack();
+                enemy.knockBack();
             }
         }
         if(!interactives.isEmpty()){
