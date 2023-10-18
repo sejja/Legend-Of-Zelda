@@ -49,7 +49,7 @@ public class Torch extends AnimatedObject implements Interaction{
                 turnON();
             }
         }
-        ((Player)ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).getFirst()).removeInteraction();
+        //((Player)ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).getFirst()).removeInteraction();
     }
     
     private void turnON(){
