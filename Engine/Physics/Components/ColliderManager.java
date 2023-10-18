@@ -49,7 +49,7 @@ public class ColliderManager {
             }
             else{return;}
         }
-        //System.out.println(mapAllCollider);
+        //System.out.println(mapAllCollision);
     }
 
     public void removeCollider(BoxCollider collider){
@@ -104,16 +104,10 @@ public class ColliderManager {
     }
 
     private boolean hasCollided(BoxCollider colliderA, BoxCollider colliderB){
-        DIRECTION direction = colliderA.GetParent().getPseudoPosition().getTargetDirection(colliderB.GetParent().getPseudoPosition());
-        //System.out.println( direction );
-        if(direction == DIRECTION.UP || direction == DIRECTION.DOWN){
-            Float distanceY = Math.abs(colliderA.GetParent().getPseudoPosition().getVectorToAnotherActor(colliderB.GetParent().getPseudoPosition()).y); //Horizontal limits
-            Float limit = (colliderA.GetBounds().GetScale().y + colliderB.GetBounds().GetScale().y)/2;
-            return distanceY < limit;
-        }else{                                                                                                                                       //Vertical limits
-            Float distanceX = Math.abs(colliderA.GetParent().getPseudoPosition().getVectorToAnotherActor(colliderB.GetParent().getPseudoPosition()).x);
-            Float limit = (colliderA.GetBounds().GetScale().x + colliderB.GetBounds().GetScale().x)/2;
-            return distanceX < limit;
-        }
+        Float distanceY = Math.abs(colliderA.GetParent().getPseudoPosition().getVectorToAnotherActor(colliderB.GetParent().getPseudoPosition()).y);
+        Float limitY = (colliderA.GetBounds().GetScale().y + colliderB.GetBounds().GetScale().y)/2;
+        Float distanceX = Math.abs(colliderA.GetParent().getPseudoPosition().getVectorToAnotherActor(colliderB.GetParent().getPseudoPosition()).x);
+        Float limitX = (colliderA.GetBounds().GetScale().x + colliderB.GetBounds().GetScale().x)/2;
+        return distanceX < limitX && distanceY < limitY;
     }
 }

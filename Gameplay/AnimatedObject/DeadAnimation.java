@@ -19,7 +19,6 @@ public class DeadAnimation extends AnimatedObject{
 
     public DeadAnimation(Actor actor){
         super(actor.GetPosition());
-        //super(new Vector2D<Float>(actor.GetPosition().x + offset.x, actor.GetPosition().x + offset.y));
         delay = 5;
         this.actor = actor;
         setAnimationMachine(new Spritesheet("Content/Animations/DeadAnimation.png", 29 , 36));

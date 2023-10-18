@@ -10,6 +10,7 @@ import Engine.Graphics.Components.ZeldaCameraComponent;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Tile.TileManager;
 import Engine.Math.Vector2D;
+import Gameplay.AnimatedObject.Torch;
 import Gameplay.Enemies.Enemy;
 import Gameplay.Enemies.Units.GreenKnight;
 import Gameplay.Interactives.Blocks.Rock;
@@ -35,6 +36,7 @@ public class TestRoom extends Level {
         ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Float>(450.f, 300.f)));
         ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Float>(550.f, 300.f)));
         ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Float>(650.f, 300.f)));
+        ObjectManager.GetObjectManager().AddEntity(new Torch(new Vector2D<Float>(700.f, 450.f)));
         var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetCamera();
 
         Vector2D<Float> topright = new Vector2D<>(GetBounds().GetPosition().x + 1280.f / 2, GetBounds().GetPosition().y + 720.f / 2);
