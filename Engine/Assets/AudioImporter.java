@@ -18,6 +18,7 @@ public class AudioImporter implements Importer{
             clip = AudioSystem.getClip(); 
             clip.open(audiostream);
         } catch (UnsupportedAudioFileException | IOException e) {
+            System.err.println(e.getMessage());
             e.printStackTrace();
         } catch (LineUnavailableException e) {
             // TODO Auto-generated catch block

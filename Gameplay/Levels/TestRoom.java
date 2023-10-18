@@ -3,6 +3,8 @@ package Gameplay.Levels;
 import java.util.ArrayList;
 
 import Engine.Assets.AssetManager;
+import Engine.Audio.Audio;
+import Engine.Audio.Sound;
 import Engine.ECSystem.Level;
 import Engine.ECSystem.ObjectManager;
 import Engine.Graphics.GraphicsPipeline;
@@ -43,5 +45,8 @@ public class TestRoom extends Level {
         Vector2D<Float> bottomleft = new Vector2D<>(GetBounds().GetPosition().x + GetBounds().GetWidth() - 1280.f / 2, GetBounds().GetPosition().y + GetBounds().GetHeight() - 760.f / 2);
 
         z.SetBounds(topright, bottomleft);
+        Sound bg = new Sound(AssetManager.Instance().GetResource("Content/Audio/dungeon1.wav"));
+        bg.SetLoopCount(-1);
+        Audio.Instance().Play(bg);
     }
 }
