@@ -43,16 +43,16 @@ public class TilemapObject extends Tilemap {
                 positiontemp.y += (int)(float)position.y;
 
             if(tempint != 0) {
-                if(tempint == 172) { // TODO, Review
+                if(tempint == 429) { // TODO, Review
                     temp = new HoleBlock(sprite.GetSprite((int) ((tempint - 1) % tilecolumns), (int) ((tempint - 1) / tilecolumns)), positiontemp, tilewidth, tileheight);
                 } else {
                     temp = new ObjectBlock(sprite.GetSprite((int) ((tempint - 1) % tilecolumns), (int) ((tempint - 1) / tilecolumns)), positiontemp, tilewidth, tileheight);
                 }
 
                 mBlocks[i] = temp;
-            }else{
+            } else{
                 //System.out.print("No block at: " + i);
-                mBlocks[i] = new Normblock(sprite.GetSprite((int) ((172 - 1) % tilecolumns), (int) ((172 - 1) / tilecolumns)), positiontemp, tilewidth, tileheight);
+                mBlocks[i] = new Normblock(null, positiontemp, tilewidth, tileheight);
             }
         }
     }

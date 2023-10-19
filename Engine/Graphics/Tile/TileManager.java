@@ -99,7 +99,7 @@ public class TileManager extends ECObject implements Renderable {
             tileWidth = Integer.parseInt(element2.getAttribute("tilewidth"));
             tileHeight = Integer.parseInt(element2.getAttribute("tileheight"));
             tileColumns = Integer.parseInt(element2.getAttribute("columns"));
-            
+
             sprite = new Spritesheet("Content/Tiles/" + imagePath, tileWidth, tileHeight);
 
             list = doc.getElementsByTagName("layer");
@@ -115,7 +115,7 @@ public class TileManager extends ECObject implements Renderable {
 
                 data[i] = eElement.getElementsByTagName("data").item(0).getTextContent();
 
-                if(i >= 1) {
+                if(!eElement.getAttribute("name").equals("colision")) {
                     mLayers.add(new TilemapNorm(mPosition, data[i], sprite, width, height, blockwith, blockheigh, tileColumns));
                 } else {
                     mLayers.add(new TilemapObject(mPosition, data[i], sprite, width, height, blockwith, blockheigh, tileColumns));

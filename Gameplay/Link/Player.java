@@ -322,6 +322,7 @@ public class Player extends Actor {
         lifeBar.Update();
         pseudoPositionUpdate();
         hitbox.Update();
+        System.out.println(GetPosition());
     }
     public void playerStateMachine(){
         if(dash){dash();return;}//Early return dash is mostly the dominate action, so if link is dashing he can not do anything else
@@ -644,7 +645,7 @@ public class Player extends Actor {
      * 
      */
     private void setToSpawnPoint(){
-        SetPosition(new Vector2D<Float>(700.f, 400.f));
+        SetPosition(new Vector2D<Float>(1350.f, 800.f));
     }
     //------------------------------------------------------------------------
 
