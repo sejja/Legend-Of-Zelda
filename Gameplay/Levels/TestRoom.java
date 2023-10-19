@@ -51,7 +51,7 @@ public class TestRoom extends Level {
         ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Float>(1300.f, 1670.f)));
         ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Float>(1400.f, 1670.f)));
         ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Float>(1500.f, 1670.f)));
-        ObjectManager.GetObjectManager().AddEntity(new Torch(new Vector2D<Float>(1260.f, 1550.f)));
+ObjectManager.GetObjectManager().AddEntity(new Torch(new Vector2D<Float>(1260.f, 1550.f)));
         var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetCamera();
 
         Vector2D<Float> topright = new Vector2D<>(GetBounds().GetPosition().x + 1280.f / 2, GetBounds().GetPosition().y + 720.f / 2);
@@ -59,6 +59,6 @@ public class TestRoom extends Level {
         Vector2D<Float> bottomleft = new Vector2D<>(GetBounds().GetPosition().x + GetBounds().GetWidth() - 1280.f / 2, GetBounds().GetPosition().y + GetBounds().GetHeight() - 760.f / 2);
 
         z.SetBounds(topright, bottomleft);
-        //System.out.println(((Normblock)TileManager.sLevelObjects.GetBlockAt(7,7)).isBlocked());
+//System.out.println(((Normblock)TileManager.sLevelObjects.GetBlockAt(7,7)).isBlocked());
     }
 }
