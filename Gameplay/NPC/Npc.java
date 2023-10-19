@@ -68,11 +68,7 @@ public class Npc extends Actor implements Interaction{
         dialogueWindow = new DialogueWindow(this);
         ObjectManager.GetObjectManager().AddEntity(this);
     }
-        /*! Transpose
-        *
-        * @Param  -> BufferedImage 2D Matrix
-        * ret     -> Transposed BufferedImage 2D Matrix
-        */ //----------------------------------------------------------------------
+
     public void Update(Vector2D<Float> playerPosition) {
 
         super.Update();
