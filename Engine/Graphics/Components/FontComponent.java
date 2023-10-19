@@ -19,7 +19,7 @@ import Engine.Math.Transform;
 import Engine.Math.Vector2D;
 import Engine.Physics.AABB;
 
-public class FontComponent extends Component implements Renderable {
+public final class FontComponent extends Component implements Renderable {
     private Font mFont;
     private String mString;
     private Transform mOffset;
@@ -30,12 +30,10 @@ public class FontComponent extends Component implements Renderable {
     *
     *   Creates an Animation Machine with a parent and a sprite
     */ //----------------------------------------------------------------------
-    public FontComponent(Actor parent, Asset fontsheet) {
+    public FontComponent(final Actor parent, final Asset fontsheet) {
         super(parent);
-        mFont = new Font(fontsheet, 16, 16);
-        mOffset = new Transform();
-        mOffset.mPosition = new Vector2D<Float>(0.f, 0.f);
-        mOffset.mScale = new Vector2D<Float>(1.f, 1.f);
+        mFont = new Font(fontsheet, new Vector2D<>(16, 16));
+        mOffset = new Transform(new Vector2D<Float>(0.f, 0.f), new Vector2D<Float>(1.f, 1.f));
         mGlyph = new Vector2D<>(56, 0);
     }
 
@@ -44,7 +42,7 @@ public class FontComponent extends Component implements Renderable {
     *
     *   Sets the String to be displayed by the Font Component
     */ //----------------------------------------------------------------------
-    public void SetString(String string) {
+    public void SetString(final String string) {
         mString = string;
     } 
 
@@ -62,43 +60,77 @@ public class FontComponent extends Component implements Renderable {
     *
     *   Unbinds the Camera from the Graphics Pipeline
     */ //----------------------------------------------------------------------
-    public void SetPosition(Vector2D<Float> vec) {
+    public void SetPosition(final Vector2D<Float> vec) {
         mOffset.mPosition = vec;
     }
 
-    public void SetScale(Vector2D<Float> vec) {
+    // ------------------------------------------------------------------------
+    /*! Set Scale
+    *
+    *   Sets the offset scale
+    */ //----------------------------------------------------------------------
+    public void SetScale(final Vector2D<Float> vec) {
         mOffset.mScale = vec;
     }
 
+    // ------------------------------------------------------------------------
+    /*! Get Position
+    *
+    *   Retrieves the  offset position of the font component
+    */ //----------------------------------------------------------------------
     public Vector2D<Float> GetPosition() {
         return mOffset.mPosition;
     }
 
+    // ------------------------------------------------------------------------
+    /*! Gets Scale
+    *
+    *   Retrieves the relative scale
+    */ //----------------------------------------------------------------------
     public Vector2D<Float> GetScale() {
         return mOffset.mScale;
     }
 
+    // ------------------------------------------------------------------------
+    /*! Render
+    *
+    *   Renders the Font Component
+    */ //----------------------------------------------------------------------
     @Override
-    public void Render(Graphics2D g, CameraComponent camerapos) {
-        final float posx = GetParent().GetPosition().x + mOffset.mPosition.x;
-        final float posy = GetParent().GetPosition().y + mOffset.mPosition.y;
-        final float scax = GetParent().GetScale().x * mOffset.mScale.x;
-        final float scay = GetParent().GetScale().y * mOffset.mScale.y;
-        Vector2D<Float> camcoord = camerapos.GetCoordinates();
+    public void Render(final Graphics2D g, final CameraComponent camerapos) {
+        final Actor parent = GetParent();
+        final Vector2D<Float> pos = parent.GetPosition();
+        final Vector2D<Float> sca = parent.GetScale();
+        final Vector2D<Float> camcoord = camerapos.GetCoordinates();
 
-        if(camerapos.OnBounds(new AABB(GetParent().GetPosition(), GetParent().GetScale())))
-            mFont.Render(g, mString, new Vector2D<>(posx - camcoord.x, posy - camcoord.y), (int)scax, (int)scay, mGlyph.x, mGlyph.y);
+        //If it's within camera bounds, render
+        if(camerapos.OnBounds(new AABB(pos, sca)))
+            mFont.Render(g, mString, new Vector2D<>(pos.x + mOffset.mPosition.x - camcoord.x, pos.y + mOffset.mPosition.y - camcoord.y), new Vector2D<Integer>((int)(sca.x * mOffset.mScale.x), (int)(sca.y * mOffset.mScale.y)), mGlyph);
     }
 
+    // ------------------------------------------------------------------------
+    /*! Init
+    *
+    *   Adds the renderable to the graphics pipeline
+    */ //----------------------------------------------------------------------
     @Override
     public void Init() {
         GraphicsPipeline.GetGraphicsPipeline().AddRenderable(this);
     }
 
+    // ------------------------------------------------------------------------
+    /*! Update
+    *
+    *   EMPTY FUNCTION
+    */ //----------------------------------------------------------------------
     @Override
-    public void Update() {
-    }
+    public void Update() {}
 
+    // ------------------------------------------------------------------------
+    /*! ShutDown
+    *
+    *   Removes the Renderable from the graphics pipeline
+    */ //----------------------------------------------------------------------
     @Override
     public void ShutDown() {
         GraphicsPipeline.GetGraphicsPipeline().RemoveRenderable(this);
