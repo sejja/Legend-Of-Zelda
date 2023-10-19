@@ -42,10 +42,7 @@ public class Bomb extends AnimatedObject {
 
             @Override
             public void OnTrigger() {
-                //System.out.println("Ha terminado");
-                ObjectManager.GetObjectManager().RemoveEntity(reference);
-                reference.SetScale(new Vector2D<>(0f,0f));
-                
+                despawn();
             }
             
         });
@@ -71,11 +68,13 @@ public class Bomb extends AnimatedObject {
     }
 
     public void countDown(){
+        if(animationMachine.GetAnimation().GetFrames() == allAnimtion[0] && animationMachine.GetAnimation().GetFrame() == 5){
+            explode();
+        }
         if(counter == limit){
             animationMachine.setMustComplete(true);
             animationMachine.SetFrames(allAnimtion[0]);
             delay = 3;
-            explode();
             counter = 0;
         }else{
             counter++;

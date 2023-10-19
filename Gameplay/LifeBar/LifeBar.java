@@ -26,7 +26,7 @@ public class LifeBar {
 
     public LifeBar (Actor actor, int healthPoints){
         this.actor = actor;
-        this.position = actor.GetPosition();
+        this.position = actor.getPseudoPosition();
         this.healthPoints = healthPoints;
         createHearts();
         setVisible(VISIBLE);
@@ -63,7 +63,7 @@ public class LifeBar {
         if(VISIBLE){
             setHeartsPosition();
         }
-        this.position = actor.GetPosition();
+        this.position = actor.getPseudoPosition();
     }
     private void setHearts(){
         int completeHearts = 0;
@@ -91,12 +91,11 @@ public class LifeBar {
         for (int i = 0; i < healthPoints/2; i++){
             Vector2D<Float> position = new Vector2D<>(this.position.x + counter, this.position.y);
             hearts[i] = new Heart(position);
-            //ObjectManager.GetObjectManager().AddEntity(hearts[i]);
             counter += hearts[0].GetScale().x;
         }
     }
     private void setHeartsPosition(){
-        Vector2D<Float> actorPosition = actor.GetPosition();
+        Vector2D<Float> actorPosition = new Vector2D<>(actor.GetPosition().x + 25, actor.GetPosition().y+10);
         Float counter = 0f;
         for (int i = 0; i < hearts.length; i++){
             Vector2D<Float> heartPosition = new Vector2D<>(actorPosition.x-14 + counter, actorPosition.y-10);

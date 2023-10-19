@@ -130,7 +130,6 @@ public class AABB {
         for(int c = 0; c < 4; c++) {
             int xt = (int)((mPosition.x + ax) + (c % 2) * mSize.x) / 64;
             int yt = (int)((mPosition.y + ay) + (int)(c / 2) * mSize.y) / 64;
-            //if(TileManager.sLevelObjects != null && TileManager.sLevelObjects.GetBlockAt(xt, yt) != null ||
             if(!(TileManager.sLevelObjects.GetBlockAt(xt, yt) instanceof Normblock)
                 && xt < TileManager.sLevelObjects.mWidth && yt < TileManager.sLevelObjects.mHeight) {
                 Block block = TileManager.sLevelObjects.GetBlockAt(xt, yt);

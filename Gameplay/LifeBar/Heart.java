@@ -44,7 +44,6 @@ public class Heart extends Actor {
     @Override
     public void Update(){
         Animate();
-        //popFromObjectManager();
     }
 
     public int getHealthPoints() {
