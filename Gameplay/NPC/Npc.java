@@ -101,13 +101,8 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
 
         setDefaultPseudoPosition();
     }
-        /*! Transpose
-        *
-        * @Param  -> BufferedImage 2D Matrix
-        * ret     -> Transposed BufferedImage 2D Matrix
-        */ //----------------------------------------------------------------------
-    public void Update() {
 
+    public void Update(Vector2D<Float> playerPosition) {
         super.Update();
         movement();
         pseudoPositionUpdate();

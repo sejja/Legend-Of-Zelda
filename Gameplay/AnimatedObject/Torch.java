@@ -5,12 +5,13 @@ import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Animations.AnimationEvent;
 import Engine.Math.Vector2D;
+import Engine.Physics.StaticPlayerCollision;
 import Engine.Physics.Components.BoxCollider;
 import Gameplay.Interaction;
 import Gameplay.Link.Player;
 import Gameplay.NPC.Npc;
 
-public class Torch extends AnimatedObject implements Interaction{
+public class Torch extends AnimatedObject implements Interaction, StaticPlayerCollision {
     
     private BoxCollider hitbox;
     private boolean isIluminating = false;
@@ -37,7 +38,7 @@ public class Torch extends AnimatedObject implements Interaction{
     public void Update(){
         super.Update();
         hitbox.Update();
-        pseudoPositionUpdate();
+        playerCollision(hitbox);
     }
 
     @Override

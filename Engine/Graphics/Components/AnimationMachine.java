@@ -113,7 +113,6 @@ public final class AnimationMachine extends Component implements Renderable {
     public void Init() {
         GraphicsPipeline.GetGraphicsPipeline().AddRenderable(this);
     }
-
     // ------------------------------------------------------------------------
     /*! Update
     *

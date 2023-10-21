@@ -50,7 +50,7 @@ public class Rock extends Interactive implements StaticPlayerCollision{
 
     public void Update(){
         super.Update();
-        playerCollision();
+        playerCollision(this.getmCollision());
     }
 
     public void setHealthPoints(int damage){
