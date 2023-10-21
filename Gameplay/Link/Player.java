@@ -453,19 +453,13 @@ public class Player extends Actor {
         stop = false;
         attack = false;
     }
-    private void takeDamage(){ //Looking for enemies to take damage
-        //System.out.println("Vida = " + healthPoints);
-        ArrayList<Entity> allEntities = ObjectManager.GetObjectManager().GetAllObjectsOfType(Enemy.class);
-
-        if(allEntities != null)
-            for (int i = 0; i < allEntities.size(); i++){
-                Enemy enemy = (Enemy) allEntities.get(i);
-                Vector2D<Float> enemyPosition = enemy.GetPosition();
-                if (enemyPosition.getModuleDistance(this.GetPosition()) < this.GetScale().y/2){
-                    this.setDamage(enemy.getDamage());
-                    enemy.knockBack();
-                }
-            }
+    private void takeDamage(){ 
+        ArrayList<Actor> enemies;
+        if (!(enemies = ColliderManager.GetColliderManager().getCollision(hitbox, Enemy.class, true)).isEmpty()){ //Mira si link se ha chocado con un enemigo
+            Enemy enemy = ((Enemy)enemies.get(0));
+            this.setDamage(enemy.getDamage());
+            enemy.knockBack();
+        }
     }
     //------------------------------------------------------------------------
 
