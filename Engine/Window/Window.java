@@ -13,7 +13,6 @@ import javax.swing.JPanel;
 
 public class Window extends JFrame {
     private GameLoop mGameLoop;
-    public static Darkness darkness;
     // ------------------------------------------------------------------------
     /*! Constructor
     *
@@ -24,7 +23,6 @@ public class Window extends JFrame {
         mGameLoop = new GameLoop(buffer);
         setTitle("The Legend Of Zelda");
 
-        //darkness=new Darkness();
         //If we are on release mode, draw a fancy window
         if(!java.lang.management.ManagementFactory.getRuntimeMXBean().getInputArguments().toString().contains("-agentlib:jdwp"))
             setUndecorated(true);
