@@ -44,9 +44,9 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     protected static AStarSearch aStarSearch = new AStarSearch();
 
     //pathfinding variables
-    protected Pair finalDestination;
+    protected Pair finalDestination= new Pair(0, 0);
     protected Pair lastFinalDestination= new Pair(0, 0);
-    protected Pair currentDestination;
+    protected Pair currentDestination= new Pair(0, 0);
     protected Stack<Pair> path = new Stack<Pair>();
     protected Vector2D<Float> pos = GetPosition();
     protected Vector2D<Float> pseudoPos = getPseudoPosition();
@@ -217,16 +217,36 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     public void Update() {
         super.Update();
         //System.out.println(vision());
-        if(!knockback){
-            pathfinding();
-            getDirection(normalizedDirection);
-        }else{knockbackRepeat();}
-        animate();
-        move();
+        decisionMaking();
         attack();
         pseudoPositionUpdate();
         mCollision.Update();
         //System.out.println(playerPos.x + " " + playerPos.y + " " + normalizedDirection+ " " );
+    }
+    // ------------------------------------------------------------------------
+    /*! decisionMaking
+    *
+    *   Decides the behavior of the Enemy based on if it is being knocked back and if the player is in its vision
+    */ //----------------------------------------------------------------------
+    public void decisionMaking(){
+        if(!knockback){
+            checkVision(); 
+        }else{
+            knockbackRepeat();
+        }
+    }
+    // ------------------------------------------------------------------------
+    /*! checkVision
+    *
+    *   If player is in vision, calls pathfinding
+    */ //----------------------------------------------------------------------
+    public void checkVision(){
+        if(vision()){
+            pathfinding();
+            getDirection(normalizedDirection);
+            animate();
+            move();
+        }
     }
 
     // ------------------------------------------------------------------------
@@ -391,7 +411,7 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     private boolean vision(){
         Vector2D<Float> dir = pseudoPos.getVectorToAnotherActor(playerPos);
         float distance = dir.getModule();
-        if ((getDirection(dir, true) == direction)){
+        if ((distance < 300)){
             return true;
         }else{
             return false;
