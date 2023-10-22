@@ -27,7 +27,6 @@ public abstract class Block {
 
     public Block(BufferedImage img, Vector2D<Integer> position, int w, int h) {
         mImg = img;
-
         mPosition = position;
         mWidth = w;
         mHeight = h;
