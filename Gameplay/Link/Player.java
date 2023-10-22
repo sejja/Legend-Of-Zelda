@@ -318,7 +318,6 @@ public class Player extends Actor {
         super.Update();
         playerStateMachine();
         Animate();
-        if(able_to_takeDamage){takeDamage();}
         lifeBar.Update();
         pseudoPositionUpdate();
         hitbox.Update();
@@ -454,14 +453,6 @@ public class Player extends Actor {
         stop = false;
         attack = false;
     }
-    private void takeDamage(){ 
-        ArrayList<Actor> enemies;
-        if (!(enemies = ColliderManager.GetColliderManager().getCollision(hitbox, Enemy.class, true)).isEmpty()){ //Mira si link se ha chocado con un enemigo
-            Enemy enemy = ((Enemy)enemies.get(0));
-            this.setDamage(enemy.getDamage());
-            enemy.knockBack();
-        }
-    }
     //------------------------------------------------------------------------
 
     /* Getters
@@ -484,13 +475,15 @@ public class Player extends Actor {
      * 
      */
     public void setDamage(int healthPoints) {
-        this.healthPoints -= healthPoints;
-        this.setAble_to_takeDamage(false);
-        if(this.healthPoints <= 0){dead();}
-        else{
-            ThreadInmortal thread = new ThreadInmortal(this);
-            thread.start();
-            lifeBar.setHealthPoints(this.healthPoints);
+        if(able_to_takeDamage){
+            this.healthPoints -= healthPoints;
+            this.setAble_to_takeDamage(false);
+            if(this.healthPoints <= 0){dead();}
+            else{
+                ThreadInmortal thread = new ThreadInmortal(this);
+                thread.start();
+                lifeBar.setHealthPoints(this.healthPoints);
+            }
         }
 
     }

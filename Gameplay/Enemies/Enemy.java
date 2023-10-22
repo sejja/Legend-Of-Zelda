@@ -3,6 +3,7 @@ package Gameplay.Enemies;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Stack;
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
@@ -14,6 +15,7 @@ import Engine.Graphics.Components.CameraComponent;
 import Engine.Graphics.Components.Renderable;
 import Engine.Math.Vector2D;
 import Engine.Physics.Components.BoxCollider;
+import Engine.Physics.Components.ColliderManager;
 import Gameplay.AnimatedObject.DeadAnimation;
 import Gameplay.Enemies.Search.*;
 import Gameplay.LifeBar.LifeBar;
@@ -221,6 +223,7 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
         }else{knockbackRepeat();}
         animate();
         move();
+        attack();
         pseudoPositionUpdate();
         mCollision.Update();
         //System.out.println(playerPos.x + " " + playerPos.y + " " + normalizedDirection+ " " );
@@ -435,6 +438,14 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     }
     public Enemy getEnemy(){
         return (Enemy)this;
+    }
+
+    public void attack(){
+        ArrayList<Actor> players = ColliderManager.GetColliderManager().getCollision(mCollision, Player.class, true);
+        if(!players.isEmpty()){
+            Player player = (Player)players.get(0);
+            player.setDamage(damage);
+        }
     }
 
     @Override 
