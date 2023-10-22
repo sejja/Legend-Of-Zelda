@@ -554,16 +554,17 @@ public class Player extends Actor {
         If the DIRECTION of the vector Player-Enemy and The DIRECTION of the player is the same
         It will called a knockBack() function of that enemy
         */
-        ArrayList<Entity> enemies = ObjectManager.GetObjectManager().GetAllObjectsOfType(Enemy.class);
-        if(enemies == null){return;}
-        for(Entity entity : enemies){
-            Enemy currentEnemy = (Enemy) entity;
-            if(currentEnemy.getPseudoPosition().getModuleDistance(getPseudoPosition()) < this.GetScale().getModule()-40){
-                System.out.println( "leda");
-                currentEnemy.setHealthPoints(damage);
-                currentEnemy.knockBack();
+        ArrayList<Actor> enemies = ColliderManager.GetColliderManager().getCollision(mCollider, Enemy.class, true);
+        if (!enemies.isEmpty()){
+            for(int i = 0; i < enemies.size(); i++){
+                Enemy enemy = (Enemy)enemies.get(i);
+                if(getPseudoPosition().getTargetDirection(enemy.getPseudoPosition()) == direction){
+                    enemy.setDamage(damage);
+                    enemy.knockBack();
+                }
             }
         }
+
     }
     private void interact(){
         if(currentNPCinteraction == null){
