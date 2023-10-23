@@ -13,9 +13,11 @@ import Engine.Physics.AABB;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
 
 public abstract class Block {
     protected static int mWidth;
@@ -30,14 +32,18 @@ public abstract class Block {
         mPosition = position;
         mWidth = w;
         mHeight = h;
+        
+        if(mImg != null){
+            //setImageTransparency(35);;
+        }
     }
 
     public abstract boolean Update(AABB p);
     public abstract boolean IsInside(AABB p);
 
     public void Render(Graphics2D g, Vector2D<Float> camerapos) {
-        //g.drawImage(mImg, (int)(float)mPosition.x - (int)(float)camerapos.x, (int)(float)mPosition.y - (int)(float)camerapos.y, 64, 64, new Color(0,0,0), null);
-        g.drawImage(mImg, (int)(float)mPosition.x - (int)(float)camerapos.x, (int)(float)mPosition.y - (int)(float)camerapos.y, 64, 64, null);
+        g.drawImage(mImg, (int)(float)mPosition.x - (int)(float)camerapos.x, (int)(float)mPosition.y - (int)(float)camerapos.y, 64, 64, new Color(0,0,0, 128), null);
+        //g.drawImage(mImg, (int)(float)mPosition.x - (int)(float)camerapos.x, (int)(float)mPosition.y - (int)(float)camerapos.y, 64, 64, null);
     }
 
 
@@ -49,18 +55,16 @@ public abstract class Block {
         return mHeight;
     }
 
-    private static BufferedImage scale1(BufferedImage before, double scale) {
-        int w = before.getWidth();
-        int h = before.getHeight();
-        // Create a new image of the proper size
-        int w2 = (int) (w * scale);
-        int h2 = (int) (h * scale);
-        BufferedImage after = new BufferedImage(w2, h2, BufferedImage.TYPE_INT_ARGB);
-        AffineTransform scaleInstance = AffineTransform.getScaleInstance(scale, scale);
-        AffineTransformOp scaleOp 
-            = new AffineTransformOp(scaleInstance, AffineTransformOp.TYPE_BILINEAR);
-    
-        scaleOp.filter(before, after);
-        return after;
+    private void setImageTransparency(int alpha){
+        //mImg = scale1(mImg, 1);
+        for(int i = 0; i< 16 ; i++){
+            for (int j = 0; j < 16; j++){
+                if(mImg.getRGB(i, j) != 0){
+                    int pixel = mImg.getRGB(i, j);
+                    Color model = new Color(pixel, true);
+                    mImg.setRGB(i,j, ( new Color(model.getRed(), model.getGreen(), model.getBlue(), alpha)  ).getRGB());
+                }
+             }
+        }
     }
 }
