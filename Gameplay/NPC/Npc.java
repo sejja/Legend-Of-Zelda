@@ -249,6 +249,8 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
     public void interaction() {
         // TODO Auto-generated method stub
         lookAtPLayer(ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0).GetPosition());
+        dialogueWindow.setNpc(this);
+        currentDirection = this.getDirection(); 
         if (!getmComponents().contains(dialogueWindow)){
             dialogueWindow.setJ(0);
             AddComponent(dialogueWindow);
