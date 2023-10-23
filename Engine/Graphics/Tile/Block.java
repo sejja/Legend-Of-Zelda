@@ -42,8 +42,8 @@ public abstract class Block {
     public abstract boolean IsInside(AABB p);
 
     public void Render(Graphics2D g, Vector2D<Float> camerapos) {
-        g.drawImage(mImg, (int)(float)mPosition.x - (int)(float)camerapos.x, (int)(float)mPosition.y - (int)(float)camerapos.y, 64, 64, new Color(0,0,0, 128), null);
-        //g.drawImage(mImg, (int)(float)mPosition.x - (int)(float)camerapos.x, (int)(float)mPosition.y - (int)(float)camerapos.y, 64, 64, null);
+        //g.drawImage(mImg, (int)(float)mPosition.x - (int)(float)camerapos.x, (int)(float)mPosition.y - (int)(float)camerapos.y, 64, 64, new Color(0,0,0, 128), null);
+        g.drawImage(mImg, (int)(float)mPosition.x - (int)(float)camerapos.x, (int)(float)mPosition.y - (int)(float)camerapos.y, 64, 64, null);
     }
 
 
