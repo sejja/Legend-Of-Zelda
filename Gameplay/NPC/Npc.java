@@ -72,7 +72,6 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
     private final int yLineMovement = 6;
     private final int stop = 7;
 
-    private boolean playerIsLooking;
 
     /*! Conversion Constructor
     * Constructs a NPC with a name, a sprite, a position, a dialog and gives it a size
@@ -107,7 +106,6 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
     }
 
     public void Update() {
-
         super.Update();
         movement();
         hitbox.Update();
@@ -136,7 +134,6 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
     public static void setInteract(boolean interact1){interact = interact1;}
     public static void setRemove() {remove = true;}
     public String getName() {return name;}
-    public void setPlayerIsLooking(boolean looking){playerIsLooking = looking;}
 
     public void lookAtPLayer(Vector2D<Float> playerPosition){
         Player player = (Player) ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0);
@@ -254,7 +251,6 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
         if (!getmComponents().contains(dialogueWindow)){
             dialogueWindow.setJ(0);
             AddComponent(dialogueWindow);
-            dialogueWindow.setJ(0);
             Pause();
         }else{
             nextDialog();

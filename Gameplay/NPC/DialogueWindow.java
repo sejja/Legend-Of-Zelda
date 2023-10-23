@@ -3,8 +3,16 @@ package Gameplay.NPC;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.List;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Scanner;
+
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Component;
 import Engine.Graphics.Font;
@@ -30,12 +38,16 @@ public class DialogueWindow extends Component implements Renderable{
     private int height; //the height of the DialogueWindow
     private static int j = 0; //Index del String del arraylist del dialogo
     private Npc npc; //the Npc we are interacting with
+    private String texto;
+    private String line;
+    private File f = new File("C:\\Users\\asier\\OneDrive\\Escritorio\\zelda\\Legend-Of-Zelda\\Gameplay\\NPC\\Dialogues.txt.");
 
     protected DialogueWindow(Npc npc) {
         super(npc);
         //TODO Auto-generated constructor stub
         this.npc = npc;
         this.window = this;
+        
     }
     
     @Override
@@ -57,6 +69,7 @@ public class DialogueWindow extends Component implements Renderable{
     public void Init() {
         // TODO Auto-generated method stub
         GraphicsPipeline.GetGraphicsPipeline().AddRenderable(this);
+        readText();
     }
     @Override
     public void Update() {
@@ -89,4 +102,23 @@ public class DialogueWindow extends Component implements Renderable{
         this.npc = npc;
     }
 
+    public void readText(){
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(f));
+            String linea = br.readLine();
+            String[] a;
+            while(linea != null){
+                if(linea.startsWith(npc.getName())){
+                    texto = br.readLine();
+                    a = texto.split("\n");
+                    System.out.println(a[0]);
+                }
+                linea = br.readLine();
+            }
+            br.close();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 }
