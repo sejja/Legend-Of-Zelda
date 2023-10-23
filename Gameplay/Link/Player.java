@@ -44,7 +44,7 @@ public class Player extends Actor {
         Used to confirm the direction
      */
     //private boolean up = false;
-    public DIRECTION direction = DIRECTION.RIGHT;
+    private DIRECTION direction = DIRECTION.RIGHT;
     private boolean attack = false;
     private boolean stop = true;
     private boolean bow = false;
@@ -322,7 +322,6 @@ public class Player extends Actor {
         lifeBar.Update();
         pseudoPositionUpdate();
         hitbox.Update();
-        System.out.println(GetPosition());
     }
     public void playerStateMachine(){
         if(dash){dash();return;}//Early return dash is mostly the dominate action, so if link is dashing he can not do anything else
@@ -583,7 +582,7 @@ public class Player extends Actor {
             currentNPCinteraction = nearestNPC();
         }
         try {
-            currentNPCinteraction.interaction();
+            currentNPCinteraction.INTERACTION();
         } catch (java.lang.NullPointerException e) {
             System.err.println("No npc found");
             this.currentNPCinteraction = null;
