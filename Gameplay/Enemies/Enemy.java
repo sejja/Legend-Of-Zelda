@@ -378,15 +378,15 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     public void setHealthPoints(int damage){
         this.healthPoints -= damage;
         if (healthPoints <= 0){
-            mCollision.ShutDown();
             die();
-            path.clear();
         }
         //______________________
         //______________________
     }
 
     private void die() {
+        mCollision.ShutDown();
+        path.clear();
         DeadAnimation deadAnimation = new DeadAnimation(this);
     }
 
