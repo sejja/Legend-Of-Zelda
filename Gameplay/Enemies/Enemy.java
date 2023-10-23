@@ -443,9 +443,7 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     }
 
     public void attack(){
-        ArrayList<Actor> players = ColliderManager.GetColliderManager().getCollision(mCollision, Player.class, true);
-        if(!players.isEmpty()){
-            Player player = (Player)players.get(0);
+        if(ColliderManager.GetColliderManager().playerCollision(mCollision)){
             player.setDamage(damage);
         }
     }
