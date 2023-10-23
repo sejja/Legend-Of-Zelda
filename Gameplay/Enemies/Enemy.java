@@ -127,24 +127,6 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
         }
     }
 
-    public DIRECTION getDirection(Vector2D<Float> vector, boolean patata) {
-        DIRECTION dir;
-        if (Math.abs(vector.x) > Math.abs(vector.y)) {
-            if (vector.x < 0) {
-                dir=DIRECTION.RIGHT;
-            } else {
-                dir=DIRECTION.LEFT;
-            }
-        } else {
-            if (vector.y < 0) {
-                dir=DIRECTION.DOWN;
-            } else {
-                dir=DIRECTION.UP;
-            }
-        }
-        return dir;
-    }
-
     // ------------------------------------------------------------------------
     /*! animate
     *
