@@ -43,7 +43,7 @@ public class Rock extends Interactive implements StaticPlayerCollision{
         //System.out.println(block);
         if (block instanceof Normblock){
             ((Normblock) block).setBlocked(true);
-            //System.out.println(((Normblock) block).isBlocked());
+
         }
     }
     @Override

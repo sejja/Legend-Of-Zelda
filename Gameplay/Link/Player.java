@@ -320,11 +320,10 @@ public class Player extends Actor {
         super.Update();
         playerStateMachine();
         Animate();
-        if(able_to_takeDamage){takeDamage();}
         lifeBar.Update();
         pseudoPositionUpdate();
         hitbox.Update();
-        System.out.println(GetPosition());
+        //System.out.println(GetPosition());
     }
     public void playerStateMachine(){
         if(dash){dash();return;}//Early return dash is mostly the dominate action, so if link is dashing he can not do anything else
@@ -456,14 +455,6 @@ public class Player extends Actor {
         stop = false;
         attack = false;
     }
-    private void takeDamage(){ 
-        ArrayList<Actor> enemies;
-        if (!(enemies = ColliderManager.GetColliderManager().getCollision(hitbox, Enemy.class, true)).isEmpty()){ //Mira si link se ha chocado con un enemigo
-            Enemy enemy = ((Enemy)enemies.get(0));
-            this.setDamage(enemy.getDamage());
-            enemy.knockBack();
-        }
-    }
     //------------------------------------------------------------------------
 
     /* Getters
@@ -486,13 +477,15 @@ public class Player extends Actor {
      * 
      */
     public void setDamage(int healthPoints) {
-        this.healthPoints -= healthPoints;
-        this.setAble_to_takeDamage(false);
-        if(this.healthPoints <= 0){dead();}
-        else{
-            ThreadInmortal thread = new ThreadInmortal(this);
-            thread.start();
-            lifeBar.setHealthPoints(this.healthPoints);
+        if(able_to_takeDamage){
+            this.healthPoints -= healthPoints;
+            this.setAble_to_takeDamage(false);
+            if(this.healthPoints <= 0){dead();}
+            else{
+                ThreadInmortal thread = new ThreadInmortal(this);
+                thread.start();
+                lifeBar.setHealthPoints(this.healthPoints);
+            }
         }
 
     }
@@ -563,16 +556,17 @@ public class Player extends Actor {
         If the DIRECTION of the vector Player-Enemy and The DIRECTION of the player is the same
         It will called a knockBack() function of that enemy
         */
-        ArrayList<Entity> enemies = ObjectManager.GetObjectManager().GetAllObjectsOfType(Enemy.class);
-        if(enemies == null){return;}
-        for(Entity entity : enemies){
-            Enemy currentEnemy = (Enemy) entity;
-            if(currentEnemy.getPseudoPosition().getModuleDistance(getPseudoPosition()) < this.GetScale().getModule()-40){
-                System.out.println( "leda");
-                currentEnemy.setHealthPoints(damage);
-                currentEnemy.knockBack();
+        ArrayList<Actor> enemies = ColliderManager.GetColliderManager().getCollision(mCollider, Enemy.class, true);
+        if (!enemies.isEmpty()){
+            for(int i = 0; i < enemies.size(); i++){
+                Enemy enemy = (Enemy)enemies.get(i);
+                if(getPseudoPosition().getTargetDirection(enemy.getPseudoPosition()) == direction){
+                    enemy.setDamage(damage);
+                    enemy.knockBack();
+                }
             }
         }
+
     }
     private void interact(){
         if(currentNPCinteraction == null){

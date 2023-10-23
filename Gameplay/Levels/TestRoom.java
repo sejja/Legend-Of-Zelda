@@ -49,12 +49,17 @@ public class TestRoom extends Level {
         ObjectManager.GetObjectManager().AddEntity(new Npc("Aelarion", new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/NPC/NPC_old.png"), new Vector2D<>(68, 72)), new Vector2D<Float>(1330.f, 800.f), dialogueArrayList, new Vector2D<Float>(78.f, 78.f), UP, yLineMovement) );
         ObjectManager.GetObjectManager().AddEntity(new Npc("Juan", new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/NPC/NPC_boy.png"), new Vector2D<>(64, 64)), new Vector2D<Float>(1580.f, 1550.f), dialogueArrayList2, new Vector2D<Float>(78.f, 78.f),4, stop) );
         ObjectManager.GetObjectManager().Update();
+
         ObjectManager.GetObjectManager().AddEntity(new Rock(new Vector2D<>(448f, 448f)));
         ObjectManager.GetObjectManager().AddEntity(new Rock(new Vector2D<>(8*64f, 8*64f)));
         ObjectManager.GetObjectManager().AddEntity(new Rock(new Vector2D<>(8*64f, 8*64f)));
-        ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Float>(1300.f, 1670.f)));
-        ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Float>(1400.f, 1670.f)));
-        ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Float>(1500.f, 1670.f)));
+
+        for(int i = 0; i < 1; i++){
+            ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Float>(1300.f, 1670.f)));
+            ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Float>(1400.f, 1670.f)));
+            ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Float>(1500.f, 1670.f)));
+        }
+
         ObjectManager.GetObjectManager().AddEntity(new Torch(new Vector2D<Float>(1260.f, 1550.f)));
         var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetCamera();
 
