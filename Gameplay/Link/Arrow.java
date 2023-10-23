@@ -9,6 +9,8 @@ import java.util.ListIterator;
 import javax.lang.model.element.ModuleElement.DirectiveKind;
 
 import Engine.Assets.AssetManager;
+import Engine.Audio.Audio;
+import Engine.Audio.Sound;
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Entity;
@@ -54,6 +56,7 @@ public class Arrow extends Actor{
         }else{
             hitbox = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<>(40f,20f), true));
         }
+        ArrowSound();
     }
 
     public Arrow (Player Link, Spritesheet spritesheet, float speed, float range, boolean fixed){ //This is actually a dash XD
@@ -81,6 +84,12 @@ public class Arrow extends Actor{
         Animate();
 
         setPseudoPosition(GetScale().x/2, GetScale().y/2);
+        ArrowSound();
+    }
+
+    private void ArrowSound() {
+        Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/arrow.wav"));
+        Audio.Instance().Play(sound);
     }
 
     public void Move(){

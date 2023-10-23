@@ -69,7 +69,7 @@ public class TestRoom extends Level {
 
         z.SetBounds(topright, bottomleft);
         Sound bg = new Sound(AssetManager.Instance().GetResource("Content/Audio/dungeon1.wav"));
-        bg.SetLoopCount(-1);
         Audio.Instance().Play(bg);
+        Audio.Instance().SetLoopCount(bg, -1);
     }
 }

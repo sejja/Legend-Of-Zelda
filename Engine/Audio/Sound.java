@@ -28,10 +28,6 @@ public class Sound {
         return mCurrentFrame;
     }
 
-    public void SetLoopCount(int times) {
-        ((Clip)(mAudio.Raw())).loop(times);
-    }
-
     public boolean IsPaused() {
         return mIsPaused;
     }

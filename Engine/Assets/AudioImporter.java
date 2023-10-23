@@ -12,19 +12,8 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 public class AudioImporter implements Importer{
      @Override
     public Asset ImportFromFile(String file) {
-        Clip clip = null;
-        try {
-            AudioInputStream audiostream = AudioSystem.getAudioInputStream(new File(file));
-            clip = AudioSystem.getClip(); 
-            clip.open(audiostream);
-        } catch (UnsupportedAudioFileException | IOException e) {
-            System.err.println(e.getMessage());
-            e.printStackTrace();
-        } catch (LineUnavailableException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        File audiostream = new File(file);
         
-        return new Asset(clip);
+        return new Asset(audiostream);
     }
 }
