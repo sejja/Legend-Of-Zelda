@@ -379,8 +379,8 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
         this.healthPoints -= damage;
         if (healthPoints <= 0){
             mCollision.ShutDown();
-            die();
             path.clear();
+            die();
         }
         //______________________
         //______________________
