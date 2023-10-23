@@ -112,7 +112,7 @@ public class ColliderManager {
         return distanceX < limitX && distanceY < limitY;
     }
 
-    public boolean PlayerCollision(BoxCollider collider){ 
+    public boolean playerCollision(BoxCollider collider){ 
         try{return(hasCollided(collider, this.mapAllCollision.get(Player.class).get(0)));}
         catch(java.lang.NullPointerException e){
             System.err.println("No player in game");
