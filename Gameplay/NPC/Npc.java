@@ -82,9 +82,10 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
         
         allAnimations = transposeMatrix(sprite.GetSpriteArray2D());
         setSetopAnimationSet(allAnimations, allAnimations[0].length);
+        sprite.setmSpriteArray(allAnimations);
         animationMachine = AddComponent(new AnimationMachine(this, sprite));
-        animationMachine.SetFrames(allAnimations[numberStartAnimation]); //La diferencia entre correr a una direction y parase en la misma es un + 4
-        animationMachine.GetAnimation().SetDelay(40);
+        animationMachine.SetFrameTrack(numberStartAnimation); //La diferencia entre correr a una direction y parase en la misma es un + 4
+        animationMachine.GetAnimation().SetDelay(15);
 
         typeOfMovement = movement;
 
@@ -136,13 +137,13 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
         Vector2D<Float> vector = playerPosition.getVectorToAnotherActor(this.GetPosition());
         System.out.println(vector);
         if((playerPosition.x > this.GetPosition().x) && (vector.x < vector.y)){
-            animationMachine.SetFrames(allAnimations[RIGHT]);
+            animationMachine.SetFrameTrack(RIGHT);
         } else if(playerPosition.x < this.GetPosition().x && (vector.x > vector.y)){
-            animationMachine.SetFrames(allAnimations[LEFT]);
+            animationMachine.SetFrameTrack(LEFT);
         } else if(playerPosition.y < this.GetPosition().y && (vector.x < vector.y)){
-            animationMachine.SetFrames(allAnimations[UP]);
+            animationMachine.SetFrameTrack(UP);
         } else if(playerPosition.y > this.GetPosition().y && (vector.x > vector.y)){
-            animationMachine.SetFrames(allAnimations[DOWN]);
+            animationMachine.SetFrameTrack(DOWN);
         }
     }
 
@@ -153,7 +154,7 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
             RemoveComponent(dialogueWindow);
             Player link = (Player) ObjectManager.GetObjectManager().GetPawn();
             link.removeInteraction();
-            animationMachine.SetFrames(allAnimations[currentDirection]);
+            animationMachine.SetFrameTrack(currentDirection);
             Pause();
         }
     }
@@ -188,19 +189,19 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
     }
     public void squareMovement(Vector2D<Float> pos, Vector2D<Float> distance) {
         if(pos.y == yInicial + distance.y && pos.x == xInicial){
-            animationMachine.SetFrames(allAnimations[LEFT]);
+            animationMachine.SetFrameTrack(LEFT);
             direction = LEFT;
             yInicial = pos.y;
         }else if(pos.x == xInicial - distance.x && pos.y == yInicial){
-            animationMachine.SetFrames(allAnimations[UP]);
+            animationMachine.SetFrameTrack(UP);
             direction = UP;
             xInicial = pos.x;
         }else if(pos.y == yInicial - distance.y && pos.x == xInicial){
-            animationMachine.SetFrames(allAnimations[RIGHT]);
+            animationMachine.SetFrameTrack(RIGHT);
             direction = RIGHT;
             yInicial = pos.y;
         }else if(pos.x == xInicial + distance.x && pos.y == yInicial){
-            animationMachine.SetFrames(allAnimations[DOWN]);
+            animationMachine.SetFrameTrack(DOWN);
             direction = DOWN;
             xInicial = pos.x;
         }
@@ -208,11 +209,11 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
     
     public void xLineMovement(Vector2D<Float> pos, Vector2D<Float> distance){
         if(pos.x == xInicial - distance.x && pos.y == yInicial){
-            animationMachine.SetFrames(allAnimations[RIGHT]);
+            animationMachine.SetFrameTrack(RIGHT);
             direction = RIGHT;
             yInicial = pos.y;
         }else if(pos.x == xInicial + distance.y && pos.y == yInicial){
-            animationMachine.SetFrames(allAnimations[LEFT]);
+            animationMachine.SetFrameTrack(LEFT);
             direction = LEFT;
             yInicial = pos.y;
         }
@@ -220,11 +221,11 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
 
     public void  yLineMovement(Vector2D<Float> pos, Vector2D<Float> distance) {
         if(pos.y == yInicial - distance.y && pos.x == xInicial){
-            animationMachine.SetFrames(allAnimations[DOWN]);
+            animationMachine.SetFrameTrack(DOWN);
             direction = DOWN;
             xInicial = pos.x;
         }else if(pos.y == yInicial + distance.y && pos.x == xInicial){
-            animationMachine.SetFrames(allAnimations[UP]);
+            animationMachine.SetFrameTrack(UP);
             direction = UP;
             xInicial = pos.x;
         }

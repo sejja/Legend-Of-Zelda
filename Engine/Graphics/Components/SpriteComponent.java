@@ -11,49 +11,47 @@ package Engine.Graphics.Components;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
+import Engine.Assets.Asset;
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Component;
 import Engine.Graphics.GraphicsPipeline;
-import Engine.Graphics.Sprite;
-import Engine.Graphics.Spritesheet;
-import Engine.Graphics.Animations.Animation;
 import Engine.Math.Vector2D;
 
 public final class SpriteComponent extends Component implements Renderable {
-    private Sprite mSprite;
+    private Asset mSprite;
 
     // ------------------------------------------------------------------------
-    /*! Animation Machine
+    /*! Sprite Component
     *
-    *   Creates an Animation Machine with a parent and a sprite
+    *   Creates an SpriteComponent with a parent and a sprite
     */ //----------------------------------------------------------------------
-    public SpriteComponent(Actor parent, Sprite sprite) {
+    public SpriteComponent(final Actor parent, final Asset sprite) {
         super(parent);
         mSprite = sprite;
     }
 
     // ------------------------------------------------------------------------
-    /*! Get Spritesheet
+    /*! Get Sprite
     *
-    *   Returns the spritesheet that we are using for animating
+    *   Returns the rendered sprite
     */ //----------------------------------------------------------------------
-    public Sprite GetSprite() {
+    public Asset GetSprite() {
         return mSprite;
     }
 
     // ------------------------------------------------------------------------
     /*! Set Sprite
-    *GraphicsPipeline
+    *
     *   Sets the Sprite that we are going to animate
     */ //----------------------------------------------------------------------
-    public void SetSprite(Sprite sp) {
+    public void SetSprite(final Asset sp) {
         mSprite = sp;
     }
 
     // ------------------------------------------------------------------------
     /*! Init
     *
-    *   Adds the Animation to the Graphics Pipeline
+    *   Adds the Sprite to the Graphics Pipeline
     */ //----------------------------------------------------------------------
     @Override
     public void Init() {
@@ -63,16 +61,15 @@ public final class SpriteComponent extends Component implements Renderable {
     // ------------------------------------------------------------------------
     /*! Update
     *
-    *   Updates the Animation every frame
+    *   EMPTY FUNCTION
     */ //----------------------------------------------------------------------
     @Override
-    public void Update() {
-    }
+    public void Update() {}
 
     // ------------------------------------------------------------------------
     /*! Shut Down
     *
-    *   Removes the Animation from the Rendering Pipeline
+    *   Removes the Sprite from the Rendering Pipeline
     */ //----------------------------------------------------------------------
     @Override
     public void ShutDown() {
@@ -82,10 +79,14 @@ public final class SpriteComponent extends Component implements Renderable {
     // ------------------------------------------------------------------------
     /*! Render
     *
-    *   Renders the animation
+    *   Renders the Sprite
     */ //----------------------------------------------------------------------
     @Override
     public void Render(Graphics2D g, CameraComponent camera) {
-        g.drawImage((BufferedImage)mSprite.GetSprite().Raw(), (int)(float)GetParent().GetPosition().x - (int)(float)camera.GetCoordinates().x, (int)(float)GetParent().GetPosition().y - (int)(float)camera.GetCoordinates().y, (int)(float)GetParent().GetScale().x, (int)(float)GetParent().GetScale().y, null);
+        final Actor parent = GetParent();
+        final Vector2D<Float> pos = parent.GetPosition();
+        final Vector2D<Float> sca = parent.GetScale();
+        final Vector2D<Float> camcoord = camera.GetCoordinates();
+        g.drawImage((BufferedImage)mSprite.Raw(), (int)(float)pos.x - (int)(float)camcoord.x, (int)(float)pos.y - (int)(float)camcoord.y, (int)(float)sca.x, (int)(float)sca.y, null);
     }
 }

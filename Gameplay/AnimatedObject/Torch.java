@@ -1,5 +1,6 @@
 package Gameplay.AnimatedObject;
 
+import Engine.Assets.AssetManager;
 import Engine.ECSystem.ObjectManager;
 import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Spritesheet;
@@ -17,13 +18,14 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
     private boolean isIluminating = false;
 
     public Torch(Vector2D<Float> position) {
-        super(position, new Spritesheet( "Content/Animations/Torch.png", 5,2, true));
+        super(position, new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/Torch.png"), 5,2, true));
         delay = -1;
         this.SetScale(new Vector2D<>(50f,100f));
         Animate(1);
         this.setDefaultPseudoPosition();
         setPseudoPositionVisible();
         hitbox = (BoxCollider)AddComponent(new BoxCollider(this, GetScale(), true));
+        animationMachine.SetFrameTrack(1);
 
         animationMachine.AddFinishedListener(new AnimationEvent() {
 
@@ -56,7 +58,7 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
     private void turnON(){
         animationMachine.setMustComplete(true);
         delay = 8;
-        Animate(1);
+        Animate(0);
     }
 
     private void iluminate(){
@@ -69,6 +71,7 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
     private void turnOff(){
         delay = -1;
         Animate(1);
+        this.animationMachine.SetFrameTrack(1);
         isIluminating = false;
     }
 

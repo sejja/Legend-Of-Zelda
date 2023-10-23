@@ -2,7 +2,7 @@ package Gameplay.Interactives.Blocks;
 
 import javax.xml.catalog.CatalogFeatures.Feature;
 
-import Engine.ECSystem.ObjectManager;
+import Engine.Assets.AssetManager;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.AnimationMachine;
 import Engine.Graphics.Tile.Block;
@@ -19,8 +19,8 @@ public class Rock extends Interactive implements StaticPlayerCollision{
     protected Vector2D<Float> size = new Vector2D<Float>(64f, 64f);
 
     //animation
-    protected Spritesheet sprite=new Spritesheet("Content/Animations/rock.png", 16,16);
     protected Block block;
+    protected Spritesheet sprite=new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/rock.png"), new Vector2D<>(16, 16));
     
 
     public Rock(Vector2D<Float> position) {

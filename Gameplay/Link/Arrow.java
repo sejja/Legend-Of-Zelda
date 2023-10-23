@@ -8,6 +8,7 @@ import java.util.ListIterator;
 
 import javax.lang.model.element.ModuleElement.DirectiveKind;
 
+import Engine.Assets.AssetManager;
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Entity;
@@ -37,7 +38,7 @@ public class Arrow extends Actor{
     public Arrow(Player Link){
         super(new Vector2D<Float>(Link.GetPosition().x + 28, Link.GetPosition().y + 45));
 
-        this.animationMachine = AddComponent(new AnimationMachine(this ,new Spritesheet("Content/Animations/Link/Arrow.png", 44 , 40))); //44,40
+        this.animationMachine = AddComponent(new AnimationMachine(this ,new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/Link/Arrow.png"), new Vector2D<>(44, 40)))); //44,40
         allAnimation = animationMachine.GetSpriteSheet().GetSpriteArray2D();
 
         direction = Link.getDirection();
@@ -139,10 +140,10 @@ public class Arrow extends Actor{
     public void Animate(){
         switch(direction)
         {
-            case UP: animationMachine.SetFrames(allAnimation[3]) ;return;
-            case DOWN: animationMachine.SetFrames(allAnimation[2]) ;return;
-            case LEFT: animationMachine.SetFrames(allAnimation[1]) ;return;
-            case RIGHT: animationMachine.SetFrames(allAnimation[0]) ;return;
+            case UP: animationMachine.SetFrameTrack(3); ;return;
+            case DOWN: animationMachine.SetFrameTrack(2) ;return;
+            case LEFT: animationMachine.SetFrameTrack(1) ;return;
+            case RIGHT: animationMachine.SetFrameTrack(0) ;return;
         }
     }
     public int damage(){return damage;}

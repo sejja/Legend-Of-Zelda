@@ -9,10 +9,8 @@
 package Engine.Graphics.Components;
 
 import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-import Engine.Assets.Asset;
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Component;
 import Engine.Graphics.GraphicsPipeline;
@@ -23,7 +21,6 @@ import Engine.Math.Vector2D;
 import Engine.Physics.AABB;
 
 public final class AnimationMachine extends Component implements Renderable {
-
     private Spritesheet mSprite;
     private Animation mAnimation;
 
@@ -35,8 +32,6 @@ public final class AnimationMachine extends Component implements Renderable {
      *          -> No change in other codes of simple actors such as normal enemies or npcs
      */
     private boolean mAnimationLocked = false;
-    private BufferedImage[] mBlendFrames;
-    private BufferedImage[] mBaseFrames;
     private ArrayList<AnimationEvent> mFinishedEvent;
 
     // ------------------------------------------------------------------------
@@ -46,7 +41,8 @@ public final class AnimationMachine extends Component implements Renderable {
     */ //----------------------------------------------------------------------
     public AnimationMachine(Actor parent, Spritesheet sp) {
         super(parent);
-        mSprite = sp;
+
+        SetAnimationSprite(sp);
         mAnimation = new Animation();
         mFinishedEvent = new ArrayList<>();
     }
@@ -75,35 +71,22 @@ public final class AnimationMachine extends Component implements Renderable {
     *   Sets the Sprite that we are going to animate
     */ //----------------------------------------------------------------------
     public void SetAnimationSprite(Spritesheet sp) {
+        assert(sp != null);
         mSprite = sp;
     }
+
     /* SetFrames
-     *  @Param BufferedImage[] frames <- This is the input frame
+     *  @Param int track <- This is the input frame
      *                                   If must_complete is true, then the input frame must be a must_end kind of animation
      *  if the input is a must_end kind of animation it will savbe a input frame in must_end_variable, the previus frame in previus_frame and set the input as the current frame
      *  if the current frame is a must_end one it will do nothing
      *  if the input is not a must ended one or the must ended animation has end it will set the input to the actual frame (before set it, in update(), it will be the previus animation)
      */
-    public void SetFrames(BufferedImage[] frames){ 
-        //System.out.println(must_complete);
-
-        //If the animation has been locked and we don't have frames to blend with
-        if (mAnimationLocked && mBlendFrames == null) {
-            mBaseFrames = mAnimation.GetFrames();
-            mBlendFrames = frames;
-            mAnimation.SetFrames(mBlendFrames);
-        
-        //If we have locked blend frames, unlock the animation
-        } else if (!mAnimationLocked && mBlendFrames != null) {   
-            mAnimationLocked = false;
-            mAnimation.SetFrames(frames);
-
-        //Else, proceed nomally
-        } else {
-            mAnimationLocked = false;
-            mAnimation.SetFrames(frames);
-        }
+    public void SetFrameTrack(int track) {
+        assert(track < mSprite.GetSpriteArray2D().length);
+        mAnimation.SetFrames(mSprite.GetSpriteArray(track));
     }
+
     // ------------------------------------------------------------------------
     /*! Init
     *
@@ -124,13 +107,10 @@ public final class AnimationMachine extends Component implements Renderable {
 
         //If we update and we change the frame
         if (mAnimation.Update() && mAnimationLocked){
-            mAnimation.SetFrames(mBaseFrames);
             mAnimationLocked = false;
-            mBlendFrames = null;
-            mBaseFrames = null;
 
             //Trigger the Finished events
-            if(mAnimation.GetFrame() == 0 && mPreviousFrame != 0)
+            if(mAnimation.GetFrame() == 0 && mPreviousFrame != 0) 
                 mFinishedEvent.stream().forEach(x -> x.OnTrigger());
         }
     }
@@ -153,12 +133,15 @@ public final class AnimationMachine extends Component implements Renderable {
     @Override
     public void Render(Graphics2D g, CameraComponent camerapos) {
         final Vector2D<Float> camcoord = camerapos.GetCoordinates();
+        final Actor parent = GetParent();
+        final Vector2D<Float> position = parent.GetPosition();
+        final Vector2D<Float> scale = parent.GetScale();
 
-        if(camerapos.OnBounds(new AABB(GetParent().GetPosition(), GetParent().GetScale())))
-            //g.drawImage(mAnimation.GetCurrentFrame(), (int)(float)GetParent().GetPosition().x - (int)(float)camcoord.x - (int)(scale.x / 4), (int)(float)GetParent().GetPosition().y - (int)(float)camcoord.y, (int)(float)GetParent().GetScale().x, (int)(float)GetParent().GetScale().y, null);
-            g.drawImage(mAnimation.GetCurrentFrame(), (int)(float)GetParent().GetPosition().x - (int)(float)camcoord.x, (int)(float)GetParent().GetPosition().y - (int)(float)camcoord.y, (int)(float)GetParent().GetScale().x, (int)(float)GetParent().GetScale().y, null);
-        }
-
+        //If the camera is on the bounds of the object, render it
+        if(camerapos.OnBounds(new AABB(position, scale)))
+            g.drawImage(mAnimation.GetCurrentFrame(), (int)(float)position.x - (int)(float)camcoord.x, (int)(float)position.y - (int)(float)camcoord.y, (int)(float)scale.x, (int)(float)scale.y, null);
+    }
+    
         
     // ------------------------------------------------------------------------
     /*! Set Must Complete
@@ -173,7 +156,7 @@ public final class AnimationMachine extends Component implements Renderable {
     *
     *   Returns wether the animation must complete or not
     */ //----------------------------------------------------------------------
-    public boolean MustComplete(){
+    public boolean MustComplete() {
         return mAnimationLocked;
     }
 

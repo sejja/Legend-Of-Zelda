@@ -20,8 +20,7 @@ import Engine.Math.Vector2D;
 public class Spritesheet {
     protected Asset mSpriteSheet = null;
     protected BufferedImage[][] mSpriteArray;
-    protected int mUCoord;
-    protected int mVCoord;
+    protected Vector2D<Integer> mUVCoord;
     protected int mWidth;
     protected int mHeight;
 
@@ -30,11 +29,11 @@ public class Spritesheet {
     *
     *   Constructs an Sprite from the filename
     */ //----------------------------------------------------------------------
-    public Spritesheet(String file) {
-        mVCoord = mUCoord = 32;
-        mSpriteSheet = LoadSprite(file);
-        mWidth = ((BufferedImage)mSpriteSheet.Raw()).getWidth() / mUCoord;
-        mHeight = ((BufferedImage)mSpriteSheet.Raw()).getHeight() / mVCoord;
+    public Spritesheet(Asset file) {
+        mUVCoord = new Vector2D<Integer>(32, 32);
+        mSpriteSheet = file;
+        mWidth = ((BufferedImage)mSpriteSheet.Raw()).getWidth() / mUVCoord.x;
+        mHeight = ((BufferedImage)mSpriteSheet.Raw()).getHeight() / mUVCoord.y;
         LoadSpriteArray();
     }
 
@@ -43,24 +42,22 @@ public class Spritesheet {
     *
     *   Consntructs an sprite from the filename, the width, and the height
     */ //----------------------------------------------------------------------
-    public Spritesheet(String file, int nrow, int ncol, boolean whatever) {
-        mSpriteSheet = LoadSprite(file);  
-        mUCoord = ((BufferedImage)mSpriteSheet.Raw()).getWidth()/nrow;
-        mVCoord = ((BufferedImage)mSpriteSheet.Raw()).getHeight()/ncol;
+    public Spritesheet(Asset file, int nrow, int ncol, boolean whatever) {
+        mSpriteSheet = file; 
+        mUVCoord = new Vector2D<Integer>(((BufferedImage)mSpriteSheet.Raw()).getWidth()/nrow, ((BufferedImage)mSpriteSheet.Raw()).getHeight()/ncol); 
 
-        mWidth = ((BufferedImage)mSpriteSheet.Raw()).getWidth() / mUCoord;
-        mHeight = ((BufferedImage)mSpriteSheet.Raw()).getHeight() / mVCoord; 
+        mWidth = ((BufferedImage)mSpriteSheet.Raw()).getWidth() / mUVCoord.x;
+        mHeight = ((BufferedImage)mSpriteSheet.Raw()).getHeight() / mUVCoord.y; 
         LoadSpriteArray();
     }
 
 
-    public Spritesheet(String file, int w, int h) {
-        mUCoord = w;
-        mVCoord = h;
+    public Spritesheet(Asset file, Vector2D<Integer> dimensions) {
+        mUVCoord = dimensions;
 
-        mSpriteSheet = LoadSprite(file);
-        mWidth = ((BufferedImage)mSpriteSheet.Raw()).getWidth() / mUCoord;
-        mHeight = ((BufferedImage)mSpriteSheet.Raw()).getHeight() / mVCoord; 
+        mSpriteSheet = file;
+        mWidth = ((BufferedImage)mSpriteSheet.Raw()).getWidth() / mUVCoord.x;
+        mHeight = ((BufferedImage)mSpriteSheet.Raw()).getHeight() / mUVCoord.y; 
         LoadSpriteArray();
     }
     // ------------------------------------------------------------------------
@@ -69,12 +66,11 @@ public class Spritesheet {
     *   Constructs a copy of an sprite
     */ //----------------------------------------------------------------------
     public Spritesheet(Spritesheet original, String path) {
-        mUCoord = original.mUCoord;
-        mVCoord = original.mVCoord;
+        mUVCoord = original.mUVCoord;
         mWidth = original.mWidth;
         mHeight = original.mHeight;
 
-        mSpriteSheet = new Spritesheet(path, mUCoord, mVCoord).GetSpriteSheet();
+        mSpriteSheet = new Spritesheet(AssetManager.Instance().GetResource(path), mUVCoord).GetSpriteSheet();
         LoadSpriteArray();
     }
 
@@ -85,8 +81,8 @@ public class Spritesheet {
     *   Sets the size of a Sprite
     */ //----------------------------------------------------------------------
     public void SetSize(int width, int height) {
-        mUCoord = width;
-        mVCoord = height;
+        mUVCoord.x = width;
+        mUVCoord.y = height;
     }
 
     // ------------------------------------------------------------------------
@@ -95,7 +91,7 @@ public class Spritesheet {
     *   Sets the Width of an sprite
     */ //----------------------------------------------------------------------
     public void SetWidth(int i) {
-        mUCoord = i;
+        mUVCoord.x = i;
     }
 
     // ------------------------------------------------------------------------
@@ -104,7 +100,7 @@ public class Spritesheet {
     *   Sets the Height of an Sprite
     */ //----------------------------------------------------------------------
     public void SetHeight(int h) {
-        mVCoord = h;
+        mUVCoord.y = h;
     }
 
     // ------------------------------------------------------------------------
@@ -113,7 +109,7 @@ public class Spritesheet {
     *   Returns the width of an sprite
     */ //----------------------------------------------------------------------
     public int GetWidth() {
-        return mUCoord;
+        return mUVCoord.x;
     }
 
     // ------------------------------------------------------------------------
@@ -121,17 +117,8 @@ public class Spritesheet {
     *
     *   Returns the height in pixels
     */ //----------------------------------------------------------------------
-    public int getHeight() {
-        return mVCoord;
-    }
-
-    // ------------------------------------------------------------------------
-    /*! Load Sprite
-    *
-    *   Loads an sprite from the fisk and uploads it as a bufferedimage
-    */ //----------------------------------------------------------------------
-    protected Asset LoadSprite(String file) {
-        return AssetManager.Instance().GetResource(file);
+    public int GetHeight() {
+        return mUVCoord.y;
     }
 
     // ------------------------------------------------------------------------
@@ -166,7 +153,7 @@ public class Spritesheet {
     *   Given an UV coordinate, returns the sprite located at a point in the spritesheet
     */ //----------------------------------------------------------------------
     public BufferedImage GetSprite(int x, int y) {
-        return ((BufferedImage)mSpriteSheet.Raw()).getSubimage(x * mUCoord, y * mVCoord, mUCoord, mVCoord);
+        return ((BufferedImage)mSpriteSheet.Raw()).getSubimage(x * mUVCoord.x, y * mUVCoord.y, mUVCoord.x, mUVCoord.y);
     }
 
     // ------------------------------------------------------------------------

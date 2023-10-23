@@ -2,6 +2,9 @@ package Gameplay.Levels;
 
 import java.util.ArrayList;
 
+import Engine.Assets.AssetManager;
+import Engine.Audio.Audio;
+import Engine.Audio.Sound;
 import Engine.ECSystem.Level;
 import Engine.ECSystem.ObjectManager;
 import Engine.Graphics.GraphicsPipeline;
@@ -34,7 +37,8 @@ public class TestRoom extends Level {
     public TestRoom(Level right, Level left, Level up, Level down, String tiles, Vector2D<Float> pos) {
         super(right, left, up, down, new TileManager(tiles));
         Init(pos);
-        ObjectManager.GetObjectManager().AddEntity(new Player(new Spritesheet("Content/Animations/Link/Link.png"), new Vector2D<Float>(1420f, 800.f), new Vector2D<Float>(100.f, 100.f)));
+
+        ObjectManager.GetObjectManager().AddEntity(new Player(new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/Link/Link.png")), new Vector2D<Float>(1420f, 800.f), new Vector2D<Float>(100.f, 100.f)));
         ArrayList<String> dialogueArrayList = new ArrayList<String>();
         ArrayList<String> dialogueArrayList2 = new ArrayList<String>();
         
@@ -42,8 +46,8 @@ public class TestRoom extends Level {
         dialogueArrayList.add("Ahora embarcate en una nueva aventura junto a tu espada y tu \narco");
         dialogueArrayList2.add("Muy buenas caballero] mi nombre es Juan] y estoy aqui protegiendo \nla puerta de acceso al palacio");
         dialogueArrayList2.add("A si que abandona este lugar por favor");
-        ObjectManager.GetObjectManager().AddEntity(new Npc("Aelarion", new Spritesheet("Content/Animations/NPC/NPC_old.png", 68, 72), new Vector2D<Float>(1330.f, 800.f), dialogueArrayList, new Vector2D<Float>(78.f, 78.f), UP, yLineMovement) );
-        ObjectManager.GetObjectManager().AddEntity(new Npc("Juan", new Spritesheet("Content/Animations/NPC/NPC_boy.png", 64, 64), new Vector2D<Float>(1580.f, 1550.f), dialogueArrayList2, new Vector2D<Float>(78.f, 78.f),4, stop) );
+        ObjectManager.GetObjectManager().AddEntity(new Npc("Aelarion", new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/NPC/NPC_old.png"), new Vector2D<>(68, 72)), new Vector2D<Float>(1330.f, 800.f), dialogueArrayList, new Vector2D<Float>(78.f, 78.f), UP, yLineMovement) );
+        ObjectManager.GetObjectManager().AddEntity(new Npc("Juan", new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/NPC/NPC_boy.png"), new Vector2D<>(64, 64)), new Vector2D<Float>(1580.f, 1550.f), dialogueArrayList2, new Vector2D<Float>(78.f, 78.f),4, stop) );
         ObjectManager.GetObjectManager().Update();
         ObjectManager.GetObjectManager().AddEntity(new Rock(new Vector2D<>(448f, 448f)));
         ObjectManager.GetObjectManager().AddEntity(new Rock(new Vector2D<>(8*64f, 8*64f)));
@@ -59,6 +63,8 @@ public class TestRoom extends Level {
         Vector2D<Float> bottomleft = new Vector2D<>(GetBounds().GetPosition().x + GetBounds().GetWidth() - 1280.f / 2, GetBounds().GetPosition().y + GetBounds().GetHeight() - 760.f / 2);
 
         z.SetBounds(topright, bottomleft);
-        //System.out.println(((Normblock)TileManager.sLevelObjects.GetBlockAt(7,7)).isBlocked());
+        Sound bg = new Sound(AssetManager.Instance().GetResource("Content/Audio/dungeon1.wav"));
+        bg.SetLoopCount(-1);
+        Audio.Instance().Play(bg);
     }
 }

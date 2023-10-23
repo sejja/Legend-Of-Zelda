@@ -4,6 +4,8 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+import Engine.Assets.Asset;
+import Engine.Assets.AssetManager;
 import Engine.ECSystem.Level;
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
@@ -277,7 +279,7 @@ public class Player extends Actor {
      */
     public void SetAnimation(int i, BufferedImage[] frames, int delay) {
         mCurrentAnimation = i;
-        mAnimation.SetFrames(frames);
+        mAnimation.SetFrameTrack(i);
         mAnimation.GetAnimation().SetDelay(delay);
     }
     // ------------------------------------------------------------------------
@@ -394,7 +396,7 @@ public class Player extends Actor {
         }
     }
     private void setBowAnimaitonSet(BufferedImage[][] temp, int size){
-        Spritesheet Bow = new Spritesheet("Content/Animations/Link/LinkArco.png", 30, 30);
+        Spritesheet Bow = new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/Link/LinkArco.png"), new Vector2D<>(30, 30));
         BufferedImage[][] animation = transposeMatrix(Bow.GetSpriteArray2D());
         for (int i = 0; i < 4; i++){
             for (int j = 0; j < 8; j++ ){
@@ -615,9 +617,12 @@ public class Player extends Actor {
          *      The first arrow and player have the same instance of the vectorposition it moves modifiying the position of the arrow and the vecto at the same time
          *      The second arrow it a arrow that contais a 1 frame animation and its has a low range to emulate a dash effect
          */
-        Arrow dash_movement = new Arrow(this, new Spritesheet("Content/Animations/Link/LinkDashSpriteSheet.png", 90 , 50), 30, 300, true);
+
+        Asset dashaAsset = AssetManager.Instance().GetResource("Content/Animations/Link/LinkDashSpriteSheet.png");
+
+        Arrow dash_movement = new Arrow(this, new Spritesheet(dashaAsset, new Vector2D<>(90, 50)), 30, 300, true);
         dash_movement.SetScale(new Vector2D<>(0f, 0f));
-        Arrow dash_animation = new Arrow(this, new Spritesheet("Content/Animations/Link/LinkDashSpriteSheet.png", 90 , 50), 0.3f , 1, false);
+        Arrow dash_animation = new Arrow(this, new Spritesheet(dashaAsset, new Vector2D<>(90, 50)), 0.3f , 1, false);
 
         ObjectManager.GetObjectManager().AddEntity(dash_animation);
         ObjectManager.GetObjectManager().AddEntity(dash_movement);
@@ -653,7 +658,7 @@ public class Player extends Actor {
         this.direction = DIRECTION.DOWN;
         setToSpawnPoint();
         hitbox.Reset();
-        mAnimation.SetFrames(mAnimation.GetSpriteSheet().GetSpriteArray2D()[DOWN+Action.STOP.getID()]);
+        mAnimation.SetFrameTrack(DOWN+Action.STOP.getID());
     }
     public void setBow(boolean bow) {this.bow = bow;}
     //------------------------------------------------------------------------
