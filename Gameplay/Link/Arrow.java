@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.ListIterator;
+import java.util.Random;
 
 import javax.lang.model.element.ModuleElement.DirectiveKind;
 
@@ -88,7 +89,14 @@ public class Arrow extends Actor{
     }
 
     private void ArrowSound() {
-        Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/arrow.wav"));
+        Random random = new Random();
+        Sound sound = null;
+
+        if(random.nextBoolean())
+            sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/arrow.wav"));
+        else
+            sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/arrow2.wav"));
+        
         Audio.Instance().Play(sound);
     }
 
