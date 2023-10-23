@@ -75,6 +75,7 @@ public class DialogueWindow extends Component implements Renderable{
         g.setColor(c);
         g.setStroke(new BasicStroke(5));
         g.drawRoundRect(x+5, y+5, width-10, height-10, 25, 25);
+        g.setStroke(new BasicStroke(1));
     }
     
     public DialogueWindow getDialgueWindow(){return this;}
