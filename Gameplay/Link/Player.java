@@ -81,6 +81,9 @@ public class Player extends Actor {
     private ZeldaCameraComponent mCamera;
     protected BoxCollider mCollider;
     protected BoxCollider hitbox;
+
+    public BoxCollider seeker;
+
     final private  int damage = 2;
     private int velocity = 0;
     final int default_velocity = 10;
