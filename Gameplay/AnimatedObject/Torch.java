@@ -68,7 +68,7 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
 
         Vector2D<Integer> tilePosition = this.GetPosition().getTilePosition();
 
-        ShadowLayer.matrixOpacity[tilePosition.x][tilePosition.y] = 255;
+        ShadowLayer.getShadowLayer().illuminate(tilePosition, 255);;
 
     }
 

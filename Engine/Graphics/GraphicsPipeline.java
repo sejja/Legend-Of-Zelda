@@ -53,7 +53,7 @@ public class GraphicsPipeline {
     private GraphicsPipeline() {
         mRenderables = new ArrayList<>();
         mCamera = null;
-        shadowLayer = new ShadowLayer();
+        shadowLayer = new ShadowLayer(0);
     }
 
     public void BindCamera(CameraComponent c) {

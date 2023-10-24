@@ -13,16 +13,21 @@ import Gameplay.Enemies.Search.pPair;
 import Gameplay.Link.Player;
 
 public class ShadowLayer {
-    public static int[][] matrixOpacity; //Array de los gradients (width x height)
-    int opacity = 230;
-    static BoxCollider seeker;
 
-    public void ShadowLayer(){
+    private static ShadowLayer shadowLayer;
+    private int[][] matrixOpacity; //Array de los gradients (width x height)
+    private int opacity;
+    private BoxCollider seeker;
+
+    public ShadowLayer(int defaultOpacity){
+        this.opacity = defaultOpacity;
+        shadowLayer = this;
     }
 
+    public static ShadowLayer getShadowLayer (){return shadowLayer;}
 
-    public void illuminate(Vector2D<Float> at, int r, float intensity) {
-
+    public void illuminate(Vector2D<Integer> tilePosition, int opacity) {
+        matrixOpacity[tilePosition.x][tilePosition.y] = opacity;
     }
 
     public void Render(Graphics2D g, CameraComponent mCamera) {
@@ -31,7 +36,7 @@ public class ShadowLayer {
             matrixOpacity = new int[(int)(float)Level.mCurrentLevel.GetBounds().GetScale().x/64][(int)(float)Level.mCurrentLevel.GetBounds().GetScale().y/64];
             for (int i = 0; i<matrixOpacity.length; i++){
                 for(int j=0; j<matrixOpacity[0].length; j++){
-                    matrixOpacity[i][j] = 0;
+                    matrixOpacity[i][j] = opacity;
                 }
             }
         }
@@ -51,7 +56,7 @@ public class ShadowLayer {
             g.setColor(c);
 
             if(getOpacity(cameraDrawPoint) > 0){
-                System.out.println("Wakala");
+               System.out.println("Wakala");
             }
 
             cameraDrawPoint.x++;
