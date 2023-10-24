@@ -4,6 +4,7 @@ import Engine.ECSystem.ObjectManager;
 import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Animations.AnimationEvent;
+import Engine.Graphics.Tile.ShadowLayer;
 import Engine.Math.Vector2D;
 import Engine.Physics.StaticPlayerCollision;
 import Engine.Physics.Components.BoxCollider;

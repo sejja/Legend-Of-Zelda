@@ -322,6 +322,7 @@ public class Player extends Actor {
         pseudoPositionUpdate();
         hitbox.Update();
         //System.out.println(GetPosition());
+        System.out.println("chorizo");
     }
     public void playerStateMachine(){
         if(dash){dash();return;}//Early return dash is mostly the dominate action, so if link is dashing he can not do anything else
