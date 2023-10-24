@@ -18,6 +18,7 @@ import Engine.Physics.AABB;
 
 public class TilemapNorm extends Tilemap {
 
+    public static TilemapNorm tilemapNorm;
     private Block[] mBlocks;
     private int mTileWidth;
     private int mTileHeight;
@@ -35,13 +36,20 @@ public class TilemapNorm extends Tilemap {
             int temp = Integer.parseInt(block[i].replaceAll("\\s+",""));
 
             if(temp != 0) {
-
                 Vector2D<Integer> positiontemp = new Vector2D<Integer>((int) (i % width) * tilewidth, (int) (i / height) * tileheight);
                 positiontemp.x += (int)(float)position.x;
                 positiontemp.y += (int)(float)position.y;
                 mBlocks[i] = new Normblock(sprite.GetSprite((int) ((temp - 1) % tilecolumns), (int) ((temp - 1) / tilecolumns)), positiontemp, tilewidth, tileheight);
             }
         }
+
+        tilemapNorm = this;
+    }
+
+    public static TilemapNorm getTilemapNorm(){return tilemapNorm;}
+
+    public Block GetBlockAt(int x, int y) {
+        return mBlocks[x + (y * mHeight)];
     }
 
     public void Render(Graphics2D g, CameraComponent camerapos, Vector2D<Float> tilemappos) {

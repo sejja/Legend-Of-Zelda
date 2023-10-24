@@ -87,4 +87,8 @@ public class Vector2D<T> {
     public Vector2D<Float> diffVector (Vector2D<Float> sum){
         return new Vector2D<Float>((Float)this.x - sum.x, (Float)this.y - sum.x);
     }
+
+    public Vector2D<Integer> getTilePosition(){
+        return new Vector2D<Integer>((Integer)(int)(float)this.x/64, (Integer)(int)(float)this.y/64);
+    }
 }
