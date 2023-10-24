@@ -65,6 +65,11 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
         isIluminating = true;
         Animate(0);
         System.out.println("Sun bless you");
+
+        Vector2D<Integer> tilePosition = this.GetPosition().getTilePosition();
+
+        ShadowLayer.matrixOpacity[tilePosition.x][tilePosition.y] = 255;
+
     }
 
     private void turnOff(){

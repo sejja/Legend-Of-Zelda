@@ -26,6 +26,8 @@ public class GraphicsPipeline {
     private CameraComponent mCamera;
     private Vector2D<Integer> mDimensions;
 
+    private ShadowLayer shadowLayer;
+
     // ------------------------------------------------------------------------
     /*! Get Graphics Pipeline
     *
@@ -51,6 +53,7 @@ public class GraphicsPipeline {
     private GraphicsPipeline() {
         mRenderables = new ArrayList<>();
         mCamera = null;
+        shadowLayer = new ShadowLayer();
     }
 
     public void BindCamera(CameraComponent c) {
@@ -87,7 +90,8 @@ public class GraphicsPipeline {
         mRenderables.addAll(mNewRenderables);
         mNewRenderables.clear();
 
-        ShadowLayer.Render(g, mCamera);
+        shadowLayer.Render(g, mCamera);
+
     }
 
     // ------------------------------------------------------------------------
