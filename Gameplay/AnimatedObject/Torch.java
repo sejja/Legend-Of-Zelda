@@ -16,6 +16,7 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
     
     private BoxCollider hitbox;
     private boolean isIluminating = false;
+    private int radius = 10;
 
     public Torch(Vector2D<Float> position) {
         super(position, new Spritesheet( "Content/Animations/Torch.png", 5,2, true));
@@ -65,7 +66,7 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
         isIluminating = true;
         Animate(0);
         System.out.println("Sun bless you");
-        int radius = 10;
+
         Vector2D<Integer> tilePosition = this.getPseudoPosition().getTilePosition();
         for (int i = tilePosition.x-radius; i <= tilePosition.x+radius; i++){
             for(int j = tilePosition.y - radius; j <= tilePosition.y+radius; j++){
@@ -88,9 +89,10 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
         Animate(1);
         isIluminating = false;
         Vector2D<Integer> tilePosition = this.getPseudoPosition().getTilePosition();
-        for (int i = tilePosition.x-3; i <= tilePosition.x+3; i++){
-            for(int j = tilePosition.y - 3; j <= tilePosition.y+3; j++){
-                ShadowLayer.getShadowLayer().illuminate(new Vector2D<Integer>(i, j), ShadowLayer.getShadowLayer().opacity);
+        for (int i = tilePosition.x-radius; i <= tilePosition.x+radius; i++){
+            for(int j = tilePosition.y - radius; j <= tilePosition.y+radius; j++){
+                int opacity  = ShadowLayer.getShadowLayer().opacity;
+                ShadowLayer.getShadowLayer().illuminate(new Vector2D<Integer>(i, j), opacity);
             }
         }
     }
