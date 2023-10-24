@@ -113,7 +113,7 @@ public class ShadowLayer {
     }
 
     private Vector2D<Integer> getWindowViewedDrawPoint (Vector2D<Integer> cameraTilePositionn, CameraComponent cameraComponent){
-        Vector2D<Float> cameraAABBPosition = cameraComponent.
-        Vector2D<Integer> result = new Vector2D<Integer>(cameraTilePositionn.x*64 - , null)
+        //Vector2D<Float> cameraAABBPosition = cameraComponent.
+        //Vector2D<Integer> result = new Vector2D<Integer>(cameraTilePositionn.x*64 - , null)
     }
 }
