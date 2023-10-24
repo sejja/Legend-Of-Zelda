@@ -18,14 +18,12 @@ public class ShadowLayer {
         final int scaleY = 16;
         var cameracoord = mCamera.GetCoordinates();
         Vector2D<Float> tilemapPos = Level.mCurrentLevel.GetBounds().GetPosition();
-        int x = (int) ((cameracoord.x - tilemapPos.x) / scaleX);
+        int x = (int) ((cameracoord.x - tilemapPos.x) / scaleX)-2*scaleX;
         int y = (int) ((cameracoord.y - tilemapPos.y) / scaleY);
-        /*
-        for(int i = x; i < x + (mCamera.GetDimensions().x) + 1; i++) {
-            for(int j = y; j < y + (mCamera.GetDimensions().y) + 2; j++) {
-                g.drawRect(i, j, scaleX, scaleY);
+        for(int i = x; i < mCamera.GetDimensions().x; i+=scaleX) {
+            for(int j = y; j < mCamera.GetDimensions().y; j+=scaleY) {
+                g.fillRect(i, j, x, y);
             }
         }
-        */
     }
 }
