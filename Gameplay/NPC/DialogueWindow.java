@@ -37,10 +37,13 @@ public class DialogueWindow extends Component implements Renderable{
     private int width; //the width of the DialogueWindow
     private int height; //the height of the DialogueWindow
     private static int j = 0; //Index del String del arraylist del dialogo
+    private int k = 0;
     private Npc npc; //the Npc we are interacting with
     private String texto;
     private String line;
-    private File f = new File("C:\\Users\\asier\\OneDrive\\Escritorio\\zelda\\Legend-Of-Zelda\\Gameplay\\NPC\\Dialogues.txt.");
+    private File f = new File("Gameplay\\NPC\\Dialogues.txt");
+    private String[] a = new String[4];
+    private int l;
 
     protected DialogueWindow(Npc npc) {
         super(npc);
@@ -60,6 +63,17 @@ public class DialogueWindow extends Component implements Renderable{
         drawSubWindow(x,y,width,height, g);
         x += 20;
         y += 20;
+        /*for(int i=l; i < a.length;i++){
+            System.out.println(i);
+            if(a[i] != null){
+                if(i%4 != 0 && i != 0) {
+                    mFont.Render(g, a[i], new Vector2D<Float>((float)x, (float)y), 32, 32, 15, 0);
+                    y += 40; 
+                }
+
+            }
+            l++;
+        }*/
         for(String line: npc.getDialoguesArrayList().get(j).split("\n")){
             mFont.Render(g, line, new Vector2D<Float>((float)x, (float)y), 32, 32, 15, 0);
             y += 40;
@@ -69,7 +83,21 @@ public class DialogueWindow extends Component implements Renderable{
     public void Init() {
         // TODO Auto-generated method stub
         GraphicsPipeline.GetGraphicsPipeline().AddRenderable(this);
-        readText();
+        /*readText();
+        a[0] = "";
+        for(int i=0; i< texto.length(); i++){
+            a[k] = a[k] + texto.charAt(i);
+            if(i % 58 == 0 && i != 0){
+                if(texto.charAt(i) != ' '){
+                    a[k] = a[k] + " ";
+                }
+                k++;
+                if(k < a.length){
+                    a[k] = "";
+                }
+            }
+        }
+        */
     }
     @Override
     public void Update() {
@@ -97,6 +125,10 @@ public class DialogueWindow extends Component implements Renderable{
     public void setSiguiente(){
         j++;
     }
+    
+    public String[] getA() {
+        return a;
+    }
 
     public void setNpc(Npc npc) {
         this.npc = npc;
@@ -107,14 +139,20 @@ public class DialogueWindow extends Component implements Renderable{
             BufferedReader br = new BufferedReader(new FileReader(f));
             String linea = br.readLine();
             String[] a;
+            
             while(linea != null){
                 if(linea.startsWith(npc.getName())){
                     texto = br.readLine();
-                    a = texto.split("\n");
-                    System.out.println(a[0]);
+                    System.out.println(texto);
+                    //a = texto.split("\n");
+                    //a[0] = "Hola";
+                    //a[0] = a[0] + "adios";
+                    //System.out.println(a[0]);
+                    
                 }
                 linea = br.readLine();
             }
+            
             br.close();
         } catch (IOException e) {
             // TODO Auto-generated catch block
