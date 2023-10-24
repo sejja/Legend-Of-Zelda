@@ -11,7 +11,7 @@ import Engine.Math.Vector2D;
 import Engine.Physics.Components.BoxCollider;
 import Gameplay.Enemies.Search.pPair;
 import Gameplay.Link.Player;
-
+//Pendiente de documentacion y de refactorizacion
 public class ShadowLayer {
 
     private static ShadowLayer shadowLayer;
