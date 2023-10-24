@@ -14,6 +14,7 @@ import java.util.Vector;
 
 import Engine.Graphics.Components.CameraComponent;
 import Engine.Graphics.Components.Renderable;
+import Engine.Graphics.Tile.ShadowLayer;
 import Engine.Math.Vector2D;
 
 public class GraphicsPipeline {
@@ -85,6 +86,8 @@ public class GraphicsPipeline {
         mOldRenderables.clear();
         mRenderables.addAll(mNewRenderables);
         mNewRenderables.clear();
+
+        ShadowLayer.Render(g, mCamera);
     }
 
     // ------------------------------------------------------------------------
