@@ -65,16 +65,19 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
         isIluminating = true;
         Animate(0);
         System.out.println("Sun bless you");
-
+        int radius = 10;
         Vector2D<Integer> tilePosition = this.getPseudoPosition().getTilePosition();
-        for (int i = tilePosition.x-3; i <= tilePosition.x+3; i++){
-            for(int j = tilePosition.y - 3; j <= tilePosition.y+3; j++){
+        for (int i = tilePosition.x-radius; i <= tilePosition.x+radius; i++){
+            for(int j = tilePosition.y - radius; j <= tilePosition.y+radius; j++){
                 int opacity  = 0;
                 int proportion = (int)Math.sqrt(Math.pow(i-tilePosition.x,2) + Math.pow(j-tilePosition.y,2));
                 System.out.println("i = " + i + "; j = " + j);
                 System.out.println("Proportion: " + proportion);
 
-                opacity += 30*proportion;
+                opacity += (int)(ShadowLayer.getShadowLayer().opacity/radius)*proportion;
+                if (opacity > ShadowLayer.getShadowLayer().opacity){
+                    opacity = ShadowLayer.getShadowLayer().opacity;
+                }
                 ShadowLayer.getShadowLayer().illuminate(new Vector2D<Integer>(i, j), opacity);
             }
         }
