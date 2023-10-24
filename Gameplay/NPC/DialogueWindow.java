@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import Engine.ECSystem.Types.Actor;
@@ -43,14 +44,14 @@ public class DialogueWindow extends Component implements Renderable{
     private String line;
     private File f = new File("Gameplay\\NPC\\Dialogues.txt");
     private String[] a = new String[4];
-    private int l;
+    private int l = 0;
+    protected ArrayList<String> dialogue;
 
     protected DialogueWindow(Npc npc) {
         super(npc);
         //TODO Auto-generated constructor stub
         this.npc = npc;
         this.window = this;
-        
     }
     
     @Override
@@ -74,6 +75,7 @@ public class DialogueWindow extends Component implements Renderable{
             }
             l++;
         }*/
+
         for(String line: npc.getDialoguesArrayList().get(j).split("\n")){
             mFont.Render(g, line, new Vector2D<Float>((float)x, (float)y), 32, 32, 15, 0);
             y += 40;
@@ -83,8 +85,9 @@ public class DialogueWindow extends Component implements Renderable{
     public void Init() {
         // TODO Auto-generated method stub
         GraphicsPipeline.GetGraphicsPipeline().AddRenderable(this);
-        /*readText();
-        a[0] = "";
+        readText();
+        textModification();
+        /*a[0] = "";
         for(int i=0; i< texto.length(); i++){
             a[k] = a[k] + texto.charAt(i);
             if(i % 58 == 0 && i != 0){
@@ -129,9 +132,42 @@ public class DialogueWindow extends Component implements Renderable{
     public String[] getA() {
         return a;
     }
+    public ArrayList<String> getDialogue(){
+        return dialogue;
+    }
 
     public void setNpc(Npc npc) {
         this.npc = npc;
+    }
+    public void textModification(){
+        String print = "";
+        texto = texto.replaceAll(",","]");
+        dialogue = new ArrayList<>();
+        //int space = 0;
+        for(int i=0; i< texto.length(); i++){
+           // if(texto.charAt(i) == ' '){
+            //    space = i;
+            //}
+            if((i%(62*5) == 0 && i != 0) ){
+                dialogue.add(print);
+                print = "";
+            }
+            if(i%62 == 0 && i!= 0){
+                l=i-62;
+                if(texto.charAt(i-62) == ' '){
+                    print = print + texto.substring(l+1,i) + "\n";
+                }else if(texto.charAt(i-1) != ' ' && texto.charAt(i+1) != ' '){
+                    print = print + texto.substring(l, i) + "[" + "\n";
+                    l=i;
+                }else{
+                    print = print  + texto.substring(l,i) + "\n";
+                    l=i;
+                }
+            }
+        }
+        dialogue.add(print);
+        System.out.println(dialogue.get(0));
+        System.out.println(dialogue.get(1));
     }
 
     public void readText(){
@@ -142,7 +178,7 @@ public class DialogueWindow extends Component implements Renderable{
             
             while(linea != null){
                 if(linea.startsWith(npc.getName())){
-                    texto = br.readLine();
+                    texto = (String) br.readLine();
                     System.out.println(texto);
                     //a = texto.split("\n");
                     //a[0] = "Hola";
