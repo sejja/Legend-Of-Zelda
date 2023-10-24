@@ -18,7 +18,7 @@ public class ShadowLayer {
     private int[][] matrixOpacity; //Array de los gradients (width x height)
     public int opacity;
     private BoxCollider seeker;
-    private boolean isOn = true;
+    private boolean isOn = false;
 
     public ShadowLayer(int defaultOpacity){
         this.opacity = defaultOpacity;
@@ -61,7 +61,7 @@ public class ShadowLayer {
             int temp = cameraDrawPoint.y;
 
            for(int drawPointY = windowShadowDrawPoint.y; drawPointY < cameraSizeY; drawPointY+= scaleY){
-            
+
                 Color c = new Color(0,0,0, getOpacity(cameraDrawPoint));
                 g.setColor(c);
     
