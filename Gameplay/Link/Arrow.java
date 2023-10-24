@@ -136,6 +136,12 @@ public class Arrow extends Actor{
         }
         SetPosition(pos);
     }
+
+    public void WallSound() {
+        Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/arrow-wall.wav"));
+        Audio.Instance().Play(sound);
+    }
+
     @Override
     public void Update() {
         super.Update();
@@ -148,6 +154,7 @@ public class Arrow extends Actor{
         }
         if( endArrow ){
             //System.out.println("Eliminado flecha");
+            WallSound();
             despawn();
         }
         Attack();
