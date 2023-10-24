@@ -50,26 +50,29 @@ public class ShadowLayer {
 
         Vector2D<Integer> cameraDrawPoint = getDrawPointPosition(mCamera);
         //System.out.println(cameraDrawPoint);
+
+
+        //______________________________________________________________________________________________________
         for (int drawPointX = 0; drawPointX < cameraSizeX; drawPointX+=scaleX ){
 
-            Color c = new Color(0,0,0, getOpacity(cameraDrawPoint));
-            g.setColor(c);
-
-            if(getOpacity(cameraDrawPoint) > 0){
+            if(getOpacity(cameraDrawPoint) == 255){
                System.out.println("Wakala");
             }
 
-            cameraDrawPoint.x++;
             int temp = cameraDrawPoint.y;
 
            for(int drawPointY = 0; drawPointY < cameraSizeY; drawPointY+= scaleY){
-                cameraDrawPoint.y++;
-
+                Color c = new Color(0,0,0, getOpacity(cameraDrawPoint));
+                g.setColor(c);
+    
                 g.fillRect(drawPointX, drawPointY, scaleX, scaleY);
+                cameraDrawPoint.y++;
            }
 
            cameraDrawPoint.y = temp; 
+           cameraDrawPoint.x++;
         }
+        //______________________________________________________________________________________________________
     }
     
     /* To get the tile that is in the drawpoint
@@ -107,5 +110,10 @@ public class ShadowLayer {
 
     private int getOpacity (Vector2D<Integer> cameraDrawPoint){
         return matrixOpacity[cameraDrawPoint.x][cameraDrawPoint.y];
+    }
+
+    private Vector2D<Integer> getWindowViewedDrawPoint (Vector2D<Integer> cameraTilePositionn, CameraComponent cameraComponent){
+        Vector2D<Float> cameraAABBPosition = cameraComponent.
+        Vector2D<Integer> result = new Vector2D<Integer>(cameraTilePositionn.x*64 - , null)
     }
 }
