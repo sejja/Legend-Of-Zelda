@@ -67,10 +67,14 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
         System.out.println("Sun bless you");
 
         Vector2D<Integer> tilePosition = this.getPseudoPosition().getTilePosition();
-        System.out.println(tilePosition);
-        int opacity  = 0;
-        for (int i = tilePosition.x-2; i <= tilePosition.x+2; i++){
-            for(int j = tilePosition.y - 2; j <= tilePosition.y+2; j++){
+        for (int i = tilePosition.x-3; i <= tilePosition.x+3; i++){
+            for(int j = tilePosition.y - 3; j <= tilePosition.y+3; j++){
+                int opacity  = 0;
+                int proportion = (int)Math.sqrt(Math.pow(i-tilePosition.x,2) + Math.pow(j-tilePosition.y,2));
+                System.out.println("i = " + i + "; j = " + j);
+                System.out.println("Proportion: " + proportion);
+
+                opacity += 30*proportion;
                 ShadowLayer.getShadowLayer().illuminate(new Vector2D<Integer>(i, j), opacity);
             }
         }
@@ -80,6 +84,12 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
         delay = -1;
         Animate(1);
         isIluminating = false;
+        Vector2D<Integer> tilePosition = this.getPseudoPosition().getTilePosition();
+        for (int i = tilePosition.x-3; i <= tilePosition.x+3; i++){
+            for(int j = tilePosition.y - 3; j <= tilePosition.y+3; j++){
+                ShadowLayer.getShadowLayer().illuminate(new Vector2D<Integer>(i, j), ShadowLayer.getShadowLayer().opacity);
+            }
+        }
     }
 
     @Override

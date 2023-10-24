@@ -61,4 +61,8 @@ public class CameraComponent extends Component {
     public void ShutDown() {
     }
     
+    public Vector2D<Float> getDrawPoint(){
+        //return  new Vector2D<Float>(this.GetCoordinates().x - this.GetDimensions().x/2, this.GetCoordinates().y - this.GetDimensions().y/2);
+        return this.GetParent().GetPosition();
+    }
 }

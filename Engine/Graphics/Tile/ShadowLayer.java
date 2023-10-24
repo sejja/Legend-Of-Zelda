@@ -16,8 +16,9 @@ public class ShadowLayer {
 
     private static ShadowLayer shadowLayer;
     private int[][] matrixOpacity; //Array de los gradients (width x height)
-    private int opacity;
+    public int opacity;
     private BoxCollider seeker;
+    private boolean isOn = true;
 
     public ShadowLayer(int defaultOpacity){
         this.opacity = defaultOpacity;
@@ -31,6 +32,7 @@ public class ShadowLayer {
     }
 
     public void Render(Graphics2D g, CameraComponent mCamera) {
+        if(!isOn){return;}
 
         if(matrixOpacity == null){
             matrixOpacity = new int[(int)(float)Level.mCurrentLevel.GetBounds().GetScale().x/64][(int)(float)Level.mCurrentLevel.GetBounds().GetScale().y/64];
@@ -49,11 +51,11 @@ public class ShadowLayer {
 
 
         Vector2D<Integer> cameraDrawPoint = getDrawPointPosition(mCamera);
-        //System.out.println(cameraDrawPoint);
+        Vector2D<Integer> windowShadowDrawPoint = getWindowViewedDrawPoint(cameraDrawPoint, mCamera);
 
 
         //______________________________________________________________________________________________________
-        for (int drawPointX = 0; drawPointX < cameraSizeX; drawPointX+=scaleX ){
+        for (int drawPointX = windowShadowDrawPoint.x; drawPointX < cameraSizeX; drawPointX+=scaleX ){
 
             if(getOpacity(cameraDrawPoint) == 255){
                System.out.println("Wakala");
@@ -61,7 +63,7 @@ public class ShadowLayer {
 
             int temp = cameraDrawPoint.y;
 
-           for(int drawPointY = 0; drawPointY < cameraSizeY; drawPointY+= scaleY){
+           for(int drawPointY = windowShadowDrawPoint.y; drawPointY < cameraSizeY; drawPointY+= scaleY){
                 Color c = new Color(0,0,0, getOpacity(cameraDrawPoint));
                 g.setColor(c);
     
@@ -84,8 +86,8 @@ public class ShadowLayer {
         int gapX = mCamera.GetDimensions().x/(2*64);
         int gapY = mCamera.GetDimensions().x/(2*64);
 
-        int cameraDrawPointX = blockPosition.x - gapX;
-        int cameraDrawPointY = blockPosition.y+4 - gapY;
+        int cameraDrawPointX = blockPosition.x-1 - gapX;
+        int cameraDrawPointY = blockPosition.y+3 - gapY;
 
         int limitX = (int)(float)(Level.mCurrentLevel.GetBounds().GetScale().x - mCamera.GetDimensions().x)/64;
         int limitY = (int)(float)(Level.mCurrentLevel.GetBounds().GetScale().y - mCamera.GetDimensions().y)/64;
@@ -113,7 +115,11 @@ public class ShadowLayer {
     }
 
     private Vector2D<Integer> getWindowViewedDrawPoint (Vector2D<Integer> cameraTilePositionn, CameraComponent cameraComponent){
-        //Vector2D<Float> cameraAABBPosition = cameraComponent.
-        //Vector2D<Integer> result = new Vector2D<Integer>(cameraTilePositionn.x*64 - , null)
+        Vector2D<Float> cameraAABBPosition = new Vector2D<Float>(cameraComponent.GetCoordinates().x - cameraComponent.GetDimensions().x/2, cameraComponent.GetCoordinates().y - cameraComponent.GetDimensions().y/2);
+        return new Vector2D<Integer>( (cameraTilePositionn.x*64) - (int)(float)cameraAABBPosition.x - 640, (cameraTilePositionn.y*64) - (int)(float)cameraAABBPosition.y - 360);
+    }
+
+    public void setOn(boolean isOn) {
+        this.isOn = isOn;
     }
 }
