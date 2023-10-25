@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import Engine.ECSystem.Level;
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
-import Engine.ECSystem.Types.Entity;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Animations.Animation;
 import Engine.Graphics.Animations.AnimationEvent;
@@ -324,7 +323,13 @@ public class Player extends Actor {
         lifeBar.Update();
         pseudoPositionUpdate();
         hitbox.Update();
+
         //System.out.println(GetPosition());
+
+
+//SE VE GENIAL, SI QUIERES, MERGEO CON AUDIO PARA LOS FPSs
+
+
     }
     public void playerStateMachine(){
         if(dash){dash();return;}//Early return dash is mostly the dominate action, so if link is dashing he can not do anything else
