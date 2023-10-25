@@ -21,7 +21,7 @@ public class HoleBlock extends Block {
     }
 
     @Override
-    public boolean Update(AABB p) {
+    public boolean HasCollision(AABB p) {
         return true;
     }
 

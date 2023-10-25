@@ -35,10 +35,10 @@ public class DialogueWindow extends Component implements Renderable{
     
     @Override
     public void Render(Graphics2D g, CameraComponent camerapos) {
-        x = Block.getWidth()*2;
-        y = Block.getHeight()*8;
-        width = 1280  - (Block.getWidth()*4);;
-        height = Block.getWidth()*3;
+        x = Block.GetWidth()*2;
+        y = Block.GetHeight()*8;
+        width = 1280  - (Block.GetWidth()*4);;
+        height = Block.GetWidth()*3;
         Font mFont = new Font(AssetManager.Instance().GetResource("Content/Fonts/ZeldaFont.png"), new Vector2D<>(16, 16));
         drawSubWindow(x,y,width,height, g);
         x += 20;

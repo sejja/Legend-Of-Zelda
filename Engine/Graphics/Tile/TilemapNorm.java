@@ -9,6 +9,8 @@
 package Engine.Graphics.Tile;
 
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
 import java.util.ArrayList;
 
 import Engine.Graphics.Spritesheet;
@@ -39,7 +41,11 @@ public class TilemapNorm extends Tilemap {
                 Vector2D<Integer> positiontemp = new Vector2D<Integer>((int) (i % width) * tilewidth, (int) (i / height) * tileheight);
                 positiontemp.x += (int)(float)position.x;
                 positiontemp.y += (int)(float)position.y;
-                mBlocks[i] = new Normblock(sprite.GetSprite((int) ((temp - 1) % tilecolumns), (int) ((temp - 1) / tilecolumns)), positiontemp, tilewidth, tileheight);
+                if(sprite.GetSprite((int) ((temp - 1) % tilecolumns), (int) ((temp - 1) / tilecolumns)) != null)
+                    mBlocks[i] = new Normblock(sprite.GetSprite((int) ((temp - 1) % tilecolumns), (int) ((temp - 1) / tilecolumns)), positiontemp, tilewidth, tileheight);
+                else
+                    System.out.println("Saving runtime!");
+            
             }
         }
     }
@@ -49,12 +55,19 @@ public class TilemapNorm extends Tilemap {
         var cameracoord = camerapos.GetCoordinates();
         int x = (int) ((cameracoord.x - tilemappos.x) / mTileWidth);
         int y = (int) ((cameracoord.y - tilemappos.y) / mTileHeight);
+        Vector2D<Integer> convertedcamcoord = new Vector2D<>((int)(float)cameracoord.x, (int)(float)cameracoord.y);
+        AffineTransform cameratransform = AffineTransform.getTranslateInstance(-convertedcamcoord.x, -convertedcamcoord.y);
 
-        for(int i = x; i < x + (camerapos.GetDimensions().x / mTileWidth) + 1; i++) {
-            for(int j = y; j < y + (camerapos.GetDimensions().y / mTileHeight) + 2; j++) {
-                if(i + (j * mHeight) > -1 && i + (j * mHeight) < mBlocks.length && mBlocks[i + (j * mHeight)] != null)
-                    mBlocks[i + (j * mHeight)].Render(g, cameracoord);
+        try {
+            for(int i = x; i < x + (camerapos.GetDimensions().x / mTileWidth) + 1; i++) {
+                for(int j = y; j < y + (camerapos.GetDimensions().y / mTileHeight) + 2; j++) {
+                    if(i + (j * mHeight) > -1 && i + (j * mHeight) < mBlocks.length && mBlocks[i + (j * mHeight)] != null)
+                        mBlocks[i + (j * mHeight)].Render(g, cameratransform, cameratransform.createInverse());
+                }
             }
+        } catch (NoninvertibleTransformException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
     }
 }

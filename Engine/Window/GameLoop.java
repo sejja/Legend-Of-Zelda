@@ -72,7 +72,7 @@ public class GameLoop extends Thread {
             mTargetBuffer.Render();
             mTargetBuffer.Present();
             final long lastRenderTime = System.nanoTime();
-
+            
             //If we have time to sleep until the next frame, sleep
             for(Thread.yield(); frametime - lastRenderTime < TBU; frametime = System.nanoTime()) {
                 //Sleeping the tread is not safe, add a try/catch

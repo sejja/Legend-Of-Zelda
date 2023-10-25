@@ -9,6 +9,8 @@
 package Engine.Graphics.Tile;
 
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
 import java.awt.image.BufferedImage;
 
 import Engine.Math.Vector2D;
@@ -18,7 +20,7 @@ public class Normblock extends Block {
     protected boolean blocked;
 
     public Normblock(BufferedImage img, Vector2D<Integer> position, int w, int h) {
-        super(img, position, w, h);
+        super(img, position, new Vector2D<>(w, h));
         blocked = false;
     }
     public void setBlocked(boolean b){
@@ -30,12 +32,12 @@ public class Normblock extends Block {
     }
 
     @Override
-    public boolean Update(AABB p) {
+    public boolean HasCollision(AABB p) {
        return false;
     }
 
-    public void Render(Graphics2D g, Vector2D<Float> camerapos) {
-        super.Render(g, camerapos);
+    public void Render(Graphics2D g, AffineTransform camerapos, AffineTransform inversecamera) throws NoninvertibleTransformException {
+        super.Render(g, camerapos, inversecamera);
     }
 
     @Override
