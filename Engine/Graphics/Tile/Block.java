@@ -56,7 +56,9 @@ public abstract class Block {
     *
     *   Returns a new Buffered Image, scaled already
     */ //----------------------------------------------------------------------
-    private static BufferedImage ScaleBuffer(final BufferedImage image, final int width, final int height) throws IOException {            
+    private static BufferedImage ScaleBuffer(final BufferedImage image, final int width, final int height) throws IOException {      
+        if(image.getType() == 0) return image;
+        
         return new AffineTransformOp(
             AffineTransform.getScaleInstance(
                 (double)width/image.getWidth(), 
