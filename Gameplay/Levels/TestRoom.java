@@ -62,8 +62,8 @@ public class TestRoom extends Level {
         }
         */
 
-        ObjectManager.GetObjectManager().AddEntity(new Torch(new Vector2D<Float>(1260.f, 1550.f)));
-        ObjectManager.GetObjectManager().AddEntity(new Torch(new Vector2D<Float>(1500.f, 1550.f)));
+        ObjectManager.GetObjectManager().AddEntity(new Torch(new Vector2D<Float>(1260.f, 1550.f), true));
+        ObjectManager.GetObjectManager().AddEntity(new Torch(new Vector2D<Float>(1500.f, 1550.f), false));
         var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetCamera();
 
         Vector2D<Float> topright = new Vector2D<>(GetBounds().GetPosition().x + 1280.f / 2, GetBounds().GetPosition().y + 720.f / 2);
