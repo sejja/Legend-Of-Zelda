@@ -5,6 +5,8 @@ import java.nio.Buffer;
 import java.util.ArrayList;
 
 import Engine.Assets.AssetManager;
+import Engine.Audio.Audio;
+import Engine.Audio.Sound;
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Entity;
@@ -98,5 +100,8 @@ public class Bomb extends AnimatedObject {
                 rock.setHealthPoints(damage);
             }
         }
+
+        Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/bomb.wav"));
+        Audio.Instance().Play(sound);
     }
 }
