@@ -118,7 +118,7 @@ public class TileManager extends ECObject implements Renderable {
                 data[i] = eElement.getElementsByTagName("data").item(0).getTextContent();
 
                 if(eElement.getAttribute("name").equals("entities")){
-                    entityQueue=new TilemapEntities(mPosition, data[i], sprite, width, height, blockwith, blockheigh, tileColumns).entityQueue;
+                    entityQueue= new TilemapEntities(mPosition, data[i], sprite, width, height, blockwith, blockheigh, tileColumns).entityQueue;
                     System.out.println(entityQueue);
 
                 }else if(!eElement.getAttribute("name").equals("colision")) {

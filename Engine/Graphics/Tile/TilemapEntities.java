@@ -40,7 +40,7 @@ public class TilemapEntities extends Tilemap {
                 entityQueue.add(new parseEntity(0, new Vector2D<Float>((float)positiontemp.x,(float)positiontemp.y)));
             }
         }
-        //System.out.println(entityQueue);
+        System.out.println(entityQueue);
         //System.out.println(entityQueue.size());
     }
 
