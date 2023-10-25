@@ -16,7 +16,7 @@ public class GreenKnight extends Enemy{
     protected Spritesheet sprite=new Spritesheet("Content/Animations/gknight.png", 16,28);
     
 
-    public GreenKnight(Vector2D<Float> position) {
+    public GreenKnight(Vector2D<Integer> position) {
         super(position);
         setPseudoPosition(25f, 50f);
         SetScale(size);

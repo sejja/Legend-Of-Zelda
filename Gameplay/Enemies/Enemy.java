@@ -3,6 +3,7 @@ package Gameplay.Enemies;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.beans.VetoableChangeListenerProxy;
 import java.util.ArrayList;
 import java.util.Stack;
 import Engine.ECSystem.ObjectManager;
@@ -75,8 +76,8 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     *
     *   Constructs an Enemy with a sprite, a position, and gives it a size
     */ //----------------------------------------------------------------------
-    public Enemy( Vector2D<Float> position) {
-        super(position);
+    public Enemy( Vector2D<Integer> position) {
+        super(new Vector2D<Float>((float)position.x*64,(float)position.y*64));
         //Render path (add to pipeline)
         GraphicsPipeline.GetGraphicsPipeline().AddRenderable(this);
     }

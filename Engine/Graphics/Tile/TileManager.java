@@ -117,7 +117,10 @@ public class TileManager extends ECObject implements Renderable {
 
                 if(!eElement.getAttribute("name").equals("colision")) {
                     mLayers.add(new TilemapNorm(mPosition, data[i], sprite, width, height, blockwith, blockheigh, tileColumns));
-                } else {
+                }else if(!eElement.getAttribute("name").equals("entities")){
+                    System.out.println("wakaña");
+                    new TilemapEntities(mPosition, data[i], sprite, width, height, blockwith, blockheigh, tileColumns);
+                }else {
                     mLayers.add(new TilemapObject(mPosition, data[i], sprite, width, height, blockwith, blockheigh, tileColumns));
                     sLevelObjects = (TilemapObject)mLayers.get(mLayers.size() - 1);
                 }
