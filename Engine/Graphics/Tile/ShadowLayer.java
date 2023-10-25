@@ -87,23 +87,24 @@ public class ShadowLayer {
         int cameraDrawPointX = blockPosition.x-1 - gapX;
         int cameraDrawPointY = blockPosition.y+3 - gapY;
 
+        //Cap the limit
         int limitX = (int)(float)(Level.mCurrentLevel.GetBounds().GetScale().x - mCamera.GetDimensions().x)/64;
         int limitY = (int)(float)(Level.mCurrentLevel.GetBounds().GetScale().y - mCamera.GetDimensions().y)/64;
-
         if(cameraDrawPointX <0){cameraDrawPointX = 0;}
         else if(cameraDrawPointX > limitX){cameraDrawPointX = limitX;}
         if(cameraDrawPointY <0){cameraDrawPointY = 0;}
         else if(cameraDrawPointY > limitY){cameraDrawPointY = limitY;}
 
-        //To see where is the cameraDrawPoint
         Vector2D<Float> result =  new Vector2D<Float>((Float)(float)cameraDrawPointX*64, (Float)(float)cameraDrawPointY*64);
+        //To see where is the cameraDrawPoint
+        /*
         if(seeker == null){
             seeker = new BoxCollider(link, result, 1);
             link.AddComponent(seeker);
         }else{
             seeker.GetBounds().SetPosition(result);
         }
-
+        */
         Vector2D<Integer> _result =  new Vector2D<Integer>((int)(result.x/64), (int)(result.y/64));
         return _result;
     }
