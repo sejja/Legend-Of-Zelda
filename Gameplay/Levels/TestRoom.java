@@ -54,12 +54,13 @@ public class TestRoom extends Level {
         ObjectManager.GetObjectManager().AddEntity(new Rock(new Vector2D<>(22, 16)));
         ObjectManager.GetObjectManager().AddEntity(new Rock(new Vector2D<>(23, 17)));
         
-/* 
+        /* 
         for(int i = 0; i < 1; i++){
             ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Integer>(10, 10)));
             ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Integer>(11, 11)));
             ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Integer>(23, 23)));
-        }*/
+        }
+        */
 
         ObjectManager.GetObjectManager().AddEntity(new Torch(new Vector2D<Float>(1260.f, 1550.f)));
         ObjectManager.GetObjectManager().AddEntity(new Torch(new Vector2D<Float>(1500.f, 1550.f)));
