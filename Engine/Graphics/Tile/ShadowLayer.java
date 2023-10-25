@@ -28,6 +28,9 @@ public class ShadowLayer {
     public static ShadowLayer getShadowLayer (){return shadowLayer;}
 
     public void illuminate(Vector2D<Integer> tilePosition, int opacity) {
+        if(matrixOpacity == null){
+            buildMatrix();
+        }
         try{
             matrixOpacity[tilePosition.x][tilePosition.y] += opacity;
    
@@ -39,12 +42,7 @@ public class ShadowLayer {
     public void Render(Graphics2D g, CameraComponent mCamera) {
 
         if(matrixOpacity == null){
-            matrixOpacity = new int[(int)(float)Level.mCurrentLevel.GetBounds().GetScale().x/64][(int)(float)Level.mCurrentLevel.GetBounds().GetScale().y/64];
-            for (int i = 0; i<matrixOpacity.length; i++){
-                for(int j=0; j<matrixOpacity[0].length; j++){
-                    matrixOpacity[i][j] = opacity;
-                }
-            }
+            buildMatrix();
         }
 
         if(!isOn){return;}
@@ -137,5 +135,14 @@ public class ShadowLayer {
 
     public void setOn(boolean isOn) {
         this.isOn = isOn;
+    }
+
+    public void buildMatrix(){
+        matrixOpacity = new int[(int)(float)Level.mCurrentLevel.GetBounds().GetScale().x/64][(int)(float)Level.mCurrentLevel.GetBounds().GetScale().y/64];
+        for (int i = 0; i<matrixOpacity.length; i++){
+            for(int j=0; j<matrixOpacity[0].length; j++){
+                matrixOpacity[i][j] = opacity;
+            }
+        }
     }
 }
