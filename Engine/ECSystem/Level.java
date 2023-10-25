@@ -3,12 +3,15 @@ package Engine.ECSystem;
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Entity;
 import Engine.Graphics.GraphicsPipeline;
+import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.ZeldaCameraComponent;
 import Engine.Graphics.Tile.TileManager;
 import Engine.Math.Util;
 import Engine.Math.Vector2D;
 import Engine.Physics.AABB;
 import Engine.Window.GameLoop;
+import Gameplay.Enemies.Units.GreenKnight;
+import Gameplay.Link.Player;
 
 public class Level {
     private Level mRight;
@@ -22,6 +25,8 @@ public class Level {
     static private Vector2D<Float> sPreviousBottomLeft;
     static private float sElapsedTime = 0;
     static private Level sPreviusLevel;
+    
+    private boolean visited = false;
 
     protected Level(Level right, Level left, Level up, Level down, TileManager tiles) {
         mRight = right;
@@ -38,6 +43,18 @@ public class Level {
     public void Init(Vector2D<Float> position) {
         mCurrentLevel = this;
         mTilemap.CreateTileMap(64, 64, position);
+        if(!visited) {
+            visited = true;
+            spawnEntities();
+        }
+    }
+
+    private void spawnEntities() {
+        
+        while(mTilemap.entityQueue != null && !mTilemap.entityQueue.isEmpty() ) {
+            var e = mTilemap.entityQueue.poll();
+            SpawnEntity(new GreenKnight(e.position));
+        }
     }
 
     public void Update() {

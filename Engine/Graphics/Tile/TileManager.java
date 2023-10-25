@@ -11,6 +11,7 @@ package Engine.Graphics.Tile;
 import java.awt.Graphics2D;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Queue;
 import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -32,6 +33,7 @@ import Engine.Physics.AABB;
 
 public class TileManager extends ECObject implements Renderable {
     public ArrayList<Tilemap>  mLayers;
+    public Queue<parseEntity> entityQueue;
     private String mPath;
     private Vector2D<Float> mPosition;
     private AABB mBounds;
@@ -115,11 +117,13 @@ public class TileManager extends ECObject implements Renderable {
 
                 data[i] = eElement.getElementsByTagName("data").item(0).getTextContent();
 
-                if(!eElement.getAttribute("name").equals("colision")) {
+                if(eElement.getAttribute("name").equals("entities")){
+                    entityQueue=new TilemapEntities(mPosition, data[i], sprite, width, height, blockwith, blockheigh, tileColumns).entityQueue;
+                    System.out.println(entityQueue);
+
+                }else if(!eElement.getAttribute("name").equals("colision")) {
                     mLayers.add(new TilemapNorm(mPosition, data[i], sprite, width, height, blockwith, blockheigh, tileColumns));
-                }else if(!eElement.getAttribute("name").equals("entities")){
-                    System.out.println("wakaña");
-                    new TilemapEntities(mPosition, data[i], sprite, width, height, blockwith, blockheigh, tileColumns);
+
                 }else {
                     mLayers.add(new TilemapObject(mPosition, data[i], sprite, width, height, blockwith, blockheigh, tileColumns));
                     sLevelObjects = (TilemapObject)mLayers.get(mLayers.size() - 1);

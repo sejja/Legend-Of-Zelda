@@ -10,6 +10,7 @@ import Engine.Graphics.Components.ZeldaCameraComponent;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Tile.Normblock;
 import Engine.Graphics.Tile.TileManager;
+import Engine.Graphics.Tile.TilemapEntities;
 import Engine.Math.Vector2D;
 import Gameplay.AnimatedObject.Torch;
 import Gameplay.Enemies.Enemy;
@@ -33,8 +34,10 @@ public class TestRoom extends Level {
     
     public TestRoom(Level right, Level left, Level up, Level down, String tiles, Vector2D<Float> pos) {
         super(right, left, up, down, new TileManager(tiles));
-        Init(pos);
         ObjectManager.GetObjectManager().AddEntity(new Player(new Spritesheet("Content/Animations/Link/Link.png"), new Vector2D<Float>(1420f, 800.f), new Vector2D<Float>(100.f, 100.f)));
+        ObjectManager.GetObjectManager().Update();
+        Init(pos);
+        
         ArrayList<String> dialogueArrayList = new ArrayList<String>();
         ArrayList<String> dialogueArrayList2 = new ArrayList<String>();
         
@@ -50,12 +53,13 @@ public class TestRoom extends Level {
 
         ObjectManager.GetObjectManager().AddEntity(new Rock(new Vector2D<>(22, 16)));
         ObjectManager.GetObjectManager().AddEntity(new Rock(new Vector2D<>(23, 17)));
-
+        
+/* 
         for(int i = 0; i < 1; i++){
             ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Integer>(10, 10)));
             ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Integer>(11, 11)));
             ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Integer>(23, 23)));
-        }
+        }*/
 
         ObjectManager.GetObjectManager().AddEntity(new Torch(new Vector2D<Float>(1260.f, 1550.f)));
         ObjectManager.GetObjectManager().AddEntity(new Torch(new Vector2D<Float>(1500.f, 1550.f)));

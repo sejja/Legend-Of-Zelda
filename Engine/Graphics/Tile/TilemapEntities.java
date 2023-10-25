@@ -17,13 +17,14 @@ public class TilemapEntities extends Tilemap {
     private int mTileHeight;
     public int mHeight;
     public int mWidth;
+    public Queue<parseEntity> entityQueue;
 
     public TilemapEntities(Vector2D<Float> position, String data, Spritesheet sprite, int width , int height, int tilewidth, int tileheight, int tilecolumns) {
         mTileHeight = tileheight;
         mTileWidth = tilewidth;
         mHeight = height;
         mWidth = width;
-        Queue<parseEntity> entityQueue = new LinkedList<parseEntity>();
+        entityQueue = new LinkedList<parseEntity>();
         
 
         String[] block = data.split(",");
@@ -36,9 +37,10 @@ public class TilemapEntities extends Tilemap {
                 positiontemp.y += (int)(float)position.y;
 
             if(tempint != 0) {
-                entityQueue.add(new parseEntity(0, positiontemp));
+                entityQueue.add(new parseEntity(0, new Vector2D<Float>((float)positiontemp.x,(float)positiontemp.y)));
             }
         }
+        //System.out.println(entityQueue);
     }
 
 

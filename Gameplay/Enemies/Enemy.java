@@ -76,8 +76,8 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     *
     *   Constructs an Enemy with a sprite, a position, and gives it a size
     */ //----------------------------------------------------------------------
-    public Enemy( Vector2D<Integer> position) {
-        super(new Vector2D<Float>((float)position.x*64,(float)position.y*64));
+    public Enemy( Vector2D<Float> position) {
+        super(position);
         //Render path (add to pipeline)
         GraphicsPipeline.GetGraphicsPipeline().AddRenderable(this);
     }
