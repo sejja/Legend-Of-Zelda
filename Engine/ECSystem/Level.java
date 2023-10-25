@@ -15,7 +15,7 @@ public class Level {
     private Level mLeft;
     private Level mUpper;
     private Level mLower;
-    private TileManager mTilemap;
+    public TileManager mTilemap;
     static public Level mCurrentLevel = null;
     static private boolean sTransitioning = false;
     static private Vector2D<Float> sPreviousTopRight;
@@ -36,8 +36,8 @@ public class Level {
     }
 
     public void Init(Vector2D<Float> position) {
-        mTilemap.CreateTileMap(64, 64, position);
         mCurrentLevel = this;
+        mTilemap.CreateTileMap(64, 64, position);
     }
 
     public void Update() {
@@ -169,8 +169,8 @@ public class Level {
         mLeft = l;
     }
 
-    protected void SpawnEntity(Entity e) {
-        Vector2D<Float> finalpos = new Vector2D<>(e.GetPosition());
+    public void SpawnEntity(Entity e) {
+        Vector2D<Float> finalpos = new Vector2D<Float>(e.GetPosition().x,e.GetPosition().y);
         finalpos.x += GetBounds().GetPosition().x;
         finalpos.y += GetBounds().GetPosition().y;
         e.SetPosition(finalpos);
