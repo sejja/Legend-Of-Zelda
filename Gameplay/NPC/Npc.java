@@ -150,7 +150,7 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
     }
 
     public void nextDialog(){
-        if(dialogueWindow.getJ() + 1 <=  this.dialogueArrayList.size()-1){ // Si hay siguiente
+        if(dialogueWindow.getJ() + 1 <=  dialogueWindow.getDialogue().size()-1){ // Si hay siguiente
             dialogueWindow.setSiguiente();
         }else{
             RemoveComponent(dialogueWindow);

@@ -38,7 +38,7 @@ public class TestRoom extends Level {
         ArrayList<String> dialogueArrayList = new ArrayList<String>();
         ArrayList<String> dialogueArrayList2 = new ArrayList<String>();
         
-        dialogueArrayList.add("En un mundo muy lejano] vivia una princesa que buscaba a su \nprincipe] y para logralo] llamo a todos los principes del reino \nademas deberas buscar todos los artefactos de las piedras para \nrecuperar el poder de hyrule");
+        dialogueArrayList.add("En un mundo muy lejano] vivia una princesa que buscaba a su \nprincipe] y para logralo] llamo a todos los principes del reino \nademas deberas buscar todos los artefactos de las piedras para \necuperar el poder de hyrule");
         dialogueArrayList.add("Ahora embarcate en una nueva aventura junto a tu espada y tu \narco");
         dialogueArrayList2.add("Muy buenas caballero] mi nombre es Juan] y estoy aqui protegiendo \nla puerta de acceso al palacio");
         dialogueArrayList2.add("A si que abandona este lugar por favor");
@@ -51,7 +51,7 @@ public class TestRoom extends Level {
         ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Float>(1300.f, 1670.f)));
         ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Float>(1400.f, 1670.f)));
         ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Float>(1500.f, 1670.f)));
-ObjectManager.GetObjectManager().AddEntity(new Torch(new Vector2D<Float>(1260.f, 1550.f)));
+        ObjectManager.GetObjectManager().AddEntity(new Torch(new Vector2D<Float>(1260.f, 1550.f)));
         var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetCamera();
 
         Vector2D<Float> topright = new Vector2D<>(GetBounds().GetPosition().x + 1280.f / 2, GetBounds().GetPosition().y + 720.f / 2);
@@ -59,6 +59,6 @@ ObjectManager.GetObjectManager().AddEntity(new Torch(new Vector2D<Float>(1260.f,
         Vector2D<Float> bottomleft = new Vector2D<>(GetBounds().GetPosition().x + GetBounds().GetWidth() - 1280.f / 2, GetBounds().GetPosition().y + GetBounds().GetHeight() - 760.f / 2);
 
         z.SetBounds(topright, bottomleft);
-//System.out.println(((Normblock)TileManager.sLevelObjects.GetBlockAt(7,7)).isBlocked());
+        //System.out.println(((Normblock)TileManager.sLevelObjects.GetBlockAt(7,7)).isBlocked());
     }
 }

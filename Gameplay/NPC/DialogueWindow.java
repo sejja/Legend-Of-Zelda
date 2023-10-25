@@ -45,7 +45,7 @@ public class DialogueWindow extends Component implements Renderable{
     private File f = new File("Gameplay\\NPC\\Dialogues.txt");
     private String[] a = new String[4];
     private int l = 0;
-    protected ArrayList<String> dialogue;
+    protected ArrayList<String> dialogue = new ArrayList<>();
 
     protected DialogueWindow(Npc npc) {
         super(npc);
@@ -75,8 +75,7 @@ public class DialogueWindow extends Component implements Renderable{
             }
             l++;
         }*/
-
-        for(String line: npc.getDialoguesArrayList().get(j).split("\n")){
+        for(String line: dialogue.get(j).split("\n")){
             mFont.Render(g, line, new Vector2D<Float>((float)x, (float)y), 32, 32, 15, 0);
             y += 40;
         }
@@ -87,20 +86,6 @@ public class DialogueWindow extends Component implements Renderable{
         GraphicsPipeline.GetGraphicsPipeline().AddRenderable(this);
         readText();
         textModification();
-        /*a[0] = "";
-        for(int i=0; i< texto.length(); i++){
-            a[k] = a[k] + texto.charAt(i);
-            if(i % 58 == 0 && i != 0){
-                if(texto.charAt(i) != ' '){
-                    a[k] = a[k] + " ";
-                }
-                k++;
-                if(k < a.length){
-                    a[k] = "";
-                }
-            }
-        }
-        */
     }
     @Override
     public void Update() {
@@ -140,34 +125,7 @@ public class DialogueWindow extends Component implements Renderable{
         this.npc = npc;
     }
     public void textModification(){
-        String print = "";
-        texto = texto.replaceAll(",","]");
-        dialogue = new ArrayList<>();
-        //int space = 0;
-        for(int i=0; i< texto.length(); i++){
-           // if(texto.charAt(i) == ' '){
-            //    space = i;
-            //}
-            if((i%(62*5) == 0 && i != 0) ){
-                dialogue.add(print);
-                print = "";
-            }
-            if(i%62 == 0 && i!= 0){
-                l=i-62;
-                if(texto.charAt(i-62) == ' '){
-                    print = print + texto.substring(l+1,i) + "\n";
-                }else if(texto.charAt(i-1) != ' ' && texto.charAt(i+1) != ' '){
-                    print = print + texto.substring(l, i) + "[" + "\n";
-                    l=i;
-                }else{
-                    print = print  + texto.substring(l,i) + "\n";
-                    l=i;
-                }
-            }
-        }
-        dialogue.add(print);
-        System.out.println(dialogue.get(0));
-        System.out.println(dialogue.get(1));
+
     }
 
     public void readText(){
@@ -178,17 +136,75 @@ public class DialogueWindow extends Component implements Renderable{
             
             while(linea != null){
                 if(linea.startsWith(npc.getName())){
-                    texto = (String) br.readLine();
-                    System.out.println(texto);
-                    //a = texto.split("\n");
-                    //a[0] = "Hola";
-                    //a[0] = a[0] + "adios";
-                    //System.out.println(a[0]);
-                    
+                    dialogue.clear();
+                    linea = br.readLine();
+                    while(linea.length() != 0){
+                        System.out.println(linea.length());
+                        linea = linea.replaceAll(",","]");
+                        String print = "";
+                        l=0;
+                        int space = 0;
+                        for(int i=0; i< linea.length(); i++){
+                            if(linea.charAt(i) == ' '){
+                                space = i;
+                            }
+                            if((i-62)%62 == 0 && i!= 0){
+                                if(linea.charAt(i-62) == ' '){
+                                    print = print + linea.substring(l+1,i) + "\n";
+                                }else if(linea.charAt(i-1) != ' ' && linea.charAt(i) != ' '){
+                                    print = print + linea.substring(l, space) + "\n";
+                                    l=space+1;
+                                }else{
+                                    print = print + linea.substring(l,i) + "\n";
+                                    l=i;
+                                }
+                            }   
+                        }
+                        if(linea.charAt(linea.length()-(linea.length()-l)) == ' '){
+                            print = print + linea.substring(l+1,linea.length());
+                        }else{
+                            print = print + linea.substring(l,linea.length());
+                        }
+                        dialogue.add(print);
+                        linea = br.readLine();
+                    }
+                    /* texto = (String) br.readLine();
+                    String print = "";
+                    texto = texto.replaceAll(",","]");
+                    int space = 0;
+                    l=0;
+                    dialogue.clear();
+                    for(int i=0; i< texto.length(); i++){
+                        if(texto.charAt(i) == ' '){
+                            space = i;
+                        }
+                        if((i%((62*4)+1) == 0 && i != 0) ){
+                            dialogue.add(print);
+                            print = "";
+                        }else
+                        if((i-62)%62 == 0 && i!= 0){
+                            if(texto.charAt(i-62) == ' '){
+                                print = print + texto.substring(l+1,i) + "\n";
+                            }else if(texto.charAt(i-1) != ' ' && texto.charAt(i) != ' '){
+                                print = print + texto.substring(l, space) + "\n";
+                                l=space+1;
+                            }else{
+                                print = print + texto.substring(l,i) + "\n";
+                                l=i;
+                            }
+                        }
+                    }
+                    if(texto.charAt(texto.length()-(texto.length()-l)) == ' '){
+                        print = print + texto.substring(l+1,texto.length());
+                    }else{
+                        
+                        print = print + texto.substring(l,texto.length());
+                    }
+                    dialogue.add(print);
+                    */
                 }
                 linea = br.readLine();
             }
-            
             br.close();
         } catch (IOException e) {
             // TODO Auto-generated catch block
