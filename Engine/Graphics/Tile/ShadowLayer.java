@@ -109,7 +109,11 @@ public class ShadowLayer {
     }
 
     private int getOpacity (Vector2D<Integer> cameraDrawPoint){
-        return matrixOpacity[cameraDrawPoint.x][cameraDrawPoint.y];
+        try{
+            return matrixOpacity[cameraDrawPoint.x][cameraDrawPoint.y];
+        }catch(java.lang.ArrayIndexOutOfBoundsException e){
+            return opacity;
+        }
     }
 
     private Vector2D<Integer> getWindowViewedDrawPoint (Vector2D<Integer> cameraTilePositionn, CameraComponent cameraComponent){
