@@ -41,6 +41,7 @@ public class TilemapEntities extends Tilemap {
             }
         }
         //System.out.println(entityQueue);
+        //System.out.println(entityQueue.size());
     }
 
 
