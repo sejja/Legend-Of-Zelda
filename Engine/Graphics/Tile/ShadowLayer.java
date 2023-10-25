@@ -28,7 +28,12 @@ public class ShadowLayer {
     public static ShadowLayer getShadowLayer (){return shadowLayer;}
 
     public void illuminate(Vector2D<Integer> tilePosition, int opacity) {
-        matrixOpacity[tilePosition.x][tilePosition.y] = opacity;
+        try{
+            matrixOpacity[tilePosition.x][tilePosition.y] += opacity;
+   
+        }catch(java.lang.ArrayIndexOutOfBoundsException e){
+            matrixOpacity[tilePosition.x][tilePosition.y] = this.opacity;
+        }
     }
 
     public void Render(Graphics2D g, CameraComponent mCamera) {
@@ -111,8 +116,16 @@ public class ShadowLayer {
 
     private int getOpacity (Vector2D<Integer> cameraDrawPoint){
         try{
+            if(matrixOpacity[cameraDrawPoint.x][cameraDrawPoint.y] > opacity){
+                return opacity;
+            }else if(matrixOpacity[cameraDrawPoint.x][cameraDrawPoint.y] < 0 ){
+                return 0;
+            }
+
             return matrixOpacity[cameraDrawPoint.x][cameraDrawPoint.y];
         }catch(java.lang.ArrayIndexOutOfBoundsException e){
+
+
             return opacity;
         }
     }

@@ -16,7 +16,7 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
     
     private BoxCollider hitbox;
     private boolean isIluminating = false;
-    private int radius = 10;
+    private int radius = 7;
 
     public Torch(Vector2D<Float> position) {
         super(position, new Spritesheet( "Content/Animations/Torch.png", 5,2, true));
@@ -70,16 +70,11 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
         Vector2D<Integer> tilePosition = this.getPseudoPosition().getTilePosition();
         for (int i = tilePosition.x-radius; i <= tilePosition.x+radius; i++){
             for(int j = tilePosition.y - radius; j <= tilePosition.y+radius; j++){
-                int opacity  = 0;
-                int proportion = (int)Math.sqrt(Math.pow(i-tilePosition.x,2) + Math.pow(j-tilePosition.y,2));
-                System.out.println("i = " + i + "; j = " + j);
-                System.out.println("Proportion: " + proportion);
-
-                opacity += (int)(ShadowLayer.getShadowLayer().opacity/radius)*proportion;
-                if (opacity > ShadowLayer.getShadowLayer().opacity){
-                    opacity = ShadowLayer.getShadowLayer().opacity;
-                }
-                ShadowLayer.getShadowLayer().illuminate(new Vector2D<Integer>(i, j), opacity);
+                int distance = (int)Math.sqrt(Math.pow(i-tilePosition.x,2) + Math.pow(j-tilePosition.y,2));
+                int proportion = (int)(ShadowLayer.getShadowLayer().opacity/radius);
+                int coeficient = ShadowLayer.getShadowLayer().opacity;
+                int difference = - (distance*proportion) + coeficient;
+                ShadowLayer.getShadowLayer().illuminate(new Vector2D<Integer>(i, j), -difference);
             }
         }
     }
@@ -91,8 +86,11 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
         Vector2D<Integer> tilePosition = this.getPseudoPosition().getTilePosition();
         for (int i = tilePosition.x-radius; i <= tilePosition.x+radius; i++){
             for(int j = tilePosition.y - radius; j <= tilePosition.y+radius; j++){
-                int opacity  = ShadowLayer.getShadowLayer().opacity;
-                ShadowLayer.getShadowLayer().illuminate(new Vector2D<Integer>(i, j), opacity);
+                int distance = (int)Math.sqrt(Math.pow(i-tilePosition.x,2) + Math.pow(j-tilePosition.y,2));
+                int proportion = (int)(ShadowLayer.getShadowLayer().opacity/radius);
+                int coeficient = ShadowLayer.getShadowLayer().opacity;
+                int difference = - (distance*proportion) + coeficient;
+                ShadowLayer.getShadowLayer().illuminate(new Vector2D<Integer>(i, j), difference);
             }
         }
     }
