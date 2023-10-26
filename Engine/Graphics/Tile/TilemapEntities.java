@@ -18,6 +18,9 @@ public class TilemapEntities extends Tilemap {
     public int mHeight;
     public int mWidth;
     public Queue<parseEntity> entityQueue;
+    public int firstEntity;
+
+    //explanation WIP
 
     public TilemapEntities(Vector2D<Float> position, String data, Spritesheet sprite, int width , int height, int tilewidth, int tileheight, int tilecolumns) {
         mTileHeight = tileheight;

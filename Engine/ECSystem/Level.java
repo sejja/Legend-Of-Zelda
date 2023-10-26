@@ -51,10 +51,19 @@ public class Level {
 
     private void spawnEntities() {
         //System.out.println(mTilemap.entityQueue);
+        int firstEntity = mTilemap.firstEntity;
         while(mTilemap.entityQueue != null && !mTilemap.entityQueue.isEmpty() ) {
             //System.out.println("Juan");
             var e = mTilemap.entityQueue.poll();
-            SpawnEntity(new GreenKnight(e.position));
+            switch(e.type) {
+                case 0:
+                    SpawnEntity(new GreenKnight(e.position));
+                    break;
+                case 1:
+                    SpawnEntity(new GreenKnight(e.position));
+                    break;
+            }
+            
         }
     }
 

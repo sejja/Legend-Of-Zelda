@@ -38,6 +38,7 @@ public class TileManager extends ECObject implements Renderable {
     private Vector2D<Float> mPosition;
     private AABB mBounds;
     public static TilemapObject sLevelObjects;
+    public int firstEntity;
 
     // ------------------------------------------------------------------------
     /*! Default Constructor
@@ -85,8 +86,12 @@ public class TileManager extends ECObject implements Renderable {
             NodeList list = doc.getElementsByTagName("tileset");
             Node node = list.item(0);
             NodeList tilesetnode = doc.getElementsByTagName("tileset");
+
             Element eElement = (Element) node;
             Element elementnode = (Element) tilesetnode.item(0);
+
+            // We get the first number for the entities
+            firstEntity=Integer.parseInt(elementnode.getAttribute("firstgid"));
 
             Document aux = builder.parse(new File(getClass().getClassLoader().getResource("Content/TiledProject/" + elementnode.getAttribute("source")).toURI()));
             aux.getDocumentElement().normalize();
