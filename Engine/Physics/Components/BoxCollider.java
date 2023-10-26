@@ -125,6 +125,10 @@ public class BoxCollider extends Component implements Renderable{
         return mBounds;
     }
 
+    public void setPosition(Vector2D<Float> position){
+        this.mBounds.SetPosition(position);
+    }
+
     public void setColor (Color color ){
         this.color = color;
     }

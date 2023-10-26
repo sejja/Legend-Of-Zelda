@@ -1,5 +1,6 @@
 package Gameplay.Link;
 
+import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -60,6 +61,7 @@ public class Player extends Actor {
 
     /*  Enable skills
      */
+    private boolean haveDash;
     private boolean haveArc;
     private boolean haveLighter;
     private boolean HaveBomb;
@@ -69,8 +71,8 @@ public class Player extends Actor {
     /* CoolDowns
      */
     private static int nArrows = 10;
-    private static int nbombs = 10;
-    private static int nDash = 3;
+    private static int nbombs = 3;
+    private static int dashCooldawn = 120;
     //----------------------------------------------------------------------
 
     /* Player Stats
@@ -80,10 +82,11 @@ public class Player extends Actor {
     private ZeldaCameraComponent mCamera;
     protected BoxCollider mCollider;
     protected BoxCollider hitbox;
-
+    protected BoxCollider terrainCollider;
     public BoxCollider seeker;
 
-    final private  int damage = 2;
+    final int dashDelay = 120;
+    final private  int damage = 999;
     private int velocity = 0;
     final int default_velocity = 10;
     private LifeBar lifeBar;
@@ -93,6 +96,7 @@ public class Player extends Actor {
      */
     private Interaction currentNPCinteraction;
     //----------------------------------------------------------------------
+    public Float getVelocity;
 
     //Methods______________________________________________________________________________________________________________________________________________________________________________
 
@@ -121,6 +125,9 @@ public class Player extends Actor {
         setPseudoPosition(50f, 50f);
         setPseudoPositionVisible();
         hitbox = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<Float>(55f, 60f), true));
+        terrainCollider = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<Float>(55f, 20f), false));
+        terrainCollider.setPosition(new Vector2D<>(getPseudoPosition().x - terrainCollider.GetBounds().GetWidth()/2, getPseudoPosition().y+20));
+        terrainCollider.setColor(Color.RED);
         ColliderManager.GetColliderManager().addCollider(hitbox, true);
         ObjectManager.GetObjectManager().SetPawn(this);
     }
@@ -202,9 +209,8 @@ public class Player extends Actor {
         InputManager.SubscribeReleased(KeyEvent.VK_SHIFT, new InputFunction() {
             @Override
             public void Execute() {
-                if (nDash > 0){
+                if (dashCooldawn == dashDelay){
                     dash = true;
-                    nDash--;
                     able_to_takeDamage = false;
                 }
                 attack = false;
@@ -323,16 +329,13 @@ public class Player extends Actor {
         lifeBar.Update();
         pseudoPositionUpdate();
         hitbox.Update();
-
+        terrainColliderUpdate();
         //System.out.println(GetPosition());
-
-
 //SE VE GENIAL, SI QUIERES, MERGEO CON AUDIO PARA LOS FPSs
-
-
     }
     public void playerStateMachine(){
-        if(dash){dash();return;}//Early return dash is mostly the dominate action, so if link is dashing he can not do anything else
+        if(dash){dashCooldawn = 0;dash();return;}
+        else if (dashCooldawn<120){dashCooldawn++;}
         if (!mAnimation.MustComplete()){Move();}
     }
     // ------------------------------------------------------------------------
@@ -341,10 +344,9 @@ public class Player extends Actor {
      *      -> True if there is no collision
      */
     public boolean SolveCollisions(Vector2D<Integer> dif) {
-        CollisionResult res = hitbox.GetBounds().collisionTile(
+        CollisionResult res = terrainCollider.GetBounds().collisionTile(
             dif.x - Level.mCurrentLevel.GetBounds().GetPosition().x, 
             dif.y - Level.mCurrentLevel.GetBounds().GetPosition().y);
-        
         falling = res == CollisionResult.Hole;
         return (res == CollisionResult.None);
     }
@@ -371,6 +373,10 @@ public class Player extends Actor {
                 break;
         }
         SetPosition(pos);
+    }
+    private void terrainColliderUpdate(){
+        //terrainCollider.Update();
+        terrainCollider.setPosition(new Vector2D<>(getPseudoPosition().x - terrainCollider.GetBounds().GetWidth()/2, getPseudoPosition().y+20));
     }
     // ------------------------------------------------------------------------
 
@@ -567,8 +573,9 @@ public class Player extends Actor {
             for(int i = 0; i < enemies.size(); i++){
                 Enemy enemy = (Enemy)enemies.get(i);
                 if(getPseudoPosition().getTargetDirection(enemy.getPseudoPosition()) == direction){
-                    enemy.setDamage(damage);
+                    enemy.setHealthPoints(damage);
                     enemy.knockBack();
+                    System.out.println("Le da");
                 }
             }
         }
