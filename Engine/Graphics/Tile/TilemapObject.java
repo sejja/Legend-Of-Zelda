@@ -62,7 +62,7 @@ public class TilemapObject extends Tilemap {
         if(GetBlockAt(x, y) != null) return GetBlockAt(x, y);
 
         AffineTransform transform = AffineTransform.getTranslateInstance(x, y);
-        transform.concatenate(AffineTransform.getScaleInstance(0, 0));
+        transform.concatenate(AffineTransform.getScaleInstance(mTileWidth, mTileHeight));
 
         return mBlocks[x + (y * mHeight)] = new ObjectBlock(null, transform);
     }

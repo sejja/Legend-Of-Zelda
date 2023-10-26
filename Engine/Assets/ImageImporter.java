@@ -37,7 +37,7 @@ public class ImageImporter implements Importer {
         BufferedImage newImage = gfxConfig.createCompatibleImage(
             image.getWidth(), image.getHeight(), image.getTransparency());
 
-        newImage = new BufferedImage(newImage.getWidth(), newImage.getHeight(), newImage.getType()==0?image.getType():newImage.getType());
+        newImage = new BufferedImage(newImage.getWidth(), newImage.getHeight(), newImage.getType()==0?BufferedImage.TYPE_INT_ARGB_PRE:newImage.getType());
 
         // get the graphics context of the new image to draw the old image on
         Graphics2D g2d = newImage.createGraphics();

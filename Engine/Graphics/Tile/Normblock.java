@@ -8,40 +8,37 @@
 
 package Engine.Graphics.Tile;
 
-import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.NoninvertibleTransformException;
 import java.awt.image.BufferedImage;
-
-import Engine.Math.Vector2D;
 import Engine.Physics.AABB;
 
 public class Normblock extends Block {
-    protected boolean blocked;
-
-    public Normblock(BufferedImage img, AffineTransform transform) {
+    // ------------------------------------------------------------------------
+    /*! Custom Constructor
+    *
+    *   Constructs a Regular Block, which does not have a collision
+    */ //----------------------------------------------------------------------
+    public Normblock(final BufferedImage img, final AffineTransform transform) {
         super(img, transform);
-        blocked = false;
-    }
-    public void setBlocked(boolean b){
-        blocked = b;
     }
 
-    public boolean isBlocked(){
-        return blocked;
-    }
-
+    // ------------------------------------------------------------------------
+    /*! Has Collision
+    *
+    *   This block does NOT collide
+    */ //----------------------------------------------------------------------
     @Override
-    public boolean HasCollision(AABB p) {
+    public boolean HasCollision(final AABB p) {
        return false;
     }
 
-    public void Render(Graphics2D g, AffineTransform camerapos, AffineTransform inversecamera) throws NoninvertibleTransformException {
-        super.Render(g, camerapos, inversecamera);
-    }
-
+    // ------------------------------------------------------------------------
+    /*! Is Inside
+    *
+    *   This block does not collide, return false
+    */ //----------------------------------------------------------------------
     @Override
-    public boolean IsInside(AABB p) {
+    public boolean IsInside(final AABB p) {
         return false;
     }
 }

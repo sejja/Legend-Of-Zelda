@@ -68,7 +68,7 @@ public class TestRoom extends Level {
         Vector2D<Float> bottomleft = new Vector2D<>(GetBounds().GetPosition().x + GetBounds().GetWidth() - 1280.f / 2, GetBounds().GetPosition().y + GetBounds().GetHeight() - 760.f / 2);
 
         z.SetBounds(topright, bottomleft);
-        Sound bg = new Sound(AssetManager.Instance().GetResource("Content/Audio/dungeon1.wav"));
+        Sound bg = new Sound(AssetManager.Instance().GetResource("Content/Audio/overworld.wav"));
         Audio.Instance().Play(bg);
         Audio.Instance().SetLoopCount(bg, -1);
     }

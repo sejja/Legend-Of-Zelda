@@ -37,15 +37,6 @@ public class HoleBlock extends Block {
     }
 
     // ------------------------------------------------------------------------
-    /*! Render
-    *
-    *   Renders a Hole Block, with it's own camera
-    */ //----------------------------------------------------------------------
-    public void Render(final Graphics2D g, final CameraComponent camera) {
-        super.Render(g, camera);
-    }
-
-    // ------------------------------------------------------------------------
     /*! Is Inside
     *
     *   Returns wether an object is completely inside us

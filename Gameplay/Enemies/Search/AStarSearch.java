@@ -24,7 +24,7 @@ public class AStarSearch{
         if (isValid(Column, Row)){
             Block block = TileManager.sLevelObjects.GetBlockAt(Column, Row);
             //System.out.println(Column + " " + Row);
-            if(block instanceof Normblock) return !((Normblock)block).isBlocked();
+            if(block instanceof Normblock) return true;
             if(block instanceof HoleBlock || block instanceof ObjectBlock) return false;
             return true;
         }else{
