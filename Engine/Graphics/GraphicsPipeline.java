@@ -48,6 +48,7 @@ public class GraphicsPipeline {
     *   creates an arraylist of renderables
     */ //----------------------------------------------------------------------
     private GraphicsPipeline() {
+        mDimensions = new Vector2D<>(0, 0);
         mRenderables = new ArrayList<>();
         mCamera = null;
     }

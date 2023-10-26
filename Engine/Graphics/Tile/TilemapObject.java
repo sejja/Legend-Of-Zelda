@@ -42,11 +42,15 @@ public class TilemapObject extends Tilemap {
                 positiontemp.x += (int)(float)position.x;
                 positiontemp.y += (int)(float)position.y;
 
+                
             if(tempint != 0) {
+                AffineTransform transform = AffineTransform.getTranslateInstance(positiontemp.x, positiontemp.y);
+                transform.concatenate(AffineTransform.getScaleInstance(tilewidth, tileheight));
+                
                 if(tempint == 429) { // TODO, Review
-                    temp = new HoleBlock(sprite.GetSprite((int) ((tempint - 1) % tilecolumns), (int) ((tempint - 1) / tilecolumns)), positiontemp, tilewidth, tileheight);
+                    temp = new HoleBlock(sprite.GetSprite((int) ((tempint - 1) % tilecolumns), (int) ((tempint - 1) / tilecolumns)), transform);
                 } else {
-                    temp = new ObjectBlock(sprite.GetSprite((int) ((tempint - 1) % tilecolumns), (int) ((tempint - 1) / tilecolumns)), positiontemp, tilewidth, tileheight);
+                    temp = new ObjectBlock(sprite.GetSprite((int) ((tempint - 1) % tilecolumns), (int) ((tempint - 1) / tilecolumns)), transform);
                 }
 
                 mBlocks[i] = temp;
@@ -65,18 +69,11 @@ public class TilemapObject extends Tilemap {
         int x = (int) ((cameracoord.x - tilemappos.x) / mTileWidth);
         int y = (int) ((cameracoord.y - tilemappos.y) / mTileHeight);
 
-        Vector2D<Integer> convertedcamcoord = new Vector2D<>((int)(float)cameracoord.x, (int)(float)cameracoord.y);
-        AffineTransform cameratransform = AffineTransform.getTranslateInstance(-convertedcamcoord.x, -convertedcamcoord.y);
-
-        try {
-            for(int i = x; i < x + (camerapos.GetDimensions().x / mTileWidth) + 1; i++) {
-                for(int j = y; j < y + (camerapos.GetDimensions().y / mTileHeight) + 2; j++) {
-                    if(i + (j * mHeight) > -1 && i + (j * mHeight) < mBlocks.length && mBlocks[i + (j * mHeight)] != null)
-                        mBlocks[i + (j * mHeight)].Render(g, cameratransform, cameratransform.createInverse());
-                }
+        for(int i = x; i < x + (camerapos.GetDimensions().x / mTileWidth) + 1; i++) {
+            for(int j = y; j < y + (camerapos.GetDimensions().y / mTileHeight) + 2; j++) {
+                if(i + (j * mHeight) > -1 && i + (j * mHeight) < mBlocks.length && mBlocks[i + (j * mHeight)] != null)
+                    mBlocks[i + (j * mHeight)].Render(g, camerapos);
             }
-        } catch (NoninvertibleTransformException e) {
-            e.printStackTrace();
         }
     }
 }

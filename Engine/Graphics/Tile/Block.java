@@ -8,37 +8,41 @@
 
 package Engine.Graphics.Tile;
 
+import Engine.Graphics.Components.CameraComponent;
 import Engine.Math.Vector2D;
 import Engine.Physics.AABB;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.NoninvertibleTransformException;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.HashMap;
 
 public abstract class Block {
-    private static Vector2D<Integer> sScale;
+    static protected Vector2D<Integer> sScale = new Vector2D<>();
     static private HashMap<BufferedImage, BufferedImage> sScaledBuffers;
     private BufferedImage mImg;
-    private AffineTransform mPosition;
+    protected AffineTransform mPosition;
 
     // ------------------------------------------------------------------------
     /*! Custom Constructor
     *
     *   Constructs a block with a custom image, a position, and dimensions
     */ //----------------------------------------------------------------------
-    public Block(final BufferedImage img, final Vector2D<Integer> position, final Vector2D<Integer> scale) {
+    public Block(final BufferedImage img, final AffineTransform transform) {
+        final int sX = (int)transform.getScaleX();
+        final int sY = (int)transform.getScaleY();
+        
         try {
-            mImg = ScaleBuffer(img, scale.x, scale.y);
+            mImg = ScaleBuffer(img, sX, sY);
         } catch (IOException e) {
             System.err.println("Exception thrown when resizing buffered image, with Stack Trace:");
             e.printStackTrace();
             mImg = img;
         } finally {
-            mPosition = AffineTransform.getTranslateInstance(position.x, position.y);
-            sScale = scale;
+            mPosition = AffineTransform.getTranslateInstance(transform.getTranslateX(), transform.getTranslateY());
+            sScale.x = sX;
+            sScale.y = sY;
         }
     }
 
@@ -78,10 +82,10 @@ public abstract class Block {
     *
     *   Renders the image, on a certain position given the Camera Position
     */ //----------------------------------------------------------------------
-    public void Render(final Graphics2D g, final AffineTransform cameratransform, final AffineTransform inversecam) throws NoninvertibleTransformException {
-        mPosition.concatenate(cameratransform);
+    public void Render(final Graphics2D g, final CameraComponent camera) {
+        mPosition.concatenate(camera.GetViewMatrix());
         g.drawImage(mImg, mPosition, null);
-        mPosition.concatenate(inversecam);
+        mPosition.concatenate(camera.GetCameraMatrix());
     }
 
     // ------------------------------------------------------------------------

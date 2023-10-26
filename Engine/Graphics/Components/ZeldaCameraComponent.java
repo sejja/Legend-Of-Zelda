@@ -60,6 +60,7 @@ public class ZeldaCameraComponent extends CameraComponent {
     *
     *   Sets the bounds of the camera
     */ //----------------------------------------------------------------------
+    @Override
     public Vector2D<Float> GetCoordinates() {
         final Vector2D<Float> pos = GetParent().GetPosition();
         final Vector2D<Integer> dim = GraphicsPipeline.GetGraphicsPipeline().GetDimensions();

@@ -18,8 +18,8 @@ import Engine.Math.Vector2D;
 import Engine.Physics.AABB;
 
 public class ObjectBlock extends Block {
-    public ObjectBlock(BufferedImage img, Vector2D<Integer> position, int w, int h) {
-        super(img, position, new Vector2D<>(w, h));
+    public ObjectBlock(BufferedImage img, AffineTransform transform) {
+        super(img, transform);
     }
 
     @Override

@@ -13,8 +13,13 @@ import Engine.ECSystem.Types.Component;
 import Engine.Graphics.GraphicsPipeline;
 import Engine.Math.Vector2D;
 import Engine.Physics.AABB;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
 
 public class CameraComponent extends Component {
+    protected AffineTransform mViewMatrix;
+    protected AffineTransform mCameraMatrix;
+
     // ------------------------------------------------------------------------
     /*! Custom Constructor
     *
@@ -30,7 +35,9 @@ public class CameraComponent extends Component {
     *   EMPTY FUNCTION
     */ //----------------------------------------------------------------------
     @Override
-    public void Init() {}
+    public void Init() {
+        mViewMatrix = mCameraMatrix = new AffineTransform();
+    }
 
     // ------------------------------------------------------------------------
     /*! Update
@@ -38,7 +45,17 @@ public class CameraComponent extends Component {
     *   EMPTY FUNCTION
     */ //----------------------------------------------------------------------
     @Override
-    public void Update() {}
+    public void Update() {
+        final Vector2D<Float> pos = GetCoordinates();
+        mCameraMatrix = AffineTransform.getTranslateInstance(pos.x, pos.y);
+        
+        //Try to invert the CameraMatrix, else, set it to the identity \_(-_-)_/
+        try {
+            mViewMatrix = mCameraMatrix.createInverse();
+        } catch (NoninvertibleTransformException e) {
+            mViewMatrix.setToIdentity();
+        }
+    }
 
     // ------------------------------------------------------------------------
     /*! Bind
@@ -47,6 +64,24 @@ public class CameraComponent extends Component {
     */ //----------------------------------------------------------------------
     public void Bind() {
         GraphicsPipeline.GetGraphicsPipeline().BindCamera(this);
+    }
+
+    // ------------------------------------------------------------------------
+    /*! Get View Matrix
+    *
+    *   Returns the Camera View Matrix, which is the inverse of the transform
+    */ //----------------------------------------------------------------------
+    public AffineTransform GetViewMatrix() {
+        return mViewMatrix;
+    }
+
+    // ------------------------------------------------------------------------
+    /*! Get Camera Matrix
+    *
+    *   Returns the Camera Matrix, which is a matrix of the transform
+    */ //----------------------------------------------------------------------
+    public AffineTransform GetCameraMatrix() {
+        return mCameraMatrix;
     }
 
     // ------------------------------------------------------------------------

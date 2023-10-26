@@ -1,6 +1,7 @@
 package Engine.Window;
 
 import Engine.ECSystem.Level;
+import Engine.Graphics.GraphicsPipeline;
 import Engine.Input.InputManager;
 import Engine.StateMachine.StateMachine;
 
@@ -65,25 +66,24 @@ public class GameLoop extends Thread {
         final double GAME_HERTZ = 60.0;
         final double TBU = 1000000000 / GAME_HERTZ;
 
-        final int MUBR = 3;
-
         double lastUpdateTime = System.nanoTime();
         double lastRenderTime;
 
-        final double TARGET_FPS = 1000;
+        final double TARGET_FPS = 60;
         final double TTBR = 1000000000 / TARGET_FPS;
         int lastSecondTime = (int) (lastUpdateTime / 1000000000);
+
+        System.out.println(TBU);
+
+        System.out.println(lastSecondTime);
 
         while (mRunning) {
 
             double now = System.nanoTime();
-            int updateCount = 0;
-            while (((now - lastUpdateTime) > TBU) && (updateCount < MUBR)) {
-                Level.mCurrentLevel.Update();
-                if(!mPause) Update();
-                lastUpdateTime += TBU;
-                updateCount++;
-            }
+
+            Level.mCurrentLevel.Update();
+            if(!mPause) Update();
+            lastUpdateTime += TBU;
 
             if ((now - lastUpdateTime) > TBU) {
                 lastUpdateTime = now - TBU;
@@ -98,17 +98,16 @@ public class GameLoop extends Thread {
                 lastSecondTime = thisSecond;
             }
 
-            while (now - lastRenderTime < TTBR && now - lastUpdateTime < TBU) {
-                Thread.yield();
+            Thread.yield();
 
-                try {
-                    Thread.sleep((int)Math.min(now - lastRenderTime, now - lastUpdateTime));
-                } catch (Exception e) {
-                    System.out.println("ERROR: yielding thread");
-                }
-
-                now = System.nanoTime();
+            try {
+                Thread.sleep((int)(16 - ((System.nanoTime() - now) / 1000000)));
+            } catch (Exception e) {
+                System.out.println("ERROR: yielding thread");
             }
+
+            System.out.println("FPS: " + 1000000000.0 / (System.nanoTime() - now));
+            now = System.nanoTime();
 
         }
     }

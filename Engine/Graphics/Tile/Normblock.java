@@ -19,8 +19,8 @@ import Engine.Physics.AABB;
 public class Normblock extends Block {
     protected boolean blocked;
 
-    public Normblock(BufferedImage img, Vector2D<Integer> position, int w, int h) {
-        super(img, position, new Vector2D<>(w, h));
+    public Normblock(BufferedImage img, AffineTransform transform) {
+        super(img, transform);
         blocked = false;
     }
     public void setBlocked(boolean b){
