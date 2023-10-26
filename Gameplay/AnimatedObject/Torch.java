@@ -28,14 +28,11 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
         this.setDefaultPseudoPosition();
         setPseudoPositionVisible();
         hitbox = (BoxCollider)AddComponent(new BoxCollider(this, GetScale(), true));
-
         animationMachine.AddFinishedListener(new AnimationEvent() {
-
             @Override
             public void OnTrigger() {
                 iluminate();
             }
-            
         });
     }
 
@@ -48,9 +45,7 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
                 previusFrameCount = this.animationMachine.GetAnimation().GetFrame();
                 removeIlumination();
                 radius++;
-                //System.out.println("Aumentando radio de iluminacion a : " + radius);
                 addIlumination();
-                //System.out.println("____________________________________________________________________");
             }
         }
     }
@@ -68,7 +63,6 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
     }
     
     private void turnON(){
-        //System.out.println("Se enciende con radio: "+ radius);
         animationMachine.setMustComplete(true);
         delay = 8;
         Animate(1);
@@ -78,11 +72,9 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
     private void iluminate(){
         removeIlumination();
         radius++;
-        //System.out.println("Final radius: " + radius);
         delay = 18;
         isIluminating = true;
         Animate(0);
-        //System.out.println("Sun bless you");
         addIlumination();
     }
 
@@ -99,7 +91,6 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
     public Class GetSuperClass(){return Npc.class;}
 
     private void addIlumination(){
-        //System.out.println("remove opacity in radius = " + radius);
         Vector2D<Integer> tilePosition = this.getPseudoPosition().getTilePosition();
         final int maxDisctance = (int)Math.round(Math.sqrt(2)*radius);
         for (int i = tilePosition.x - maxDisctance; i <= tilePosition.x + maxDisctance; i++){
@@ -111,7 +102,6 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
     }
 
     private void removeIlumination(){
-        //System.out.println("Adding opacity in radius = " + radius);
         Vector2D<Integer> tilePosition = this.getPseudoPosition().getTilePosition();
         final int maxDisctance = (int)Math.round(Math.sqrt(2)*radius);
         for (int i = tilePosition.x - maxDisctance; i <= tilePosition.x + maxDisctance; i++){
@@ -126,7 +116,7 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
         double distance = Math.sqrt( Math.pow(tilePosition.x-origin.x,2) + Math.pow(tilePosition.y-origin.y,2) );
         if (distance>radius){return 0;}
         final double coeficient = ShadowLayer.getShadowLayer().opacity;
-        double difference = Math.round( (-( ( coeficient*distance ) / radius ) + coeficient)); //Esos espacios NO SE TOCA
+        double difference = Math.round( (-( ( coeficient*distance ) / radius ) + coeficient)); //Esos espacios NO SE TOCA <-----------------------------------------
         return (int) difference;
     }
 }
