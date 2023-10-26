@@ -37,20 +37,19 @@ public class Rock extends Interactive implements StaticPlayerCollision{
 
         setPseudoPosition(GetScale().x/2, GetScale().y/2);
         setPseudoPositionVisible();
-
         mPositionPair = PositionToPair(getPseudoPosition());
         block = TileManager.sLevelObjects.GetBlockAt(mPositionPair.getFirst(),mPositionPair.getSecond());
         //System.out.println(block);
         if (block instanceof Normblock){
             ((Normblock) block).setBlocked(true);
-            //System.out.println(((Normblock) block).isBlocked());
+
         }
     }
     @Override
 
     public void Update(){
         super.Update();
-        playerCollision();
+        playerCollision(this.getmCollision());
     }
 
     public void setHealthPoints(int damage){

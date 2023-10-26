@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import Engine.ECSystem.Level;
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
-import Engine.ECSystem.Types.Entity;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Animations.Animation;
 import Engine.Graphics.Animations.AnimationEvent;
@@ -81,6 +80,9 @@ public class Player extends Actor {
     private ZeldaCameraComponent mCamera;
     protected BoxCollider mCollider;
     protected BoxCollider hitbox;
+
+    public BoxCollider seeker;
+
     final private  int damage = 2;
     private int velocity = 0;
     final int default_velocity = 10;
@@ -115,7 +117,7 @@ public class Player extends Actor {
         lifeBar = new LifeBar(getPlayer(), getHealthPoints());
         //---------------------------------------------------------------------
         mCollider = (BoxCollider)AddComponent(new BoxCollider(this));
-
+        
         setPseudoPosition(50f, 50f);
         setPseudoPositionVisible();
         hitbox = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<Float>(55f, 60f), true));
@@ -318,7 +320,6 @@ public class Player extends Actor {
         super.Update();
         playerStateMachine();
         Animate();
-        if(able_to_takeDamage){takeDamage();}
         lifeBar.Update();
         pseudoPositionUpdate();
         hitbox.Update();
@@ -453,20 +454,6 @@ public class Player extends Actor {
         stop = false;
         attack = false;
     }
-    private void takeDamage(){ //Looking for enemies to take damage
-        //System.out.println("Vida = " + healthPoints);
-        ArrayList<Entity> allEntities = ObjectManager.GetObjectManager().GetAllObjectsOfType(Enemy.class);
-
-        if(allEntities != null)
-            for (int i = 0; i < allEntities.size(); i++){
-                Enemy enemy = (Enemy) allEntities.get(i);
-                Vector2D<Float> enemyPosition = enemy.GetPosition();
-                if (enemyPosition.getModuleDistance(this.GetPosition()) < this.GetScale().y/2){
-                    this.setDamage(enemy.getDamage());
-                    enemy.knockBack();
-                }
-            }
-    }
     //------------------------------------------------------------------------
 
     /* Getters
@@ -489,13 +476,15 @@ public class Player extends Actor {
      * 
      */
     public void setDamage(int healthPoints) {
-        this.healthPoints -= healthPoints;
-        this.setAble_to_takeDamage(false);
-        if(this.healthPoints <= 0){dead();}
-        else{
-            ThreadInmortal thread = new ThreadInmortal(this);
-            thread.start();
-            lifeBar.setHealthPoints(this.healthPoints);
+        if(able_to_takeDamage){
+            this.healthPoints -= healthPoints;
+            this.setAble_to_takeDamage(false);
+            if(this.healthPoints <= 0){dead();}
+            else{
+                ThreadInmortal thread = new ThreadInmortal(this);
+                thread.start();
+                lifeBar.setHealthPoints(this.healthPoints);
+            }
         }
 
     }
@@ -566,16 +555,17 @@ public class Player extends Actor {
         If the DIRECTION of the vector Player-Enemy and The DIRECTION of the player is the same
         It will called a knockBack() function of that enemy
         */
-        ArrayList<Entity> enemies = ObjectManager.GetObjectManager().GetAllObjectsOfType(Enemy.class);
-        if(enemies == null){return;}
-        for(Entity entity : enemies){
-            Enemy currentEnemy = (Enemy) entity;
-            if(currentEnemy.getPseudoPosition().getModuleDistance(getPseudoPosition()) < this.GetScale().getModule()-40){
-                System.out.println( "leda");
-                currentEnemy.setHealthPoints(damage);
-                currentEnemy.knockBack();
+        ArrayList<Actor> enemies = ColliderManager.GetColliderManager().getCollision(mCollider, Enemy.class, true);
+        if (!enemies.isEmpty()){
+            for(int i = 0; i < enemies.size(); i++){
+                Enemy enemy = (Enemy)enemies.get(i);
+                if(getPseudoPosition().getTargetDirection(enemy.getPseudoPosition()) == direction){
+                    enemy.setDamage(damage);
+                    enemy.knockBack();
+                }
             }
         }
+
     }
     private void interact(){
         if(currentNPCinteraction == null){

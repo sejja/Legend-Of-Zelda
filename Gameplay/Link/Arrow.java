@@ -150,7 +150,6 @@ public class Arrow extends Actor{
     public void Attack(){
         ArrayList<Actor> enemies;
         if(!(enemies = ColliderManager.GetColliderManager().getCollision(hitbox, Enemy.class, true)).isEmpty()){
-            System.err.println("patata");
             Enemy enemy = (Enemy)enemies.get(0);
             enemy.setHealthPoints(damage);
             enemy.knockBack();

@@ -14,6 +14,7 @@ import java.util.Vector;
 
 import Engine.Graphics.Components.CameraComponent;
 import Engine.Graphics.Components.Renderable;
+import Engine.Graphics.Tile.ShadowLayer;
 import Engine.Math.Vector2D;
 
 public class GraphicsPipeline {
@@ -24,6 +25,8 @@ public class GraphicsPipeline {
     static private GraphicsPipeline sPipe = new GraphicsPipeline();
     private CameraComponent mCamera;
     private Vector2D<Integer> mDimensions;
+
+    private ShadowLayer shadowLayer;
 
     // ------------------------------------------------------------------------
     /*! Get Graphics Pipeline
@@ -50,6 +53,7 @@ public class GraphicsPipeline {
     private GraphicsPipeline() {
         mRenderables = new ArrayList<>();
         mCamera = null;
+        shadowLayer = new ShadowLayer(220);
     }
 
     public void BindCamera(CameraComponent c) {
@@ -85,6 +89,9 @@ public class GraphicsPipeline {
         mOldRenderables.clear();
         mRenderables.addAll(mNewRenderables);
         mNewRenderables.clear();
+
+        shadowLayer.Render(g, mCamera);
+
     }
 
     // ------------------------------------------------------------------------

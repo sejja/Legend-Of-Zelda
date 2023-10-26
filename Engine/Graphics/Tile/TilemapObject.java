@@ -9,12 +9,10 @@
 package Engine.Graphics.Tile;
 
 import java.awt.Graphics2D;
-import java.util.HashMap;
 
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.CameraComponent;
 import Engine.Math.Vector2D;
-import Engine.Physics.AABB;
 import Engine.Graphics.Tile.TilemapObject;
 
 public class TilemapObject extends Tilemap {

@@ -3,6 +3,8 @@ package Gameplay.Enemies;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.beans.VetoableChangeListenerProxy;
+import java.util.ArrayList;
 import java.util.Stack;
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
@@ -14,6 +16,7 @@ import Engine.Graphics.Components.CameraComponent;
 import Engine.Graphics.Components.Renderable;
 import Engine.Math.Vector2D;
 import Engine.Physics.Components.BoxCollider;
+import Engine.Physics.Components.ColliderManager;
 import Gameplay.AnimatedObject.DeadAnimation;
 import Gameplay.Enemies.Search.*;
 import Gameplay.LifeBar.LifeBar;
@@ -42,9 +45,9 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     protected static AStarSearch aStarSearch = new AStarSearch();
 
     //pathfinding variables
-    protected Pair finalDestination;
+    protected Pair finalDestination= new Pair(0, 0);
     protected Pair lastFinalDestination= new Pair(0, 0);
-    protected Pair currentDestination;
+    protected Pair currentDestination= new Pair(0, 0);
     protected Stack<Pair> path = new Stack<Pair>();
     protected Vector2D<Float> pos = GetPosition();
     protected Vector2D<Float> pseudoPos = getPseudoPosition();
@@ -125,24 +128,6 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
         }
     }
 
-    public DIRECTION getDirection(Vector2D<Float> vector, boolean patata) {
-        DIRECTION dir;
-        if (Math.abs(vector.x) > Math.abs(vector.y)) {
-            if (vector.x < 0) {
-                dir=DIRECTION.RIGHT;
-            } else {
-                dir=DIRECTION.LEFT;
-            }
-        } else {
-            if (vector.y < 0) {
-                dir=DIRECTION.DOWN;
-            } else {
-                dir=DIRECTION.UP;
-            }
-        }
-        return dir;
-    }
-
     // ------------------------------------------------------------------------
     /*! animate
     *
@@ -215,15 +200,36 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     public void Update() {
         super.Update();
         //System.out.println(vision());
-        if(!knockback){
-            pathfinding();
-            getDirection(normalizedDirection);
-        }else{knockbackRepeat();}
-        animate();
-        move();
+        decisionMaking();
+        attack();
         pseudoPositionUpdate();
         mCollision.Update();
         //System.out.println(playerPos.x + " " + playerPos.y + " " + normalizedDirection+ " " );
+    }
+    // ------------------------------------------------------------------------
+    /*! decisionMaking
+    *
+    *   Decides the behavior of the Enemy based on if it is being knocked back and if the player is in its vision
+    */ //----------------------------------------------------------------------
+    public void decisionMaking(){
+        if(!knockback){
+            checkVision(); 
+        }else{
+            knockbackRepeat();
+        }
+    }
+    // ------------------------------------------------------------------------
+    /*! checkVision
+    *
+    *   If player is in vision, calls pathfinding
+    */ //----------------------------------------------------------------------
+    public void checkVision(){
+        if(vision()){
+            pathfinding();
+            getDirection(normalizedDirection);
+            animate();
+            move();
+        }
     }
 
     // ------------------------------------------------------------------------
@@ -373,22 +379,22 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     public void setHealthPoints(int damage){
         this.healthPoints -= damage;
         if (healthPoints <= 0){
-            mCollision.ShutDown();
             die();
-            path.clear();
         }
         //______________________
         //______________________
     }
 
     private void die() {
+        mCollision.ShutDown();
+        path.clear();
         DeadAnimation deadAnimation = new DeadAnimation(this);
     }
 
     private boolean vision(){
         Vector2D<Float> dir = pseudoPos.getVectorToAnotherActor(playerPos);
         float distance = dir.getModule();
-        if ((getDirection(dir, true) == direction)){
+        if ((distance < 300)){
             return true;
         }else{
             return false;
@@ -435,6 +441,12 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     }
     public Enemy getEnemy(){
         return (Enemy)this;
+    }
+
+    public void attack(){
+        if(ColliderManager.GetColliderManager().playerCollision(mCollision)){
+            player.setDamage(damage);
+        }
     }
 
     @Override 
