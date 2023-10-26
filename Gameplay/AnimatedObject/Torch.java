@@ -1,7 +1,5 @@
 package Gameplay.AnimatedObject;
 
-import Engine.ECSystem.ObjectManager;
-import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Animations.AnimationEvent;
 import Engine.Graphics.Tile.ShadowLayer;
@@ -18,7 +16,7 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
     private boolean isIluminating = false;
     private int radius;
     private int previusFrameCount = 0;
-    final int defaultRadius = 2;
+    final int defaultRadius = 1;
 
     public Torch(Vector2D<Float> position) {
         super(position, new Spritesheet( "Content/Animations/Torch.png", 5,2, true));
@@ -50,9 +48,9 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
                 previusFrameCount = this.animationMachine.GetAnimation().GetFrame();
                 removeIlumination();
                 radius++;
-                System.out.println("Aumentando radio de iluminacion a : " + radius);
+                //System.out.println("Aumentando radio de iluminacion a : " + radius);
                 addIlumination();
-                System.out.println("____________________________________________________________________");
+                //System.out.println("____________________________________________________________________");
             }
         }
     }
@@ -70,7 +68,7 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
     }
     
     private void turnON(){
-        System.out.println("Se enciende con radio: "+ radius);
+        //System.out.println("Se enciende con radio: "+ radius);
         animationMachine.setMustComplete(true);
         delay = 8;
         Animate(1);
@@ -80,7 +78,7 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
     private void iluminate(){
         removeIlumination();
         radius++;
-        System.out.println("Final radius: " + radius);
+        //System.out.println("Final radius: " + radius);
         delay = 18;
         isIluminating = true;
         Animate(0);
@@ -101,44 +99,34 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
     public Class GetSuperClass(){return Npc.class;}
 
     private void addIlumination(){
-        System.out.println("Adding opacity in radius = " + radius);
+        //System.out.println("remove opacity in radius = " + radius);
         Vector2D<Integer> tilePosition = this.getPseudoPosition().getTilePosition();
-        for (int i = tilePosition.x - radius; i <= tilePosition.x + radius; i++){
-            for(int j = tilePosition.y - radius; j <= tilePosition.y+radius; j++){
-
-                float distance = (float)Math.sqrt(Math.pow(i-tilePosition.x,2) + Math.pow(j-tilePosition.y,2));
-                float proportion = (ShadowLayer.getShadowLayer().opacity/radius);
-                int coeficient = ShadowLayer.getShadowLayer().opacity;
-                int difference = Math.round(-(distance*proportion) + coeficient);
+        final int maxDisctance = (int)Math.round(Math.sqrt(2)*radius);
+        for (int i = tilePosition.x - maxDisctance; i <= tilePosition.x + maxDisctance; i++){
+            for(int j = tilePosition.y - maxDisctance; j <= tilePosition.y+maxDisctance; j++){
+                int difference = luminosityDiffereceFunction(new Vector2D<Integer>(i,j), tilePosition);
                 ShadowLayer.getShadowLayer().illuminate(new Vector2D<Integer>(i, j), -difference);
-
-                if(i == tilePosition.x - radius && j == tilePosition.y - radius){
-                    System.out.println(-difference);
-                    System.out.println("CurrentOpacity at extreme: " + ShadowLayer.getShadowLayer().getOpacityAt(new Vector2D<Integer>(i, j)));
-                }
-
             }
         }
     }
 
     private void removeIlumination(){
-        System.out.println("Removing opacity in radius = " + radius);
+        //System.out.println("Adding opacity in radius = " + radius);
         Vector2D<Integer> tilePosition = this.getPseudoPosition().getTilePosition();
-        for (int i = tilePosition.x - radius; i <= tilePosition.x + radius; i++){
-            for(int j = tilePosition.y - radius; j <= tilePosition.y+radius; j++){
-
-                float distance = (float)Math.sqrt(Math.pow(i-tilePosition.x,2) + Math.pow(j-tilePosition.y,2));
-                float proportion = (ShadowLayer.getShadowLayer().opacity/radius);
-                int coeficient = ShadowLayer.getShadowLayer().opacity;
-                int difference = Math.round(-(distance*proportion) + coeficient);
+        final int maxDisctance = (int)Math.round(Math.sqrt(2)*radius);
+        for (int i = tilePosition.x - maxDisctance; i <= tilePosition.x + maxDisctance; i++){
+            for(int j = tilePosition.y - maxDisctance; j <= tilePosition.y + maxDisctance; j++){
+                int difference = luminosityDiffereceFunction(new Vector2D<Integer>(i,j), tilePosition);
                 ShadowLayer.getShadowLayer().illuminate(new Vector2D<Integer>(i, j), difference);
-
-                if(i == tilePosition.x - radius && j == tilePosition.y - radius){
-                    System.out.println(difference);
-                    System.out.println("CurrentOpacity at extreme: " + ShadowLayer.getShadowLayer().getOpacityAt(new Vector2D<Integer>(i, j)));
-                }
-
             }
         }
+    }
+
+    private int luminosityDiffereceFunction(Vector2D<Integer> tilePosition, Vector2D<Integer> origin){
+        double distance = Math.sqrt( Math.pow(tilePosition.x-origin.x,2) + Math.pow(tilePosition.y-origin.y,2) );
+        if (distance>radius){return 0;}
+        final double coeficient = ShadowLayer.getShadowLayer().opacity;
+        double difference = Math.round( (-( ( coeficient*distance ) / radius ) + coeficient)); //Esos espacios NO SE TOCA
+        return (int) difference;
     }
 }
