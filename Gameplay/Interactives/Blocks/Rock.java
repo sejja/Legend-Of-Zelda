@@ -23,8 +23,8 @@ public class Rock extends Interactive implements StaticPlayerCollision{
     protected Block block;
     
 
-    public Rock(Vector2D<Integer> position) {
-        super(new Vector2D<Float>((float)position.x*64,(float)position.y*64));
+    public Rock(Vector2D<Float> position) {
+        super(position);
         SetScale(size);
 
         // ADD ANIMATION COMPONENT

@@ -51,8 +51,7 @@ public class TestRoom extends Level {
         
         ObjectManager.GetObjectManager().Update();
 
-        ObjectManager.GetObjectManager().AddEntity(new Rock(new Vector2D<>(22, 16)));
-        ObjectManager.GetObjectManager().AddEntity(new Rock(new Vector2D<>(23, 17)));
+        
         
         /* 
         for(int i = 0; i < 1; i++){

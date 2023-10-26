@@ -90,8 +90,10 @@ public class TileManager extends ECObject implements Renderable {
             Element eElement = (Element) node;
             Element elementnode = (Element) tilesetnode.item(0);
 
+            Node entityNode = list.item(1);
+
             // We get the first number for the entities
-            firstEntity=Integer.parseInt(elementnode.getAttribute("firstgid"));
+            firstEntity=Integer.parseInt(((Element)entityNode).getAttribute("firstgid"));
 
             Document aux = builder.parse(new File(getClass().getClassLoader().getResource("Content/TiledProject/" + elementnode.getAttribute("source")).toURI()));
             aux.getDocumentElement().normalize();
