@@ -101,7 +101,7 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
     public Class GetSuperClass(){return Npc.class;}
 
     private void addIlumination(){
-        System.out.println("remove opacity in radius = " + radius);
+        //System.out.println("remove opacity in radius = " + radius);
         Vector2D<Integer> tilePosition = this.getPseudoPosition().getTilePosition();
         final int maxDisctance = (int)Math.round(Math.sqrt(2)*radius);
         for (int i = tilePosition.x - maxDisctance; i <= tilePosition.x + maxDisctance; i++){
@@ -113,7 +113,7 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
     }
 
     private void removeIlumination(){
-        System.out.println("Adding opacity in radius = " + radius);
+        //System.out.println("Adding opacity in radius = " + radius);
         Vector2D<Integer> tilePosition = this.getPseudoPosition().getTilePosition();
         final int maxDisctance = (int)Math.round(Math.sqrt(2)*radius);
         for (int i = tilePosition.x - maxDisctance; i <= tilePosition.x + maxDisctance; i++){
