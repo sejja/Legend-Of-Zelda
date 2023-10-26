@@ -20,17 +20,12 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
     private int previusFrameCount = 0;
     final int defaultRadius = 2;
 
-    public Torch(Vector2D<Float> position, boolean lighted) {
+    public Torch(Vector2D<Float> position) {
         super(position, new Spritesheet( "Content/Animations/Torch.png", 5,2, true));
         delay = -1;
         this.SetScale(new Vector2D<>(50f,100f));
         radius = defaultRadius;
         Animate(1);
-
-        if(lighted){
-            //removeIlumination();
-            //turnON();
-        }
         
         this.setDefaultPseudoPosition();
         setPseudoPositionVisible();
@@ -110,15 +105,18 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
         Vector2D<Integer> tilePosition = this.getPseudoPosition().getTilePosition();
         for (int i = tilePosition.x - radius; i <= tilePosition.x + radius; i++){
             for(int j = tilePosition.y - radius; j <= tilePosition.y+radius; j++){
+
                 float distance = (float)Math.sqrt(Math.pow(i-tilePosition.x,2) + Math.pow(j-tilePosition.y,2));
                 float proportion = (ShadowLayer.getShadowLayer().opacity/radius);
                 int coeficient = ShadowLayer.getShadowLayer().opacity;
                 int difference = Math.round(-(distance*proportion) + coeficient);
                 ShadowLayer.getShadowLayer().illuminate(new Vector2D<Integer>(i, j), -difference);
-                if(j == tilePosition.y && i == tilePosition.x){
+
+                if(i == tilePosition.x - radius && j == tilePosition.y - radius){
                     System.out.println(-difference);
-                    System.out.println("CurrentOpacity at the Torch Tile: " + ShadowLayer.getShadowLayer().getOpacityAt(tilePosition));
+                    System.out.println("CurrentOpacity at extreme: " + ShadowLayer.getShadowLayer().getOpacityAt(new Vector2D<Integer>(i, j)));
                 }
+
             }
         }
     }
@@ -128,15 +126,18 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
         Vector2D<Integer> tilePosition = this.getPseudoPosition().getTilePosition();
         for (int i = tilePosition.x - radius; i <= tilePosition.x + radius; i++){
             for(int j = tilePosition.y - radius; j <= tilePosition.y+radius; j++){
+
                 float distance = (float)Math.sqrt(Math.pow(i-tilePosition.x,2) + Math.pow(j-tilePosition.y,2));
                 float proportion = (ShadowLayer.getShadowLayer().opacity/radius);
                 int coeficient = ShadowLayer.getShadowLayer().opacity;
                 int difference = Math.round(-(distance*proportion) + coeficient);
                 ShadowLayer.getShadowLayer().illuminate(new Vector2D<Integer>(i, j), difference);
-                if(j == tilePosition.y && i == tilePosition.x){
+
+                if(i == tilePosition.x - radius && j == tilePosition.y - radius){
                     System.out.println(difference);
-                    System.out.println("CurrentOpacity at the Torch Tile: " + ShadowLayer.getShadowLayer().getOpacityAt(tilePosition));
+                    System.out.println("CurrentOpacity at extreme: " + ShadowLayer.getShadowLayer().getOpacityAt(new Vector2D<Integer>(i, j)));
                 }
+
             }
         }
     }
