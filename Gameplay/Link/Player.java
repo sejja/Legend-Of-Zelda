@@ -6,6 +6,8 @@ import java.util.ArrayList;
 
 import Engine.Assets.Asset;
 import Engine.Assets.AssetManager;
+import Engine.Audio.Audio;
+import Engine.Audio.Sound;
 import Engine.ECSystem.Level;
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
@@ -563,6 +565,17 @@ public class Player extends Actor {
                 if(getPseudoPosition().getTargetDirection(enemy.getPseudoPosition()) == direction){
                     enemy.setDamage(damage);
                     enemy.knockBack();
+                }
+            }
+        }
+
+        ArrayList<Actor> interactives = ColliderManager.GetColliderManager().getCollision(mCollider, Interactive.class, true);
+        if (!interactives.isEmpty()){
+            for(int i = 0; i < interactives.size(); i++){
+                Interactive interactive = (Interactive)interactives.get(i);
+                if(getPseudoPosition().getTargetDirection(interactive.getPseudoPosition()) == direction){
+                    Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/bombable-wall.wav"));
+                    Audio.Instance().Play(sound);
                 }
             }
         }

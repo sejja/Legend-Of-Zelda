@@ -5,6 +5,10 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Stack;
+
+import Engine.Assets.AssetManager;
+import Engine.Audio.Audio;
+import Engine.Audio.Sound;
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
 import Engine.Graphics.GraphicsPipeline;
@@ -406,6 +410,8 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
 
     private void die() {
         DeadAnimation deadAnimation = new DeadAnimation(this);
+        Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/enemy-death.wav"));
+        Audio.Instance().Play(sound);
     }
 
     private boolean vision(){
