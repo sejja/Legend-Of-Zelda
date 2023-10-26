@@ -18,11 +18,17 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
     private boolean isIluminating = false;
     private int radius = 7;
 
-    public Torch(Vector2D<Float> position) {
+    public Torch(Vector2D<Float> position, boolean lighted) {
         super(position, new Spritesheet( "Content/Animations/Torch.png", 5,2, true));
         delay = -1;
         this.SetScale(new Vector2D<>(50f,100f));
+
         Animate(1);
+
+        if(lighted){
+            turnON();
+        }
+        
         this.setDefaultPseudoPosition();
         setPseudoPositionVisible();
         hitbox = (BoxCollider)AddComponent(new BoxCollider(this, GetScale(), true));
@@ -35,6 +41,7 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
             }
             
         });
+
     }
 
     public void Update(){
