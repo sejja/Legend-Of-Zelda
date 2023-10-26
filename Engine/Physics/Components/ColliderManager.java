@@ -5,13 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
-import javax.lang.model.element.ModuleElement.DirectiveKind;
-import javax.swing.Box;
-import javax.swing.text.html.HTMLDocument.Iterator;
-
 import Engine.ECSystem.Types.Actor;
-import Engine.Math.Vector2D;
-import Gameplay.Link.DIRECTION;
 import Gameplay.Link.Player;
 /* ColliderManager is a static object thats manage the colision between objects
  *      -> All BoxCollider thats hasCollision it is added automatically to the colliderManager
