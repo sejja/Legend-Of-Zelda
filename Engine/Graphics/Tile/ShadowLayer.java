@@ -28,12 +28,13 @@ public class ShadowLayer {
     public static ShadowLayer getShadowLayer (){return shadowLayer;}
 
     public void illuminate(Vector2D<Integer> tilePosition, int opacity) {
+
         if(matrixOpacity == null){
             buildMatrix();
         }
+
         try{
             matrixOpacity[tilePosition.x][tilePosition.y] += opacity;
-   
         }catch(java.lang.ArrayIndexOutOfBoundsException e){
             matrixOpacity[tilePosition.x][tilePosition.y] = this.opacity;
         }
@@ -144,5 +145,9 @@ public class ShadowLayer {
                 matrixOpacity[i][j] = opacity;
             }
         }
+    }
+
+    public int getOpacityAt (Vector2D<Integer> tilePosition){
+        return matrixOpacity[tilePosition.x][tilePosition.y];
     }
 }
