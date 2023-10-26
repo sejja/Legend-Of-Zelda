@@ -104,7 +104,7 @@ public class GameLoop extends Thread {
                 try {
                     Thread.sleep((int)(16.66666666666666666666666 - ((System.nanoTime() - now) / 1000000.f)));
                 } catch (Exception e) {
-                    System.out.println("ERROR: yielding thread");
+
                 }
 
                 now = System.nanoTime();

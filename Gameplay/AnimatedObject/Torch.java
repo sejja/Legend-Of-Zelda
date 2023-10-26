@@ -1,6 +1,8 @@
 package Gameplay.AnimatedObject;
 
 import Engine.Assets.AssetManager;
+import Engine.Audio.Audio;
+import Engine.Audio.Sound;
 import Engine.ECSystem.ObjectManager;
 import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Spritesheet;
@@ -59,6 +61,8 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
         animationMachine.setMustComplete(true);
         delay = 8;
         Animate(0);
+        Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/fire.wav"));
+        Audio.Instance().Play(sound);
     }
 
     private void iluminate(){

@@ -3,6 +3,7 @@ package Gameplay.Link;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Random;
 
 import Engine.Assets.Asset;
 import Engine.Assets.AssetManager;
@@ -17,6 +18,9 @@ import Engine.Graphics.Animations.Animation;
 import Engine.Graphics.Animations.AnimationEvent;
 import Engine.Graphics.Components.AnimationMachine;
 import Engine.Graphics.Components.ZeldaCameraComponent;
+import Engine.Graphics.Tile.Block;
+import Engine.Graphics.Tile.ObjectBlock;
+import Engine.Graphics.Tile.TileManager;
 import Engine.Input.InputFunction;
 import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
@@ -85,7 +89,7 @@ public class Player extends Actor {
     private ZeldaCameraComponent mCamera;
     protected BoxCollider mCollider;
     protected BoxCollider hitbox;
-    final private  int damage = 2;
+    final private  int damage = 1;
     private int velocity = 0;
     final int default_velocity = 10;
     private LifeBar lifeBar;
@@ -165,9 +169,21 @@ public class Player extends Actor {
             @Override
             public void Execute() {
                 setVelocity(0);
+                bow = false;
+                Random r = new Random();
+
+                if(!attack) {
+                    if(r.nextBoolean()) {
+                        Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/fighter-sword.wav"));
+                        Audio.Instance().Play(sound);   
+                    } else {
+                        Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/sword-2.wav"));
+                        Audio.Instance().Play(sound);
+                    }
+                }
+
                 stop = true;
                 attack = true;
-                bow = false;
             }
         });
         InputManager.SubscribeReleased(KeyEvent.VK_J, new InputFunction() {
@@ -220,6 +236,8 @@ public class Player extends Actor {
                 if(nbombs >= 0){
                     new Bomb(new Vector2D<Float>(GetPosition().x, GetPosition().y));
                     nbombs--;
+                    Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/lay-bomb.wav"));
+                    Audio.Instance().Play(sound);
                 }else{
                     System.out.println("Bombs run out");}
                 
@@ -487,6 +505,14 @@ public class Player extends Actor {
                 ThreadInmortal thread = new ThreadInmortal(this);
                 thread.start();
                 lifeBar.setHealthPoints(this.healthPoints);
+                Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/link-hurt.wav"));
+                Audio.Instance().Play(sound);
+            
+                if(this.healthPoints <= 2) {
+                    sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/low-hp.wav"));
+                    Audio.Instance().Play(sound);
+                    Audio.Instance().SetLoopCount(sound, -1);
+                }
             }
         }
 
@@ -498,7 +524,11 @@ public class Player extends Actor {
 
         if (type == null){
             mAnimation.setMustComplete(true);
-            if(falling && mCurrentAnimation != FALL || mAnimation.GetAnimation().GetDelay() == -1) {SetAnimation(FALL, mAnimation.GetSpriteSheet().GetSpriteArray(FALL), delay);}//Enviromental special case
+            if(falling && mCurrentAnimation != FALL || mAnimation.GetAnimation().GetDelay() == -1) {
+                SetAnimation(FALL, mAnimation.GetSpriteSheet().GetSpriteArray(FALL), delay);
+                Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/link-fall.wav"));
+                Audio.Instance().Play(sound);
+            }//Enviromental special case
             return;
         }
         int i = type.getID();
@@ -578,6 +608,35 @@ public class Player extends Actor {
                     Audio.Instance().Play(sound);
                 }
             }
+        }
+
+        {
+            switch (direction){
+            case UP:
+                if(!SolveCollisions(new Vector2D<>(0, -10))) {
+                    Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/tink.wav"));
+                    Audio.Instance().Play(sound);
+                }
+                break;
+            case DOWN:
+                if(!SolveCollisions(new Vector2D<>(0, 10))) {
+                    Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/tink.wav"));
+                    Audio.Instance().Play(sound);
+                }
+                break;
+            case LEFT:
+                if(!SolveCollisions(new Vector2D<>(-10, 0))) {
+                    Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/tink.wav"));
+                    Audio.Instance().Play(sound);
+                }
+                break;
+            case RIGHT:
+                if(!SolveCollisions(new Vector2D<>(10, 0))) {
+                    Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/tink.wav"));
+                    Audio.Instance().Play(sound);
+                }
+                break;
+        }
         }
 
     }

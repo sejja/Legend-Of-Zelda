@@ -13,6 +13,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.JLabel;
 
+import Engine.Assets.AssetManager;
+import Engine.Audio.Audio;
+import Engine.Audio.Sound;
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
 import Engine.Graphics.GraphicsPipeline;
@@ -150,12 +153,16 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
     public void nextDialog(){
         if(dialogueWindow.getJ() + 1 <=  this.dialogueArrayList.size()-1){ // Si hay siguiente
             dialogueWindow.setSiguiente();
+            Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/message.wav"));
+            Audio.Instance().Play(sound);
         }else{
             RemoveComponent(dialogueWindow);
             Player link = (Player) ObjectManager.GetObjectManager().GetPawn();
             link.removeInteraction();
             animationMachine.SetFrameTrack(currentDirection);
             Pause();
+            Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/finish.wav"));
+            Audio.Instance().Play(sound);
         }
     }
 
@@ -251,6 +258,8 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
             AddComponent(dialogueWindow);
             dialogueWindow.setJ(0);
             Pause();
+            Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/message.wav"));
+            Audio.Instance().Play(sound);
         }else{
             nextDialog();
         }

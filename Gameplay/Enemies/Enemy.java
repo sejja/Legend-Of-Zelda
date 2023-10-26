@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Stack;
 
 import Engine.Assets.AssetManager;
@@ -164,52 +165,27 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
             return;
         }
 
-        if(chase){
-            switch (direction){
-                case UP:
-                    if(mCurrentAnimation != UP || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), this.delay);
-                    }
-                    break;
-                case DOWN:
-                    if(mCurrentAnimation != DOWN || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(DOWN, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN), this.delay);
-                    }
-                    break;
-                case LEFT:
-                    if(mCurrentAnimation != RIGHT || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(RIGHT, mAnimation.GetSpriteSheet().GetSpriteArray(RIGHT), this.delay);
-                    }
-                    break;
-                case RIGHT:
-                    if(mCurrentAnimation != LEFT || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(LEFT, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT), this.delay);
-                    }
-                    break;
-            }
-        }else{
-            switch (direction){
-                case UP:
-                    if(mCurrentAnimation != UP || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), this.delay);
-                    }
-                    break;
-                case DOWN:
-                    if(mCurrentAnimation != DOWN || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(DOWN, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN), this.delay);
-                    }
-                    break;
-                case LEFT:
-                    if(mCurrentAnimation != RIGHT || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(RIGHT, mAnimation.GetSpriteSheet().GetSpriteArray(RIGHT), this.delay);
-                    }
-                    break;
-                case RIGHT:
-                    if(mCurrentAnimation != LEFT || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(LEFT, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT), this.delay);
-                    }
-                    break;
-            }
+        switch (direction){
+            case UP:
+                if(mCurrentAnimation != UP || mAnimation.GetAnimation().GetDelay() == -1) {
+                    SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), this.delay);
+                }
+                break;
+            case DOWN:
+                if(mCurrentAnimation != DOWN || mAnimation.GetAnimation().GetDelay() == -1) {
+                    SetAnimation(DOWN, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN), this.delay);
+                }
+                break;
+            case LEFT:
+                if(mCurrentAnimation != RIGHT || mAnimation.GetAnimation().GetDelay() == -1) {
+                    SetAnimation(RIGHT, mAnimation.GetSpriteSheet().GetSpriteArray(RIGHT), this.delay);
+                }
+                break;
+            case RIGHT:
+                if(mCurrentAnimation != LEFT || mAnimation.GetAnimation().GetDelay() == -1) {
+                    SetAnimation(LEFT, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT), this.delay);
+                }
+                break;
         }
     }
 
@@ -325,9 +301,6 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     *   Receives the movements in a stack and sets the movement of the Enemy with the A* search
     */ //----------------------------------------------------------------------
     public void move() {
-        if(chase){
-            speed = 3;
-        }
         if(!path.isEmpty()){
             if(!path.isEmpty()){
                 currentDestination = path.peek();
@@ -370,9 +343,16 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
         knockback=true;
         Vector2D<Float> dir = pos.getVectorToAnotherActor(playerPos);
         normalizedDirection=normalize(dir);
-        Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/enemy-hit.wav"));
-        Audio.Instance().Play(sound);
         
+        Random r = new Random();
+
+        if(r.nextBoolean()) {
+            Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/enemy-hit.wav"));
+            Audio.Instance().Play(sound);
+        } else {
+            Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/small-enemy-hit.wav"));
+            Audio.Instance().Play(sound);
+        }
     }
     
     public void knockbackRepeat(){
@@ -420,8 +400,15 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
         Vector2D<Float> dir = pseudoPos.getVectorToAnotherActor(playerPos);
         float distance = dir.getModule();
         if ((distance < 300)){
+            if(!chase) {
+                Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/soldier.wav"));
+                Audio.Instance().Play(sound);
+            }
+
+            chase = true;
             return true;
         }else{
+            chase = false;
             return false;
         }
         
