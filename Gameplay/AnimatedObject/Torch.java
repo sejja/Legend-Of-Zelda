@@ -73,7 +73,20 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
         isIluminating = true;
         Animate(0);
         System.out.println("Sun bless you");
+        addIlumination();
+    }
 
+    private void turnOff(){
+        delay = -1;
+        Animate(1);
+        isIluminating = false;
+        removeIlumination();
+    }
+
+    @Override
+    public Class GetSuperClass(){return Npc.class;}
+
+    private void addIlumination(){
         Vector2D<Integer> tilePosition = this.getPseudoPosition().getTilePosition();
         for (int i = tilePosition.x-radius; i <= tilePosition.x+radius; i++){
             for(int j = tilePosition.y - radius; j <= tilePosition.y+radius; j++){
@@ -86,10 +99,7 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
         }
     }
 
-    private void turnOff(){
-        delay = -1;
-        Animate(1);
-        isIluminating = false;
+    private void removeIlumination(){
         Vector2D<Integer> tilePosition = this.getPseudoPosition().getTilePosition();
         for (int i = tilePosition.x-radius; i <= tilePosition.x+radius; i++){
             for(int j = tilePosition.y - radius; j <= tilePosition.y+radius; j++){
@@ -101,7 +111,4 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
             }
         }
     }
-
-    @Override
-    public Class GetSuperClass(){return Npc.class;}
 }
