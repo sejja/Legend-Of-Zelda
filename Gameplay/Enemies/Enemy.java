@@ -370,6 +370,8 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
         knockback=true;
         Vector2D<Float> dir = pos.getVectorToAnotherActor(playerPos);
         normalizedDirection=normalize(dir);
+        Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/enemy-hit.wav"));
+        Audio.Instance().Play(sound);
         
     }
     

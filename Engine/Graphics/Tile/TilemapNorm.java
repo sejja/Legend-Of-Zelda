@@ -46,9 +46,6 @@ public class TilemapNorm extends Tilemap {
                     transform.concatenate(AffineTransform.getScaleInstance(tilewidth, tileheight));
                     mBlocks[i] = new Normblock(sprite.GetSprite((int) ((temp - 1) % tilecolumns), (int) ((temp - 1) / tilecolumns)), transform);
                 }
-                else
-                    System.out.println("Saving runtime!");
-            
             }
         }
     }
@@ -64,6 +61,6 @@ public class TilemapNorm extends Tilemap {
                 if(i + (j * mHeight) > -1 && i + (j * mHeight) < mBlocks.length && mBlocks[i + (j * mHeight)] != null)
                     mBlocks[i + (j * mHeight)].Render(g, camerapos);
             }
-        }
+         }
     }
 }

@@ -58,8 +58,21 @@ public class TilemapObject extends Tilemap {
         }
     }
 
+    public Block PlaceBlockAt(int x, int y) {
+        if(GetBlockAt(x, y) != null) return GetBlockAt(x, y);
+
+        AffineTransform transform = AffineTransform.getTranslateInstance(x, y);
+        transform.concatenate(AffineTransform.getScaleInstance(0, 0));
+
+        return mBlocks[x + (y * mHeight)] = new ObjectBlock(null, transform);
+    }
+
     public Block GetBlockAt(int x, int y) {
         return mBlocks[x + (y * mHeight)];
+    }
+
+    public void RemoveBlockAt(int x, int y) {
+        mBlocks[x + (y * mHeight)] = null;
     }
 
     public void Render(Graphics2D g, CameraComponent camerapos, Vector2D<Float> tilemappos) {
