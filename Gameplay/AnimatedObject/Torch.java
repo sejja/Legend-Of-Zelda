@@ -1,7 +1,5 @@
 package Gameplay.AnimatedObject;
 
-import Engine.ECSystem.ObjectManager;
-import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Animations.AnimationEvent;
 import Engine.Graphics.Tile.ShadowLayer;
