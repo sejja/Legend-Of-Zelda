@@ -49,7 +49,6 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
     static boolean remove = false;
     
     private static DialogueWindow dialogueWindow;
-    private ArrayList<String> dialogueArrayList;
 
     private AnimationMachine animationMachine;
     private BufferedImage[][] allAnimations;
@@ -77,7 +76,7 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
     * Constructs a NPC with a name, a sprite, a position, a dialog and gives it a size
     */ //----------------------------------------------------------------------
 
-    public Npc(String nameNPC, Spritesheet sprite, Vector2D<Float> position, ArrayList<String> dialogueArrayList, Vector2D<Float> size, int numberStartAnimation, int movement) {
+    public Npc(String nameNPC, Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size, int numberStartAnimation, int movement) {
         super(position);
         this.name = nameNPC;
         
@@ -94,7 +93,6 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
         yInicial = position.y;
 
         SetScale(size);
-        this.dialogueArrayList = dialogueArrayList;
 
         this.setDefaultPseudoPosition();
         setPseudoPositionVisible();
@@ -130,7 +128,6 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
     }
     //______________________________________________________________________________________
     
-    public ArrayList<String> getDialoguesArrayList() {return dialogueArrayList;}
     public static void setInteract(boolean interact1){interact = interact1;}
     public static void setRemove() {remove = true;}
     public String getName() {return name;}
