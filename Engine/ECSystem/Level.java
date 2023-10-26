@@ -57,13 +57,13 @@ public class Level {
         while(mTilemap.entityQueue != null && !mTilemap.entityQueue.isEmpty() ) {
             //System.out.println("Juan");
             var e = mTilemap.entityQueue.poll();
-            System.out.println(e.type+"  "+ firstEntity);
+            //System.out.println(e.type+"  "+ firstEntity);
             if(e.type == firstEntity) {
                 SpawnEntity(new GreenKnight(e.position));
             }else if(e.type == firstEntity+1) {
                 SpawnEntity(new Rock(e.position));
             }else if(e.type == firstEntity+2) {
-                SpawnEntity(new Torch(e.position,false));
+                SpawnEntity(new Torch(e.position));
             }
             
         }
