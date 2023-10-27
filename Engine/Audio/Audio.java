@@ -60,6 +60,9 @@ public class Audio {
         } catch (LineUnavailableException | IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
+        } catch (UnsupportedAudioFileException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         } finally {
             Play(sound);
         }
