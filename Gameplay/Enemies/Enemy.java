@@ -6,6 +6,9 @@ import java.awt.image.BufferedImage;
 import java.beans.VetoableChangeListenerProxy;
 import java.util.ArrayList;
 import java.util.Stack;
+import java.util.Vector;
+
+import Engine.ECSystem.Level;
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
 import Engine.Graphics.GraphicsPipeline;
@@ -53,10 +56,8 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     protected Vector2D<Float> pseudoPos = getPseudoPosition();
     protected Player player = (Player) ObjectManager.GetObjectManager().GetObjectByName(Player.class, "Player");
     protected Vector2D<Float> playerPos = player.getPseudoPosition();
-    protected float xlowerBound;
-    protected float xupperBound;
-    protected float ylowerBound;
-    protected float yupperBound;
+    protected Vector2D<Float> lowerBounds;
+    protected Vector2D<Float> upperBounds;
 
     //stats
     protected int healthPoints = 1;
@@ -229,6 +230,8 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
             getDirection(normalizedDirection);
             animate();
             move();
+        }else{
+            animate();
         }
     }
 
@@ -238,8 +241,8 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     *   Calculates the path to the player if the path is unblocked and is not the same as the last time A* was called
     */ //----------------------------------------------------------------------
     public void pathfinding() {
-        Pair enemyTile = positionToPair(getPseudoPosition());
-        finalDestination = positionToPair(playerPos);
+        Pair enemyTile = positionToPair(Level.GetLevelSpaceCoordinates(getPseudoPosition()));
+        finalDestination = positionToPair(Level.GetLevelSpaceCoordinates(playerPos));
         if(isDestinationChanged() && isDestinationReachable()){
             lastFinalDestination = finalDestination;
             path = aStarSearch.aStarSearch(enemyTile, finalDestination);
@@ -304,30 +307,25 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     *   Receives the movements in a stack and sets the movement of the Enemy with the A* search
     */ //----------------------------------------------------------------------
     public void move() {
-        if(chase){
-            speed = 3;
-        }
         if(!path.isEmpty()){
             if(!path.isEmpty()){
                 currentDestination = path.peek();
             }
             // Margin of error for the movement
-            xlowerBound = currentDestination.getFirst()*64 - 3;
-            xupperBound = currentDestination.getFirst()*64 + 3;
-            ylowerBound = currentDestination.getSecond()*64 - 3;
-            yupperBound = currentDestination.getSecond()*64 + 3;
+            lowerBounds = Level.GetWorldSpaceCoordinates(new Vector2D<Float>((float)((currentDestination.getFirst()*64) - 3), (float)((currentDestination.getSecond()*64) - 3)));
+            upperBounds = Level.GetWorldSpaceCoordinates(new Vector2D<Float>((float)((currentDestination.getFirst()*64) + 3), (float)((currentDestination.getSecond()*64) + 3)));
 
             //If currentDestination reached, pop next destination
-            if(((((xlowerBound <= pseudoPos.x) && (pseudoPos.x <= xupperBound)) && ((ylowerBound <= pseudoPos.y+GetScale().y/2) && (pseudoPos.y+GetScale().y/2 <= yupperBound)))) && (currentDestination != finalDestination) && !path.isEmpty()){
+            if(((((lowerBounds.x <= pseudoPos.x) && (pseudoPos.x <= upperBounds.x)) && ((lowerBounds.y <= pseudoPos.y+GetScale().y/2) && (pseudoPos.y+GetScale().y/2 <= upperBounds.y)))) && (currentDestination != finalDestination) && !path.isEmpty()){
                 path.pop();
                 if(!path.isEmpty()){
                     currentDestination = path.peek();
                 }
-                normalizedDirection = normalize(pseudoPosToDest());
+                normalizedDirection = normalize(Level.GetWorldSpaceCoordinates(pseudoPosToDest()));
                 pos.x += normalizedDirection.x * speed;
                 pos.y += normalizedDirection.y * speed;
             }else{
-                normalizedDirection = normalize(pseudoPosToDest());
+                normalizedDirection = normalize(Level.GetWorldSpaceCoordinates(pseudoPosToDest()));
                 pos.x += normalizedDirection.x * speed;
                 pos.y += normalizedDirection.y * speed;
             }
@@ -409,7 +407,8 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
         Stack<Pair> mPath = (Stack<Pair>)path.clone();
 
         while (!mPath.isEmpty()) {
-            Pair p = mPath.pop();
+            Pair x = mPath.pop();
+            Pair p = Level.GetLevelPair(x);
             g.drawRect(p.getFirst() * 64 - (int)(float)camcoord.x, p.getSecond() * 64 - (int)(float)camcoord.y, 64, 64);
         }
     }

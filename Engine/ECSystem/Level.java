@@ -11,6 +11,7 @@ import Engine.Math.Vector2D;
 import Engine.Physics.AABB;
 import Engine.Window.GameLoop;
 import Gameplay.AnimatedObject.Torch;
+import Gameplay.Enemies.Search.Pair;
 import Gameplay.Enemies.Units.GreenKnight;
 import Gameplay.Interactives.Blocks.Rock;
 import Gameplay.Link.Player;
@@ -49,6 +50,28 @@ public class Level {
             visited = true;
             spawnEntities();
         }
+    }
+
+    public static Vector2D<Float> GetWorldSpaceCoordinates(Vector2D<Float> levelcoordinate) {
+        Vector2D<Float> finalpos = new Vector2D<Float>(levelcoordinate.x,levelcoordinate.y);
+        finalpos.x += mCurrentLevel.GetBounds().GetPosition().x;
+        finalpos.y += mCurrentLevel.GetBounds().GetPosition().y;
+        return finalpos;
+    }
+
+    public static Vector2D<Float> GetLevelSpaceCoordinates(Vector2D<Float> worldcoordinate) {
+        Vector2D<Float> finalpos = new Vector2D<Float>(worldcoordinate.x,worldcoordinate.y);
+        finalpos.x -= mCurrentLevel.GetBounds().GetPosition().x;
+        finalpos.y -= mCurrentLevel.GetBounds().GetPosition().y;
+        return finalpos;
+    }
+
+    public static Pair GetLevelPair(Pair pair) {
+        int x= pair.getFirst();
+        int y= pair.getSecond();
+        x += mCurrentLevel.GetBounds().GetPosition().x/64;
+        y += mCurrentLevel.GetBounds().GetPosition().y/64;
+        return new Pair(x,y);
     }
 
     private void spawnEntities() {
