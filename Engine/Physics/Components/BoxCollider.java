@@ -32,8 +32,8 @@ public class BoxCollider extends Component implements Renderable{
 
     private AABB mBounds;
     private boolean hasCollision;
-
     private Color color = Color.BLUE;
+    private Vector2D<Float> size;
     // ------------------------------------------------------------------------
     /*! Conversion Constructor
     *
@@ -139,4 +139,13 @@ public class BoxCollider extends Component implements Renderable{
        g.drawRect((int)(float)(mBounds.GetPosition().x - campos.x), (int)(float)(mBounds.GetPosition().y - campos.y), (int)mBounds.GetWidth(), (int)mBounds.GetHeight());
     }
 
+    public void disable(){
+        size = mBounds.GetScale();
+        mBounds.SetSize(new Vector2D<>(0f,0f));
+    }
+
+    public void enable(){
+        if(size == null){System.out.println("AlreadyEnabled");}
+        else{this.mBounds.SetSize(size);}
+    }
 }

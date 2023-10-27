@@ -33,6 +33,7 @@ public class Arrow extends Actor{
     private DIRECTION direction;
     private BoxCollider hitbox;
     private boolean endArrow;
+    private boolean fixed;
 
     public Arrow(Player Link){
         super(new Vector2D<Float>(Link.GetPosition().x + 28, Link.GetPosition().y + 45));
@@ -69,6 +70,9 @@ public class Arrow extends Actor{
         if (fixed)
         {
             SetPosition(Link.GetPosition());
+            //Link.getHitbox().disable();
+            this.fixed = fixed;
+            Link.setVelocity(0);
         }
         else
         {
@@ -130,6 +134,7 @@ public class Arrow extends Actor{
         if( endArrow ){
             despawn();
         }
+        if(fixed){((Player)ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0)).setVelocity(0);}
         Attack();
         pseudoPositionUpdate();
         hitbox.Update();
@@ -159,25 +164,32 @@ public class Arrow extends Actor{
         Player link = ((Player)ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0));
         ArrayList<Actor> rocks;
         if(!(rocks = ColliderManager.GetColliderManager().getCollision(hitbox, Interactive.class, true)).isEmpty()){
+            int distance = (int) (speed+link.getVelocity());
             switch(direction){
                 case UP:
-                    this.SetPosition(new Vector2D<Float>(GetPosition().x, GetPosition().y+(speed+link.getVelocity())));
+                    this.SetPosition(new Vector2D<Float>(GetPosition().x, GetPosition().y+distance));
                     despawn();
                     break;
                 case DOWN:
-                    this.SetPosition(new Vector2D<Float>(GetPosition().x, GetPosition().y-(speed+link.getVelocity())));
+                    this.SetPosition(new Vector2D<Float>(GetPosition().x, GetPosition().y-distance));
                     despawn();
                     break;
                 case LEFT:
-                    this.SetPosition(new Vector2D<Float>(GetPosition().x+(speed+link.getVelocity()), GetPosition().y));
+                    this.SetPosition(new Vector2D<Float>(GetPosition().x+distance, GetPosition().y));
                     despawn();
                     break;
                 case RIGHT:
-                    this.SetPosition(new Vector2D<Float>(GetPosition().x-(speed+link.getVelocity()), GetPosition().y));
+                    this.SetPosition(new Vector2D<Float>(GetPosition().x-distance, GetPosition().y));
                     despawn();
                     break;
             }
         }
+    }
+
+    @Override
+    protected void despawn() {
+        super.despawn();
+        if(fixed){((Player)ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0)).setVelocity(10);;}
     }
 
     @Override 
