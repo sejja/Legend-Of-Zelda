@@ -156,7 +156,7 @@ public class Arrow extends Actor{
             else{despawn();}
         }
         
-        Player link = ((Player)ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).getFirst());
+        Player link = ((Player)ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0));
         ArrayList<Actor> rocks;
         if(!(rocks = ColliderManager.GetColliderManager().getCollision(hitbox, Interactive.class, true)).isEmpty()){
             switch(direction){
