@@ -1,10 +1,10 @@
 Aelarion
-En un mundo muy lejano, vivia una princesa que buscaba a su principe, y para logralo, llamo a todos los principes del reino ademas deberas buscar todos los artefactos de las piedras para recuperar el poder de hyrule
-Ahora embarcate en una nueva aventura junto a tu espada y tu arco
-
+Buenas, mi nombre es Aelarion el Conocedor de las Estrellas, y hace tiempo llevo investigando tus aventuras, y por ello necesito pedirte un favor 
+Existen varias  piedras repartidas por este mundo, asi que necesito que vayas a buscarlas para recuperar el poder de la Trifuerza\
+Cuando las tengas vuelve al palacio y entregaselas al herrero, Durin, el Forjador de Leyendas\
 
 Juan
-Muy buenas caballero, mi nombre es Juan, y estoy aqui protegiendo la puerta de acceso al palacio
-A si que abandona este lugar por favor
+Buenas caballero, mi nombre es Juan, y vengo a mostrarte los controles para poder moverte por este mundo!
+Para empezar puedes moverte con las teclas {WASD|, usar la espada con la {J|, el arco con la {K|, el dash con la tecla {Shift|\\\ Y muchas otras habilidades que aprenderas por el camino!
 
 Fin

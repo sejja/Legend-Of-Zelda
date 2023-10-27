@@ -1,45 +1,17 @@
 package Gameplay.NPC;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Stack;
-import java.util.Vector;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import javax.swing.JLabel;
 
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
-import Engine.ECSystem.Types.Entity;
-import Engine.Graphics.GraphicsPipeline;
-import Engine.Graphics.Sprite;
 import Engine.Graphics.Spritesheet;
-import Engine.Graphics.Animations.Animation;
 import Engine.Graphics.Components.AnimationMachine;
-import Engine.Graphics.Components.CameraComponent;
-import Engine.Graphics.Components.Renderable;
-import Engine.Graphics.Components.SpriteComponent;
-import Engine.Graphics.Objects.FontObject;
-import Engine.Graphics.Tile.TileManager;
-import Engine.Graphics.Tile.Tilemap;
-import Engine.Input.InputFunction;
-import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
 import Engine.Physics.StaticPlayerCollision;
 import Engine.Physics.Components.BoxCollider;
-import Engine.Physics.Components.ColliderManager;
 import Engine.Window.GameLoop;
 import Gameplay.Interaction;
-import Gameplay.Enemies.Search.Pair;
-import Gameplay.Interactives.Interactive;
-import Gameplay.Link.*;
 import Gameplay.Link.Player;
-import Gameplay.States.PlayState;
 
 
 public class Npc extends Actor implements StaticPlayerCollision, Interaction{
@@ -53,11 +25,12 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
     private AnimationMachine animationMachine;
     private BufferedImage[][] allAnimations;
 
-    private final int speed = 1;
+    private final int speed = 2;
     private int direction;
     private int currentDirection;
     private float xInicial;
     private float yInicial;
+
 
     private final int DOWN = 0;
     private final int LEFT = 1;
@@ -66,6 +39,7 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
 
     private int typeOfMovement;
 
+    //Type of movement
     private final int squareMovement = 4;
     private final int xLineMovement = 5;
     private final int yLineMovement = 6;
@@ -84,7 +58,7 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
         setSetopAnimationSet(allAnimations, allAnimations[0].length);
         animationMachine = AddComponent(new AnimationMachine(this, sprite));
         animationMachine.SetFrames(allAnimations[numberStartAnimation]); //La diferencia entre correr a una direction y parase en la misma es un + 4
-        animationMachine.GetAnimation().SetDelay(40);
+        animationMachine.GetAnimation().SetDelay(15);
 
         typeOfMovement = movement;
 
@@ -99,8 +73,7 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
         hitbox = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<Float>(50f,50f), true));
         
         dialogueWindow = new DialogueWindow(this);
-        ObjectManager.GetObjectManager().AddEntity(this);
-
+        
     }
 
     public void Update() {
@@ -143,18 +116,6 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
             animationMachine.SetFrames(allAnimations[UP]);
         } else if(player.getPseudoPosition().y > this.getPseudoPosition().y && (Math.abs(vector.x) < Math.abs(vector.y))){
             animationMachine.SetFrames(allAnimations[DOWN]);
-        }
-    }
-
-    public void nextDialog(){
-        if(dialogueWindow.getJ() + 1 <=  dialogueWindow.getDialogue().size()-1){ // Si hay siguiente
-            dialogueWindow.setSiguiente();
-        }else{
-            RemoveComponent(dialogueWindow);
-            Player link = (Player) ObjectManager.GetObjectManager().GetPawn();
-            link.removeInteraction();
-            animationMachine.SetFrames(allAnimations[currentDirection]);
-            Pause();
         }
     }
 
@@ -251,6 +212,18 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
             Pause();
         }else{
             nextDialog();
+        }
+    }
+
+    public void nextDialog(){
+        if(dialogueWindow.getJ() + 1 <=  dialogueWindow.getDialogue().size()-1){ // Si hay siguiente
+            dialogueWindow.setSiguiente();
+        }else{
+            RemoveComponent(dialogueWindow);
+            Player link = (Player) ObjectManager.GetObjectManager().GetPawn();
+            link.removeInteraction();
+            animationMachine.SetFrames(allAnimations[currentDirection]);
+            Pause();
         }
     }
 }
