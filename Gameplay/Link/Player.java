@@ -72,7 +72,7 @@ public class Player extends Actor {
      */
     private static int nArrows = 10;
     private static int nbombs = 3;
-    private static int dashCooldawn = 120;
+    private static int dashCooldawn = 30;
     //----------------------------------------------------------------------
 
     /* Player Stats
@@ -85,7 +85,7 @@ public class Player extends Actor {
     protected BoxCollider terrainCollider;
     public BoxCollider seeker;
 
-    final int dashDelay = 120;
+    final int dashDelay = 30;
     final private  int damage = 999;
     private int velocity = 0;
     final int default_velocity = 10;
@@ -209,7 +209,7 @@ public class Player extends Actor {
         InputManager.SubscribeReleased(KeyEvent.VK_SHIFT, new InputFunction() {
             @Override
             public void Execute() {
-                if (dashCooldawn == dashDelay){
+                if (dashCooldawn >= dashDelay){
                     dash = true;
                     able_to_takeDamage = false;
                 }

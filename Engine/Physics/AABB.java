@@ -71,6 +71,9 @@ public class AABB {
         mSize = size;
     }
 
+    public void SetSize(Vector2D<Float> size){
+        this.mSize = size;
+    }
     // ------------------------------------------------------------------------
     /*! Set WIdth
     *
