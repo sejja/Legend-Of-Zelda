@@ -376,7 +376,7 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     private boolean vision(){
         Vector2D<Float> dir = pseudoPos.getVectorToAnotherActor(playerPos);
         float distance = dir.getModule();
-        if ((distance < 300)){
+        if ((distance < 700)){
             if(!chase) {
                 Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/soldier.wav"));
                 Audio.Instance().Play(sound);

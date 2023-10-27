@@ -54,7 +54,7 @@ public class GraphicsPipeline {
         mDimensions = new Vector2D<>(0, 0);
         mRenderables = new ArrayList<>();
         mCamera = null;
-        shadowLayer = new ShadowLayer(255);
+        shadowLayer = new ShadowLayer(230);
     }
 
     public void BindCamera(CameraComponent c) {
