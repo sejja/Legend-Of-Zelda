@@ -11,6 +11,7 @@ package Engine.Graphics.Tile;
 import java.awt.Graphics2D;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Queue;
 import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -33,10 +34,12 @@ import Engine.Physics.AABB;
 
 public class TileManager extends ECObject implements Renderable {
     public ArrayList<Tilemap>  mLayers;
+    public Queue<parseEntity> entityQueue;
     private String mPath;
     private Vector2D<Float> mPosition;
     private AABB mBounds;
     public static TilemapObject sLevelObjects;
+    public int firstEntity;
 
     // ------------------------------------------------------------------------
     /*! Default Constructor
@@ -84,8 +87,14 @@ public class TileManager extends ECObject implements Renderable {
             NodeList list = doc.getElementsByTagName("tileset");
             Node node = list.item(0);
             NodeList tilesetnode = doc.getElementsByTagName("tileset");
+
             Element eElement = (Element) node;
             Element elementnode = (Element) tilesetnode.item(0);
+
+            Node entityNode = list.item(1);
+
+            // We get the first number for the entities
+            firstEntity=Integer.parseInt(((Element)entityNode).getAttribute("firstgid"));
 
             Document aux = builder.parse(new File(getClass().getClassLoader().getResource("Content/TiledProject/" + elementnode.getAttribute("source")).toURI()));
             aux.getDocumentElement().normalize();
@@ -116,9 +125,15 @@ public class TileManager extends ECObject implements Renderable {
 
                 data[i] = eElement.getElementsByTagName("data").item(0).getTextContent();
 
-                if(!eElement.getAttribute("name").equals("colision")) {
+                //System.out.println(eElement.getAttribute("name"));
+                if(eElement.getAttribute("name").equals("entities")){
+                    entityQueue= new TilemapEntities(mPosition, data[i], sprite, width, height, blockwith, blockheigh, tileColumns).entityQueue;
+                    //System.out.println(entityQueue);
+
+                }else if(!eElement.getAttribute("name").equals("colision")) {
                     mLayers.add(new TilemapNorm(mPosition, data[i], sprite, width, height, blockwith, blockheigh, tileColumns));
-                } else {
+
+                }else {
                     mLayers.add(new TilemapObject(mPosition, data[i], sprite, width, height, blockwith, blockheigh, tileColumns));
                     sLevelObjects = (TilemapObject)mLayers.get(mLayers.size() - 1);
                 }

@@ -32,8 +32,8 @@ public class BoxCollider extends Component implements Renderable{
 
     private AABB mBounds;
     private boolean hasCollision;
-
     private Color color = Color.BLUE;
+    private Vector2D<Float> size;
     // ------------------------------------------------------------------------
     /*! Conversion Constructor
     *
@@ -63,6 +63,11 @@ public class BoxCollider extends Component implements Renderable{
         }
         this.hasCollision = hasCollision;
         ColliderManager.GetColliderManager().addCollider(this, hasCollision);
+    }
+
+    public BoxCollider(Actor parent, Vector2D<Float> position, int seeker){ //This construct will bild a Hitbox
+        super(parent);
+        mBounds = new AABB(position, new Vector2D<Float>(64f, 64f));
     }
 
     public void setHitboxScale(Vector2D <Float> scale){
@@ -120,6 +125,10 @@ public class BoxCollider extends Component implements Renderable{
         return mBounds;
     }
 
+    public void setPosition(Vector2D<Float> position){
+        this.mBounds.SetPosition(position);
+    }
+
     public void setColor (Color color ){
         this.color = color;
     }
@@ -127,7 +136,16 @@ public class BoxCollider extends Component implements Renderable{
     public void Render(Graphics2D g, CameraComponent camerapos) {
         var campos = camerapos.GetCoordinates();
        g.setColor(color);
-       //g.drawRect((int)(float)(mBounds.GetPosition().x - campos.x), (int)(float)(mBounds.GetPosition().y - campos.y), (int)mBounds.GetWidth(), (int)mBounds.GetHeight());
+       g.drawRect((int)(float)(mBounds.GetPosition().x - campos.x), (int)(float)(mBounds.GetPosition().y - campos.y), (int)mBounds.GetWidth(), (int)mBounds.GetHeight());
     }
 
+    public void disable(){
+        size = mBounds.GetScale();
+        mBounds.SetSize(new Vector2D<>(0f,0f));
+    }
+
+    public void enable(){
+        if(size == null){System.out.println("AlreadyEnabled");}
+        else{this.mBounds.SetSize(size);}
+    }
 }

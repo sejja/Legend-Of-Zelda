@@ -3,25 +3,33 @@ package Engine.ECSystem;
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Entity;
 import Engine.Graphics.GraphicsPipeline;
+import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.ZeldaCameraComponent;
 import Engine.Graphics.Tile.TileManager;
 import Engine.Math.Util;
 import Engine.Math.Vector2D;
 import Engine.Physics.AABB;
 import Engine.Window.GameLoop;
+import Gameplay.AnimatedObject.Torch;
+import Gameplay.Enemies.Search.Pair;
+import Gameplay.Enemies.Units.GreenKnight;
+import Gameplay.Interactives.Blocks.Rock;
+import Gameplay.Link.Player;
 
 public class Level {
     private Level mRight;
     private Level mLeft;
     private Level mUpper;
     private Level mLower;
-    private TileManager mTilemap;
+    public TileManager mTilemap;
     static public Level mCurrentLevel = null;
     static private boolean sTransitioning = false;
     static private Vector2D<Float> sPreviousTopRight;
     static private Vector2D<Float> sPreviousBottomLeft;
     static private float sElapsedTime = 0;
     static private Level sPreviusLevel;
+    
+    private boolean visited = false;
 
     protected Level(Level right, Level left, Level up, Level down, TileManager tiles) {
         mRight = right;
@@ -36,8 +44,52 @@ public class Level {
     }
 
     public void Init(Vector2D<Float> position) {
-        mTilemap.CreateTileMap(64, 64, position);
         mCurrentLevel = this;
+        mTilemap.CreateTileMap(64, 64, position);
+        if(!visited) {
+            visited = true;
+            spawnEntities();
+        }
+    }
+
+    public static Vector2D<Float> GetWorldSpaceCoordinates(Vector2D<Float> levelcoordinate) {
+        Vector2D<Float> finalpos = new Vector2D<Float>(levelcoordinate.x,levelcoordinate.y);
+        finalpos.x += mCurrentLevel.GetBounds().GetPosition().x;
+        finalpos.y += mCurrentLevel.GetBounds().GetPosition().y;
+        return finalpos;
+    }
+
+    public static Vector2D<Float> GetLevelSpaceCoordinates(Vector2D<Float> worldcoordinate) {
+        Vector2D<Float> finalpos = new Vector2D<Float>(worldcoordinate.x,worldcoordinate.y);
+        finalpos.x -= mCurrentLevel.GetBounds().GetPosition().x;
+        finalpos.y -= mCurrentLevel.GetBounds().GetPosition().y;
+        return finalpos;
+    }
+
+    public static Pair GetLevelPair(Pair pair) {
+        int x= pair.getFirst();
+        int y= pair.getSecond();
+        x += mCurrentLevel.GetBounds().GetPosition().x/64;
+        y += mCurrentLevel.GetBounds().GetPosition().y/64;
+        return new Pair(x,y);
+    }
+
+    private void spawnEntities() {
+        //System.out.println(mTilemap.entityQueue);
+        int firstEntity = mTilemap.firstEntity;
+        while(mTilemap.entityQueue != null && !mTilemap.entityQueue.isEmpty() ) {
+            //System.out.println("Juan");
+            var e = mTilemap.entityQueue.poll();
+            //System.out.println(e.type+"  "+ firstEntity);
+            if(e.type == firstEntity) {
+                SpawnEntity(new GreenKnight(e.position));
+            }else if(e.type == firstEntity+1) {
+                SpawnEntity(new Rock(e.position));
+            }else if(e.type == firstEntity+2) {
+                SpawnEntity(new Torch(e.position));
+            }
+            
+        }
     }
 
     public void Update() {
@@ -167,8 +219,8 @@ public class Level {
         mLeft = l;
     }
 
-    protected void SpawnEntity(Entity e) {
-        Vector2D<Float> finalpos = new Vector2D<>(e.GetPosition());
+    public void SpawnEntity(Entity e) {
+        Vector2D<Float> finalpos = new Vector2D<Float>(e.GetPosition().x,e.GetPosition().y);
         finalpos.x += GetBounds().GetPosition().x;
         finalpos.y += GetBounds().GetPosition().y;
         e.SetPosition(finalpos);

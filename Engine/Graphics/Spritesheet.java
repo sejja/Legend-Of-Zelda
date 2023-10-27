@@ -185,7 +185,6 @@ public class Spritesheet {
 
         //For every image
         for(int i = 0; i < img.size(); i++) {
-
             //If the image is not null
             if(img.get(i) != null) {
                 g.drawImage(img.get(i), (int)x, (int)y, width, height, null);

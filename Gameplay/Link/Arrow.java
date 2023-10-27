@@ -31,12 +31,13 @@ public class Arrow extends Actor{
     
     private int damage = 2;
     private AnimationMachine animationMachine;
-    private float speed = 18;
+    private float speed = 15;
     private float range = 350;
     private Float distance = 0f;
     private DIRECTION direction;
     private BoxCollider hitbox;
     private boolean endArrow;
+    private boolean fixed;
 
     public Arrow(Player Link){
         super(new Vector2D<Float>(Link.GetPosition().x + 28, Link.GetPosition().y + 45));
@@ -63,7 +64,7 @@ public class Arrow extends Actor{
     public Arrow (Player Link, Spritesheet spritesheet, float speed, float range, boolean fixed){ //This is actually a dash XD
         super(Link.GetPosition());
         //link = Link;
-
+        //Link.setVelocity(0);
         this.speed = speed;
         this.range = range;
         this.damage = 0;
@@ -74,14 +75,17 @@ public class Arrow extends Actor{
         if (fixed)
         {
             SetPosition(Link.GetPosition());
+            //Link.getHitbox().disable();
+            this.fixed = fixed;
+            Link.setVelocity(0);
         }
         else
         {
-        SetPosition(new Vector2D<Float>(Link.GetPosition().x, Link.GetPosition().y));
+            SetPosition(new Vector2D<Float>(Link.GetPosition().x, Link.GetPosition().y));
         }
         SetScale(new Vector2D<Float>(100f,100f));
         animationMachine.GetAnimation().SetDelay(1);
-        hitbox = (BoxCollider)AddComponent(new BoxCollider(this));
+        hitbox = Link.getHitbox();
         Animate();
 
         setPseudoPosition(GetScale().x/2, GetScale().y/2);
@@ -148,8 +152,7 @@ public class Arrow extends Actor{
         Move();
         if (!(distance >= range)){
             Animate();
-        }else{ //Delete arrow
-            //System.out.println("Eliminado flecha");
+        }else{
             despawn();
         }
         if( endArrow ){
@@ -157,6 +160,7 @@ public class Arrow extends Actor{
             WallSound();
             despawn();
         }
+        if(fixed){((Player)ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0)).setVelocity(0);}
         Attack();
         pseudoPositionUpdate();
         hitbox.Update();
@@ -182,6 +186,36 @@ public class Arrow extends Actor{
             if (damage ==0 ){return;}
             else{despawn();}
         }
+        
+        Player link = ((Player)ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0));
+        ArrayList<Actor> rocks;
+        if(!(rocks = ColliderManager.GetColliderManager().getCollision(hitbox, Interactive.class, true)).isEmpty()){
+            int distance = (int) (speed+link.getVelocity());
+            switch(direction){
+                case UP:
+                    this.SetPosition(new Vector2D<Float>(GetPosition().x, GetPosition().y+distance));
+                    despawn();
+                    break;
+                case DOWN:
+                    this.SetPosition(new Vector2D<Float>(GetPosition().x, GetPosition().y-distance));
+                    despawn();
+                    break;
+                case LEFT:
+                    this.SetPosition(new Vector2D<Float>(GetPosition().x+distance, GetPosition().y));
+                    despawn();
+                    break;
+                case RIGHT:
+                    this.SetPosition(new Vector2D<Float>(GetPosition().x-distance, GetPosition().y));
+                    despawn();
+                    break;
+            }
+        }
+    }
+
+    @Override
+    protected void despawn() {
+        super.despawn();
+        if(fixed){((Player)ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0)).setVelocity(10);;}
     }
 
     @Override 

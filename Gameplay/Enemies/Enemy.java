@@ -3,17 +3,16 @@ package Gameplay.Enemies;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.Random;
 import java.util.Stack;
 
 import Engine.Assets.AssetManager;
 import Engine.Audio.Audio;
 import Engine.Audio.Sound;
+
+import Engine.ECSystem.Level;
 import Engine.ECSystem.ObjectManager;
-import Engine.ECSystem.Types.Actor;
 import Engine.Graphics.GraphicsPipeline;
-import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Animations.Animation;
 import Engine.Graphics.Components.AnimationMachine;
 import Engine.Graphics.Components.CameraComponent;
@@ -24,8 +23,6 @@ import Engine.Physics.Components.ColliderManager;
 import Gameplay.AnimatedObject.DeadAnimation;
 import Gameplay.Enemies.Search.*;
 import Gameplay.LifeBar.LifeBar;
-import Gameplay.Link.DirectionObject;
-import Gameplay.Link.Arrow;
 import Gameplay.Link.DIRECTION;
 import Gameplay.Link.Player;
 
@@ -57,10 +54,8 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     protected Vector2D<Float> pseudoPos = getPseudoPosition();
     protected Player player = (Player) ObjectManager.GetObjectManager().GetObjectByName(Player.class, "Player");
     protected Vector2D<Float> playerPos = player.getPseudoPosition();
-    protected float xlowerBound;
-    protected float xupperBound;
-    protected float ylowerBound;
-    protected float yupperBound;
+    protected Vector2D<Float> lowerBounds;
+    protected Vector2D<Float> upperBounds;
 
     //stats
     protected int healthPoints = 1;
@@ -130,24 +125,6 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
                 this.direction=DIRECTION.UP;
             }
         }
-    }
-
-    public DIRECTION getDirection(Vector2D<Float> vector, boolean patata) {
-        DIRECTION dir;
-        if (Math.abs(vector.x) > Math.abs(vector.y)) {
-            if (vector.x < 0) {
-                dir=DIRECTION.RIGHT;
-            } else {
-                dir=DIRECTION.LEFT;
-            }
-        } else {
-            if (vector.y < 0) {
-                dir=DIRECTION.DOWN;
-            } else {
-                dir=DIRECTION.UP;
-            }
-        }
-        return dir;
     }
 
     // ------------------------------------------------------------------------
@@ -226,6 +203,8 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
             getDirection(normalizedDirection);
             animate();
             move();
+        }else{
+            animate();
         }
     }
 
@@ -235,8 +214,8 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     *   Calculates the path to the player if the path is unblocked and is not the same as the last time A* was called
     */ //----------------------------------------------------------------------
     public void pathfinding() {
-        Pair enemyTile = positionToPair(getPseudoPosition());
-        finalDestination = positionToPair(playerPos);
+        Pair enemyTile = positionToPair(Level.GetLevelSpaceCoordinates(getPseudoPosition()));
+        finalDestination = positionToPair(Level.GetLevelSpaceCoordinates(playerPos));
         if(isDestinationChanged() && isDestinationReachable()){
             lastFinalDestination = finalDestination;
             path = aStarSearch.aStarSearch(enemyTile, finalDestination);
@@ -306,22 +285,20 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
                 currentDestination = path.peek();
             }
             // Margin of error for the movement
-            xlowerBound = currentDestination.getFirst()*64 - 3;
-            xupperBound = currentDestination.getFirst()*64 + 3;
-            ylowerBound = currentDestination.getSecond()*64 - 3;
-            yupperBound = currentDestination.getSecond()*64 + 3;
+            lowerBounds = Level.GetWorldSpaceCoordinates(new Vector2D<Float>((float)((currentDestination.getFirst()*64) - 3), (float)((currentDestination.getSecond()*64) - 3)));
+            upperBounds = Level.GetWorldSpaceCoordinates(new Vector2D<Float>((float)((currentDestination.getFirst()*64) + 3), (float)((currentDestination.getSecond()*64) + 3)));
 
             //If currentDestination reached, pop next destination
-            if(((((xlowerBound <= pseudoPos.x) && (pseudoPos.x <= xupperBound)) && ((ylowerBound <= pseudoPos.y+GetScale().y/2) && (pseudoPos.y+GetScale().y/2 <= yupperBound)))) && (currentDestination != finalDestination) && !path.isEmpty()){
+            if(((((lowerBounds.x <= pseudoPos.x) && (pseudoPos.x <= upperBounds.x)) && ((lowerBounds.y <= pseudoPos.y+GetScale().y/2) && (pseudoPos.y+GetScale().y/2 <= upperBounds.y)))) && (currentDestination != finalDestination) && !path.isEmpty()){
                 path.pop();
                 if(!path.isEmpty()){
                     currentDestination = path.peek();
                 }
-                normalizedDirection = normalize(pseudoPosToDest());
+                normalizedDirection = normalize(Level.GetWorldSpaceCoordinates(pseudoPosToDest()));
                 pos.x += normalizedDirection.x * speed;
                 pos.y += normalizedDirection.y * speed;
             }else{
-                normalizedDirection = normalize(pseudoPosToDest());
+                normalizedDirection = normalize(Level.GetWorldSpaceCoordinates(pseudoPosToDest()));
                 pos.x += normalizedDirection.x * speed;
                 pos.y += normalizedDirection.y * speed;
             }
@@ -382,15 +359,15 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     public void setHealthPoints(int damage){
         this.healthPoints -= damage;
         if (healthPoints <= 0){
-            mCollision.ShutDown();
             die();
-            path.clear();
         }
         //______________________
         //______________________
     }
 
     private void die() {
+        mCollision.ShutDown();
+        path.clear();
         DeadAnimation deadAnimation = new DeadAnimation(this);
         Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/enemy-death.wav"));
         Audio.Instance().Play(sound);
@@ -421,7 +398,8 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
         Stack<Pair> mPath = (Stack<Pair>)path.clone();
 
         while (!mPath.isEmpty()) {
-            Pair p = mPath.pop();
+            Pair x = mPath.pop();
+            Pair p = Level.GetLevelPair(x);
             g.drawRect(p.getFirst() * 64 - (int)(float)camcoord.x, p.getSecond() * 64 - (int)(float)camcoord.y, 64, 64);
         }
     }
@@ -456,9 +434,7 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     }
 
     public void attack(){
-        ArrayList<Actor> players = ColliderManager.GetColliderManager().getCollision(mCollision, Player.class, true);
-        if(!players.isEmpty()){
-            Player player = (Player)players.get(0);
+        if(ColliderManager.GetColliderManager().playerCollision(mCollision)){
             player.setDamage(damage);
         }
     }
