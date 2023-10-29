@@ -3,6 +3,7 @@ package Gameplay.AnimatedObject;
 import Engine.Assets.AssetManager;
 import Engine.Audio.Audio;
 import Engine.Audio.Sound;
+import Engine.ECSystem.Level;
 import Engine.ECSystem.ObjectManager;
 import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Spritesheet;
@@ -128,5 +129,10 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
         final double coeficient = ShadowLayer.getShadowLayer().opacity;
         double difference = Math.round( (-( ( coeficient*distance ) / radius ) + coeficient)); //Esos espacios NO SE TOCA <-----------------------------------------
         return (int) difference;
+    }
+
+    @Override
+    public Vector2D<Float> getPseudoPosition(){
+        return Level.GetLevelSpaceCoordinates(super.getPseudoPosition());
     }
 }

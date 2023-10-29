@@ -150,6 +150,7 @@ public class Arrow extends Actor{
     public void Update() {
         super.Update();
         Move();
+        if(fixed){((Player)ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0)).setVelocity(0);}
         if (!(distance >= range)){
             Animate();
         }else{
@@ -160,7 +161,6 @@ public class Arrow extends Actor{
             WallSound();
             despawn();
         }
-        if(fixed){((Player)ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0)).setVelocity(0);}
         Attack();
         pseudoPositionUpdate();
         hitbox.Update();
@@ -214,8 +214,11 @@ public class Arrow extends Actor{
 
     @Override
     protected void despawn() {
+        if(fixed){
+            ((Player)ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0)).setVelocity(10);
+            System.out.println("Patata");
+        }
         super.despawn();
-        if(fixed){((Player)ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0)).setVelocity(10);;}
     }
 
     @Override 
