@@ -352,6 +352,7 @@ public class Player extends Actor {
         pseudoPositionUpdate();
         hitbox.Update();
         terrainColliderUpdate();
+        System.out.println("Player Position: 0" + this.GetPosition());
         //System.out.println(GetPosition());
 //SE VE GENIAL, SI QUIERES, MERGEO CON AUDIO PARA LOS FPSs
     }
