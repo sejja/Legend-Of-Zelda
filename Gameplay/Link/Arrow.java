@@ -126,6 +126,7 @@ public class Arrow extends Actor{
     public void Update() {
         super.Update();
         Move();
+        if(fixed){((Player)ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0)).setVelocity(0);}
         if (!(distance >= range)){
             Animate();
         }else{
@@ -134,7 +135,6 @@ public class Arrow extends Actor{
         if( endArrow ){
             despawn();
         }
-        if(fixed){((Player)ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0)).setVelocity(0);}
         Attack();
         pseudoPositionUpdate();
         hitbox.Update();
