@@ -150,14 +150,12 @@ public class Arrow extends Actor{
     public void Update() {
         super.Update();
         Move();
-        if(fixed){((Player)ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0)).setVelocity(0);}
         if (!(distance >= range)){
             Animate();
         }else{
             despawn();
         }
         if( endArrow ){
-            //System.out.println("Eliminado flecha");
             WallSound();
             despawn();
         }
@@ -214,10 +212,6 @@ public class Arrow extends Actor{
 
     @Override
     protected void despawn() {
-        if(fixed){
-            ((Player)ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0)).setVelocity(10);
-            //System.out.println("Patata");
-        }
         super.despawn();
     }
 

@@ -78,7 +78,7 @@ public class ShadowLayer {
      */
     private Vector2D<Integer> getDrawPointPosition(CameraComponent mCamera){
         Player link = (Player)ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0);
-        Vector2D<Integer> blockPosition = link.getPseudoPosition().getTilePosition();
+        Vector2D<Integer> blockPosition = Level.GetLevelSpaceCoordinates(link.getPseudoPosition()).getTilePosition();
         int gapX = mCamera.GetDimensions().x/(2*64);
         int gapY = mCamera.GetDimensions().x/(2*64);
 

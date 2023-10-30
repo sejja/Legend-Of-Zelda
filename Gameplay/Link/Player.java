@@ -167,7 +167,7 @@ public class Player extends Actor {
         });
         InputManager.SubscribePressed(KeyEvent.VK_A, new InputFunction() {
             @Override
-            public void Execute() {activateAction(LEFT);}
+            public void Execute() {activateAction(LEFT);System.out.println("hola");}
         });
         InputManager.SubscribePressed(KeyEvent.VK_D, new InputFunction() {
             @Override
@@ -353,7 +353,7 @@ public class Player extends Actor {
         hitbox.Update();
         terrainColliderUpdate();
         //System.out.println("Player Position: " + this.getPseudoPosition());
-        //System.out.println(velocity);
+        System.out.println(velocity);
         //System.out.println(GetPosition());
 //SE VE GENIAL, SI QUIERES, MERGEO CON AUDIO PARA LOS FPSs
     }
@@ -469,25 +469,24 @@ public class Player extends Actor {
             switch(action){
                 case(0):
                     this.direction = DIRECTION.RIGHT;
-                    setVelocity(default_velocity);
                     break;
                 case(1):
                     this.direction = DIRECTION.LEFT;
-                    setVelocity(default_velocity);
                     break;
                 case(2):
                     this.direction = DIRECTION.DOWN;
-                    setVelocity(default_velocity);
                     break;
                 case(3):
                     this.direction = DIRECTION.UP;
-                    setVelocity(default_velocity);
                     break;
             }
         }else if (action >= 5 && action <= 8){
             setVelocity(0);
             setAttack(true);
+            return;
         }
+        //System.out.println("haha");
+        velocity = default_velocity;
         stop = false;
         attack = false;
     }
