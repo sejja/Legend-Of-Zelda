@@ -216,7 +216,7 @@ public class Arrow extends Actor{
     protected void despawn() {
         if(fixed){
             ((Player)ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0)).setVelocity(10);
-            System.out.println("Patata");
+            //System.out.println("Patata");
         }
         super.despawn();
     }
