@@ -141,6 +141,14 @@ public class ShadowLayer {
         }
     }
 
+    public void resetMatrix(){
+        for (int i = 0; i<matrixOpacity.length; i++){
+            for(int j=0; j<matrixOpacity[0].length; j++){
+                matrixOpacity[i][j] = 0;
+            }
+        }
+    }
+
     public int getOpacityAt (Vector2D<Integer> tilePosition){
         return matrixOpacity[tilePosition.x][tilePosition.y];
     }
