@@ -7,7 +7,7 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
+import java.util.logging.XMLFormatter;
 
 public class Log {
     private Logger mLogger;
@@ -19,7 +19,6 @@ public class Log {
         try {
             Path p = Paths.get("Logs", path);
 
-            System.out.println(p);
             if(!Files.exists(Paths.get("Logs"))) {
                 Files.createDirectory(Paths.get("Logs"));
             }
@@ -30,7 +29,7 @@ public class Log {
 
             FileHandler fHandler = new FileHandler(p.toString());
             mLogger.addHandler(fHandler);
-            SimpleFormatter formatter = new SimpleFormatter();
+            XMLFormatter formatter = new XMLFormatter();
             fHandler.setFormatter(formatter);
         } catch (SecurityException | IOException e) {
             // TODO Auto-generated catch block

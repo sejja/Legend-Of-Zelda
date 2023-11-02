@@ -12,6 +12,8 @@ import javax.lang.model.element.ModuleElement.DirectiveKind;
 import Engine.Assets.AssetManager;
 import Engine.Audio.Audio;
 import Engine.Audio.Sound;
+import Engine.Developer.Logger.Log;
+import Engine.Developer.Logger.Logger;
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Entity;
@@ -70,6 +72,7 @@ public class Arrow extends Actor{
         this.damage = 0;
         this.animationMachine = AddComponent(new AnimationMachine(this ,spritesheet)); 
 
+        
         allAnimation = animationMachine.GetSpriteSheet().GetSpriteArray2D();
          direction = Link.getDirection();
         if (fixed)
@@ -183,6 +186,8 @@ public class Arrow extends Actor{
             endArrow = true;
             if (damage ==0 ){return;}
             else{despawn();}
+            Log v = Logger.Instance().GetLog("Gameplay");
+            Logger.Instance().Log(v, "Arrow Launched", Level.INFO, 1, Color.GREEN);
         }
         
         Player link = ((Player)ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0));

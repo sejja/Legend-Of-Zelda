@@ -2,12 +2,12 @@ package Engine.Window;
 
 import Engine.Developer.Logger.Log;
 import Engine.Developer.Logger.Logger;
-import Engine.ECSystem.Level;
+import Engine.ECSystem.World;
 import Engine.Input.InputManager;
 import Engine.StateMachine.StateMachine;
 
 public class GameLoop extends Thread {
-    private boolean mRunning;
+    static private boolean mRunning;
     private StateMachine mStateManager;
     private PresentBuffer mTargetBuffer;
     static private boolean mPause;
@@ -25,11 +25,15 @@ public class GameLoop extends Thread {
     public void Init() {
         Log v = Logger.Instance().GetLog("GameLoop");
 
-        Logger.Instance().Log(v, "Engine Started!", java.util.logging.Level.FINE);
+        Logger.Instance().Log(v, "Engine Started!", java.util.logging.Level.INFO);
 
         mRunning = true;
         mStateManager = new StateMachine();
         new InputManager(mTargetBuffer);
+    }
+
+    public static void Quit() {
+        mRunning = false;
     }
 
     // ------------------------------------------------------------------------
@@ -85,7 +89,7 @@ public class GameLoop extends Thread {
             double now = System.nanoTime();
             int updateCount = 0;
             while (((now - lastUpdateTime) > TBU) && (updateCount < MUBR)) {
-                Level.mCurrentLevel.Update();
+                World.mCurrentLevel.Update();
                 if(!mPause) Update();
                 lastUpdateTime += TBU;
                 updateCount++;

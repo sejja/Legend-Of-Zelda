@@ -5,12 +5,15 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.logging.Level;
 
 import Engine.Assets.Asset;
 import Engine.Assets.AssetManager;
 import Engine.Audio.Audio;
 import Engine.Audio.Sound;
-import Engine.ECSystem.Level;
+import Engine.Developer.Logger.Log;
+import Engine.Developer.Logger.Logger;
+import Engine.ECSystem.World;
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
 import Engine.Graphics.Spritesheet;
@@ -172,6 +175,10 @@ public class Player extends Actor {
         InputManager.SubscribePressed(KeyEvent.VK_D, new InputFunction() {
             @Override
             public void Execute() {activateAction(RIGHT);}
+        });
+        InputManager.SubscribePressed(KeyEvent.VK_ESCAPE, new InputFunction() {
+            @Override
+            public void Execute() {GameLoop.Quit(); }
         });
         //ATTACK_____________________________________________________________________________________________
         InputManager.SubscribePressed(KeyEvent.VK_J, new InputFunction() {
@@ -369,8 +376,8 @@ public class Player extends Actor {
      */
     public boolean SolveCollisions(Vector2D<Integer> dif) {
         CollisionResult res = terrainCollider.GetBounds().collisionTile(
-            dif.x - Level.mCurrentLevel.GetBounds().GetPosition().x, 
-            dif.y - Level.mCurrentLevel.GetBounds().GetPosition().y);
+            dif.x - World.mCurrentLevel.GetBounds().GetPosition().x, 
+            dif.y - World.mCurrentLevel.GetBounds().GetPosition().y);
         falling = res == CollisionResult.Hole;
         return (res == CollisionResult.None);
     }
@@ -589,6 +596,8 @@ public class Player extends Actor {
     *   
     */
     private void dead(){ //falta hacer que link se muera y termine el juego
+        Log v = Logger.Instance().GetLog("Gameplay");
+        Logger.Instance().Log(v, "I Died", Level.INFO, 1, Color.RED);
         System.out.println("Ha muerto");
     }
     //------------------------------------------------------------------------

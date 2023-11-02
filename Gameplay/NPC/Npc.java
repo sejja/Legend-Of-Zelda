@@ -10,12 +10,15 @@ import java.util.ArrayList;
 import java.util.Stack;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
 
 import javax.swing.JLabel;
 
 import Engine.Assets.AssetManager;
 import Engine.Audio.Audio;
 import Engine.Audio.Sound;
+import Engine.Developer.Logger.Log;
+import Engine.Developer.Logger.Logger;
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
 import Engine.Graphics.GraphicsPipeline;
@@ -249,6 +252,9 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
     public Class GetSuperClass(){return Npc.class;}
     @Override
     public void interaction() {
+        Log v = Logger.Instance().GetLog("Gameplay");
+        Logger.Instance().Log(v, "Interacted with NPC", Level.INFO, 1, Color.BLUE);
+
         // TODO Auto-generated method stub
         dialogueWindow.setNpc(this);
         currentDirection = this.getDirection(); 

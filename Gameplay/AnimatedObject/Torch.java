@@ -3,7 +3,7 @@ package Gameplay.AnimatedObject;
 import Engine.Assets.AssetManager;
 import Engine.Audio.Audio;
 import Engine.Audio.Sound;
-import Engine.ECSystem.Level;
+import Engine.ECSystem.World;
 import Engine.ECSystem.ObjectManager;
 import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Spritesheet;
@@ -133,6 +133,6 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
 
     @Override
     public Vector2D<Float> getPseudoPosition(){
-        return Level.GetLevelSpaceCoordinates(super.getPseudoPosition());
+        return World.GetLevelSpaceCoordinates(super.getPseudoPosition());
     }
 }

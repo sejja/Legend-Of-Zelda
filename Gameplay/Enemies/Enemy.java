@@ -9,8 +9,10 @@ import java.util.Stack;
 import Engine.Assets.AssetManager;
 import Engine.Audio.Audio;
 import Engine.Audio.Sound;
-
-import Engine.ECSystem.Level;
+import Engine.Developer.Logger.Log;
+import Engine.Developer.Logger.Logger;
+import java.util.logging.Level;
+import Engine.ECSystem.World;
 import Engine.ECSystem.ObjectManager;
 import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Animations.Animation;
@@ -214,8 +216,8 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     *   Calculates the path to the player if the path is unblocked and is not the same as the last time A* was called
     */ //----------------------------------------------------------------------
     public void pathfinding() {
-        Pair enemyTile = positionToPair(Level.GetLevelSpaceCoordinates(getPseudoPosition()));
-        finalDestination = positionToPair(Level.GetLevelSpaceCoordinates(playerPos));
+        Pair enemyTile = positionToPair(World.GetLevelSpaceCoordinates(getPseudoPosition()));
+        finalDestination = positionToPair(World.GetLevelSpaceCoordinates(playerPos));
         if(isDestinationChanged() && isDestinationReachable()){
             lastFinalDestination = finalDestination;
             path = aStarSearch.aStarSearch(enemyTile, finalDestination);
@@ -285,8 +287,8 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
                 currentDestination = path.peek();
             }
             // Margin of error for the movement
-            lowerBounds = Level.GetWorldSpaceCoordinates(new Vector2D<Float>((float)((currentDestination.getFirst()*64) - 3), (float)((currentDestination.getSecond()*64) - 3)));
-            upperBounds = Level.GetWorldSpaceCoordinates(new Vector2D<Float>((float)((currentDestination.getFirst()*64) + 3), (float)((currentDestination.getSecond()*64) + 3)));
+            lowerBounds = Engine.ECSystem.World.GetWorldSpaceCoordinates(new Vector2D<Float>((float)((currentDestination.getFirst()*64) - 3), (float)((currentDestination.getSecond()*64) - 3)));
+            upperBounds = Engine.ECSystem.World.GetWorldSpaceCoordinates(new Vector2D<Float>((float)((currentDestination.getFirst()*64) + 3), (float)((currentDestination.getSecond()*64) + 3)));
 
             //If currentDestination reached, pop next destination
             if(((((lowerBounds.x <= pseudoPos.x) && (pseudoPos.x <= upperBounds.x)) && ((lowerBounds.y <= pseudoPos.y+GetScale().y/2) && (pseudoPos.y+GetScale().y/2 <= upperBounds.y)))) && (currentDestination != finalDestination) && !path.isEmpty()){
@@ -294,11 +296,11 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
                 if(!path.isEmpty()){
                     currentDestination = path.peek();
                 }
-                normalizedDirection = normalize(Level.GetWorldSpaceCoordinates(pseudoPosToDest()));
+                normalizedDirection = normalize(Engine.ECSystem.World.GetWorldSpaceCoordinates(pseudoPosToDest()));
                 pos.x += normalizedDirection.x * speed;
                 pos.y += normalizedDirection.y * speed;
             }else{
-                normalizedDirection = normalize(Level.GetWorldSpaceCoordinates(pseudoPosToDest()));
+                normalizedDirection = normalize(Engine.ECSystem.World.GetWorldSpaceCoordinates(pseudoPosToDest()));
                 pos.x += normalizedDirection.x * speed;
                 pos.y += normalizedDirection.y * speed;
             }
@@ -366,6 +368,9 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     }
 
     private void die() {
+        Log v = Logger.Instance().GetLog("Gameplay");
+        Logger.Instance().Log(v, "Enemy died", Level.INFO, 1, Color.GREEN);
+
         mCollision.ShutDown();
         path.clear();
         DeadAnimation deadAnimation = new DeadAnimation(this);
@@ -399,7 +404,7 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
 
         while (!mPath.isEmpty()) {
             Pair x = mPath.pop();
-            Pair p = Level.GetLevelPair(x);
+            Pair p = Engine.ECSystem.World.GetLevelPair(x);
             g.drawRect(p.getFirst() * 64 - (int)(float)camcoord.x, p.getSecond() * 64 - (int)(float)camcoord.y, 64, 64);
         }
     }

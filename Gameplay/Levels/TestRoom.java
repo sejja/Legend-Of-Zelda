@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import Engine.Assets.AssetManager;
 import Engine.Audio.Audio;
 import Engine.Audio.Sound;
-import Engine.ECSystem.Level;
+import Engine.ECSystem.World;
 import Engine.ECSystem.ObjectManager;
 import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Sprite;
@@ -24,7 +24,7 @@ import Gameplay.NPC.Npc;
 
 
 
-public class TestRoom extends Level {
+public class TestRoom extends World {
     private final int DOWN = 0;
     private final int LEFT = 1;
     private final int RIGHT= 2;
@@ -35,7 +35,7 @@ public class TestRoom extends Level {
     private final int yLineMovement = 6;
     private final int stop = 7;
     
-    public TestRoom(Level right, Level left, Level up, Level down, String tiles, Vector2D<Float> pos) {
+    public TestRoom(World right, World left, World up, World down, String tiles, Vector2D<Float> pos) {
         super(right, left, up, down, new TileManager(tiles));
         ObjectManager.GetObjectManager().AddEntity(new Player(new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/Link/Link.png")), new Vector2D<Float>(2500f, 1700.f), new Vector2D<Float>(100.f, 100.f)));
         ObjectManager.GetObjectManager().Update();

@@ -16,22 +16,22 @@ import Gameplay.Enemies.Units.GreenKnight;
 import Gameplay.Interactives.Blocks.Rock;
 import Gameplay.Link.Player;
 
-public class Level {
-    private Level mRight;
-    private Level mLeft;
-    private Level mUpper;
-    private Level mLower;
+public class World {
+    private World mRight;
+    private World mLeft;
+    private World mUpper;
+    private World mLower;
     public TileManager mTilemap;
-    static public Level mCurrentLevel = null;
+    static public World mCurrentLevel = null;
     static private boolean sTransitioning = false;
     static private Vector2D<Float> sPreviousTopRight;
     static private Vector2D<Float> sPreviousBottomLeft;
     static private float sElapsedTime = 0;
-    static private Level sPreviusLevel;
+    static private World sPreviusLevel;
     
     private boolean visited = false;
 
-    protected Level(Level right, Level left, Level up, Level down, TileManager tiles) {
+    protected World(World right, World left, World up, World down, TileManager tiles) {
         mRight = right;
         mLeft = left;
         mUpper = up;
@@ -187,35 +187,35 @@ public class Level {
 
     void ShutDown() {}
 
-    public Level GetRightLevel() {
+    public World GetRightLevel() {
         return mRight;
     }
 
-    public Level GetLeftLevel() {
+    public World GetLeftLevel() {
         return mLeft;
     }
 
-    public Level GetUpperLevel() {
+    public World GetUpperLevel() {
         return mUpper;
     }
 
-    public Level GetLowerLevel() {
+    public World GetLowerLevel() {
         return mLower;
     }
 
-    public void SetRightLevel(Level l) {
+    public void SetRightLevel(World l) {
         mRight = l;
     }
 
-    public void SetUpperLevel(Level l) {
+    public void SetUpperLevel(World l) {
         mUpper = l;
     }
 
-    public void SetLowerLevel(Level l) {
+    public void SetLowerLevel(World l) {
         mLower = l;
     }
 
-    public void SetLeftlevel(Level l) {
+    public void SetLeftlevel(World l) {
         mLeft = l;
     }
 

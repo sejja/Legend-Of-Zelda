@@ -4,7 +4,7 @@ import java.awt.Graphics2D;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import Engine.ECSystem.Level;
+import Engine.ECSystem.World;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.CameraComponent;
 import Engine.Math.Vector2D;

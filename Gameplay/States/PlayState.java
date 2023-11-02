@@ -13,7 +13,7 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
-import Engine.ECSystem.Level;
+import Engine.ECSystem.World;
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Entity;
@@ -35,7 +35,7 @@ import Gameplay.Link.Player;
 import Gameplay.NPC.Npc;
 
 public class PlayState extends State {
-    Level mTestLevel;
+    World mTestLevel;
 
     // ------------------------------------------------------------------------
     /*! Constructor
