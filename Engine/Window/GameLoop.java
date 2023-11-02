@@ -1,5 +1,7 @@
 package Engine.Window;
 
+import Engine.Developer.Logger.Log;
+import Engine.Developer.Logger.Logger;
 import Engine.ECSystem.Level;
 import Engine.Input.InputManager;
 import Engine.StateMachine.StateMachine;
@@ -21,6 +23,10 @@ public class GameLoop extends Thread {
     *   Creates the FrameBuffer (a BufferedImage)
     */ //----------------------------------------------------------------------
     public void Init() {
+        Log v = Logger.Instance().GetLog("GameLoop");
+
+        Logger.Instance().Log(v, "Engine Started!", java.util.logging.Level.FINE);
+
         mRunning = true;
         mStateManager = new StateMachine();
         new InputManager(mTargetBuffer);
@@ -111,5 +117,8 @@ public class GameLoop extends Thread {
             }
 
         }
+
+        Log v = Logger.Instance().GetLog("GameLoop");
+        Logger.Instance().Log(v, "Bye bye", java.util.logging.Level.FINE);
     }
 }
