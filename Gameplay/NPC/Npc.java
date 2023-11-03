@@ -29,7 +29,6 @@ import Engine.Graphics.Components.AnimationMachine;
 import Engine.Graphics.Components.CameraComponent;
 import Engine.Graphics.Components.Renderable;
 import Engine.Graphics.Components.SpriteComponent;
-import Engine.Graphics.Objects.FontObject;
 import Engine.Graphics.Tile.TileManager;
 import Engine.Graphics.Tile.Tilemap;
 import Engine.Input.InputFunction;
@@ -252,8 +251,6 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
     public Class GetSuperClass(){return Npc.class;}
     @Override
     public void interaction() {
-        Log v = Logger.Instance().GetLog("Gameplay");
-        Logger.Instance().Log(v, "Interacted with NPC", Level.INFO, 1, Color.BLUE);
 
         // TODO Auto-generated method stub
         dialogueWindow.setNpc(this);

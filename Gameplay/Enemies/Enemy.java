@@ -368,12 +368,12 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     }
 
     private void die() {
-        Log v = Logger.Instance().GetLog("Gameplay");
-        Logger.Instance().Log(v, "Enemy died", Level.INFO, 1, Color.GREEN);
+        //Log v = Logger.Instance().GetLog("Gameplay");
+        //Logger.Instance().Log(v, "Enemy died", Level.INFO, 1, Color.GREEN);
 
         mCollision.ShutDown();
         path.clear();
-        DeadAnimation deadAnimation = new DeadAnimation(this);
+        new DeadAnimation(this);
         Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/enemy-death.wav"));
         Audio.Instance().Play(sound);
     }

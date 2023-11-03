@@ -206,7 +206,7 @@ public class TileManager extends ECObject implements Renderable {
 
     public void Render(Graphics2D g, CameraComponent camerapos) {
         for(int i= 0; i < mLayers.size(); i++) {
-            mLayers.get(i).Render(g, camerapos, mPosition);
+            mLayers.get(i).Render(g, camerapos, mBounds);
         }
     }
 }

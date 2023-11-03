@@ -1,11 +1,13 @@
 package Gameplay.Link;
 
+import java.awt.Color;
 import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Random;
+import java.util.logging.Level;
 
 import javax.lang.model.element.ModuleElement.DirectiveKind;
 
@@ -186,8 +188,6 @@ public class Arrow extends Actor{
             endArrow = true;
             if (damage ==0 ){return;}
             else{despawn();}
-            Log v = Logger.Instance().GetLog("Gameplay");
-            Logger.Instance().Log(v, "Arrow Launched", Level.INFO, 1, Color.GREEN);
         }
         
         Player link = ((Player)ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0));

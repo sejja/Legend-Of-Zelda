@@ -48,7 +48,7 @@ public class TilemapEntities extends Tilemap {
     }
 
 
-    public void Render(Graphics2D g, CameraComponent camerapos, Vector2D<Float> tilemappos) {
+    public void Render(Graphics2D g, CameraComponent camerapos, AABB tilemappos) {
     }
 }
 
