@@ -82,7 +82,7 @@ public class Arrow extends Actor{
             SetPosition(Link.GetPosition());
             //Link.getHitbox().disable();
             this.fixed = fixed;
-            Link.setVelocity(0);
+            //Link.setVelocity(0);
         }
         else
         {
@@ -217,6 +217,7 @@ public class Arrow extends Actor{
 
     @Override
     protected void despawn() {
+        //if(fixed){((Player)ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0)).setVelocity(10);}
         super.despawn();
     }
 
