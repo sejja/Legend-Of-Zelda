@@ -118,29 +118,29 @@ public class Arrow extends Actor{
                 currentPosition = pos.y;
                 if(hitbox.GetBounds().collisionTile(0, -speed) == CollisionResult.None){
                     pos.y -= speed;
+                    distance += Math.abs(currentPosition - pos.y);
                 }else{endArrow = true;}
-                distance += Math.abs(currentPosition - pos.y);
                 return;
             case DOWN:
                 currentPosition = pos.y;
                 if(hitbox.GetBounds().collisionTile(0, +speed) == CollisionResult.None){
                     pos.y += speed;
+                    distance += Math.abs(currentPosition - pos.y);
                 }else{endArrow = true;}
-                distance += Math.abs(currentPosition - pos.y);
                 return;
             case LEFT:
                 currentPosition = pos.x;
                 if(hitbox.GetBounds().collisionTile(-speed, 0) == CollisionResult.None){
                     pos.x -= speed;
+                    distance += Math.abs(currentPosition - pos.x);
                 }else{endArrow = true;}
-                distance += Math.abs(currentPosition - pos.x);
                 return;
             case RIGHT:
                 currentPosition = pos.x;
                 if(hitbox.GetBounds().collisionTile(+speed, 0) == CollisionResult.None){
                     pos.x += speed;
+                    distance += Math.abs(currentPosition - pos.x);
                 }else{endArrow = true;}
-                distance += Math.abs(currentPosition - pos.x);
                 return;
         }
         SetPosition(pos);
