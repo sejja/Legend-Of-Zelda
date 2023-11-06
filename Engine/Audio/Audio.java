@@ -23,7 +23,7 @@ public class Audio {
     }
 
     public void Play(Sound sound) {
-        try {
+       /*try {
             if(!mSounds.containsKey(sound)) {
                 Clip clip = AudioSystem.getClip();
                 clip.open(AudioSystem.getAudioInputStream((File)sound.GetWaveformat().Raw()));
@@ -37,20 +37,20 @@ public class Audio {
             mSounds.get(sound).start();
         } catch (LineUnavailableException | IOException | UnsupportedAudioFileException e) {
             e.printStackTrace();
-        }
+        }*/ 
     }
 
     public void SetLoopCount(Sound sound, int count) {
-        mSounds.get(sound).loop(count);
+        //mSounds.get(sound).loop(count);
     }
 
-    public void Pause(Sound sound) {
+    public void Pause(Sound sound) {/* 
         sound.SetCurrentFrame((mSounds.get(sound)).getMicrosecondPosition());
         mSounds.get(sound).stop();
-        sound.SetIsPaused(true);
+        sound.SetIsPaused(true);*/
     }
 
-    public void Restart(Sound sound) { 
+    public void Restart(Sound sound) { /* 
         try {
             mSounds.get(sound).stop(); 
             mSounds.get(sound).close();
@@ -65,21 +65,21 @@ public class Audio {
             e.printStackTrace();
         } finally {
             Play(sound);
-        }
+        }*/
     } 
       
-    public void Stop(Sound sound) { 
+    public void Stop(Sound sound) { /* 
         sound.SetCurrentFrame(0L); 
         mSounds.get(sound).stop(); 
-        mSounds.get(sound).close(); 
+        mSounds.get(sound).close(); */
     } 
       
-    public void Forward(Sound sound, long c) { 
+    public void Forward(Sound sound, long c) { /* 
         if (c > 0 && c < ((Clip)sound.GetWaveformat().Raw()).getMicrosecondLength())   { 
             mSounds.get(sound).stop();  
             sound.SetCurrentFrame(c); 
             mSounds.get(sound).setMicrosecondPosition(c);
             Play(sound); 
-        } 
+        } */
     } 
 }

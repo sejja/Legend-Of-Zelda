@@ -139,7 +139,7 @@ public class AABB {
                 if(block instanceof HoleBlock) {
                     return collisionHole(ax, ay, xt, yt, block) ? CollisionResult.Hole : CollisionResult.None;
                 }
-                return block != null ? (block.HasCollision(this) ? CollisionResult.Wall : CollisionResult.None) : CollisionResult.None;
+                return block != null ? (block.HasCollision() ? CollisionResult.Wall : CollisionResult.None) : CollisionResult.None;
             }
         }
 
@@ -153,11 +153,11 @@ public class AABB {
         if((nextYT == yt + 1) || (nextYT == xt + 1)) {
             if(TileManager.sLevelObjects.GetBlockAt(nextXT, nextYT) != null) {
                 Block neighbour = TileManager.sLevelObjects.GetBlockAt(nextXT, nextYT);
-                return neighbour.HasCollision(this);
+                return neighbour.HasCollision();
             }
         } else {
             if(block.IsInside(this)) {
-                return block.HasCollision(this);
+                return block.HasCollision();
             }
         }
 
