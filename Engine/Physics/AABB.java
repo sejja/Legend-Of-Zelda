@@ -153,11 +153,11 @@ public class AABB {
         if((nextYT == yt + 1) || (nextYT == xt + 1)) {
             if(TileManager.sLevelObjects.GetBlockAt(nextXT, nextYT) != null) {
                 Block neighbour = TileManager.sLevelObjects.GetBlockAt(nextXT, nextYT);
-                return neighbour.HasCollision(this);
+                return neighbour.HasCollision();
             }
         } else {
             if(block.IsInside(this)) {
-                return block.HasCollision(this);
+                return block.HasCollision();
             }
         }
 
