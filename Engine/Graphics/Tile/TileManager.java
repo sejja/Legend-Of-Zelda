@@ -93,8 +93,7 @@ public class TileManager extends ECObject implements Renderable {
 
             Node entityNode = list.item(1);
 
-            // We get the first number for the entities
-            firstEntity=Integer.parseInt(((Element)entityNode).getAttribute("firstgid"));
+
 
             Document aux = builder.parse(new File(getClass().getClassLoader().getResource("Content/TiledProject/" + elementnode.getAttribute("source")).toURI()));
             aux.getDocumentElement().normalize();
@@ -127,6 +126,8 @@ public class TileManager extends ECObject implements Renderable {
 
                 //System.out.println(eElement.getAttribute("name"));
                 if(eElement.getAttribute("name").equals("entities")){
+                    // We get the first number for the entities
+                    firstEntity=Integer.parseInt(((Element)entityNode).getAttribute("firstgid"));
                     entityQueue= new TilemapEntities(mPosition, data[i], sprite, width, height, blockwith, blockheigh, tileColumns).entityQueue;
                     //System.out.println(entityQueue);
 
