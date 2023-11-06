@@ -28,7 +28,7 @@ public class ObjectBlock extends Block {
     *   This object DOES collide
     */ //----------------------------------------------------------------------
     @Override
-    public boolean HasCollision(final AABB p) {
+    public boolean HasCollision() {
         return true;
     }
 

@@ -139,7 +139,7 @@ public class AABB {
                 if(block instanceof HoleBlock) {
                     return collisionHole(ax, ay, xt, yt, block) ? CollisionResult.Hole : CollisionResult.None;
                 }
-                return block != null ? (block.HasCollision(this) ? CollisionResult.Wall : CollisionResult.None) : CollisionResult.None;
+                return block != null ? (block.HasCollision() ? CollisionResult.Wall : CollisionResult.None) : CollisionResult.None;
             }
         }
 

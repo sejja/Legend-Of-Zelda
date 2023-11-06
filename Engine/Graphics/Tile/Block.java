@@ -74,7 +74,7 @@ public abstract class Block {
                 ));
     }
 
-    public abstract boolean HasCollision(final AABB p);
+    public abstract boolean HasCollision();
     public abstract boolean IsInside(final AABB p);
 
     // ------------------------------------------------------------------------

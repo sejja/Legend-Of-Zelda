@@ -19,7 +19,6 @@ public class Rock extends Interactive implements StaticPlayerCollision{
     protected Vector2D<Float> size = new Vector2D<Float>(64f, 64f);
 
     //animation
-    protected Block block;
     protected Spritesheet sprite=new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/rock.png"), new Vector2D<>(16, 16));
 
     public Rock(Vector2D<Float> position) {
@@ -36,11 +35,6 @@ public class Rock extends Interactive implements StaticPlayerCollision{
 
         setPseudoPosition(GetScale().x/2, GetScale().y/2);
         setPseudoPositionVisible();
-        mPositionPair = PositionToPair(getPseudoPosition());
-        block = TileManager.sLevelObjects.GetBlockAt(mPositionPair.getFirst(),mPositionPair.getSecond());
-        if(block == null) {
-            TileManager.sLevelObjects.PlaceBlockAt(mPositionPair.getFirst(),mPositionPair.getSecond());
-        }
     }
     @Override
 

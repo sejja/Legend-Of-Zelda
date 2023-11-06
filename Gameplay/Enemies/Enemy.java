@@ -3,16 +3,16 @@ package Gameplay.Enemies;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.util.Random;
+import java.beans.VetoableChangeListenerProxy;
+import java.util.ArrayList;
 import java.util.Stack;
-
-import Engine.Assets.AssetManager;
-import Engine.Audio.Audio;
-import Engine.Audio.Sound;
+import java.util.Vector;
 
 import Engine.ECSystem.Level;
 import Engine.ECSystem.ObjectManager;
+import Engine.ECSystem.Types.Actor;
 import Engine.Graphics.GraphicsPipeline;
+import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Animations.Animation;
 import Engine.Graphics.Components.AnimationMachine;
 import Engine.Graphics.Components.CameraComponent;
@@ -23,6 +23,8 @@ import Engine.Physics.Components.ColliderManager;
 import Gameplay.AnimatedObject.DeadAnimation;
 import Gameplay.Enemies.Search.*;
 import Gameplay.LifeBar.LifeBar;
+import Gameplay.Link.DirectionObject;
+import Gameplay.Link.Arrow;
 import Gameplay.Link.DIRECTION;
 import Gameplay.Link.Player;
 
@@ -142,27 +144,52 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
             return;
         }
 
-        switch (direction){
-            case UP:
-                if(mCurrentAnimation != UP || mAnimation.GetAnimation().GetDelay() == -1) {
-                    SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), this.delay);
-                }
-                break;
-            case DOWN:
-                if(mCurrentAnimation != DOWN || mAnimation.GetAnimation().GetDelay() == -1) {
-                    SetAnimation(DOWN, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN), this.delay);
-                }
-                break;
-            case LEFT:
-                if(mCurrentAnimation != RIGHT || mAnimation.GetAnimation().GetDelay() == -1) {
-                    SetAnimation(RIGHT, mAnimation.GetSpriteSheet().GetSpriteArray(RIGHT), this.delay);
-                }
-                break;
-            case RIGHT:
-                if(mCurrentAnimation != LEFT || mAnimation.GetAnimation().GetDelay() == -1) {
-                    SetAnimation(LEFT, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT), this.delay);
-                }
-                break;
+        if(chase){
+            switch (direction){
+                case UP:
+                    if(mCurrentAnimation != UP || mAnimation.GetAnimation().GetDelay() == -1) {
+                        SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), this.delay);
+                    }
+                    break;
+                case DOWN:
+                    if(mCurrentAnimation != DOWN || mAnimation.GetAnimation().GetDelay() == -1) {
+                        SetAnimation(DOWN, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN), this.delay);
+                    }
+                    break;
+                case LEFT:
+                    if(mCurrentAnimation != RIGHT || mAnimation.GetAnimation().GetDelay() == -1) {
+                        SetAnimation(RIGHT, mAnimation.GetSpriteSheet().GetSpriteArray(RIGHT), this.delay);
+                    }
+                    break;
+                case RIGHT:
+                    if(mCurrentAnimation != LEFT || mAnimation.GetAnimation().GetDelay() == -1) {
+                        SetAnimation(LEFT, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT), this.delay);
+                    }
+                    break;
+            }
+        }else{
+            switch (direction){
+                case UP:
+                    if(mCurrentAnimation != UP || mAnimation.GetAnimation().GetDelay() == -1) {
+                        SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), this.delay);
+                    }
+                    break;
+                case DOWN:
+                    if(mCurrentAnimation != DOWN || mAnimation.GetAnimation().GetDelay() == -1) {
+                        SetAnimation(DOWN, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN), this.delay);
+                    }
+                    break;
+                case LEFT:
+                    if(mCurrentAnimation != RIGHT || mAnimation.GetAnimation().GetDelay() == -1) {
+                        SetAnimation(RIGHT, mAnimation.GetSpriteSheet().GetSpriteArray(RIGHT), this.delay);
+                    }
+                    break;
+                case RIGHT:
+                    if(mCurrentAnimation != LEFT || mAnimation.GetAnimation().GetDelay() == -1) {
+                        SetAnimation(LEFT, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT), this.delay);
+                    }
+                    break;
+            }
         }
     }
 
@@ -321,15 +348,6 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
         Vector2D<Float> dir = pos.getVectorToAnotherActor(playerPos);
         normalizedDirection=normalize(dir);
         
-        Random r = new Random();
-
-        if(r.nextBoolean()) {
-            Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/enemy-hit.wav"));
-            Audio.Instance().Play(sound);
-        } else {
-            Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/small-enemy-hit.wav"));
-            Audio.Instance().Play(sound);
-        }
     }
     
     public void knockbackRepeat(){
@@ -369,23 +387,14 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
         mCollision.ShutDown();
         path.clear();
         DeadAnimation deadAnimation = new DeadAnimation(this);
-        Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/enemy-death.wav"));
-        Audio.Instance().Play(sound);
     }
 
     private boolean vision(){
         Vector2D<Float> dir = pseudoPos.getVectorToAnotherActor(playerPos);
         float distance = dir.getModule();
         if ((distance < 300)){
-            if(!chase) {
-                Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/soldier.wav"));
-                Audio.Instance().Play(sound);
-            }
-
-            chase = true;
             return true;
         }else{
-            chase = false;
             return false;
         }
         
