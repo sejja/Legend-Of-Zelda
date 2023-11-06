@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
-import Engine.ECSystem.Level;
+import Engine.ECSystem.World;
 import Engine.ECSystem.ObjectManager;
 import Engine.Graphics.Components.CameraComponent;
 import Engine.Math.Vector2D;
@@ -42,9 +42,7 @@ public class ShadowLayer {
 
     public void Render(Graphics2D g, CameraComponent mCamera) {
 
-        if(matrixOpacity == null){
-            buildMatrix();
-        }
+        if(matrixOpacity == null){buildMatrix();}
 
         if(!isOn){return;}
 
@@ -61,14 +59,10 @@ public class ShadowLayer {
 
         //______________________________________________________________________________________________________
         for (int drawPointX = windowShadowDrawPoint.x; drawPointX < cameraSizeX; drawPointX+=scaleX ){
-
             int temp = cameraDrawPoint.y;
-
-           for(int drawPointY = windowShadowDrawPoint.y; drawPointY < cameraSizeY; drawPointY+= scaleY){
-
+            for(int drawPointY = windowShadowDrawPoint.y; drawPointY < cameraSizeY; drawPointY+= scaleY){
                 Color c = new Color(0,0,0, getOpacity(cameraDrawPoint));
                 g.setColor(c);
-    
                 g.fillRect(drawPointX, drawPointY, scaleX, scaleY);
                 cameraDrawPoint.y++;
            }
@@ -84,7 +78,7 @@ public class ShadowLayer {
      */
     private Vector2D<Integer> getDrawPointPosition(CameraComponent mCamera){
         Player link = (Player)ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0);
-        Vector2D<Integer> blockPosition = link.getPseudoPosition().getTilePosition();
+        Vector2D<Integer> blockPosition = World.GetLevelSpaceCoordinates(link.getPseudoPosition()).getTilePosition();
         int gapX = mCamera.GetDimensions().x/(2*64);
         int gapY = mCamera.GetDimensions().x/(2*64);
 
@@ -92,8 +86,8 @@ public class ShadowLayer {
         int cameraDrawPointY = blockPosition.y+3 - gapY;
 
         //Cap the limit
-        int limitX = (int)(float)(Level.mCurrentLevel.GetBounds().GetScale().x - mCamera.GetDimensions().x)/64;
-        int limitY = (int)(float)(Level.mCurrentLevel.GetBounds().GetScale().y - mCamera.GetDimensions().y)/64;
+        int limitX = (int)(float)(World.mCurrentLevel.GetBounds().GetScale().x - mCamera.GetDimensions().x)/64;
+        int limitY = (int)(float)(World.mCurrentLevel.GetBounds().GetScale().y - mCamera.GetDimensions().y)/64;
         if(cameraDrawPointX <0){cameraDrawPointX = 0;}
         else if(cameraDrawPointX > limitX){cameraDrawPointX = limitX;}
         if(cameraDrawPointY <0){cameraDrawPointY = 0;}
@@ -139,10 +133,18 @@ public class ShadowLayer {
     }
 
     public void buildMatrix(){
-        matrixOpacity = new int[(int)(float)Level.mCurrentLevel.GetBounds().GetScale().x/64][(int)(float)Level.mCurrentLevel.GetBounds().GetScale().y/64];
+        matrixOpacity = new int[(int)(float)World.mCurrentLevel.GetBounds().GetScale().x/64][(int)(float)World.mCurrentLevel.GetBounds().GetScale().y/64];
         for (int i = 0; i<matrixOpacity.length; i++){
             for(int j=0; j<matrixOpacity[0].length; j++){
                 matrixOpacity[i][j] = opacity;
+            }
+        }
+    }
+
+    public void resetMatrix(){
+        for (int i = 0; i<matrixOpacity.length; i++){
+            for(int j=0; j<matrixOpacity[0].length; j++){
+                matrixOpacity[i][j] = 0;
             }
         }
     }

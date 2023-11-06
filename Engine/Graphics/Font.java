@@ -14,7 +14,7 @@ import java.util.function.IntConsumer;
 import Engine.Assets.Asset;
 import Engine.Math.Vector2D;
 
-public final class Font extends Spritesheet {
+public class Font extends Spritesheet {
     // ------------------------------------------------------------------------
     /*! Constructor
     *

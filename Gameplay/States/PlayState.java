@@ -13,7 +13,7 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
-import Engine.ECSystem.Level;
+import Engine.ECSystem.World;
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Entity;
@@ -26,6 +26,7 @@ import Engine.Math.Vector2D;
 import Engine.Physics.Components.ColliderManager;
 import Engine.StateMachine.State;
 import Gameplay.Enemies.*;
+import Gameplay.Levels.OverWorld1Left;
 import Gameplay.Levels.TestRoom;
 import Gameplay.Levels.TestRoom2;
 import Gameplay.Enemies.Units.GreenKnight;
@@ -35,7 +36,7 @@ import Gameplay.Link.Player;
 import Gameplay.NPC.Npc;
 
 public class PlayState extends State {
-    Level mTestLevel;
+    World mTestLevel;
 
     // ------------------------------------------------------------------------
     /*! Constructor

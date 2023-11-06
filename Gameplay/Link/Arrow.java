@@ -1,17 +1,21 @@
 package Gameplay.Link;
 
+import java.awt.Color;
 import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Random;
+import java.util.logging.Level;
 
 import javax.lang.model.element.ModuleElement.DirectiveKind;
 
 import Engine.Assets.AssetManager;
 import Engine.Audio.Audio;
 import Engine.Audio.Sound;
+import Engine.Developer.Logger.Log;
+import Engine.Developer.Logger.Logger;
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Entity;
@@ -70,6 +74,7 @@ public class Arrow extends Actor{
         this.damage = 0;
         this.animationMachine = AddComponent(new AnimationMachine(this ,spritesheet)); 
 
+        
         allAnimation = animationMachine.GetSpriteSheet().GetSpriteArray2D();
          direction = Link.getDirection();
         if (fixed)
@@ -77,7 +82,7 @@ public class Arrow extends Actor{
             SetPosition(Link.GetPosition());
             //Link.getHitbox().disable();
             this.fixed = fixed;
-            Link.setVelocity(0);
+            //Link.setVelocity(0);
         }
         else
         {
@@ -156,11 +161,9 @@ public class Arrow extends Actor{
             despawn();
         }
         if( endArrow ){
-            //System.out.println("Eliminado flecha");
             WallSound();
             despawn();
         }
-        if(fixed){((Player)ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0)).setVelocity(0);}
         Attack();
         pseudoPositionUpdate();
         hitbox.Update();
@@ -214,8 +217,8 @@ public class Arrow extends Actor{
 
     @Override
     protected void despawn() {
+        //if(fixed){((Player)ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0)).setVelocity(10);}
         super.despawn();
-        if(fixed){((Player)ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0)).setVelocity(10);;}
     }
 
     @Override 

@@ -1,10 +1,16 @@
 package Engine.Assets;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
 import java.awt.image.BufferedImage;
+import java.util.logging.Level;
+
 import javax.imageio.ImageIO;
+
+import Engine.Developer.Logger.Log;
+import Engine.Developer.Logger.Logger;
 
 public class ImageImporter implements Importer {
     @Override
@@ -13,6 +19,8 @@ public class ImageImporter implements Importer {
 
         //Add a try/catch clause, as it might fail to get the resource in question
         try {
+            Log v = Logger.Instance().GetLog("Assets");
+            Logger.Instance().Log(v, "Imported: " + file, Level.INFO, 2, Color.CYAN);
             sprite = MatchColorPalette(ImageIO.read(getClass().getClassLoader().getResourceAsStream(file)));
         } catch(Exception e) {
             e.printStackTrace();

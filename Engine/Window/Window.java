@@ -35,5 +35,14 @@ public class Window extends JFrame {
         setVisible(true);
         setAutoRequestFocus(true);
         mGameLoop.start();
+
+        while(mGameLoop.isAlive()) {try {
+            Thread.sleep(1000L);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }}
+
+        this.dispose();
     }
 }

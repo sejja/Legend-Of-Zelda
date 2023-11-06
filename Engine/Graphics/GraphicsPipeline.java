@@ -12,6 +12,7 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import Engine.Developer.Logger.Logger;
 import Engine.Graphics.Components.CameraComponent;
 import Engine.Graphics.Components.Renderable;
 import Engine.Graphics.Tile.ShadowLayer;
@@ -54,7 +55,7 @@ public class GraphicsPipeline {
         mDimensions = new Vector2D<>(0, 0);
         mRenderables = new ArrayList<>();
         mCamera = null;
-        shadowLayer = new ShadowLayer(255);
+        shadowLayer = new ShadowLayer(170);
     }
 
     public void BindCamera(CameraComponent c) {
@@ -92,7 +93,7 @@ public class GraphicsPipeline {
         mNewRenderables.clear();
 
         shadowLayer.Render(g, mCamera);
-
+        Logger.Instance().Render(g);
     }
 
     // ------------------------------------------------------------------------

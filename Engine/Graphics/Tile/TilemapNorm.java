@@ -58,11 +58,11 @@ public class TilemapNorm extends Tilemap {
         return mBlocks[x + (y * mHeight)];
     }
 
-    public void Render(Graphics2D g, CameraComponent camerapos, Vector2D<Float> tilemappos) {
+    public void Render(Graphics2D g, CameraComponent camerapos, AABB tilemappos) {
         //if(true){return;}
         var cameracoord = camerapos.GetCoordinates();
-        int x = (int) ((cameracoord.x - tilemappos.x) / mTileWidth);
-        int y = (int) ((cameracoord.y - tilemappos.y) / mTileHeight);
+        int x = (int) ((cameracoord.x - tilemappos.GetPosition().x) / mTileWidth);
+        int y = (int) ((cameracoord.y - tilemappos.GetPosition().y) / mTileHeight);
 
         for(int i = x; i < x + (camerapos.GetDimensions().x / mTileWidth) + 1; i++) {
             for(int j = y; j < y + (camerapos.GetDimensions().y / mTileHeight) + 2; j++) {

@@ -15,6 +15,7 @@ import java.awt.geom.NoninvertibleTransformException;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.CameraComponent;
 import Engine.Math.Vector2D;
+import Engine.Physics.AABB;
 import Engine.Graphics.Tile.TilemapObject;
 
 public class TilemapObject extends Tilemap {
@@ -75,12 +76,12 @@ public class TilemapObject extends Tilemap {
         mBlocks[x + (y * mHeight)] = null;
     }
 
-    public void Render(Graphics2D g, CameraComponent camerapos, Vector2D<Float> tilemappos) {
+    public void Render(Graphics2D g, CameraComponent camerapos, AABB tilemappos) {
 
         var cameracoord = camerapos.GetCoordinates();
 
-        int x = (int) ((cameracoord.x - tilemappos.x) / mTileWidth);
-        int y = (int) ((cameracoord.y - tilemappos.y) / mTileHeight);
+        int x = (int) ((cameracoord.x - tilemappos.GetPosition().x) / mTileWidth);
+        int y = (int) ((cameracoord.y - tilemappos.GetPosition().y) / mTileHeight);
 
         for(int i = x; i < x + (camerapos.GetDimensions().x / mTileWidth) + 1; i++) {
             for(int j = y; j < y + (camerapos.GetDimensions().y / mTileHeight) + 2; j++) {

@@ -5,12 +5,15 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.logging.Level;
 
 import Engine.Assets.Asset;
 import Engine.Assets.AssetManager;
 import Engine.Audio.Audio;
 import Engine.Audio.Sound;
-import Engine.ECSystem.Level;
+import Engine.Developer.Logger.Log;
+import Engine.Developer.Logger.Logger;
+import Engine.ECSystem.World;
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
 import Engine.Graphics.Spritesheet;
@@ -52,7 +55,7 @@ public class Player extends Actor {
         Used to confirm the direction
      */
     //private boolean up = false;
-    public DIRECTION direction = DIRECTION.RIGHT;
+    private DIRECTION direction = DIRECTION.RIGHT;
     private boolean attack = false;
     private boolean stop = true;
     private boolean bow = false;
@@ -167,11 +170,15 @@ public class Player extends Actor {
         });
         InputManager.SubscribePressed(KeyEvent.VK_A, new InputFunction() {
             @Override
-            public void Execute() {activateAction(LEFT);}
+            public void Execute() {activateAction(LEFT);System.out.println("hola");}
         });
         InputManager.SubscribePressed(KeyEvent.VK_D, new InputFunction() {
             @Override
             public void Execute() {activateAction(RIGHT);}
+        });
+        InputManager.SubscribePressed(KeyEvent.VK_ESCAPE, new InputFunction() {
+            @Override
+            public void Execute() {GameLoop.Quit(); }
         });
         //ATTACK_____________________________________________________________________________________________
         InputManager.SubscribePressed(KeyEvent.VK_J, new InputFunction() {
@@ -352,6 +359,8 @@ public class Player extends Actor {
         pseudoPositionUpdate();
         hitbox.Update();
         terrainColliderUpdate();
+        //System.out.println("Player Position: " + this.getPseudoPosition());
+        System.out.println(velocity);
         //System.out.println(GetPosition());
 //SE VE GENIAL, SI QUIERES, MERGEO CON AUDIO PARA LOS FPSs
     }
@@ -367,8 +376,8 @@ public class Player extends Actor {
      */
     public boolean SolveCollisions(Vector2D<Integer> dif) {
         CollisionResult res = terrainCollider.GetBounds().collisionTile(
-            dif.x - Level.mCurrentLevel.GetBounds().GetPosition().x, 
-            dif.y - Level.mCurrentLevel.GetBounds().GetPosition().y);
+            dif.x - World.mCurrentLevel.GetBounds().GetPosition().x, 
+            dif.y - World.mCurrentLevel.GetBounds().GetPosition().y);
         falling = res == CollisionResult.Hole;
         return (res == CollisionResult.None);
     }
@@ -467,25 +476,24 @@ public class Player extends Actor {
             switch(action){
                 case(0):
                     this.direction = DIRECTION.RIGHT;
-                    setVelocity(default_velocity);
                     break;
                 case(1):
                     this.direction = DIRECTION.LEFT;
-                    setVelocity(default_velocity);
                     break;
                 case(2):
                     this.direction = DIRECTION.DOWN;
-                    setVelocity(default_velocity);
                     break;
                 case(3):
                     this.direction = DIRECTION.UP;
-                    setVelocity(default_velocity);
                     break;
             }
         }else if (action >= 5 && action <= 8){
             setVelocity(0);
             setAttack(true);
+            return;
         }
+        //System.out.println("haha");
+        velocity = default_velocity;
         stop = false;
         attack = false;
     }
@@ -588,6 +596,8 @@ public class Player extends Actor {
     *   
     */
     private void dead(){ //falta hacer que link se muera y termine el juego
+        Log v = Logger.Instance().GetLog("Gameplay");
+        Logger.Instance().Log(v, "I Died", Level.INFO, 1, Color.RED);
         System.out.println("Ha muerto");
     }
     //------------------------------------------------------------------------
@@ -660,7 +670,7 @@ public class Player extends Actor {
             currentNPCinteraction = nearestNPC();
         }
         try {
-            currentNPCinteraction.interaction();
+            currentNPCinteraction.INTERACTION();
         } catch (java.lang.NullPointerException e) {
             System.err.println("No npc found");
             this.currentNPCinteraction = null;

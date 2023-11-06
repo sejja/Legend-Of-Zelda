@@ -72,7 +72,7 @@ public class AStarSearch{
         }
 
         boolean[][] closedList = new boolean[COL][ROW];
-        cell[][] cellDetails = new cell[COL][ROW];
+        Gameplay.Enemies.Search.cell[][] cellDetails = new Gameplay.Enemies.Search.cell[COL][ROW];
 
         int i, j;
         for (i = 0; i < COL; i++) {

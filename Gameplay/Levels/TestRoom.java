@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import Engine.Assets.AssetManager;
 import Engine.Audio.Audio;
 import Engine.Audio.Sound;
-import Engine.ECSystem.Level;
+import Engine.ECSystem.World;
 import Engine.ECSystem.ObjectManager;
 import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Sprite;
@@ -24,7 +24,7 @@ import Gameplay.NPC.Npc;
 
 
 
-public class TestRoom extends Level {
+public class TestRoom extends World {
     private final int DOWN = 0;
     private final int LEFT = 1;
     private final int RIGHT= 2;
@@ -35,7 +35,7 @@ public class TestRoom extends Level {
     private final int yLineMovement = 6;
     private final int stop = 7;
     
-    public TestRoom(Level right, Level left, Level up, Level down, String tiles, Vector2D<Float> pos) {
+    public TestRoom(World right, World left, World up, World down, String tiles, Vector2D<Float> pos) {
         super(right, left, up, down, new TileManager(tiles));
         ObjectManager.GetObjectManager().AddEntity(new Player(new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/Link/Link.png")), new Vector2D<Float>(2500f, 1700.f), new Vector2D<Float>(100.f, 100.f)));
         ObjectManager.GetObjectManager().Update();
@@ -43,13 +43,10 @@ public class TestRoom extends Level {
         
         ArrayList<String> dialogueArrayList = new ArrayList<String>();
         ArrayList<String> dialogueArrayList2 = new ArrayList<String>();
+
+        ObjectManager.GetObjectManager().AddEntity(new Npc("Aelarion", new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/NPC/NPC_old.png"), new Vector2D<Integer>(68, 72)), new Vector2D<Float>(1330.f, 800.f), new Vector2D<Float>(78.f, 78.f), UP, yLineMovement) );
+        ObjectManager.GetObjectManager().AddEntity(new Npc("Juan", new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/NPC/NPC_boy.png"), new Vector2D<Integer>(64, 64)), new Vector2D<Float>(1580.f, 1550.f), new Vector2D<Float>(78.f, 78.f),4, stop) );
         
-        dialogueArrayList.add("En un mundo muy lejano] vivia una princesa que buscaba a su \nprincipe] y para logralo] llamo a todos los principes del reino \nademas deberas vuscar todos los artefactos de las piedras para \necuperar el poder de hyrule");
-        dialogueArrayList.add("Ahora embarcate en una nueva aventura junto a tu espada y tu \narco");
-        dialogueArrayList2.add("Muy buenas caballero] mi nombre es Juan] y estoy aqui protegiendo \nla puerta de acceso al palacio");
-        dialogueArrayList2.add("A si que abandona este lugar por favor");
-        ObjectManager.GetObjectManager().AddEntity(new Npc("Aelarion", new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/NPC/NPC_old.png"), new Vector2D<>(68, 72)), new Vector2D<Float>(1330.f, 800.f), dialogueArrayList, new Vector2D<Float>(78.f, 78.f), UP, yLineMovement) );
-        ObjectManager.GetObjectManager().AddEntity(new Npc("Juan", new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/NPC/NPC_boy.png"), new Vector2D<>(64, 64)), new Vector2D<Float>(1580.f, 1550.f), dialogueArrayList2, new Vector2D<Float>(78.f, 78.f),4, stop) );
         ObjectManager.GetObjectManager().Update();
 
         

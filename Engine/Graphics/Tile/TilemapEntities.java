@@ -4,7 +4,7 @@ import java.awt.Graphics2D;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import Engine.ECSystem.Level;
+import Engine.ECSystem.World;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.CameraComponent;
 import Engine.Math.Vector2D;
@@ -48,7 +48,7 @@ public class TilemapEntities extends Tilemap {
     }
 
 
-    public void Render(Graphics2D g, CameraComponent camerapos, Vector2D<Float> tilemappos) {
+    public void Render(Graphics2D g, CameraComponent camerapos, AABB tilemappos) {
     }
 }
 
