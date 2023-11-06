@@ -207,6 +207,10 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
             move();
         }else{
             animate();
+            if(!path.empty()){
+                path.clear();
+            }
+            
         }
     }
 
