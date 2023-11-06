@@ -1,6 +1,7 @@
 package Engine.Graphics.Tile;
 
 import java.awt.Graphics2D;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -18,17 +19,17 @@ public class TilemapEntities extends Tilemap {
     public int mHeight;
     public int mWidth;
     public Queue<parseEntity> entityQueue;
-    public int firstEntity;
+    static public int firstEntity;
 
     //explanation WIP
 
-    public TilemapEntities(Vector2D<Float> position, String data, Spritesheet sprite, int width , int height, int tilewidth, int tileheight, int tilecolumns) {
+    public TilemapEntities(Vector2D<Float> position, String data, ArrayList<Spritesheet> sprite, int width , int height, int tilewidth, int tileheight, ArrayList<Integer> tilecolumns, ArrayList<Integer> ids) {
         mTileHeight = tileheight;
         mTileWidth = tilewidth;
         mHeight = height;
         mWidth = width;
         entityQueue = new LinkedList<parseEntity>();
-        
+        firstEntity = ids.get(1);
 
         String[] block = data.split(",");
 

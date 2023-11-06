@@ -11,6 +11,7 @@ package Engine.Graphics.Tile;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
+import java.util.ArrayList;
 
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.CameraComponent;
@@ -26,7 +27,7 @@ public class TilemapObject extends Tilemap {
     public int mHeight;
     public int mWidth;
 
-    public TilemapObject(Vector2D<Float> position, String data, Spritesheet sprite, int width , int height, int tilewidth, int tileheight, int tilecolumns) {
+    public TilemapObject(Vector2D<Float> position, String data, ArrayList<Spritesheet> sprite, int width , int height, int tilewidth, int tileheight, ArrayList<Integer> tilecolumns, ArrayList<Integer> ids) {
         Block temp;
         mTileHeight = tileheight;
         mTileWidth = tilewidth;
@@ -49,9 +50,9 @@ public class TilemapObject extends Tilemap {
                 transform.concatenate(AffineTransform.getScaleInstance(tilewidth, tileheight));
                 
                 if(tempint == 429) { // TODO, Review
-                    temp = new HoleBlock(sprite.GetSprite((int) ((tempint - 1) % tilecolumns), (int) ((tempint - 1) / tilecolumns)), transform);
+                    temp = new HoleBlock(sprite.get(0).GetSprite((int) ((tempint - 1) % tilecolumns.get(0)), (int) ((tempint - 1) / tilecolumns.get(0))), transform);
                 } else {
-                    temp = new ObjectBlock(sprite.GetSprite((int) ((tempint - 1) % tilecolumns), (int) ((tempint - 1) / tilecolumns)), transform);
+                    temp = new ObjectBlock(sprite.get(0).GetSprite((int) ((tempint - 1) % tilecolumns.get(0)), (int) ((tempint - 1) / tilecolumns.get(0))), transform);
                 }
 
                 mBlocks[i] = temp;

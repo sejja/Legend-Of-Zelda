@@ -26,7 +26,7 @@ public class TilemapNorm extends Tilemap {
     private int mTileHeight;
     private int mHeight;
 
-    public TilemapNorm(Vector2D<Float> position, String data, Spritesheet sprite, int width , int height, int tilewidth, int tileheight, int tilecolumns) {
+    public TilemapNorm(Vector2D<Float> position, String data, ArrayList<Spritesheet> sprite, int width , int height, int tilewidth, int tileheight, ArrayList<Integer> tilecolumns, ArrayList<Integer> ids) {
         mBlocks = new Block[width * height];
         mTileHeight = tileheight;
         mTileWidth = tilewidth;
@@ -41,10 +41,10 @@ public class TilemapNorm extends Tilemap {
                 Vector2D<Integer> positiontemp = new Vector2D<Integer>((int) (i % width) * tilewidth, (int) (i / height) * tileheight);
                 positiontemp.x += (int)(float)position.x;
                 positiontemp.y += (int)(float)position.y;
-                if(sprite.GetSprite((int) ((temp - 1) % tilecolumns), (int) ((temp - 1) / tilecolumns)) != null) {
+                if(sprite.get(0).GetSprite((int) ((temp - 1) % tilecolumns.get(0)), (int) ((temp - 1) / tilecolumns.get(0))) != null) {
                     AffineTransform transform = AffineTransform.getTranslateInstance(positiontemp.x, positiontemp.y);
                     transform.concatenate(AffineTransform.getScaleInstance(tilewidth, tileheight));
-                    mBlocks[i] = new Normblock(sprite.GetSprite((int) ((temp - 1) % tilecolumns), (int) ((temp - 1) / tilecolumns)), transform);
+                    mBlocks[i] = new Normblock(sprite.get(0).GetSprite((int) ((temp - 1) % tilecolumns.get(0)), (int) ((temp - 1) / tilecolumns.get(0))), transform);
                 }
             }
         }

@@ -6,6 +6,7 @@ import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.ZeldaCameraComponent;
 import Engine.Graphics.Tile.TileManager;
+import Engine.Graphics.Tile.TilemapEntities;
 import Engine.Math.Util;
 import Engine.Math.Vector2D;
 import Engine.Physics.AABB;
@@ -45,7 +46,7 @@ public class World {
 
     public void Init(Vector2D<Float> position) {
         mCurrentLevel = this;
-        mTilemap.CreateTileMap(64, 64, position);
+        mTilemap.CreateTileMap(position, new Vector2D<>(64, 64));
         if(!visited) {
             visited = true;
             spawnEntities();
@@ -76,7 +77,7 @@ public class World {
 
     private void spawnEntities() {
         //System.out.println(mTilemap.entityQueue);
-        int firstEntity = mTilemap.firstEntity;
+        int firstEntity = TilemapEntities.firstEntity;
         while(mTilemap.entityQueue != null && !mTilemap.entityQueue.isEmpty() ) {
             //System.out.println("Juan");
             var e = mTilemap.entityQueue.poll();
@@ -110,7 +111,7 @@ public class World {
 
                 //RIGHT
                 if(position.x < (GetBounds().GetPosition().x) && mLeft != null) {
-                    var b = mLeft.mTilemap.EstimateBounds(64, 64);
+                    var b = mLeft.mTilemap.EstimateBounds(new Vector2D<>(64, 64));
                     Vector2D<Float> scale = new Vector2D<>(b.GetWidth(), b.GetHeight());
                     var pos = GetBounds().GetPosition();
                     pos.x -= scale.x;
@@ -123,7 +124,7 @@ public class World {
                 }
                 //UP
                 if(position.y < (GetBounds().GetPosition().y) && mUpper != null) {
-                    var b = mUpper.mTilemap.EstimateBounds(64, 64);
+                    var b = mUpper.mTilemap.EstimateBounds(new Vector2D<>(64, 64));
                     Vector2D<Float> scale = new Vector2D<>(b.GetWidth(), b.GetHeight());
                     var pos = GetBounds().GetPosition();
                     pos.y -= scale.y;

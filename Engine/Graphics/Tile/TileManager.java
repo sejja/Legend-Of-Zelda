@@ -8,11 +8,14 @@
 
 package Engine.Graphics.Tile;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Queue;
-import java.util.Vector;
+import java.util.logging.Level;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -20,10 +23,11 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import Engine.Assets.AssetManager;
+import Engine.Developer.Logger.Logger;
 import Engine.ECSystem.Types.ECObject;
 import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Spritesheet;
@@ -33,28 +37,18 @@ import Engine.Math.Vector2D;
 import Engine.Physics.AABB;
 
 public class TileManager extends ECObject implements Renderable {
-    public ArrayList<Tilemap>  mLayers;
+    public ArrayList<Tilemap> mLayers;
     public Queue<parseEntity> entityQueue;
     private String mPath;
-    private Vector2D<Float> mPosition;
     private AABB mBounds;
     public static TilemapObject sLevelObjects;
-    public int firstEntity;
-
-    // ------------------------------------------------------------------------
-    /*! Default Constructor
-    *
-    *   Constructs an empty array of layers
-    */ //----------------------------------------------------------------------
-    public TileManager() {
-    }
 
     // ------------------------------------------------------------------------
     /*! Conversion Constructor
     *
     *   Takes a path, and generates a whole TileManager from it
     */ //----------------------------------------------------------------------
-    public TileManager(String path) {
+    public TileManager(final String path) {
         mPath = path;
     }
 
@@ -63,151 +57,109 @@ public class TileManager extends ECObject implements Renderable {
     *
     *   From a file and the sizes, configure the tilemap to be render-ready
     */ //----------------------------------------------------------------------
-    public void CreateTileMap(int blockwith, int blockheigh, Vector2D<Float> position) {
-        String imagePath;
-
+    public void CreateTileMap(final Vector2D<Float> position, final Vector2D<Integer> blockscale) {
         int width = 0;
         int height = 0;
-        int tileWidth;
-        int tileHeight;
-        int tileColumns;
-        int layers = 0;
-        Spritesheet sprite;
-        mPosition = position;
         mLayers = new ArrayList<>();
+        mBounds = new AABB(position, new Vector2D<Float>(0.f, 0.f));
+;
+        ArrayList<Integer> tilecolumns = new ArrayList<>();
+        ArrayList<Spritesheet> images = new ArrayList<>(); 
+        ArrayList<Integer> ids = new ArrayList<>();
 
-        String[] data = new String[10];
-
+        //In case something can't be read properly, it means the tsx is corrupt
         try {
-            DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = builderFactory.newDocumentBuilder();
-            Document doc = builder.parse(new File(getClass().getClassLoader().getResource(mPath).toURI()));
+            final DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            final Document doc = builder.parse(new File(getClass().getClassLoader().getResource(mPath).toURI()));
             doc.getDocumentElement().normalize();
 
-            NodeList list = doc.getElementsByTagName("tileset");
-            Node node = list.item(0);
-            NodeList tilesetnode = doc.getElementsByTagName("tileset");
-
-            Element eElement = (Element) node;
-            Element elementnode = (Element) tilesetnode.item(0);
-
-            Node entityNode = list.item(1);
-
-            // We get the first number for the entities
-            firstEntity=Integer.parseInt(((Element)entityNode).getAttribute("firstgid"));
-
-            Document aux = builder.parse(new File(getClass().getClassLoader().getResource("Content/TiledProject/" + elementnode.getAttribute("source")).toURI()));
-            aux.getDocumentElement().normalize();
-            NodeList tilesetdata = aux.getElementsByTagName("tileset");
-            NodeList imagedata = aux.getElementsByTagName("image");
-            Node node2 = tilesetdata.item(0);
-            Element element2 = (Element) node2;
-            Node node3 = imagedata.item(0);
-            Element element3 = (Element) node3;
-
-            imagePath = element3.getAttribute("source");
-            tileWidth = Integer.parseInt(element2.getAttribute("tilewidth"));
-            tileHeight = Integer.parseInt(element2.getAttribute("tileheight"));
-            tileColumns = Integer.parseInt(element2.getAttribute("columns"));
+            NodeList tilelist = doc.getElementsByTagName("tileset");
             
-            sprite = new Spritesheet(AssetManager.Instance().GetResource("Content/Tiles/" + imagePath), new Vector2D<>(tileWidth, tileHeight));
+            //Parse each of the tilesets, with it's image specs and it's image paths
+            for(int i = 0, length = tilelist.getLength(); i < length; i++) {
+                final Element node = (Element) tilelist.item(i);
+                TSXDocument aux = (TSXDocument)AssetManager.Instance().GetResource("Content/TiledProject/" 
+                + node.getAttribute("source")).Raw();
+                tilecolumns.add(aux.mColumns);
+                images.add(aux.mImage);
+                ids.add(Integer.parseInt(node.getAttribute("firstgid")));
+            }
 
-            list = doc.getElementsByTagName("layer");
-            layers = list.getLength();
+            tilelist = doc.getElementsByTagName("layer");
+            int layers = tilelist.getLength();
+            String[] data = new String[layers];
 
-            for(int i = 0; i < layers; i++) {
-                node = list.item(i);
-                eElement = (Element) node;
-                if(i <= 0) {
-                    width = Integer.parseInt(eElement.getAttribute("width"));
-                    height = Integer.parseInt(eElement.getAttribute("height"));
-                }
+            Element eElement = (Element) tilelist.item(0);
+            width = Integer.parseInt(eElement.getAttribute("width"));
+            height = Integer.parseInt(eElement.getAttribute("height"));
 
+            //Create each of the layers
+            for(int i = 0; i < layers; i++, eElement = (Element) tilelist.item(i)) {
                 data[i] = eElement.getElementsByTagName("data").item(0).getTextContent();
 
-                //System.out.println(eElement.getAttribute("name"));
                 if(eElement.getAttribute("name").equals("entities")){
-                    entityQueue= new TilemapEntities(mPosition, data[i], sprite, width, height, blockwith, blockheigh, tileColumns).entityQueue;
-                    //System.out.println(entityQueue);
-
+                    entityQueue = new TilemapEntities(position, data[i], images, width, height, blockscale.x, blockscale.y, tilecolumns, ids).entityQueue;
                 }else if(!eElement.getAttribute("name").equals("colision")) {
-                    mLayers.add(new TilemapNorm(mPosition, data[i], sprite, width, height, blockwith, blockheigh, tileColumns));
-
+                    mLayers.add(new TilemapNorm(position, data[i], images, width, height, blockscale.x, blockscale.y, tilecolumns, ids));
                 }else {
-                    mLayers.add(new TilemapObject(mPosition, data[i], sprite, width, height, blockwith, blockheigh, tileColumns));
+                    mLayers.add(new TilemapObject(position, data[i], images, width, height, blockscale.x, blockscale.y, tilecolumns, ids));
                     sLevelObjects = (TilemapObject)mLayers.get(mLayers.size() - 1);
                 }
             }
 
-            mBounds = new AABB(mPosition, new Vector2D<Float>((float)(width * blockwith), (float)(height * blockheigh)));
+            mBounds.SetSize(new Vector2D<Float>((float)(width * blockscale.x), (float)(height * blockscale.y)));
             GraphicsPipeline.GetGraphicsPipeline().AddRenderableBottom(this);
 
-        } catch(Exception e) {
-            System.out.println("ERROR - TILEMANAGER: can not read tilemap:");
-            e.printStackTrace();
-            System.exit(0);
+        } catch(ParserConfigurationException | SAXException | IOException | URISyntaxException e) {
+            Logger.Instance().Log(Logger.Instance().GetLog("Engine"), 
+                "Error - Can't read tilemap file. " + e.getMessage(), Level.SEVERE, 2, Color.red);
         }
     }
 
-    public Vector2D<Float> GetPosition() {
-        return mPosition;
-    }
+    // ------------------------------------------------------------------------
+    /*! Estimate Bounds
+    *
+    *   Estimates the Bounds that a Tile Manager might have, even if it hasn't been created yet
+    */ //----------------------------------------------------------------------
+    public AABB EstimateBounds(final Vector2D<Integer> blockscale) {
+        int width = 0;
+        int height = 0;
 
-    public AABB EstimateBounds(int blockheigh, int blockwith) {
-        int layers = 0;
-        DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder;
+        //In case something can't be read properly, it means the tsx is corrupt
         try {
-            builder = builderFactory.newDocumentBuilder();
-            Document doc = builder.parse(new File(getClass().getClassLoader().getResource(mPath).toURI()));
+            final DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            final Document doc = builder.parse(new File(getClass().getClassLoader().getResource(mPath).toURI()));
             doc.getDocumentElement().normalize();
 
-            NodeList list = doc.getElementsByTagName("tileset");
-            Node node = list.item(0);
-            NodeList tilesetnode = doc.getElementsByTagName("tileset");
-            Element eElement = (Element) node;
-            Element elementnode = (Element) tilesetnode.item(0);
+            final Element eElement = (Element) doc.getElementsByTagName("layer").item(0);
+            width = Integer.parseInt(eElement.getAttribute("width"));
+            height = Integer.parseInt(eElement.getAttribute("height"));
 
-            Document aux = builder.parse(new File(getClass().getClassLoader().getResource("Content/TiledProject/" + elementnode.getAttribute("source")).toURI()));
-            aux.getDocumentElement().normalize();
-            NodeList tilesetdata = aux.getElementsByTagName("tileset");
-            NodeList imagedata = aux.getElementsByTagName("image");
-            Node node2 = tilesetdata.item(0);
-            Element element2 = (Element) node2;
-            Node node3 = imagedata.item(0);
-            Element element3 = (Element) node3;
-            int width = 0;
-            int height = 0;
+            return new AABB(new Vector2D<>(), new Vector2D<Float>((float)(width * blockscale.x), (float)(height * blockscale.y)));
 
-            list = doc.getElementsByTagName("layer");
-            layers = list.getLength();
-
-            for(int i = 0; i < layers; i++) {
-                node = list.item(i);
-                eElement = (Element) node;
-                if(i <= 0) {
-                    width = Math.max(width, Integer.parseInt(eElement.getAttribute("width")));
-                    height = Math.min(height, Integer.parseInt(eElement.getAttribute("height")));
-                }
-            }
-
-            return new AABB(new Vector2D<>(0.f, 0.f), new Vector2D<Float>((float)(width * blockwith), (float)(height * blockheigh)));
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        } catch(ParserConfigurationException | SAXException | IOException | URISyntaxException e) {
+            Logger.Instance().Log(Logger.Instance().GetLog("Engine"), 
+                "Error - Can't read tilemap file. " + e.getMessage(), Level.SEVERE, 2, Color.red);
+            return null;    
         }
-
-        return null;
     }
 
+    // ------------------------------------------------------------------------
+    /*! Get Bounds
+    *
+    *   Returns the level Boundaries
+    */ //----------------------------------------------------------------------
     public AABB GetBounds() {
         return mBounds;
     }
 
-    public void Render(Graphics2D g, CameraComponent camerapos) {
-        for(int i= 0; i < mLayers.size(); i++) {
-            mLayers.get(i).Render(g, camerapos, mBounds);
-        }
+    // ------------------------------------------------------------------------
+    /*! Render
+    *
+    *   Renders every layer that the tile manager contains
+    */ //----------------------------------------------------------------------
+    public void Render(final Graphics2D g, final CameraComponent camerapos) {
+        mLayers.forEach(l -> l.Render(g, camerapos, mBounds));
     }
 }
  
