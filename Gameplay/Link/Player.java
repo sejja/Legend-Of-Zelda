@@ -606,6 +606,14 @@ public class Player extends Actor {
         GraphicsPipeline.GetGraphicsPipeline().AddRenderable(mAnimation);
         PresentBuffer.SetClearColor(Color.red);
         ShadowLayer.getShadowLayer().setOn(false);
+        mAnimation.setMustComplete(true);
+        SetAnimation(FALL, mAnimation.GetSpriteSheet().GetSpriteArray(FALL), 10);
+        mAnimation.AddFinishedListener(new AnimationEvent() {
+            @Override
+            public void OnTrigger() {
+                GraphicsPipeline.GetGraphicsPipeline().RemoveAllRenderables();
+            }
+        });
     }
     //------------------------------------------------------------------------
     

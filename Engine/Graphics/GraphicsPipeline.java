@@ -81,10 +81,7 @@ public class GraphicsPipeline {
     *   Renders every component
     */ //----------------------------------------------------------------------
     public void Render(Graphics2D g) {
-        //Renderable
-        for (Renderable r: mRenderables) 
-            r.Render(g, mCamera);
-
+        
         for(Renderable r: mOldRenderables)
             mRenderables.remove(r);
 
@@ -92,8 +89,12 @@ public class GraphicsPipeline {
         mRenderables.addAll(mNewRenderables);
         mNewRenderables.clear();
 
+        //Renderable
+        for (Renderable r: mRenderables) 
+            r.Render(g, mCamera);
+
         shadowLayer.Render(g, mCamera);
-        Logger.Instance().Render(g);
+        Logger.Render(g);
     }
 
     // ------------------------------------------------------------------------
