@@ -7,7 +7,7 @@ import java.util.ListIterator;
 
 import Engine.ECSystem.Types.Actor;
 import Gameplay.Link.Player;
-/* ColliderManager is a static object thats manage the colision between objects
+/** ColliderManager is a static object thats manage the colision between objects
  *      -> All BoxCollider thats hasCollision it is added automatically to the colliderManager
  *      -> Use ColliderManager.GetColliderManager() to the the ColliderManager
  *      -> Use getCollision(BoxCollider collider, Class objective, boolean hasCollision) to get the objects thats has a collision with the currentCollider 

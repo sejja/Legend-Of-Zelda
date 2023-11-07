@@ -7,7 +7,7 @@ import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.AnimationMachine;
 import Engine.Math.Vector2D;
 
-/* This is abstract class thats create a basic object that have no movement and a simple animation
+/** This is abstract class thats create a basic object that have no movement and a simple animation
  *      -> It has a default animation delay = 5
  *      -> It has to have a position a SpriteSheet
  *          -> if you provide a actor position it will fixed in the actor
