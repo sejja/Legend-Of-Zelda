@@ -27,8 +27,7 @@ public class StackActioner {
         if(stack.getLast().actionEquals(direction, action)){return false;}
         ActionObject newActionObject = new ActionObject(direction, action);
         if(!register.contains(newActionObject)){
-            //System.out.println("Chorizo");
-            //System.out.println("quien unos loles");
+            floorAction.setDirection(direction);
             register.add(newActionObject);
             stack.addLast(newActionObject);
         }
@@ -37,12 +36,15 @@ public class StackActioner {
 
     public boolean pop(ActionObject actionToRemove){
         if(actionToRemove.equals(floorAction)){return false;}
-        if(register.contains(actionToRemove)){return false;}
+        if (!register.contains(actionToRemove)) {
+            System.err.println("ERROR ALGO NO VA BIEN ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
+            return false;
+        }
         register.remove(actionToRemove);
         stack.remove(actionToRemove);
         return true;
     }
 
     @Override
-    public String toString(){return this.readCurrentAction().toString();}
+    public String toString(){return (this.readCurrentAction().toString() + "| StackSize = " + stack.size() + "| RegisterSize = " + register.size());}
 }

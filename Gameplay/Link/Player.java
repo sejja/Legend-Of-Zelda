@@ -5,6 +5,7 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Stack;
 import java.util.logging.Level;
 
 import Engine.Assets.Asset;
@@ -21,9 +22,6 @@ import Engine.Graphics.Animations.Animation;
 import Engine.Graphics.Animations.AnimationEvent;
 import Engine.Graphics.Components.AnimationMachine;
 import Engine.Graphics.Components.ZeldaCameraComponent;
-import Engine.Graphics.Tile.Block;
-import Engine.Graphics.Tile.ObjectBlock;
-import Engine.Graphics.Tile.TileManager;
 import Engine.Input.InputFunction;
 import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
@@ -128,6 +126,7 @@ public class Player extends Actor {
         mCamera = AddComponent(new ZeldaCameraComponent(this));
         mCamera.Bind();
         SetAnimation(RIGHT, sprite.GetSpriteArray(RIGHT), delay);
+        stackActioner = new StackActioner(this);
         implementsActions();
         this.SetName("Player");
         //---------------------------------------------------------------------
@@ -143,8 +142,6 @@ public class Player extends Actor {
         terrainCollider.setColor(Color.RED);
         ColliderManager.GetColliderManager().addCollider(hitbox, true);
         ObjectManager.GetObjectManager().SetPawn(this);
-
-        stackActioner = new StackActioner(this);
     }
     // ------------------------------------------------------------------------
 
@@ -167,19 +164,29 @@ public class Player extends Actor {
         //RUN______________________________________________________________________________________________
         InputManager.SubscribePressed(KeyEvent.VK_W, new InputFunction() {
             @Override
-            public void Execute() {activateAction(UP);stackActioner.push(direction, Action.RUN);}
+            public void Execute() {
+                activateAction(UP);
+                stackActioner.push(direction, Action.RUN);
+            }
         });
         InputManager.SubscribePressed(KeyEvent.VK_S, new InputFunction() {
             @Override
-            public void Execute() {activateAction(DOWN);stackActioner.push(direction, Action.RUN);}
+            public void Execute() {
+                activateAction(DOWN);
+                stackActioner.push(direction, Action.RUN);
+            }
         });
         InputManager.SubscribePressed(KeyEvent.VK_A, new InputFunction() {
             @Override
-            public void Execute() {activateAction(LEFT);stackActioner.push(direction, Action.RUN);}
+            public void Execute() {
+                activateAction(LEFT);
+                stackActioner.push(direction, Action.RUN);}
         });
         InputManager.SubscribePressed(KeyEvent.VK_D, new InputFunction() {
             @Override
-            public void Execute() {activateAction(RIGHT);stackActioner.push(direction, Action.RUN);}
+            public void Execute() {
+                activateAction(RIGHT);
+                stackActioner.push(direction, Action.RUN);}
         });
         InputManager.SubscribePressed(KeyEvent.VK_ESCAPE, new InputFunction() {
             @Override
@@ -205,6 +212,7 @@ public class Player extends Actor {
 
                 stop = true;
                 attack = true;
+                stackActioner.push(direction, Action.ATTACK);
             }
         });
         InputManager.SubscribeReleased(KeyEvent.VK_J, new InputFunction() {
@@ -225,6 +233,7 @@ public class Player extends Actor {
                 stop = true;
                 if(!attack){ //If not attacking, then shoot
                     bow = true;
+                    stackActioner.push(direction,Action.BOW);
                 }
                 dash = false;
             }
@@ -294,12 +303,14 @@ public class Player extends Actor {
                 {
                     shootArrow();
                     bow = false;
+                    stackActioner.pop(new ActionObject(direction,Action.BOW));
                 }
                 else if (attack) //Finished Attack (attack && !bow)
                 {
                     Attack();
                     bow = false;
                     attack = false;
+                    stackActioner.pop(new ActionObject(direction, Action.ATTACK));
                 }
                 //mAnimation.setMustComplete(false);
             }
@@ -329,7 +340,10 @@ public class Player extends Actor {
      */
     public void Animate() {
 
-        if (mAnimation.MustComplete()){return;} //Early return, if it is a animation thats has to be complete, do not animaate
+        if (mAnimation.MustComplete()){return;} //Early return, if it is a animation thats has to be complete, do not animate
+
+        setMovement(stackActioner.readCurrentAction().getAction());return;
+        /* 
         if (stop){
             setMovement(Action.STOP);
             if (attack){setMovement(Action.ATTACK);}
@@ -348,6 +362,7 @@ public class Player extends Actor {
                 }
             }
         }
+        */
     }
     // ------------------------------------------------------------------------
 
@@ -358,6 +373,7 @@ public class Player extends Actor {
     @Override
     public void Update() { 
         super.Update();
+        System.out.println(stackActioner);
         playerStateMachine();
         Animate();
         lifeBar.Update();
@@ -368,7 +384,6 @@ public class Player extends Actor {
         //System.out.println(velocity);
         //System.out.println(GetPosition());
 //SE VE GENIAL, SI QUIERES, MERGEO CON AUDIO PARA LOS FPSs
-        System.out.println(stackActioner);
     }
     public void playerStateMachine(){
         if(dash){dashCooldawn = 0;dash();return;}
