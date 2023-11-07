@@ -60,4 +60,9 @@ public class ActionObject {
     public boolean actionEquals(DIRECTION otherDirection, Action otherAction ){
         return this.direction==otherDirection && this.action==otherAction;
     }
+
+    @Override
+    public String toString() {
+        return "ActionObject [direction=" + direction + ", action=" + action + "]";
+    }
 }

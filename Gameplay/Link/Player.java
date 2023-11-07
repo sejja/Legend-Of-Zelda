@@ -61,6 +61,8 @@ public class Player extends Actor {
     private boolean bow = false;
     public boolean dash = false;
     private boolean falling = false;
+
+    StackActioner stackActioner;
     //----------------------------------------------------------------------
 
     /* Animation
@@ -141,6 +143,8 @@ public class Player extends Actor {
         terrainCollider.setColor(Color.RED);
         ColliderManager.GetColliderManager().addCollider(hitbox, true);
         ObjectManager.GetObjectManager().SetPawn(this);
+
+        stackActioner = new StackActioner(this);
     }
     // ------------------------------------------------------------------------
 
@@ -156,29 +160,30 @@ public class Player extends Actor {
                 setVelocity(0);
                 stop = true;
                 attack = false;
+                stackActioner.pop(new ActionObject(direction,Action.RUN));
             }
             });
         }
         //RUN______________________________________________________________________________________________
         InputManager.SubscribePressed(KeyEvent.VK_W, new InputFunction() {
             @Override
-            public void Execute() {activateAction(UP);}
+            public void Execute() {activateAction(UP);stackActioner.push(direction, Action.RUN);}
         });
         InputManager.SubscribePressed(KeyEvent.VK_S, new InputFunction() {
             @Override
-            public void Execute() {activateAction(DOWN);}
+            public void Execute() {activateAction(DOWN);stackActioner.push(direction, Action.RUN);}
         });
         InputManager.SubscribePressed(KeyEvent.VK_A, new InputFunction() {
             @Override
-            public void Execute() {activateAction(LEFT);System.out.println("hola");}
+            public void Execute() {activateAction(LEFT);stackActioner.push(direction, Action.RUN);}
         });
         InputManager.SubscribePressed(KeyEvent.VK_D, new InputFunction() {
             @Override
-            public void Execute() {activateAction(RIGHT);}
+            public void Execute() {activateAction(RIGHT);stackActioner.push(direction, Action.RUN);}
         });
         InputManager.SubscribePressed(KeyEvent.VK_ESCAPE, new InputFunction() {
             @Override
-            public void Execute() {GameLoop.Quit(); }
+            public void Execute() {GameLoop.Quit();}
         });
         //ATTACK_____________________________________________________________________________________________
         InputManager.SubscribePressed(KeyEvent.VK_J, new InputFunction() {
@@ -360,9 +365,10 @@ public class Player extends Actor {
         hitbox.Update();
         terrainColliderUpdate();
         //System.out.println("Player Position: " + this.getPseudoPosition());
-        System.out.println(velocity);
+        //System.out.println(velocity);
         //System.out.println(GetPosition());
 //SE VE GENIAL, SI QUIERES, MERGEO CON AUDIO PARA LOS FPSs
+        System.out.println(stackActioner);
     }
     public void playerStateMachine(){
         if(dash){dashCooldawn = 0;dash();return;}

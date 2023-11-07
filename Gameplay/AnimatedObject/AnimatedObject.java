@@ -55,4 +55,6 @@ public abstract class AnimatedObject extends Actor{
         animationMachine.GetAnimation().SetDelay(delay);
         animation = spritesheet.GetSpriteArray2D()[defaultAnimationIndex];
     }
+
+    
 }
