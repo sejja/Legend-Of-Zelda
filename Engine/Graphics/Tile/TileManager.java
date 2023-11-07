@@ -140,7 +140,7 @@ public class TileManager extends ECObject implements Renderable {
         } catch(ParserConfigurationException | SAXException | IOException | URISyntaxException e) {
             Logger.Instance().Log(Logger.Instance().GetLog("Engine"), 
                 "Error - Can't read tilemap file. " + e.getMessage(), Level.SEVERE, 2, Color.red);
-            return null;    
+            return null;
         }
     }
 

@@ -29,9 +29,6 @@ public class TSXDocument {
     public TSXDocument(final String path) {
         try {
             DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            
-            System.out.println("THIS WILL FAIL: " + "Content/TiledProject/" 
-            + path);
 
             final Document aux = builder.parse(
                 new File(getClass().getClassLoader().getResource(path).toURI()));
