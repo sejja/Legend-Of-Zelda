@@ -16,6 +16,7 @@ import Engine.Developer.Logger.Logger;
 import Engine.ECSystem.World;
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
+import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Animations.Animation;
 import Engine.Graphics.Animations.AnimationEvent;
@@ -23,6 +24,7 @@ import Engine.Graphics.Components.AnimationMachine;
 import Engine.Graphics.Components.ZeldaCameraComponent;
 import Engine.Graphics.Tile.Block;
 import Engine.Graphics.Tile.ObjectBlock;
+import Engine.Graphics.Tile.ShadowLayer;
 import Engine.Graphics.Tile.TileManager;
 import Engine.Input.InputFunction;
 import Engine.Input.InputManager;
@@ -30,6 +32,7 @@ import Engine.Math.Vector2D;
 import Engine.Physics.CollisionResult;
 import Engine.Physics.Components.BoxCollider;
 import Engine.Window.GameLoop;
+import Engine.Window.PresentBuffer;
 import Engine.Physics.Components.ColliderManager;
 import Gameplay.Interaction;
 import Gameplay.AnimatedObject.Bomb;
@@ -597,8 +600,12 @@ public class Player extends Actor {
     */
     private void dead(){ //falta hacer que link se muera y termine el juego
         Log v = Logger.Instance().GetLog("Gameplay");
-        Logger.Instance().Log(v, "I Died", Level.INFO, 1, Color.RED);
+        Logger.Instance().Log(v, "I Died", Level.INFO, 1, Color.BLACK);
         System.out.println("Ha muerto");
+        GraphicsPipeline.GetGraphicsPipeline().RemoveAllRenderables();
+        GraphicsPipeline.GetGraphicsPipeline().AddRenderable(mAnimation);
+        PresentBuffer.SetClearColor(Color.red);
+        ShadowLayer.getShadowLayer().setOn(false);
     }
     //------------------------------------------------------------------------
     

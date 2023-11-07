@@ -106,6 +106,10 @@ public class GraphicsPipeline {
         
     }
 
+    public void RemoveAllRenderables() {
+        mRenderables.forEach(x -> mOldRenderables.add(x));
+    }
+
     public CameraComponent GetCamera() {
         return mCamera;
     }

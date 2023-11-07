@@ -10,6 +10,9 @@ package Engine.Graphics.Tile;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsEnvironment;
+import java.awt.Transparency;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.image.BufferedImage;
@@ -70,7 +73,11 @@ public class TilemapNorm extends Tilemap {
     *   Renders the whole tilemap into a buffer, allowing for pre-computed rendering
     */ //----------------------------------------------------------------------
     private void RenderToBuffer(final Vector2D<Float> position, final int tileheight, final int tilewidth, final int height, final Block[] blocks) {
-        mBuffer = new BufferedImage(height * tilewidth, height * tileheight, BufferedImage.TYPE_INT_ARGB);
+        GraphicsConfiguration gfxConfig = GraphicsEnvironment.
+        getLocalGraphicsEnvironment().getDefaultScreenDevice().
+        getDefaultConfiguration();
+        mBuffer = gfxConfig.createCompatibleImage(
+            height * tilewidth, height * tileheight, Transparency.TRANSLUCENT);
         final Graphics2D gfx = mBuffer.createGraphics();
 
         Arrays.stream(blocks).forEach(b -> {
