@@ -41,7 +41,7 @@ public class TileManager extends ECObject implements Renderable {
     public Queue<parseEntity> entityQueue;
     private String mPath;
     private AABB mBounds;
-    public static TilemapObject sLevelObjects;
+    public static CollisionLayer sLevelObjects;
 
     // ------------------------------------------------------------------------
     /*! Conversion Constructor
@@ -102,8 +102,8 @@ public class TileManager extends ECObject implements Renderable {
                 }else if(!eElement.getAttribute("name").equals("colision")) {
                     mLayers.add(new DecorativeLayer(position, data[i], images, new Vector2D<>(width, height), blockscale, tilecolumns, ids));
                 }else {
-                    mLayers.add(new TilemapObject(position, data[i], images, width, height, blockscale.x, blockscale.y, tilecolumns, ids));
-                    sLevelObjects = (TilemapObject)mLayers.get(mLayers.size() - 1);
+                    mLayers.add(new CollisionLayer(position, data[i], images, new Vector2D<>(width, height), blockscale, tilecolumns, ids));
+                    sLevelObjects = (CollisionLayer)mLayers.get(mLayers.size() - 1);
                 }
             }
 
