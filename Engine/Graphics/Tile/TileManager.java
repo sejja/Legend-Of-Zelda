@@ -100,7 +100,7 @@ public class TileManager extends ECObject implements Renderable {
                 if(eElement.getAttribute("name").equals("entities")){
                     entityQueue = new TilemapEntities(position, data[i], images, width, height, blockscale.x, blockscale.y, tilecolumns, ids).entityQueue;
                 }else if(!eElement.getAttribute("name").equals("colision")) {
-                    mLayers.add(new TilemapNorm(position, data[i], images, width, height, blockscale.x, blockscale.y, tilecolumns, ids));
+                    mLayers.add(new DecorativeLayer(position, data[i], images, new Vector2D<>(width, height), blockscale, tilecolumns, ids));
                 }else {
                     mLayers.add(new TilemapObject(position, data[i], images, width, height, blockscale.x, blockscale.y, tilecolumns, ids));
                     sLevelObjects = (TilemapObject)mLayers.get(mLayers.size() - 1);

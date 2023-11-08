@@ -26,24 +26,30 @@ import Engine.Graphics.Components.CameraComponent;
 import Engine.Math.Vector2D;
 import Engine.Physics.AABB;
 
-public class TilemapNorm extends Tilemap {
+public class DecorativeLayer extends Tilemap {
     private BufferedImage mBuffer;
 
-    public TilemapNorm(Vector2D<Float> position, String data, 
-        ArrayList<Spritesheet> sprite, int width , int height, int tilewidth, 
-        int tileheight, ArrayList<Integer> tilecolumns, ArrayList<Integer> ids) {
-        Block[] mBlocks = new Block[width * height];
+    // ------------------------------------------------------------------------
+    /*! 
+    *
+    *   Renders the whole tilemap into a buffer, allowing for pre-computed rendering
+    */ //----------------------------------------------------------------------
+    public DecorativeLayer(final Vector2D<Float> position, final String data, 
+        final ArrayList<Spritesheet> sprite, final Vector2D<Integer> scale, 
+        final Vector2D<Integer> tilescale, final ArrayList<Integer> tilecolumns,
+        final ArrayList<Integer> ids) {
+        Block[] mBlocks = new Block[scale.x * scale.y];
         String[] block = data.split(",");
 
         //Loop through all coverable tiles
-        for(int i = 0, length = width * height; i < length; i++) {
+        for(int i = 0, length = scale.x * scale.y; i < length; i++) {
             int id = Integer.parseInt(block[i].replaceAll("\\s+",""));
 
             //If we don't have a null block
             if(id != 0) {
                 Vector2D<Integer> positiontemp = new Vector2D<Integer>(
-                    (int) (i % width) * tilewidth + (int)(float)position.x, 
-                    (int) (i / height) * tileheight + (int)(float)position.y);
+                    (int) (i % scale.x) * tilescale.x + (int)(float)position.x, 
+                    (int) (i / scale.y) * tilescale.y + (int)(float)position.y);
 
                 int sprite_id = 0; //Might be -1
 
@@ -58,13 +64,13 @@ public class TilemapNorm extends Tilemap {
                 //If we have a valid subsprite
                 if(sp != null) {
                     AffineTransform transform = AffineTransform.getTranslateInstance(positiontemp.x, positiontemp.y);
-                    transform.concatenate(AffineTransform.getScaleInstance(tilewidth, tileheight));
+                    transform.concatenate(AffineTransform.getScaleInstance(tilescale.x, tilescale.y));
                     mBlocks[i] = new Normblock(sp, transform);
                 }
             }
         }
 
-        RenderToBuffer(position, tileheight, tilewidth, height, mBlocks);
+        RenderToBuffer(position, tilescale, scale.y, mBlocks);
     }
 
     // ------------------------------------------------------------------------
@@ -72,12 +78,12 @@ public class TilemapNorm extends Tilemap {
     *
     *   Renders the whole tilemap into a buffer, allowing for pre-computed rendering
     */ //----------------------------------------------------------------------
-    private void RenderToBuffer(final Vector2D<Float> position, final int tileheight, final int tilewidth, final int height, final Block[] blocks) {
+    private void RenderToBuffer(final Vector2D<Float> position, final Vector2D<Integer> scale, final int height, final Block[] blocks) {
         GraphicsConfiguration gfxConfig = GraphicsEnvironment.
         getLocalGraphicsEnvironment().getDefaultScreenDevice().
         getDefaultConfiguration();
         mBuffer = gfxConfig.createCompatibleImage(
-            height * tilewidth, height * tileheight, Transparency.TRANSLUCENT);
+            height * scale.x, height * scale.y, Transparency.TRANSLUCENT);
         final Graphics2D gfx = mBuffer.createGraphics();
 
         Arrays.stream(blocks).forEach(b -> {
@@ -85,7 +91,7 @@ public class TilemapNorm extends Tilemap {
             //In case the transform matrix is not inverstible, which is mathematically impossible (we are only translating)
             try {
                 if(b != null)
-                    b.RenderAtPosition(gfx, AffineTransform.getTranslateInstance(position.x, position.y));
+                    b.RenderAtPosition(gfx, AffineTransform.getTranslateInstance(-position.x, -position.y));
             } catch (NoninvertibleTransformException e) {
                 Logger.Instance().Log(Logger.Instance().GetLog("Engine"), 
                 "TilemapNorm - Can't render tile: " + e.getMessage(), Level.WARNING, 4, Color.yellow);
