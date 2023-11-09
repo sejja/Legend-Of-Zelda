@@ -3,6 +3,8 @@ package Gameplay.NPC;
 import java.awt.event.KeyEvent;
 
 import Engine.Assets.AssetManager;
+import Engine.Audio.Audio;
+import Engine.Audio.Sound;
 import Engine.ECSystem.Types.Actor;
 import Engine.Graphics.Components.FontComponent;
 import Engine.Input.InputFunction;
@@ -37,6 +39,14 @@ public class SelectionArrow extends Actor{
                 SetIsContinue(false);
             }
         });
+
+        InputManager.SubscribePressed(KeyEvent.VK_ENTER, new InputFunction() {
+            @Override
+            public void Execute() {
+                Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/finish.wav"));
+                Audio.Instance().Play(sound);
+            }
+        });
     }
 
     @Override
@@ -50,5 +60,7 @@ public class SelectionArrow extends Actor{
 
     public void SetIsContinue(boolean b) {
         iscontinue = b;
+        Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/message.wav"));
+        Audio.Instance().Play(sound);
     }
 }

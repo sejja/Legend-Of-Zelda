@@ -2,7 +2,9 @@ package Engine.Audio;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.TreeMap;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -12,10 +14,17 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 public class Audio {
     private static Audio sInstance = new Audio();
-    private HashMap<Sound, Clip> mSounds;
+    private TreeMap<Sound, Clip> mSounds;
 
     private Audio() {
-        mSounds = new HashMap<Sound, Clip>();
+        mSounds = new TreeMap<Sound, Clip>(new Comparator<Sound>() {
+
+            @Override
+            public int compare(Sound o1, Sound o2) {
+                return o1.mAudio.compareTo(o2.mAudio);
+            }
+            
+        });
     }
 
     public static Audio Instance() {
@@ -29,7 +38,14 @@ public class Audio {
                 clip.open(AudioSystem.getAudioInputStream((File)sound.GetWaveformat().Raw()));
                 mSounds.put(sound, clip);
             } else {
-                mSounds.get(sound).open(AudioSystem.getAudioInputStream((AudioInputStream)sound.GetWaveformat().Raw()));
+                Clip s = mSounds.get(sound);
+                if(s.isActive()) {
+                    return;
+                } else if(s.isOpen()) {
+                    s.stop();
+                    s.close();
+                }
+                s.open(AudioSystem.getAudioInputStream((File)sound.GetWaveformat().Raw()));
             }
 
             sound.SetIsPaused(false);
@@ -69,9 +85,11 @@ public class Audio {
     } 
       
     public void Stop(Sound sound) { 
-        sound.SetCurrentFrame(0L); 
-        mSounds.get(sound).stop(); 
-        mSounds.get(sound).close(); 
+        if(mSounds.containsKey(sound)) {
+            sound.SetCurrentFrame(0L); 
+            mSounds.get(sound).stop(); 
+            mSounds.get(sound).close(); 
+        }
     } 
       
     public void Forward(Sound sound, long c) { 

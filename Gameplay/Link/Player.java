@@ -109,6 +109,7 @@ public class Player extends Actor {
     private int velocity = 0;
     final int default_velocity = 10;
     private LifeBar lifeBar;
+    Sound low_hp_sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/low-hp.wav"));
     //----------------------------------------------------------------------
 
     /* NPC
@@ -539,9 +540,8 @@ public class Player extends Actor {
                 Audio.Instance().Play(sound);
             
                 if(this.healthPoints <= 2) {
-                    sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/low-hp.wav"));
-                    Audio.Instance().Play(sound);
-                    Audio.Instance().SetLoopCount(sound, -1);
+                    Audio.Instance().Play(low_hp_sound);
+                    Audio.Instance().SetLoopCount(low_hp_sound, -1);
                 }
             }
         }
@@ -614,6 +614,13 @@ public class Player extends Actor {
         ShadowLayer.getShadowLayer().setOn(false);
         mAnimation.setMustComplete(true);
         SetAnimation(FALL, mAnimation.GetSpriteSheet().GetSpriteArray(FALL), 10);
+        Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/link-death.wav"));
+        Audio.Instance().Play(sound);  
+        Audio.Instance().Stop(low_hp_sound);
+        Audio.Instance().SetLoopCount(low_hp_sound, 0);
+        Sound bg = new Sound(AssetManager.Instance().GetResource("Content/Audio/overworld.wav"));
+        Audio.Instance().Stop(bg);
+        Audio.Instance().SetLoopCount(bg, -1);
         mAnimation.AddFinishedListener(new AnimationEvent() {
             @Override
             public void OnTrigger() {
@@ -645,6 +652,10 @@ public class Player extends Actor {
 
                 arrow.SetScale(new Vector2D<>(GetScale().x / 2, GetScale().y / 2));
                 ObjectManager.GetObjectManager().AddEntity(arrow);
+
+                Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/crystal.wav"));
+                Audio.Instance().Play(sound);  
+                Audio.Instance().SetLoopCount(sound, -1);
             }
         });
     }
