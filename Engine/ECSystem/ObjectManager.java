@@ -34,6 +34,14 @@ public class ObjectManager {
         return sManager;
     }
 
+    public void Clear() {
+        for(var x : mAliveEntities.keySet()) {
+            for(Entity y : mAliveEntities.get(x)) {
+                RemoveEntity(y);
+            }
+        }
+    }
+
     // ------------------------------------------------------------------------
     /*! Get Object By Name
     *
@@ -126,7 +134,7 @@ public class ObjectManager {
     *
     *   Updates every object on the object manager
     */ //----------------------------------------------------------------------
-    public void Update() {
+    public synchronized void Update() {
         mAliveEntities.values()            
             .stream().forEach(x -> x
             .stream().forEach(y -> y.Update()));

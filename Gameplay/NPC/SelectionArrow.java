@@ -10,6 +10,8 @@ import Engine.Graphics.Components.FontComponent;
 import Engine.Input.InputFunction;
 import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
+import Engine.StateMachine.StateMachine;
+import Engine.Window.GameLoop;
 
 public class SelectionArrow extends Actor{
 
@@ -45,6 +47,14 @@ public class SelectionArrow extends Actor{
             public void Execute() {
                 Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/finish.wav"));
                 Audio.Instance().Play(sound);
+                sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/crystal.wav"));
+                Audio.Instance().Stop(sound);
+
+                if(iscontinue) {
+                    GameLoop.Restart();
+                } else {
+                    GameLoop.Quit();
+                }
             }
         });
     }

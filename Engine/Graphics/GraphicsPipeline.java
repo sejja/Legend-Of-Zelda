@@ -80,18 +80,18 @@ public class GraphicsPipeline {
     *
     *   Renders every component
     */ //----------------------------------------------------------------------
-    public void Render(Graphics2D g) {
-        
-        for(Renderable r: mOldRenderables)
-            mRenderables.remove(r);
-
-        mOldRenderables.clear();
+    synchronized public void Render(Graphics2D g) {
         mRenderables.addAll(mNewRenderables);
         mNewRenderables.clear();
 
         //Renderable
         for (Renderable r: mRenderables) 
             r.Render(g, mCamera);
+
+        for(Renderable r: mOldRenderables)
+            mRenderables.remove(r);
+
+        mOldRenderables.clear();
 
         shadowLayer.Render(g, mCamera);
         Logger.Render(g);

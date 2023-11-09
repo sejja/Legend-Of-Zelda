@@ -12,6 +12,7 @@ import Engine.Graphics.Sprite;
 import Engine.Graphics.Components.ZeldaCameraComponent;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Tile.Normblock;
+import Engine.Graphics.Tile.ShadowLayer;
 import Engine.Graphics.Tile.TileManager;
 import Engine.Graphics.Tile.TilemapEntities;
 import Engine.Math.Vector2D;
@@ -38,12 +39,12 @@ public class TestRoom extends World {
     public TestRoom(World right, World left, World up, World down, String tiles, Vector2D<Float> pos) {
         super(right, left, up, down, new TileManager(tiles));
         ObjectManager.GetObjectManager().AddEntity(new Player(new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/Link/Link.png")), new Vector2D<Float>(2500f, 1700.f), new Vector2D<Float>(100.f, 100.f)));
-        ObjectManager.GetObjectManager().Update();
         Init(pos);
         
         ArrayList<String> dialogueArrayList = new ArrayList<String>();
         ArrayList<String> dialogueArrayList2 = new ArrayList<String>();
-        
+        ShadowLayer.getShadowLayer().setOn(true);
+        ShadowLayer.getShadowLayer().buildMatrix();
         dialogueArrayList.add("En un mundo muy lejano] vivia una princesa que buscaba a su \nprincipe] y para logralo] llamo a todos los principes del reino \nademas deberas vuscar todos los artefactos de las piedras para \necuperar el poder de hyrule");
         dialogueArrayList.add("Ahora embarcate en una nueva aventura junto a tu espada y tu \narco");
         dialogueArrayList2.add("Muy buenas caballero] mi nombre es Juan] y estoy aqui protegiendo \nla puerta de acceso al palacio");

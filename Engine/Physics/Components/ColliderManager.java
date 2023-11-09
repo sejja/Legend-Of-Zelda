@@ -24,6 +24,12 @@ public class ColliderManager {
         mapAllCollider = new HashMap<>();
     }
 
+    public void Clear() {
+        mapAllCollision.clear();
+        mapAllNonCollision.clear();
+        mapAllCollider.clear();
+    } 
+
     public static ColliderManager GetColliderManager (){return colliderManager;}
 
     public void addCollider(BoxCollider collider, boolean itCollides){

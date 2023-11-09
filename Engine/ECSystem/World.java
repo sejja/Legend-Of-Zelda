@@ -32,6 +32,12 @@ public class World {
     
     private boolean visited = false;
 
+    public static void Reset() {
+        mCurrentLevel = null;
+        sTransitioning = false;
+        sElapsedTime = 0;
+    }
+
     protected World(World right, World left, World up, World down, TileManager tiles) {
         mRight = right;
         mLeft = left;

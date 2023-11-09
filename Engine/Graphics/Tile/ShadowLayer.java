@@ -3,6 +3,7 @@ package Engine.Graphics.Tile;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 
 import Engine.ECSystem.World;
 import Engine.ECSystem.ObjectManager;
@@ -105,6 +106,10 @@ public class ShadowLayer {
         */
         Vector2D<Integer> _result =  new Vector2D<Integer>((int)(result.x/64), (int)(result.y/64));
         return _result;
+    }
+
+    public void Clear(int opacity){
+        this.opacity = opacity;
     }
 
     private int getOpacity (Vector2D<Integer> cameraDrawPoint){
