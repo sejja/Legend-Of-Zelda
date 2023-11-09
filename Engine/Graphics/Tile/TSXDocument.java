@@ -1,3 +1,11 @@
+//
+//	TSXDocument.java
+//	Legend Of Zelda
+//
+//	Created by Diego Revilla on 09/11/2023
+//	Copyright Deusto © 2023. All Rights reserved
+// 
+
 package Engine.Graphics.Tile;
 
 import java.awt.Color;
@@ -26,6 +34,11 @@ public class TSXDocument {
     public int mColumns;
     public Spritesheet mImage;
 
+    // ------------------------------------------------------------------------
+    /*! Custom Constructor
+    *
+    *   Caches the tileset data from the TSX file
+    */ //----------------------------------------------------------------------
     public TSXDocument(final String path) {
         try {
             DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
