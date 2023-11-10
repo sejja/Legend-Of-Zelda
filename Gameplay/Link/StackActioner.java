@@ -37,6 +37,7 @@ public class StackActioner {
         if(actionToRemove.equals(floorAction)){return false;}
         if (!register.contains(actionToRemove)) {
             System.err.println("ERROR ALGO NO VA BIEN :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
+            System.out.println("ConcheSumadre");
             return false;
         }
         register.remove(actionToRemove);
