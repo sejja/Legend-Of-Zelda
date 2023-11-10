@@ -36,7 +36,7 @@ public class StackActioner {
     public boolean pop(ActionObject actionToRemove){
         if(actionToRemove.equals(floorAction)){return false;}
         if (!register.contains(actionToRemove)) {
-            System.err.println("ERROR ALGO NO VA BIEN ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
+            System.err.println("ERROR ALGO NO VA BIEN :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
             return false;
         }
         register.remove(actionToRemove);
