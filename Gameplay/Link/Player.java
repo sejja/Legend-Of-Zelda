@@ -243,7 +243,7 @@ public class Player extends Actor {
             public void Execute() {
                 setVelocity(0);
                 stop = true;
-                bow =false;
+                //bow =false;
             }
         });
         //DASH_______________________________________________________________________________________________
@@ -290,20 +290,22 @@ public class Player extends Actor {
             @Override
             public void Execute() {interact();}
         });
-
+        var player = this; //<-----------------------------quitar
         mAnimation.AddFinishedListener(new AnimationEvent() {
 
             @Override
             public void OnTrigger() {
+                System.out.println(player.actionToString());
                 if (falling) //Finished falling animation
                 {
                     linkHasFalled();
                 }
-                else if (nArrows != 0 && bow) //Spawn Arrow
+                else if (bow) //Spawn Arrow
                 {
                     shootArrow();
                     bow = false;
                     stackActioner.pop(new ActionObject(direction,Action.BOW));
+                    System.out.println("Se popea arco");
                 }
                 else if (attack) //Finished Attack (attack && !bow)
                 {
@@ -311,6 +313,7 @@ public class Player extends Actor {
                     bow = false;
                     attack = false;
                     stackActioner.pop(new ActionObject(direction, Action.ATTACK));
+                    System.out.println("Se popea espada");
                 }
                 //mAnimation.setMustComplete(false);
             }
@@ -608,7 +611,7 @@ public class Player extends Actor {
      */
     private void shootArrow(){ //Tiene que dar al enemigo
         nArrows--;
-        if(nArrows == 0){System.out.println("0 Arrows in quiver");}
+        if(nArrows <= 0){System.out.println("0 Arrows in quiver");}
         else{ObjectManager.GetObjectManager().AddEntity(new Arrow(this));}
     }
     //------------------------------------------------------------------------
