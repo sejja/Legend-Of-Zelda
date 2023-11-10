@@ -344,7 +344,7 @@ public class Player extends Actor {
     public void Animate() {
 
         if (mAnimation.MustComplete()){return;} //Early return, if it is a animation thats has to be complete, do not animate
-
+        direction = stackActioner.readCurrentAction().getDirection();
         setMovement(stackActioner.readCurrentAction().getAction());return;
         /* 
         if (stop){
