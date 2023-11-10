@@ -18,7 +18,8 @@ public class StackActioner {
         stack = new LinkedList<>();
         floorAction = new ActionObject(link.getDirection());
         register = new HashSet<>();
-        stack.push(floorAction);
+        stack.addLast(floorAction);
+        register.add(floorAction);
     }
 
     public ActionObject readCurrentAction(){return stack.getLast();}
