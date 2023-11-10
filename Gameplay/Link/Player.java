@@ -626,7 +626,7 @@ public class Player extends Actor {
             public void OnTrigger() {
                 GraphicsPipeline.GetGraphicsPipeline().RemoveAllRenderables();
                 
-                Vector2D<Float> posincamspace = GraphicsPipeline.GetGraphicsPipeline().GetCamera().GetCoordinates();
+                Vector2D<Float> posincamspace = GraphicsPipeline.GetGraphicsPipeline().GetBindedCamera().GetCoordinates();
                 Vector2D<Integer> scale = GraphicsPipeline.GetGraphicsPipeline().GetDimensions();
                 Actor gameovertext = new Actor(new Vector2D<>(posincamspace.x + scale.x / 2 - 250, posincamspace.y + scale.y / 4)) {};
                 gameovertext.SetScale(GetScale());

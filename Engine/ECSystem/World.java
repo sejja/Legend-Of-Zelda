@@ -110,7 +110,7 @@ public class World {
                 if(position.x > (GetBounds().GetPosition().x + GetBounds().GetWidth()) && mRight != null) {
                     mRight.Init(new Vector2D<>(GetBounds().GetPosition().x + GetBounds().GetWidth(), GetBounds().GetPosition().y));
                     sTransitioning = true;
-                     var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetCamera();
+                     var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetBindedCamera();
                     sPreviousTopRight = z.GetTopRightBound();
                     sPreviousBottomLeft = z.GetBottomLeftBound();
                 }
@@ -124,7 +124,7 @@ public class World {
 
                     mLeft.Init(pos);
                     sTransitioning = true;
-                    var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetCamera();
+                    var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetBindedCamera();
                     sPreviousTopRight = z.GetTopRightBound();
                     sPreviousBottomLeft = z.GetBottomLeftBound();
                 }
@@ -137,7 +137,7 @@ public class World {
 
                     mRight.Init(pos);
                     sTransitioning = true;
-                    var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetCamera();
+                    var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetBindedCamera();
                     sPreviousTopRight = z.GetTopRightBound();
                     sPreviousBottomLeft = z.GetBottomLeftBound();
                 }
@@ -146,13 +146,13 @@ public class World {
                 if(position.y > (GetBounds().GetPosition().y + GetBounds().GetHeight()) && mLower != null) {
                     mLower.Init(new Vector2D<>(GetBounds().GetPosition().x, GetBounds().GetPosition().y + GetBounds().GetHeight()));
                     sTransitioning = true;
-                    var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetCamera();
+                    var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetBindedCamera();
                     sPreviousTopRight = z.GetTopRightBound();
                     sPreviousBottomLeft = z.GetBottomLeftBound();
                 }
             }
         } else {
-            var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetCamera();
+            var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetBindedCamera();
             z.Update();
 
             if(sElapsedTime < 0.5) {

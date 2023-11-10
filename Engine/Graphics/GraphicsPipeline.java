@@ -10,8 +10,6 @@ package Engine.Graphics;
 
 import java.awt.Graphics2D;
 import java.util.ArrayList;
-import java.util.Vector;
-
 import Engine.Developer.Logger.Logger;
 import Engine.Graphics.Components.CameraComponent;
 import Engine.Graphics.Components.Renderable;
@@ -38,10 +36,20 @@ public class GraphicsPipeline {
         return sPipe;
     }
 
-    public void SetDimensions(Vector2D<Integer> dim) {
+    // ------------------------------------------------------------------------
+    /*! Set Dimensions
+    *
+    *   Sets the rendering dimensions
+    */ //----------------------------------------------------------------------
+    public void SetDimensions(final Vector2D<Integer> dim) {
         mDimensions = dim;
     }
 
+    // ------------------------------------------------------------------------
+    /*! Get Dimensions
+    *
+    *   Retrieve the Rendering Dimensions
+    */ //----------------------------------------------------------------------
     public Vector2D<Integer> GetDimensions() {
         return mDimensions;
     }
@@ -58,7 +66,12 @@ public class GraphicsPipeline {
         shadowLayer = new ShadowLayer(170);
     }
 
-    public void BindCamera(CameraComponent c) {
+    // ------------------------------------------------------------------------
+    /*! Bind Camera
+    *
+    *   Binds the rendering camera
+    */ //----------------------------------------------------------------------
+    public void BindCamera(final CameraComponent c) {
         mCamera = c;
     }
 
@@ -67,11 +80,16 @@ public class GraphicsPipeline {
     *
     *   Adds a Renderable to the pipeline
     */ //----------------------------------------------------------------------
-    public void AddRenderable(Renderable r) {
+    public void AddRenderable(final Renderable r) {
         mNewRenderables.add(r);
     }
 
-    public void AddRenderableBottom(Renderable r) {
+    // ------------------------------------------------------------------------
+    /*! Add Renderable Bottom
+    *
+    *   Adds a Renderable to the botttom of the rendering pipeline
+    */ //----------------------------------------------------------------------
+    public void AddRenderableBottom(final Renderable r) {
         mRenderables.add(0, r);
     }
 
@@ -80,19 +98,16 @@ public class GraphicsPipeline {
     *
     *   Renders every component
     */ //----------------------------------------------------------------------
-    synchronized public void Render(Graphics2D g) {
+    public void Render(final Graphics2D g) {
         mRenderables.addAll(mNewRenderables);
         mNewRenderables.clear();
 
-        //Renderable
-        for (Renderable r: mRenderables) 
-            r.Render(g, mCamera);
+        //If there is indeed a Binded Camera
+        if(mCamera != null)
+            mRenderables.stream().forEach(r -> r.Render(g, mCamera));
 
-        for(Renderable r: mOldRenderables)
-            mRenderables.remove(r);
-
+        mOldRenderables.stream().forEach(r -> mRenderables.remove(r));
         mOldRenderables.clear();
-
         shadowLayer.Render(g, mCamera);
         Logger.Render(g);
     }
@@ -102,20 +117,35 @@ public class GraphicsPipeline {
     *
     *   Removes one renderable
     */ //----------------------------------------------------------------------
-    public void RemoveRenderable(Renderable r) {
+    public void RemoveRenderable(final Renderable r) {
         mOldRenderables.add(r);
         
     }
 
+    // ------------------------------------------------------------------------
+    /*! Remove All Renderables
+    *
+    *   Removes all renderables from the renderable list
+    */ //----------------------------------------------------------------------
     public void RemoveAllRenderables() {
         mRenderables.forEach(x -> mOldRenderables.add(x));
     }
 
-    public CameraComponent GetCamera() {
+    // ------------------------------------------------------------------------
+    /*! Get Camera
+    *
+    *   Returns the Binded Camera
+    */ //----------------------------------------------------------------------
+    public CameraComponent GetBindedCamera() {
         return mCamera;
     }
 
-    public void UnbindCamera(CameraComponent c) {
+    // ------------------------------------------------------------------------
+    /*! Unbind Camera
+    *
+    *   Unbinds the current rendering camera, if there is any
+    */ //----------------------------------------------------------------------
+    public void UnbindCamera(final CameraComponent c) {
         mCamera = (mCamera == c) ? null : mCamera;
     }
 }

@@ -64,7 +64,7 @@ public class TestRoom extends World {
         //ObjectManager.GetObjectManager().AddEntity(new Torch(new Vector2D<Float>(1680f, 1550.f)));
         //ObjectManager.GetObjectManager().AddEntity(new Torch(new Vector2D<Float>(1500.f, 1550.f)));
         //ObjectManager.GetObjectManager().AddEntity(new Torch(new Vector2D<Float>(1400.f, 1550.f)));
-        var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetCamera();
+        var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetBindedCamera();
         ObjectManager.GetObjectManager().AddEntity(new Rock(new Vector2D<Float>(1470f, 750.f)));
         ObjectManager.GetObjectManager().AddEntity(new Rock(new Vector2D<Float>(1356f, 750.f)));
 
