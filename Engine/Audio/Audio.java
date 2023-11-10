@@ -32,7 +32,7 @@ public class Audio {
     }
 
     public void Play(Sound sound) {
-        try {
+       try {
             if(!mSounds.containsKey(sound)) {
                 Clip clip = AudioSystem.getClip();
                 clip.open(AudioSystem.getAudioInputStream((File)sound.GetWaveformat().Raw()));
@@ -60,13 +60,13 @@ public class Audio {
         mSounds.get(sound).loop(count);
     }
 
-    public void Pause(Sound sound) {
+    public void Pause(Sound sound) { 
         sound.SetCurrentFrame((mSounds.get(sound)).getMicrosecondPosition());
         mSounds.get(sound).stop();
         sound.SetIsPaused(true);
     }
 
-    public void Restart(Sound sound) { 
+    public void Restart(Sound sound) {  
         try {
             mSounds.get(sound).stop(); 
             mSounds.get(sound).close();

@@ -82,7 +82,7 @@ public class Arrow extends Actor{
             SetPosition(Link.GetPosition());
             //Link.getHitbox().disable();
             this.fixed = fixed;
-            Link.setVelocity(0);
+            //Link.setVelocity(0);
         }
         else
         {
@@ -118,29 +118,29 @@ public class Arrow extends Actor{
                 currentPosition = pos.y;
                 if(hitbox.GetBounds().collisionTile(0, -speed) == CollisionResult.None){
                     pos.y -= speed;
+                    distance += Math.abs(currentPosition - pos.y);
                 }else{endArrow = true;}
-                distance += Math.abs(currentPosition - pos.y);
                 return;
             case DOWN:
                 currentPosition = pos.y;
                 if(hitbox.GetBounds().collisionTile(0, +speed) == CollisionResult.None){
                     pos.y += speed;
+                    distance += Math.abs(currentPosition - pos.y);
                 }else{endArrow = true;}
-                distance += Math.abs(currentPosition - pos.y);
                 return;
             case LEFT:
                 currentPosition = pos.x;
                 if(hitbox.GetBounds().collisionTile(-speed, 0) == CollisionResult.None){
                     pos.x -= speed;
+                    distance += Math.abs(currentPosition - pos.x);
                 }else{endArrow = true;}
-                distance += Math.abs(currentPosition - pos.x);
                 return;
             case RIGHT:
                 currentPosition = pos.x;
                 if(hitbox.GetBounds().collisionTile(+speed, 0) == CollisionResult.None){
                     pos.x += speed;
+                    distance += Math.abs(currentPosition - pos.x);
                 }else{endArrow = true;}
-                distance += Math.abs(currentPosition - pos.x);
                 return;
         }
         SetPosition(pos);
@@ -217,6 +217,7 @@ public class Arrow extends Actor{
 
     @Override
     protected void despawn() {
+        //if(fixed){((Player)ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0)).setVelocity(10);}
         super.despawn();
     }
 

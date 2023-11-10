@@ -23,6 +23,7 @@ import Gameplay.NPC.Npc;
 public abstract class Interactive extends Actor{
 
     protected Pair mPositionPair;
+    protected Block block;
 
     //stats
     protected int healthPoints = 1;
@@ -38,6 +39,12 @@ public abstract class Interactive extends Actor{
     */ //----------------------------------------------------------------------
     public Interactive( Vector2D<Float> position) {
         super(position);
+        mPositionPair = PositionToPair(getPseudoPosition());
+        Vector2D<Integer> pos = new Vector2D<>(mPositionPair.getFirst(), mPositionPair.getSecond());
+        block = TileManager.sLevelObjects.GetBlockAt(pos);
+        if(block == null) {
+            TileManager.sLevelObjects.PlaceBlockAt(pos);
+        }
     }
 
     public void SetAnimation(int i, BufferedImage[] frames, int delay) {

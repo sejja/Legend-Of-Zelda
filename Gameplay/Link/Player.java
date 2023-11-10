@@ -62,7 +62,7 @@ public class Player extends Actor {
         Used to confirm the direction
      */
     //private boolean up = false;
-    public DIRECTION direction = DIRECTION.RIGHT;
+    private DIRECTION direction = DIRECTION.RIGHT;
     private boolean attack = false;
     private boolean stop = true;
     private boolean bow = false;
@@ -729,7 +729,7 @@ public class Player extends Actor {
             currentNPCinteraction = nearestNPC();
         }
         try {
-            currentNPCinteraction.interaction();
+            currentNPCinteraction.INTERACTION();
         } catch (java.lang.NullPointerException e) {
             System.err.println("No npc found");
             this.currentNPCinteraction = null;

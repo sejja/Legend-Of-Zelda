@@ -26,6 +26,7 @@ import Engine.Math.Vector2D;
 import Engine.Physics.Components.ColliderManager;
 import Engine.StateMachine.State;
 import Gameplay.Enemies.*;
+import Gameplay.Levels.OverWorld1Left;
 import Gameplay.Levels.TestRoom;
 import Gameplay.Levels.TestRoom2;
 import Gameplay.Enemies.Units.GreenKnight;
@@ -44,7 +45,10 @@ public class PlayState extends State {
     */ //----------------------------------------------------------------------
     public PlayState() {
         var t = new TestRoom2(null, null, null, null, "Content/TiledProject/TestRoom2.tmx");
-        mTestLevel = new TestRoom(t, null, null, null, "Content/TiledProject/OverWorld1.tmx", new Vector2D<>(0.f, 0.f));
+        var t2 = new OverWorld1Left(null, null, null, null, "Content/TiledProject/OverWorld1Left.tmx");
+        mTestLevel = new TestRoom(t, t2, null, null, "Content/TiledProject/OverWorld1.tmx", new Vector2D<>(0.f, 0.f));
+        
+        t2.SetRightLevel(mTestLevel);
         t.SetLeftlevel(mTestLevel);
 
         var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetCamera();

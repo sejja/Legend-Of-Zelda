@@ -49,10 +49,8 @@ public class TestRoom extends World {
         dialogueArrayList.add("Ahora embarcate en una nueva aventura junto a tu espada y tu \narco");
         dialogueArrayList2.add("Muy buenas caballero] mi nombre es Juan] y estoy aqui protegiendo \nla puerta de acceso al palacio");
         dialogueArrayList2.add("A si que abandona este lugar por favor");
-        ObjectManager.GetObjectManager().AddEntity(new Npc("Aelarion", new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/NPC/NPC_old.png"), new Vector2D<>(68, 72)), new Vector2D<Float>(1330.f, 800.f), dialogueArrayList, new Vector2D<Float>(78.f, 78.f), UP, yLineMovement) );
-        ObjectManager.GetObjectManager().AddEntity(new Npc("Juan", new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/NPC/NPC_boy.png"), new Vector2D<>(64, 64)), new Vector2D<Float>(1580.f, 1550.f), dialogueArrayList2, new Vector2D<Float>(78.f, 78.f),4, stop) );
-        ObjectManager.GetObjectManager().Update();
-
+        ObjectManager.GetObjectManager().AddEntity(new Npc("Aelarion", new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/NPC/NPC_old.png"), new Vector2D<Integer>(68, 72)), new Vector2D<Float>(1330.f, 800.f), new Vector2D<Float>(78.f, 78.f), UP, yLineMovement) );
+        ObjectManager.GetObjectManager().AddEntity(new Npc("Juan", new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/NPC/NPC_boy.png"), new Vector2D<Integer>(64, 64)), new Vector2D<Float>(1580.f, 1550.f), new Vector2D<Float>(78.f, 78.f),4, stop) );
         
         
         /* 

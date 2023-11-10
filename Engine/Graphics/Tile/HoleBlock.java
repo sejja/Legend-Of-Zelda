@@ -32,7 +32,7 @@ public class HoleBlock extends Block {
     *   A hole block DOES collide
     */ //----------------------------------------------------------------------
     @Override
-    public boolean HasCollision(final AABB p) {
+    public boolean HasCollision() {
         return true;
     }
 

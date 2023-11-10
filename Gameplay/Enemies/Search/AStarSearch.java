@@ -26,9 +26,10 @@ public class AStarSearch{
             Vector2D<Integer> pos = new Vector2D<>(Column, Row);
             Block block = TileManager.sLevelObjects.GetBlockAt(pos);
             //System.out.println(Column + " " + Row);
-            if(block instanceof Normblock) return true;
-            if(block instanceof HoleBlock || block instanceof ObjectBlock) return false;
-            return true;
+            if(block == null){
+                return true;
+            }
+            return !block.HasCollision();
         }else{
             //System.out.println(Column + " " + Row);
             return false;
