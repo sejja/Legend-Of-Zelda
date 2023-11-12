@@ -54,14 +54,11 @@ public class PlayState extends State {
         var entradaArriba = new TestRoom2(null, null, null, null, "Content/TiledProject/entradaArriba.tmx");
         var finalRoom = new TestRoom2(null, null, null, null, "Content/TiledProject/finalRoom.tmx");
 
-        mTestLevel = new TestRoom(pasilloDer, t, null, null, "Content/TiledProject/entrada.tmx", new Vector2D<>(0.f, 0.f));
-
         var t2 = new OverWorld1Left(null, null, null, null, "Content/TiledProject/OverWorld1Left.tmx");
         mTestLevel = new TestRoom(t, t2, null, null, "Content/TiledProject/OverWorld1.tmx", new Vector2D<>(0.f, 0.f));
         
         t2.SetRightLevel(mTestLevel);
-        t.SetLeftlevel(mTestLevel);
-        mTestLevel.SetRightLevel(pasilloDer);
+       
 
         var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetBindedCamera();
         Vector2D<Float> topright = new Vector2D<>(mTestLevel.GetBounds().GetPosition().x + 1280.f / 2, mTestLevel.GetBounds().GetPosition().y + 720.f / 2);
