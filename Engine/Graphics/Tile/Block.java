@@ -13,6 +13,7 @@ import Engine.Math.Vector2D;
 import Engine.Physics.AABB;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -74,7 +75,7 @@ public abstract class Block {
                 ));
     }
 
-    public abstract boolean HasCollision(final AABB p);
+    public abstract boolean HasCollision();
     public abstract boolean IsInside(final AABB p);
 
     // ------------------------------------------------------------------------
@@ -86,6 +87,17 @@ public abstract class Block {
         mPosition.concatenate(camera.GetViewMatrix());
         g.drawImage(mImg, mPosition, null);
         mPosition.concatenate(camera.GetCameraMatrix());
+    }
+
+    // ------------------------------------------------------------------------
+    /*! Render
+    *
+    *   Renders the image, on a certain position given the Camera Position
+    */ //----------------------------------------------------------------------
+    public void RenderAtPosition(final Graphics2D g, final AffineTransform tranf) throws NoninvertibleTransformException {
+        mPosition.concatenate(tranf);
+        g.drawImage(mImg, mPosition, null);
+        mPosition.concatenate(tranf.createInverse());
     }
 
     // ------------------------------------------------------------------------

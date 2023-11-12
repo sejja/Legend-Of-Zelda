@@ -16,7 +16,7 @@ import Gameplay.Link.Player;
 public interface StaticPlayerCollision {
     default void playerCollision(BoxCollider hitbox){
         Actor staticalObject = (Actor)this;
-        if(!ColliderManager.GetColliderManager().getCollision(hitbox, Player.class,true).isEmpty()){
+        if(ColliderManager.GetColliderManager().playerCollision(hitbox)){
             Player link = (Player)ColliderManager.GetColliderManager().getMapAllCollision().get(Player.class).getFirst().GetParent();
             Vector2D<Float> currentPosition = link.GetPosition();
             Float difference = 1f;

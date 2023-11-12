@@ -1,25 +1,32 @@
 package Gameplay.Link;
 
+import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.logging.Level;
 
 import Engine.Assets.Asset;
 import Engine.Assets.AssetManager;
 import Engine.Audio.Audio;
 import Engine.Audio.Sound;
-import Engine.ECSystem.Level;
+import Engine.Developer.Logger.Log;
+import Engine.Developer.Logger.Logger;
+import Engine.ECSystem.World;
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
-import Engine.ECSystem.Types.Entity;
+import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Animations.Animation;
 import Engine.Graphics.Animations.AnimationEvent;
 import Engine.Graphics.Components.AnimationMachine;
+import Engine.Graphics.Components.FontComponent;
+import Engine.Graphics.Components.SpriteComponent;
 import Engine.Graphics.Components.ZeldaCameraComponent;
 import Engine.Graphics.Tile.Block;
 import Engine.Graphics.Tile.ObjectBlock;
+import Engine.Graphics.Tile.ShadowLayer;
 import Engine.Graphics.Tile.TileManager;
 import Engine.Input.InputFunction;
 import Engine.Input.InputManager;
@@ -27,6 +34,7 @@ import Engine.Math.Vector2D;
 import Engine.Physics.CollisionResult;
 import Engine.Physics.Components.BoxCollider;
 import Engine.Window.GameLoop;
+import Engine.Window.PresentBuffer;
 import Engine.Physics.Components.ColliderManager;
 import Gameplay.Interaction;
 import Gameplay.AnimatedObject.Bomb;
@@ -34,6 +42,8 @@ import Gameplay.Enemies.Enemy;
 import Gameplay.Interactives.Interactive;
 import Gameplay.LifeBar.LifeBar;
 import Gameplay.NPC.Npc;
+import Gameplay.NPC.SelectionArrow;
+import Engine.Graphics.Components.FontComponent;
 
 public class Player extends Actor {
     
@@ -52,12 +62,13 @@ public class Player extends Actor {
         Used to confirm the direction
      */
     //private boolean up = false;
-    public DIRECTION direction = DIRECTION.RIGHT;
+    private DIRECTION direction = DIRECTION.RIGHT;
     private boolean attack = false;
     private boolean stop = true;
     private boolean bow = false;
     public boolean dash = false;
     private boolean falling = false;
+    private boolean canmove = true;
     //----------------------------------------------------------------------
 
     /* Animation
@@ -69,6 +80,7 @@ public class Player extends Actor {
 
     /*  Enable skills
      */
+    private boolean haveDash;
     private boolean haveArc;
     private boolean haveLighter;
     private boolean HaveBomb;
@@ -78,8 +90,8 @@ public class Player extends Actor {
     /* CoolDowns
      */
     private static int nArrows = 10;
-    private static int nbombs = 10;
-    private static int nDash = 3;
+    private static int nbombs = 3;
+    private static int dashCooldawn = 30;
     //----------------------------------------------------------------------
 
     /* Player Stats
@@ -89,16 +101,22 @@ public class Player extends Actor {
     private ZeldaCameraComponent mCamera;
     protected BoxCollider mCollider;
     protected BoxCollider hitbox;
-    final private  int damage = 1;
+    protected BoxCollider terrainCollider;
+    public BoxCollider seeker;
+
+    final int dashDelay = 30;
+    final private  int damage = 999;
     private int velocity = 0;
     final int default_velocity = 10;
     private LifeBar lifeBar;
+    Sound low_hp_sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/low-hp.wav"));
     //----------------------------------------------------------------------
 
     /* NPC
      */
     private Interaction currentNPCinteraction;
     //----------------------------------------------------------------------
+    public Float getVelocity;
 
     //Methods______________________________________________________________________________________________________________________________________________________________________________
 
@@ -123,10 +141,13 @@ public class Player extends Actor {
         lifeBar = new LifeBar(getPlayer(), getHealthPoints());
         //---------------------------------------------------------------------
         mCollider = (BoxCollider)AddComponent(new BoxCollider(this));
-
+        
         setPseudoPosition(50f, 50f);
         setPseudoPositionVisible();
         hitbox = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<Float>(55f, 60f), true));
+        terrainCollider = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<Float>(55f, 20f), false));
+        terrainCollider.setPosition(new Vector2D<>(getPseudoPosition().x - terrainCollider.GetBounds().GetWidth()/2, getPseudoPosition().y+20));
+        terrainCollider.setColor(Color.RED);
         ColliderManager.GetColliderManager().addCollider(hitbox, true);
         ObjectManager.GetObjectManager().SetPawn(this);
     }
@@ -158,11 +179,15 @@ public class Player extends Actor {
         });
         InputManager.SubscribePressed(KeyEvent.VK_A, new InputFunction() {
             @Override
-            public void Execute() {activateAction(LEFT);}
+            public void Execute() {activateAction(LEFT);System.out.println("hola");}
         });
         InputManager.SubscribePressed(KeyEvent.VK_D, new InputFunction() {
             @Override
             public void Execute() {activateAction(RIGHT);}
+        });
+        InputManager.SubscribePressed(KeyEvent.VK_ESCAPE, new InputFunction() {
+            @Override
+            public void Execute() {GameLoop.Quit(); }
         });
         //ATTACK_____________________________________________________________________________________________
         InputManager.SubscribePressed(KeyEvent.VK_J, new InputFunction() {
@@ -220,9 +245,8 @@ public class Player extends Actor {
         InputManager.SubscribeReleased(KeyEvent.VK_SHIFT, new InputFunction() {
             @Override
             public void Execute() {
-                if (nDash > 0){
+                if (dashCooldawn >= dashDelay){
                     dash = true;
-                    nDash--;
                     able_to_takeDamage = false;
                 }
                 attack = false;
@@ -343,11 +367,16 @@ public class Player extends Actor {
         lifeBar.Update();
         pseudoPositionUpdate();
         hitbox.Update();
+        terrainColliderUpdate();
+        //System.out.println("Player Position: " + this.getPseudoPosition());
+        System.out.println(velocity);
         //System.out.println(GetPosition());
+//SE VE GENIAL, SI QUIERES, MERGEO CON AUDIO PARA LOS FPSs
     }
     public void playerStateMachine(){
-        if(dash){dash();return;}//Early return dash is mostly the dominate action, so if link is dashing he can not do anything else
-        if (!mAnimation.MustComplete()){Move();}
+        if(dash){dashCooldawn = 0;dash();return;}
+        else if (dashCooldawn<120){dashCooldawn++;}
+        if (!mAnimation.MustComplete() && canmove){Move();}
     }
     // ------------------------------------------------------------------------
     
@@ -355,10 +384,9 @@ public class Player extends Actor {
      *      -> True if there is no collision
      */
     public boolean SolveCollisions(Vector2D<Integer> dif) {
-        CollisionResult res = hitbox.GetBounds().collisionTile(
-            dif.x - Level.mCurrentLevel.GetBounds().GetPosition().x, 
-            dif.y - Level.mCurrentLevel.GetBounds().GetPosition().y);
-        
+        CollisionResult res = terrainCollider.GetBounds().collisionTile(
+            dif.x - World.mCurrentLevel.GetBounds().GetPosition().x, 
+            dif.y - World.mCurrentLevel.GetBounds().GetPosition().y);
         falling = res == CollisionResult.Hole;
         return (res == CollisionResult.None);
     }
@@ -385,6 +413,10 @@ public class Player extends Actor {
                 break;
         }
         SetPosition(pos);
+    }
+    private void terrainColliderUpdate(){
+        //terrainCollider.Update();
+        terrainCollider.setPosition(new Vector2D<>(getPseudoPosition().x - terrainCollider.GetBounds().GetWidth()/2, getPseudoPosition().y+20));
     }
     // ------------------------------------------------------------------------
 
@@ -453,25 +485,24 @@ public class Player extends Actor {
             switch(action){
                 case(0):
                     this.direction = DIRECTION.RIGHT;
-                    setVelocity(default_velocity);
                     break;
                 case(1):
                     this.direction = DIRECTION.LEFT;
-                    setVelocity(default_velocity);
                     break;
                 case(2):
                     this.direction = DIRECTION.DOWN;
-                    setVelocity(default_velocity);
                     break;
                 case(3):
                     this.direction = DIRECTION.UP;
-                    setVelocity(default_velocity);
                     break;
             }
         }else if (action >= 5 && action <= 8){
             setVelocity(0);
             setAttack(true);
+            return;
         }
+        //System.out.println("haha");
+        velocity = default_velocity;
         stop = false;
         attack = false;
     }
@@ -509,9 +540,8 @@ public class Player extends Actor {
                 Audio.Instance().Play(sound);
             
                 if(this.healthPoints <= 2) {
-                    sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/low-hp.wav"));
-                    Audio.Instance().Play(sound);
-                    Audio.Instance().SetLoopCount(sound, -1);
+                    Audio.Instance().Play(low_hp_sound);
+                    Audio.Instance().SetLoopCount(low_hp_sound, -1);
                 }
             }
         }
@@ -528,6 +558,7 @@ public class Player extends Actor {
                 SetAnimation(FALL, mAnimation.GetSpriteSheet().GetSpriteArray(FALL), delay);
                 Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/link-fall.wav"));
                 Audio.Instance().Play(sound);
+                canmove = false;
             }//Enviromental special case
             return;
         }
@@ -574,7 +605,59 @@ public class Player extends Actor {
     *   
     */
     private void dead(){ //falta hacer que link se muera y termine el juego
-        System.out.println("Ha muerto");
+        Log v = Logger.Instance().GetLog("Gameplay");
+        Logger.Instance().Log(v, "I Died", Level.INFO, 1, Color.BLACK);
+        canmove = false;
+        GraphicsPipeline.GetGraphicsPipeline().RemoveAllRenderables();
+        GraphicsPipeline.GetGraphicsPipeline().AddRenderable(mAnimation);
+        PresentBuffer.SetClearColor(Color.red);
+        ShadowLayer.getShadowLayer().setOn(false);
+        mAnimation.setMustComplete(true);
+        SetAnimation(FALL, mAnimation.GetSpriteSheet().GetSpriteArray(FALL), 10);
+        Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/link-death.wav"));
+        Audio.Instance().Play(sound);  
+        Audio.Instance().Stop(low_hp_sound);
+        Audio.Instance().SetLoopCount(low_hp_sound, 0);
+        Sound bg = new Sound(AssetManager.Instance().GetResource("Content/Audio/overworld.wav"));
+        Audio.Instance().Stop(bg);
+        Audio.Instance().SetLoopCount(bg, -1);
+        mAnimation.AddFinishedListener(new AnimationEvent() {
+            @Override
+            public void OnTrigger() {
+                GraphicsPipeline.GetGraphicsPipeline().RemoveAllRenderables();
+                
+                Vector2D<Float> posincamspace = GraphicsPipeline.GetGraphicsPipeline().GetBindedCamera().GetCoordinates();
+                Vector2D<Integer> scale = GraphicsPipeline.GetGraphicsPipeline().GetDimensions();
+                Actor gameovertext = new Actor(new Vector2D<>(posincamspace.x + scale.x / 2 - 250, posincamspace.y + scale.y / 4)) {};
+                gameovertext.SetScale(GetScale());
+                FontComponent font = new FontComponent(gameovertext, AssetManager.Instance().GetResource("Content/Fonts/ZeldaFont.png"));
+
+                Actor continuet = new Actor(new Vector2D<>(posincamspace.x + scale.x / 2 - 200, posincamspace.y + scale.y / 2 + 100)) {};
+                continuet.SetScale(new Vector2D<>(GetScale().x / 2, GetScale().y / 2));
+                FontComponent continuefFontComponent = new FontComponent(continuet, AssetManager.Instance().GetResource("Content/Fonts/ZeldaFont.png"));
+                Actor qyuit = new Actor(new Vector2D<>(posincamspace.x + scale.x / 2 - 200, posincamspace.y + 3 * scale.y / 4)) {};
+                qyuit.SetScale(new Vector2D<>(GetScale().x / 2, GetScale().y / 2));
+                FontComponent quitfont = new FontComponent(qyuit, AssetManager.Instance().GetResource("Content/Fonts/ZeldaFont.png"));
+                font.SetString("Game Over");
+                gameovertext.AddComponent(font);
+                continuefFontComponent.SetString("Continue");
+                continuet.AddComponent(continuefFontComponent);
+                quitfont.SetString("Quit");
+                qyuit.AddComponent(quitfont);
+
+                SelectionArrow arrow = new SelectionArrow(new Vector2D<>(continuet.GetPosition().x - 100,
+                                                                        continuet.GetPosition().y),
+                                                        new Vector2D<>(qyuit.GetPosition().x - 100,
+                                                                        qyuit.GetPosition().y));
+
+                arrow.SetScale(new Vector2D<>(GetScale().x / 2, GetScale().y / 2));
+                ObjectManager.GetObjectManager().AddEntity(arrow);
+
+                Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/crystal.wav"));
+                Audio.Instance().Play(sound);  
+                Audio.Instance().SetLoopCount(sound, -1);
+            }
+        });
     }
     //------------------------------------------------------------------------
     
@@ -593,8 +676,9 @@ public class Player extends Actor {
             for(int i = 0; i < enemies.size(); i++){
                 Enemy enemy = (Enemy)enemies.get(i);
                 if(getPseudoPosition().getTargetDirection(enemy.getPseudoPosition()) == direction){
-                    enemy.setDamage(damage);
+                    enemy.setHealthPoints(damage);
                     enemy.knockBack();
+                    System.out.println("Le da");
                 }
             }
         }
@@ -645,7 +729,7 @@ public class Player extends Actor {
             currentNPCinteraction = nearestNPC();
         }
         try {
-            currentNPCinteraction.interaction();
+            currentNPCinteraction.INTERACTION();
         } catch (java.lang.NullPointerException e) {
             System.err.println("No npc found");
             this.currentNPCinteraction = null;
@@ -725,6 +809,7 @@ public class Player extends Actor {
         setToSpawnPoint();
         hitbox.Reset();
         mAnimation.SetFrameTrack(DOWN+Action.STOP.getID());
+        canmove = true;
     }
     public void setBow(boolean bow) {this.bow = bow;}
     //------------------------------------------------------------------------

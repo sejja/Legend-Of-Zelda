@@ -13,7 +13,7 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
-import Engine.ECSystem.Level;
+import Engine.ECSystem.World;
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Entity;
@@ -26,6 +26,7 @@ import Engine.Math.Vector2D;
 import Engine.Physics.Components.ColliderManager;
 import Engine.StateMachine.State;
 import Gameplay.Enemies.*;
+import Gameplay.Levels.OverWorld1Left;
 import Gameplay.Levels.TestRoom;
 import Gameplay.Levels.TestRoom2;
 import Gameplay.Enemies.Units.GreenKnight;
@@ -35,7 +36,8 @@ import Gameplay.Link.Player;
 import Gameplay.NPC.Npc;
 
 public class PlayState extends State {
-    Level mTestLevel;
+    World mTestLevel;
+
     // ------------------------------------------------------------------------
     /*! Constructor
     *
@@ -54,10 +56,14 @@ public class PlayState extends State {
 
         mTestLevel = new TestRoom(pasilloDer, t, null, null, "Content/TiledProject/entrada.tmx", new Vector2D<>(0.f, 0.f));
 
+        var t2 = new OverWorld1Left(null, null, null, null, "Content/TiledProject/OverWorld1Left.tmx");
+        mTestLevel = new TestRoom(t, t2, null, null, "Content/TiledProject/OverWorld1.tmx", new Vector2D<>(0.f, 0.f));
+        
+        t2.SetRightLevel(mTestLevel);
         t.SetLeftlevel(mTestLevel);
         mTestLevel.SetRightLevel(pasilloDer);
 
-        var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetCamera();
+        var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetBindedCamera();
         Vector2D<Float> topright = new Vector2D<>(mTestLevel.GetBounds().GetPosition().x + 1280.f / 2, mTestLevel.GetBounds().GetPosition().y + 720.f / 2);
         Vector2D<Float> bottomleft = new Vector2D<>(mTestLevel.GetBounds().GetPosition().x + mTestLevel.GetBounds().GetWidth() - 1280.f / 2, mTestLevel.GetBounds().GetPosition().y + mTestLevel.GetBounds().GetHeight() - 760.f / 2);
         z.SetBounds(topright, bottomleft); 

@@ -10,4 +10,8 @@ public class Asset {
     public Object Raw() {
         return mResource;
     }
+
+    public int compareTo(Asset other) {
+        return this == other ? 0 : other.mResource.hashCode() - mResource.hashCode();
+    }
 }

@@ -28,7 +28,7 @@ public class Normblock extends Block {
     *   This block does NOT collide
     */ //----------------------------------------------------------------------
     @Override
-    public boolean HasCollision(final AABB p) {
+    public boolean HasCollision() {
        return false;
     }
 

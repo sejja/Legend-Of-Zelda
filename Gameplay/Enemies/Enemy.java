@@ -3,13 +3,16 @@ package Gameplay.Enemies;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Random;
+import java.beans.VetoableChangeListenerProxy;
 import java.util.Stack;
-
+import java.util.Vector;
 import Engine.Assets.AssetManager;
 import Engine.Audio.Audio;
 import Engine.Audio.Sound;
+import Engine.Developer.Logger.Log;
+import Engine.Developer.Logger.Logger;
+import java.util.logging.Level;
+import Engine.ECSystem.World;
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
 import Engine.Graphics.GraphicsPipeline;
@@ -55,12 +58,10 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     protected Stack<Pair> path = new Stack<Pair>();
     protected Vector2D<Float> pos = GetPosition();
     protected Vector2D<Float> pseudoPos = getPseudoPosition();
-    protected Player player = (Player) ObjectManager.GetObjectManager().GetObjectByName(Player.class, "Player");
-    protected Vector2D<Float> playerPos = player.getPseudoPosition();
-    protected float xlowerBound;
-    protected float xupperBound;
-    protected float ylowerBound;
-    protected float yupperBound;
+    protected Player player = null;
+    protected Vector2D<Float> playerPos;
+    protected Vector2D<Float> lowerBounds;
+    protected Vector2D<Float> upperBounds;
 
     //stats
     protected int healthPoints = 1;
@@ -132,24 +133,6 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
         }
     }
 
-    public DIRECTION getDirection(Vector2D<Float> vector, boolean patata) {
-        DIRECTION dir;
-        if (Math.abs(vector.x) > Math.abs(vector.y)) {
-            if (vector.x < 0) {
-                dir=DIRECTION.RIGHT;
-            } else {
-                dir=DIRECTION.LEFT;
-            }
-        } else {
-            if (vector.y < 0) {
-                dir=DIRECTION.DOWN;
-            } else {
-                dir=DIRECTION.UP;
-            }
-        }
-        return dir;
-    }
-
     // ------------------------------------------------------------------------
     /*! animate
     *
@@ -165,27 +148,52 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
             return;
         }
 
-        switch (direction){
-            case UP:
-                if(mCurrentAnimation != UP || mAnimation.GetAnimation().GetDelay() == -1) {
-                    SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), this.delay);
-                }
-                break;
-            case DOWN:
-                if(mCurrentAnimation != DOWN || mAnimation.GetAnimation().GetDelay() == -1) {
-                    SetAnimation(DOWN, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN), this.delay);
-                }
-                break;
-            case LEFT:
-                if(mCurrentAnimation != RIGHT || mAnimation.GetAnimation().GetDelay() == -1) {
-                    SetAnimation(RIGHT, mAnimation.GetSpriteSheet().GetSpriteArray(RIGHT), this.delay);
-                }
-                break;
-            case RIGHT:
-                if(mCurrentAnimation != LEFT || mAnimation.GetAnimation().GetDelay() == -1) {
-                    SetAnimation(LEFT, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT), this.delay);
-                }
-                break;
+        if(chase){
+            switch (direction){
+                case UP:
+                    if(mCurrentAnimation != UP || mAnimation.GetAnimation().GetDelay() == -1) {
+                        SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), this.delay);
+                    }
+                    break;
+                case DOWN:
+                    if(mCurrentAnimation != DOWN || mAnimation.GetAnimation().GetDelay() == -1) {
+                        SetAnimation(DOWN, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN), this.delay);
+                    }
+                    break;
+                case LEFT:
+                    if(mCurrentAnimation != RIGHT || mAnimation.GetAnimation().GetDelay() == -1) {
+                        SetAnimation(RIGHT, mAnimation.GetSpriteSheet().GetSpriteArray(RIGHT), this.delay);
+                    }
+                    break;
+                case RIGHT:
+                    if(mCurrentAnimation != LEFT || mAnimation.GetAnimation().GetDelay() == -1) {
+                        SetAnimation(LEFT, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT), this.delay);
+                    }
+                    break;
+            }
+        }else{
+            switch (direction){
+                case UP:
+                    if(mCurrentAnimation != UP || mAnimation.GetAnimation().GetDelay() == -1) {
+                        SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), this.delay);
+                    }
+                    break;
+                case DOWN:
+                    if(mCurrentAnimation != DOWN || mAnimation.GetAnimation().GetDelay() == -1) {
+                        SetAnimation(DOWN, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN), this.delay);
+                    }
+                    break;
+                case LEFT:
+                    if(mCurrentAnimation != RIGHT || mAnimation.GetAnimation().GetDelay() == -1) {
+                        SetAnimation(RIGHT, mAnimation.GetSpriteSheet().GetSpriteArray(RIGHT), this.delay);
+                    }
+                    break;
+                case RIGHT:
+                    if(mCurrentAnimation != LEFT || mAnimation.GetAnimation().GetDelay() == -1) {
+                        SetAnimation(LEFT, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT), this.delay);
+                    }
+                    break;
+            }
         }
     }
 
@@ -195,13 +203,18 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     *   Adds Behavior to the Enemy
     */ //----------------------------------------------------------------------
     public void Update() {
-        super.Update();
-        //System.out.println(vision());
-        decisionMaking();
-        attack();
-        pseudoPositionUpdate();
-        mCollision.Update();
-        //System.out.println(playerPos.x + " " + playerPos.y + " " + normalizedDirection+ " " );
+        if(player == null) {
+            player = (Player)ObjectManager.GetObjectManager().GetPawn();
+            playerPos = player.getPseudoPosition();
+        } else {
+             super.Update();
+            //System.out.println(vision());
+            decisionMaking();
+            attack();
+            pseudoPositionUpdate();
+            mCollision.Update();
+            //System.out.println(playerPos.x + " " + playerPos.y + " " + normalizedDirection+ " " );
+        }
     }
     // ------------------------------------------------------------------------
     /*! decisionMaking
@@ -226,6 +239,12 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
             getDirection(normalizedDirection);
             animate();
             move();
+        }else{
+            animate();
+            if(!path.empty()){
+                path.clear();
+            }
+            
         }
     }
 
@@ -235,8 +254,8 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     *   Calculates the path to the player if the path is unblocked and is not the same as the last time A* was called
     */ //----------------------------------------------------------------------
     public void pathfinding() {
-        Pair enemyTile = positionToPair(getPseudoPosition());
-        finalDestination = positionToPair(playerPos);
+        Pair enemyTile = positionToPair(World.GetLevelSpaceCoordinates(getPseudoPosition()));
+        finalDestination = positionToPair(World.GetLevelSpaceCoordinates(playerPos));
         if(isDestinationChanged() && isDestinationReachable()){
             lastFinalDestination = finalDestination;
             path = aStarSearch.aStarSearch(enemyTile, finalDestination);
@@ -306,22 +325,20 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
                 currentDestination = path.peek();
             }
             // Margin of error for the movement
-            xlowerBound = currentDestination.getFirst()*64 - 3;
-            xupperBound = currentDestination.getFirst()*64 + 3;
-            ylowerBound = currentDestination.getSecond()*64 - 3;
-            yupperBound = currentDestination.getSecond()*64 + 3;
+            lowerBounds = Engine.ECSystem.World.GetWorldSpaceCoordinates(new Vector2D<Float>((float)((currentDestination.getFirst()*64) - 3), (float)((currentDestination.getSecond()*64) - 3)));
+            upperBounds = Engine.ECSystem.World.GetWorldSpaceCoordinates(new Vector2D<Float>((float)((currentDestination.getFirst()*64) + 3), (float)((currentDestination.getSecond()*64) + 3)));
 
             //If currentDestination reached, pop next destination
-            if(((((xlowerBound <= pseudoPos.x) && (pseudoPos.x <= xupperBound)) && ((ylowerBound <= pseudoPos.y+GetScale().y/2) && (pseudoPos.y+GetScale().y/2 <= yupperBound)))) && (currentDestination != finalDestination) && !path.isEmpty()){
+            if(((((lowerBounds.x <= pseudoPos.x) && (pseudoPos.x <= upperBounds.x)) && ((lowerBounds.y <= pseudoPos.y+GetScale().y/2) && (pseudoPos.y+GetScale().y/2 <= upperBounds.y)))) && (currentDestination != finalDestination) && !path.isEmpty()){
                 path.pop();
                 if(!path.isEmpty()){
                     currentDestination = path.peek();
                 }
-                normalizedDirection = normalize(pseudoPosToDest());
+                normalizedDirection = normalize(Engine.ECSystem.World.GetWorldSpaceCoordinates(pseudoPosToDest()));
                 pos.x += normalizedDirection.x * speed;
                 pos.y += normalizedDirection.y * speed;
             }else{
-                normalizedDirection = normalize(pseudoPosToDest());
+                normalizedDirection = normalize(Engine.ECSystem.World.GetWorldSpaceCoordinates(pseudoPosToDest()));
                 pos.x += normalizedDirection.x * speed;
                 pos.y += normalizedDirection.y * speed;
             }
@@ -344,15 +361,6 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
         Vector2D<Float> dir = pos.getVectorToAnotherActor(playerPos);
         normalizedDirection=normalize(dir);
         
-        Random r = new Random();
-
-        if(r.nextBoolean()) {
-            Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/enemy-hit.wav"));
-            Audio.Instance().Play(sound);
-        } else {
-            Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/small-enemy-hit.wav"));
-            Audio.Instance().Play(sound);
-        }
     }
     
     public void knockbackRepeat(){
@@ -382,16 +390,19 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     public void setHealthPoints(int damage){
         this.healthPoints -= damage;
         if (healthPoints <= 0){
-            mCollision.ShutDown();
             die();
-            path.clear();
         }
         //______________________
         //______________________
     }
 
     private void die() {
-        DeadAnimation deadAnimation = new DeadAnimation(this);
+        //Log v = Logger.Instance().GetLog("Gameplay");
+        //Logger.Instance().Log(v, "Enemy died", Level.INFO, 1, Color.GREEN);
+
+        mCollision.ShutDown();
+        path.clear();
+        new DeadAnimation(this);
         Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/enemy-death.wav"));
         Audio.Instance().Play(sound);
     }
@@ -399,7 +410,7 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     private boolean vision(){
         Vector2D<Float> dir = pseudoPos.getVectorToAnotherActor(playerPos);
         float distance = dir.getModule();
-        if ((distance < 300)){
+        if ((distance < 700)){
             if(!chase) {
                 Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/soldier.wav"));
                 Audio.Instance().Play(sound);
@@ -408,7 +419,6 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
             chase = true;
             return true;
         }else{
-            chase = false;
             return false;
         }
         
@@ -421,7 +431,8 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
         Stack<Pair> mPath = (Stack<Pair>)path.clone();
 
         while (!mPath.isEmpty()) {
-            Pair p = mPath.pop();
+            Pair x = mPath.pop();
+            Pair p = Engine.ECSystem.World.GetLevelPair(x);
             g.drawRect(p.getFirst() * 64 - (int)(float)camcoord.x, p.getSecond() * 64 - (int)(float)camcoord.y, 64, 64);
         }
     }
@@ -456,9 +467,7 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     }
 
     public void attack(){
-        ArrayList<Actor> players = ColliderManager.GetColliderManager().getCollision(mCollision, Player.class, true);
-        if(!players.isEmpty()){
-            Player player = (Player)players.get(0);
+        if(ColliderManager.GetColliderManager().playerCollision(mCollision)){
             player.setDamage(damage);
         }
     }

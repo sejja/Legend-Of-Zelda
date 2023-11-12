@@ -23,7 +23,16 @@ public class StateMachine {
     */ //----------------------------------------------------------------------
     public StateMachine() {
         mStates = new ArrayList<State>();
+        Init();
+    }
+
+    private void Init() {
         mStates.add(new PlayState());
+    }
+
+    public void Restart() {
+        mStates.clear();
+        Init();
     }
 
     // ------------------------------------------------------------------------

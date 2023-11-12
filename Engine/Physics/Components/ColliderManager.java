@@ -5,13 +5,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
-import javax.lang.model.element.ModuleElement.DirectiveKind;
-import javax.swing.Box;
-import javax.swing.text.html.HTMLDocument.Iterator;
-
 import Engine.ECSystem.Types.Actor;
-import Engine.Math.Vector2D;
-import Gameplay.Link.DIRECTION;
+import Gameplay.Link.Player;
 /* ColliderManager is a static object thats manage the colision between objects
  *      -> All BoxCollider thats hasCollision it is added automatically to the colliderManager
  *      -> Use ColliderManager.GetColliderManager() to the the ColliderManager
@@ -28,6 +23,12 @@ public class ColliderManager {
         mapAllNonCollision = new HashMap<>();
         mapAllCollider = new HashMap<>();
     }
+
+    public void Clear() {
+        mapAllCollision.clear();
+        mapAllNonCollision.clear();
+        mapAllCollider.clear();
+    } 
 
     public static ColliderManager GetColliderManager (){return colliderManager;}
 
@@ -109,5 +110,13 @@ public class ColliderManager {
         Float distanceX = Math.abs(colliderA.GetParent().getPseudoPosition().getVectorToAnotherActor(colliderB.GetParent().getPseudoPosition()).x);
         Float limitX = (colliderA.GetBounds().GetScale().x + colliderB.GetBounds().GetScale().x)/2;
         return distanceX < limitX && distanceY < limitY;
+    }
+
+    public boolean playerCollision(BoxCollider collider){ 
+        try{return(hasCollided(collider, this.mapAllCollision.get(Player.class).get(0)));}
+        catch(java.lang.NullPointerException e){
+            System.err.println("No player in game");
+        }
+        return false;
     }
 }
