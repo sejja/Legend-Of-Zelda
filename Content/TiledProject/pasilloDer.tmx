@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="1">
- <tileset firstgid="1" name="hyrule" tilewidth="16" tileheight="16" spacing="1" tilecount="420" columns="21">
-  <image source="C:/Users/ikert/Pictures/hyrule.png" width="356" height="339"/>
- </tileset>
+ <tileset firstgid="1" source="hyrule.tsx"/>
  <layer id="2" name="suelo" width="20" height="20">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,212,155,157,215,0,0,0,0,0,0,0,0,
@@ -35,7 +33,7 @@
 213,213,213,213,232,200,0,0,0,0,0,0,0,0,0,0,0,206,237,213,
 213,213,213,213,232,200,0,0,0,0,0,0,0,0,0,0,0,206,237,213,
 213,213,213,213,232,200,0,0,0,0,0,0,0,0,0,0,0,206,237,213,
-149,149,149,149,142,200,152,0,0,0,0,0,0,0,0,0,0,206,237,213,
+149,149,149,149,142,200,0,0,0,0,0,0,0,0,0,0,0,206,237,213,
 140,140,140,140,140,368,0,0,0,0,0,0,0,0,0,0,0,206,237,213,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,206,237,213,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,206,237,213,

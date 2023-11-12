@@ -36,7 +36,6 @@ import Gameplay.NPC.Npc;
 
 public class PlayState extends State {
     Level mTestLevel;
-
     // ------------------------------------------------------------------------
     /*! Constructor
     *
@@ -44,8 +43,19 @@ public class PlayState extends State {
     */ //----------------------------------------------------------------------
     public PlayState() {
         var t = new TestRoom2(null, null, null, null, "Content/TiledProject/TestRoom2.tmx");
-        mTestLevel = new TestRoom(t, null, null, null, "Content/TiledProject/dungeon1.tmx", new Vector2D<>(0.f, 0.f));
+        var pasilloDer = new TestRoom2(null, null, null, null, "Content/TiledProject/pasilloDer.tmx");
+        var pasilloDerArriba = new TestRoom2(null, null, null, null, "Content/TiledProject/pasilloDerArriba.tmx");
+        var pasilloDerAbajo = new TestRoom2(null, null, null, null, "Content/TiledProject/pasilloDerAbajo.tmx");
+        var pasilloIzq = new TestRoom2(null, null, null, null, "Content/TiledProject/pasilloIzq.tmx");
+        var pasilloIzqArriba = new TestRoom2(null, null, null, null, "Content/TiledProject/pasilloIzqArriba.tmx");
+        var pasilloIzqAbajo = new TestRoom2(null, null, null, null, "Content/TiledProject/pasilloIzqAbajo.tmx");
+        var entradaArriba = new TestRoom2(null, null, null, null, "Content/TiledProject/entradaArriba.tmx");
+        var finalRoom = new TestRoom2(null, null, null, null, "Content/TiledProject/finalRoom.tmx");
+
+        mTestLevel = new TestRoom(pasilloDer, t, null, null, "Content/TiledProject/entrada.tmx", new Vector2D<>(0.f, 0.f));
+
         t.SetLeftlevel(mTestLevel);
+        mTestLevel.SetRightLevel(pasilloDer);
 
         var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetCamera();
         Vector2D<Float> topright = new Vector2D<>(mTestLevel.GetBounds().GetPosition().x + 1280.f / 2, mTestLevel.GetBounds().GetPosition().y + 720.f / 2);

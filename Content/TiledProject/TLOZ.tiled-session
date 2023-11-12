@@ -59,7 +59,16 @@
         "DungeonCastle.tsx",
         "StressTest.tmx",
         "TestRoom.tmx",
-        "TestRoom2.tmx"
+        "TestRoom2.tmx",
+        "entrada.tmx",
+        "entradaArriba.tmx",
+        "finalRoom.tmx",
+        "pasilloDer.tmx",
+        "pasilloDerAbajo.tmx",
+        "pasilloDerArriba.tmx",
+        "pasilloIzq.tmx",
+        "pasilloIzqAbajo.tmx",
+        "pasilloIzqArriba.tmx"
     ],
     "project": "TLOZ.tiled-project",
     "recentFiles": [
@@ -68,7 +77,16 @@
         "DungeonCastle.tsx",
         "StressTest.tmx",
         "TestRoom2.tmx",
-        "TestRoom.tmx"
+        "TestRoom.tmx",
+        "entrada.tmx",
+        "entradaArriba.tmx",
+        "finalRoom.tmx",
+        "pasilloDer.tmx",
+        "pasilloDerAbajo.tmx",
+        "pasilloDerArriba.tmx",
+        "pasilloIzq.tmx",
+        "pasilloIzqAbajo.tmx",
+        "pasilloIzqArriba.tmx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {
