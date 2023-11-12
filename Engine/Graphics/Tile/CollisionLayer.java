@@ -103,6 +103,7 @@ public class CollisionLayer extends Tilemap {
     *   Retrieves a block at a location
     */ //----------------------------------------------------------------------
     public Block GetBlockAt(final Vector2D<Integer> position) {
+        if(position.x + (position.y * mHeight) > mBlocks.length) return null;
         return mBlocks[position.x + (position.y * mHeight)];
     }
 
