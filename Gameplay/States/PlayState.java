@@ -53,9 +53,12 @@ public class PlayState extends State {
         var pasilloIzqAbajo = new TestRoom2(null, null, null, null, "Content/TiledProject/pasilloIzqAbajo.tmx");
         var entradaArriba = new TestRoom2(null, null, null, null, "Content/TiledProject/entradaArriba.tmx");
         var finalRoom = new TestRoom2(null, null, null, null, "Content/TiledProject/finalRoom.tmx");
+        var entrada = new TestRoom2(null, null, null, null, "Content/TiledProject/entrada.tmx");
+
+
 
         var t2 = new OverWorld1Left(null, null, null, null, "Content/TiledProject/OverWorld1Left.tmx");
-        mTestLevel = new TestRoom(t, t2, null, null, "Content/TiledProject/OverWorld1.tmx", new Vector2D<>(0.f, 0.f));
+        mTestLevel = new TestRoom(pasilloDer, t2, null, null, "Content/TiledProject/OverWorld1.tmx", new Vector2D<>(0.f, 0.f));
         
         t2.SetRightLevel(mTestLevel);
        
