@@ -5,10 +5,7 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.Stack;
 import java.util.logging.Level;
-
-import Engine.Assets.Asset;
 import Engine.Assets.AssetManager;
 import Engine.Audio.Audio;
 import Engine.Audio.Sound;
@@ -141,11 +138,10 @@ public class Player extends Actor {
         terrainCollider = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<Float>(55f, 20f), false));
         terrainCollider.setPosition(new Vector2D<>(getPseudoPosition().x - terrainCollider.GetBounds().GetWidth()/2, getPseudoPosition().y+20));
         terrainCollider.setColor(Color.RED);
-
         previusPosition = position;
-
         ColliderManager.GetColliderManager().addCollider(hitbox, true);
         ObjectManager.GetObjectManager().SetPawn(this);
+        GetPosition().y = GetPosition().y-10;
     }
     // ------------------------------------------------------------------------
 
@@ -390,7 +386,7 @@ public class Player extends Actor {
         //System.out.println(velocity);
         //System.out.println(GetPosition());
     }
-    public void playerStateMachine(){
+    private void playerStateMachine(){
         if(dash){dashCooldawn = 0;dash();return;}
         else if (dashCooldawn<120){dashCooldawn++;}
         //else {if(!mAnimation.MustComplete()){Move();}}
@@ -401,12 +397,16 @@ public class Player extends Actor {
     /* Colision
      *      -> True if there is no collision
      */
-    public boolean SolveCollisions(Vector2D<Integer> dif) {
-        CollisionResult res = terrainCollider.GetBounds().collisionTile(
-            dif.x - World.mCurrentLevel.GetBounds().GetPosition().x, 
-            dif.y - World.mCurrentLevel.GetBounds().GetPosition().y);
-        falling = res == CollisionResult.Hole;
-        return (res == CollisionResult.None);
+    private boolean SolveCollisions(Vector2D<Integer> dif) {
+        float topLeftX =  dif.x - World.mCurrentLevel.GetBounds().GetPosition().x;
+        float topLeftY =  dif.y - World.mCurrentLevel.GetBounds().GetPosition().y;
+        CollisionResult res = terrainCollider.GetBounds().collisionTile(topLeftX, topLeftY);
+        CollisionResult res_1 = terrainCollider.GetBounds().collisionTile(topLeftX + terrainCollider.GetBounds().GetWidth(), topLeftY);
+        CollisionResult res_2 = terrainCollider.GetBounds().collisionTile(topLeftX , topLeftY + terrainCollider.GetBounds().GetHeight());
+        CollisionResult res_3 = terrainCollider.GetBounds().collisionTile(topLeftX + terrainCollider.GetBounds().GetWidth(), topLeftY + terrainCollider.GetBounds().GetHeight());
+        boolean result = (res == CollisionResult.None) && (res_1 == CollisionResult.None) && (res_2 == CollisionResult.None) && (res_3 == CollisionResult.None);
+        falling = (res == CollisionResult.Hole);
+        return (result);
     }
     // ------------------------------------------------------------------------
     
@@ -414,7 +414,7 @@ public class Player extends Actor {
     *
     *   Moves the sprite on a certain direction
     */ //----------------------------------------------------------------------
-    public void Move() {
+    private void Move() {
         Vector2D<Float> pos = GetPosition();
         previusPosition = new Vector2D<>(pos.x, pos.y);
         switch (direction){

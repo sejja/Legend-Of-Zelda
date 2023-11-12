@@ -137,10 +137,13 @@ public class Arrow extends Actor{
     }
 
     public boolean SolveCollisions(Vector2D<Integer> dif) {
-        CollisionResult res = hitbox.GetBounds().collisionTile(
-            dif.x - World.mCurrentLevel.GetBounds().GetPosition().x, 
-            dif.y - World.mCurrentLevel.GetBounds().GetPosition().y);
-        boolean isMovable = (res == CollisionResult.None);
+        float topLeftX =  dif.x - World.mCurrentLevel.GetBounds().GetPosition().x;
+        float topLeftY =  dif.y - World.mCurrentLevel.GetBounds().GetPosition().y;
+        CollisionResult res = hitbox.GetBounds().collisionTile(topLeftX, topLeftY);
+        CollisionResult res_1 = hitbox.GetBounds().collisionTile(topLeftX + hitbox.GetBounds().GetWidth(), topLeftY);
+        CollisionResult res_2 = hitbox.GetBounds().collisionTile(topLeftX , topLeftY + hitbox.GetBounds().GetHeight());
+        CollisionResult res_3 = hitbox.GetBounds().collisionTile(topLeftX + hitbox.GetBounds().GetWidth(), topLeftY + hitbox.GetBounds().GetHeight());
+        boolean isMovable = (res == CollisionResult.None) && (res_1 == CollisionResult.None) && (res_2 == CollisionResult.None) && (res_3 == CollisionResult.None);
         if(!isMovable){
             endArrow = true;
         }
