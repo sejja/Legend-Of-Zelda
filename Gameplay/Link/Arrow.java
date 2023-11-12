@@ -116,38 +116,31 @@ public class Arrow extends Actor{
                 if(hitbox.GetBounds().collisionTile(0, -speed) == CollisionResult.None){
                     pos.y -= speed;
                     distance += Math.abs(currentPosition - pos.y);
-                }else{
-                    endArrow = true;
-                }
+                }else{endArrow = true;}
                 return;
             case DOWN:
                 currentPosition = pos.y;
                 if(hitbox.GetBounds().collisionTile(0, +speed) == CollisionResult.None){
                     pos.y += speed;
                     distance += Math.abs(currentPosition - pos.y);
-                }else{
-                    endArrow = true;
-                }
+                }else{endArrow = true;}
                 return;
             case LEFT:
                 currentPosition = pos.x;
                 if(hitbox.GetBounds().collisionTile(-speed, 0) == CollisionResult.None){
                     pos.x -= speed;
                     distance += Math.abs(currentPosition - pos.x);
-                }else{
-                    endArrow = true;
-                }
+                }else{endArrow = true;}
                 return;
             case RIGHT:
                 currentPosition = pos.x;
                 if(hitbox.GetBounds().collisionTile(+speed, 0) == CollisionResult.None){
                     pos.x += speed;
                     distance += Math.abs(currentPosition - pos.x);
-                }else{
-                    endArrow = true;
-                }
+                }else{endArrow = true;}
                 return;
         }
+        System.out.println(distance);
         SetPosition(pos);
     }
 
@@ -160,7 +153,7 @@ public class Arrow extends Actor{
     public void Update() {
         super.Update();
         Move();
-        if (!(distance >= range)){
+        if ((distance <= range)){
             Animate();
         }else{
             despawn();

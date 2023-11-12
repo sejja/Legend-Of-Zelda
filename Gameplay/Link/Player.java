@@ -388,7 +388,6 @@ public class Player extends Actor {
         //System.out.println("Player Position: " + this.getPseudoPosition());
         //System.out.println(velocity);
         //System.out.println(GetPosition());
-//SE VE GENIAL, SI QUIERES, MERGEO CON AUDIO PARA LOS FPSs
     }
     public void playerStateMachine(){
         if(dash){dashCooldawn = 0;dash();return;}
