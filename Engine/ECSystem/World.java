@@ -222,7 +222,7 @@ public class World {
         mLower = l;
     }
 
-    public void SetLeftlevel(World l) {
+    public void SetLeftLevel(World l) {
         mLeft = l;
     }
 

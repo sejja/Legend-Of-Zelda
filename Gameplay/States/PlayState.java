@@ -37,15 +37,6 @@ import Gameplay.NPC.Npc;
 
 public class PlayState extends State {
     World mTestLevel;
-    World entrada;
-    World pasilloDer;
-    World pasilloDerArriba;
-    World pasilloDerAbajo;
-    World pasilloIzq;
-    World pasilloIzqArriba;
-    World pasilloIzqAbajo;
-    World entradaArriba;
-    World finalRoom;
 
     // ------------------------------------------------------------------------
     /*! Constructor
@@ -54,22 +45,26 @@ public class PlayState extends State {
     */ //----------------------------------------------------------------------
     public PlayState() {
         var t = new TestRoom2(null, null, null, null, "Content/TiledProject/TestRoom2.tmx");
-        var pasilloDer = new TestRoom2(null, entrada, pasilloDerArriba, pasilloDerAbajo, "Content/TiledProject/pasilloDer.tmx");
-        var pasilloDerArriba = new TestRoom2(null, entradaArriba, null, entrada, "Content/TiledProject/pasilloDerArriba.tmx");
-        var pasilloDerAbajo = new TestRoom2(null, null, pasilloDer, null, "Content/TiledProject/pasilloDerAbajo.tmx");
-        var pasilloIzq = new TestRoom2(entrada, null, pasilloIzqArriba, pasilloIzqAbajo, "Content/TiledProject/pasilloIzq.tmx");
-        var pasilloIzqArriba = new TestRoom2(entradaArriba, null, null, pasilloIzq, "Content/TiledProject/pasilloIzqArriba.tmx");
-        var pasilloIzqAbajo = new TestRoom2(null, null, pasilloIzq, null, "Content/TiledProject/pasilloIzqAbajo.tmx");
-        var entradaArriba = new TestRoom2(pasilloDerArriba, pasilloIzqArriba, finalRoom, entrada, "Content/TiledProject/entradaArriba.tmx");
-        var finalRoom = new TestRoom2(null, null, null, entradaArriba, "Content/TiledProject/finalRoom.tmx");
-        var entrada = new TestRoom2(pasilloDer, pasilloIzq, entradaArriba, mTestLevel, "Content/TiledProject/entrada.tmx");
+        var pasilloDerArriba = new TestRoom2(null, null, null, null, "Content/TiledProject/pasilloDerArriba.tmx");
+        var pasilloDer = new TestRoom2(null, null, null, null, "Content/TiledProject/pasilloDer.tmx");
+        var pasilloDerAbajo = new TestRoom2(null, null, null, null, "Content/TiledProject/pasilloDerAbajo.tmx");
+        var pasilloIzq = new TestRoom2(null, null, null, null, "Content/TiledProject/pasilloIzq.tmx");
+        var pasilloIzqArriba = new TestRoom2(null, null, null, null, "Content/TiledProject/pasilloIzqArriba.tmx");
+        var pasilloIzqAbajo = new TestRoom2(null, null, null, null, "Content/TiledProject/pasilloIzqAbajo.tmx");
+        var entradaArriba = new TestRoom2(null, null, null, null, "Content/TiledProject/entradaArriba.tmx");
+        var finalRoom = new TestRoom2(null, null, null, null, "Content/TiledProject/finalRoom.tmx");
+        var pasilloDer2 = new TestRoom2(null, null, null, null, "Content/TiledProject/pasilloDer2.tmx");
+        var entrada = new TestRoom2(null, null, null, null, "Content/TiledProject/entrada.tmx");
+        var pasilloDer3 = new TestRoom2(null, null, null, null, "Content/TiledProject/pasilloDer3.tmx");
 
 
-        var t2 = new OverWorld1Left(null, null, entrada, null, "Content/TiledProject/OverWorld1Left.tmx");
-        mTestLevel = new TestRoom(pasilloDer, t2, entrada, null, "Content/TiledProject/Overworld1.tmx", new Vector2D<>(0.f, 0.f));
+        var t2 = new OverWorld1Left(null, null, null, null, "Content/TiledProject/OverWorld1Left.tmx");
+        mTestLevel = new TestRoom(pasilloDer2, null, null, null, "Content/TiledProject/overworld1.tmx", new Vector2D<>(0.f, 0.f));
         
         t2.SetRightLevel(mTestLevel);
-       
+        //mTestLevel.SetRightLevel(pasilloDer);
+        pasilloDer3.SetLeftLevel(mTestLevel);
+
 
         var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetBindedCamera();
         Vector2D<Float> topright = new Vector2D<>(mTestLevel.GetBounds().GetPosition().x + 1280.f / 2, mTestLevel.GetBounds().GetPosition().y + 720.f / 2);
