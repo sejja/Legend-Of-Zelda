@@ -111,29 +111,29 @@ public class Arrow extends Actor{
                 if(SolveCollisions(new Vector2D<Integer>(0, -speed))) {
                     pos.y -= speed;
                     distance += speed;
-                }
+                }else{pos.y += speed;}
                 break;
             case DOWN:
                 if(SolveCollisions(new Vector2D<Integer>(0, +speed))) {
                     pos.y += speed;
                     distance += speed;
-                }
+                }else{pos.y -= speed;}
                 break;
             case LEFT:
                 if(SolveCollisions(new Vector2D<Integer>(-speed, 0))) {
                     pos.x -= speed;
                     distance += speed;
-                }
+                }else{pos.x += speed;}
                 break;
             case RIGHT:
                 if(SolveCollisions(new Vector2D<Integer>(+speed, 0))){
                     pos.x += speed;
                     distance += speed;
-                }
+                }else{pos.x -= speed;}
                 break;
         }
-        System.out.println(distance);
-        SetPosition(pos);
+        //System.out.println(distance);
+        //SetPosition(pos);
     }
 
     public boolean SolveCollisions(Vector2D<Integer> dif) {
@@ -154,16 +154,17 @@ public class Arrow extends Actor{
     @Override
     public void Update() {
         super.Update();
+        Animate();
         Move();
         Attack();
-        if ((distance <= range)){
-            Animate();
-        }else{
+        if (distance >= range){
             despawn();
+            return;
         }
         if( endArrow ){
             WallSound();
             despawn();
+            return;
         }
         pseudoPositionUpdate();
         hitbox.Update();
