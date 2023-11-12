@@ -54,6 +54,7 @@ public class Player extends Actor {
      */
     //private boolean up = false;
     private DIRECTION direction = DIRECTION.RIGHT;
+    private boolean movable = true;
     private boolean attack = false;
     private boolean stop = true;
     private boolean bow = false;
@@ -392,7 +393,8 @@ public class Player extends Actor {
     public void playerStateMachine(){
         if(dash){dashCooldawn = 0;dash();return;}
         else if (dashCooldawn<120){dashCooldawn++;}
-        else {if(!mAnimation.MustComplete()){Move();}}
+        //else {if(!mAnimation.MustComplete()){Move();}}
+        if(!mAnimation.MustComplete() && movable){Move();}
     }
     // ------------------------------------------------------------------------
     
@@ -540,7 +542,7 @@ public class Player extends Actor {
     public boolean isAble_to_takeDamage() {return able_to_takeDamage;}
     public BoxCollider getHitbox() {return hitbox;}
     public Vector2D<Float> getPreviusPosition(){return this.previusPosition;}
-
+    public BoxCollider getEnviromentCollider() {return this.terrainCollider;}
     //------------------------------------------------------------------------
     /* Setters
      * 
@@ -608,7 +610,7 @@ public class Player extends Actor {
         }
     }
     public void setPreviusPosition(Vector2D<Float> previusPosition){this.previusPosition = previusPosition;}
-    public void setDash(Boolean value){this.dash = value;}
+    public void setMovable(Boolean value){this.movable = value;}
     //------------------------------------------------------------------------
 
     /* Spawn a Arrow object
@@ -737,12 +739,14 @@ public class Player extends Actor {
          *      The first arrow and player have the same instance of the vectorposition it moves modifiying the position of the arrow and the vecto at the same time
          *      The second arrow it a arrow that contais a 1 frame animation and its has a low range to emulate a dash effect
          */
-        Asset dashaAsset = AssetManager.Instance().GetResource("Content/Animations/Link/LinkDashSpriteSheet.png");
+        //Asset dashaAsset = AssetManager.Instance().GetResource("Content/Animations/Link/LinkDashSpriteSheet.png");
 
-        Arrow dash_movement = new Arrow(this, new Spritesheet(dashaAsset, new Vector2D<>(90, 50)), 30, 250, true);
+        Arrow dash_movement = new Arrow(this, 30, 250, true);
         dash_movement.SetScale(new Vector2D<>(0f, 0f));
         ObjectManager.GetObjectManager().AddEntity(dash_movement);
 
+        movable = false;
+        dash = false;
         able_to_takeDamage = true;
     }
     //------------------------------------------------------------------------

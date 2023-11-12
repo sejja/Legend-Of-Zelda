@@ -7,7 +7,7 @@ import Engine.Physics.Components.ColliderManager;
 import Gameplay.Interactives.Interactive;
 import Gameplay.Link.Player;
 
-/* Statical Object Collision with the player
+/** Statical Object Collision with the player
  *      StaticalObject
  *          -> No movable
  *      -> The statical Object must have a hitbox
@@ -18,8 +18,8 @@ public interface StaticPlayerCollision {
         if(ColliderManager.GetColliderManager().playerCollision(hitbox)){
             Player link = (Player)ColliderManager.GetColliderManager().getMapAllCollision().get(Player.class).getFirst().GetParent();
             Vector2D<Float> currentPosition = link.GetPosition();
-            System.out.println(link.getPreviusPosition().getModuleDistance(currentPosition));
             link.SetPosition(link.getPreviusPosition());
+            //System.out.println(link.getPreviusPosition().getModuleDistance(currentPosition));
         }
     }
 }

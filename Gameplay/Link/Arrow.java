@@ -17,6 +17,7 @@ import Engine.Audio.Sound;
 import Engine.Developer.Logger.Log;
 import Engine.Developer.Logger.Logger;
 import Engine.ECSystem.ObjectManager;
+import Engine.ECSystem.World;
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Entity;
 import Engine.Graphics.Spritesheet;
@@ -35,7 +36,7 @@ public class Arrow extends Actor{
     
     private int damage = 2;
     private AnimationMachine animationMachine;
-    private float speed = 0;
+    private int speed = 15;
     private float range = 350;
     private Float distance = 0f;
     private DIRECTION direction;
@@ -65,12 +66,12 @@ public class Arrow extends Actor{
         ArrowSound();
     }
 
-    public Arrow (Player Link, Spritesheet spritesheet, float speed, float range, boolean fixed){ //This is actually a dash XD
+    public Arrow (Player Link, float speed, float range, boolean fixed){ //This is actually a dash XD
         super(Link.GetPosition());
-        this.speed = speed;
+        this.speed = (int)speed;
         this.range = range;
         this.damage = 0;
-        this.animationMachine = AddComponent(new AnimationMachine(this ,spritesheet)); 
+        this.animationMachine = AddComponent(new AnimationMachine(this ,new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/Link/Arrow.png")))); 
         allAnimation = animationMachine.GetSpriteSheet().GetSpriteArray2D();
          direction = Link.getDirection();
         if (fixed)
@@ -78,12 +79,8 @@ public class Arrow extends Actor{
             SetPosition(Link.GetPosition());
             this.fixed = fixed;
         }
-        else
-        {
-            SetPosition(new Vector2D<Float>(Link.GetPosition().x, Link.GetPosition().y));
-        }
         SetScale(new Vector2D<Float>(100f,100f));
-        animationMachine.GetAnimation().SetDelay(1);
+        animationMachine.GetAnimation().SetDelay(-1);
         hitbox = Link.getHitbox();
         Animate();
 
@@ -109,50 +106,56 @@ public class Arrow extends Actor{
             Player link = (Player)ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0);
             link.setPreviusPosition(new Vector2D<>(pos.x, pos.y));
         }
-        Float currentPosition;
         switch (direction){
             case UP:
-                currentPosition = pos.y;
-                if(hitbox.GetBounds().collisionTile(0, -speed) == CollisionResult.None){
+                if(SolveCollisions(new Vector2D<Integer>(0, -speed))) {
                     pos.y -= speed;
-                    distance += Math.abs(currentPosition - pos.y);
-                }else{endArrow = true;}
-                return;
+                    distance += speed;
+                }
+                break;
             case DOWN:
-                currentPosition = pos.y;
-                if(hitbox.GetBounds().collisionTile(0, +speed) == CollisionResult.None){
+                if(SolveCollisions(new Vector2D<Integer>(0, +speed))) {
                     pos.y += speed;
-                    distance += Math.abs(currentPosition - pos.y);
-                }else{endArrow = true;}
-                return;
+                    distance += speed;
+                }
+                break;
             case LEFT:
-                currentPosition = pos.x;
-                if(hitbox.GetBounds().collisionTile(-speed, 0) == CollisionResult.None){
+                if(SolveCollisions(new Vector2D<Integer>(-speed, 0))) {
                     pos.x -= speed;
-                    distance += Math.abs(currentPosition - pos.x);
-                }else{endArrow = true;}
-                return;
+                    distance += speed;
+                }
+                break;
             case RIGHT:
-                currentPosition = pos.x;
-                if(hitbox.GetBounds().collisionTile(+speed, 0) == CollisionResult.None){
+                if(SolveCollisions(new Vector2D<Integer>(+speed, 0))){
                     pos.x += speed;
-                    distance += Math.abs(currentPosition - pos.x);
-                }else{endArrow = true;}
-                return;
+                    distance += speed;
+                }
+                break;
         }
         System.out.println(distance);
         SetPosition(pos);
+    }
+
+    public boolean SolveCollisions(Vector2D<Integer> dif) {
+        CollisionResult res = hitbox.GetBounds().collisionTile(
+            dif.x - World.mCurrentLevel.GetBounds().GetPosition().x, 
+            dif.y - World.mCurrentLevel.GetBounds().GetPosition().y);
+        boolean isMovable = (res == CollisionResult.None);
+        if(!isMovable){
+            endArrow = true;
+        }
+        return (isMovable);
     }
 
     public void WallSound() {
         Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/arrow-wall.wav"));
         Audio.Instance().Play(sound);
     }
-
     @Override
     public void Update() {
         super.Update();
         Move();
+        Attack();
         if ((distance <= range)){
             Animate();
         }else{
@@ -162,7 +165,6 @@ public class Arrow extends Actor{
             WallSound();
             despawn();
         }
-        Attack();
         pseudoPositionUpdate();
         hitbox.Update();
     }
@@ -184,40 +186,21 @@ public class Arrow extends Actor{
             enemy.setHealthPoints(damage);
             enemy.knockBack();
             endArrow = true;
-            if (damage ==0 ){return;}
-            else{despawn();}
+            if (damage == 0 ){return;}
+            else{endArrow = true;}
         }
-        
         Player link = ((Player)ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0));
         ArrayList<Actor> rocks;
         if(!(rocks = ColliderManager.GetColliderManager().getCollision(hitbox, Interactive.class, true)).isEmpty()){
-            int distance = (int) (speed+link.getVelocity());
-            switch(direction){
-                case UP:
-                    this.SetPosition(new Vector2D<Float>(GetPosition().x, GetPosition().y+distance));
-                    despawn();
-                    break;
-                case DOWN:
-                    this.SetPosition(new Vector2D<Float>(GetPosition().x, GetPosition().y-distance));
-                    despawn();
-                    break;
-                case LEFT:
-                    this.SetPosition(new Vector2D<Float>(GetPosition().x+distance, GetPosition().y));
-                    despawn();
-                    break;
-                case RIGHT:
-                    this.SetPosition(new Vector2D<Float>(GetPosition().x-distance, GetPosition().y));
-                    despawn();
-                    break;
-            }
+            if(fixed){link.SetPosition(link.getPreviusPosition());}
+            endArrow = true;
         }
     }
     @Override
     protected void despawn() {
-        if(fixed){((Player)ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0)).setDash(false);}
+        if(fixed){((Player)ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0)).setMovable(true);}
         super.despawn();
     }
-
     @Override 
     public Class GetSuperClass(){return Arrow.class;}
 }
