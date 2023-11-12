@@ -59,8 +59,9 @@ public class Player extends Actor {
     private boolean bow = false;
     public boolean dash = false;
     private boolean falling = false;
-
     StackActioner stackActioner;
+    
+    private Vector2D<Float> previusPosition;
     //----------------------------------------------------------------------
 
     /* Animation
@@ -133,13 +134,15 @@ public class Player extends Actor {
         lifeBar = new LifeBar(getPlayer(), getHealthPoints());
         //---------------------------------------------------------------------
         mCollider = (BoxCollider)AddComponent(new BoxCollider(this));
-        
         setPseudoPosition(50f, 50f);
         setPseudoPositionVisible();
         hitbox = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<Float>(55f, 60f), true));
         terrainCollider = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<Float>(55f, 20f), false));
         terrainCollider.setPosition(new Vector2D<>(getPseudoPosition().x - terrainCollider.GetBounds().GetWidth()/2, getPseudoPosition().y+20));
         terrainCollider.setColor(Color.RED);
+
+        previusPosition = position;
+
         ColliderManager.GetColliderManager().addCollider(hitbox, true);
         ObjectManager.GetObjectManager().SetPawn(this);
     }
@@ -157,7 +160,7 @@ public class Player extends Actor {
                 setVelocity(0);
                 stop = true;
                 attack = false;
-                stackActioner.pop(new ActionObject(direction,Action.RUN));
+                stackActioner.pop(direction,Action.RUN);
             }
             });
         }
@@ -220,9 +223,7 @@ public class Player extends Actor {
             public void Execute() {
                 setVelocity(0);
                 stop = true;
-                //attack = false;
                 bow = false;
-                dash = false;
             }
         });
         //BOW________________________________________________________________________________________________
@@ -235,7 +236,6 @@ public class Player extends Actor {
                     bow = true;
                     stackActioner.push(direction,Action.BOW);
                 }
-                dash = false;
             }
         });
         InputManager.SubscribeReleased(KeyEvent.VK_K, new InputFunction() {
@@ -243,7 +243,6 @@ public class Player extends Actor {
             public void Execute() {
                 setVelocity(0);
                 stop = true;
-                //bow =false;
             }
         });
         //DASH_______________________________________________________________________________________________
@@ -304,7 +303,7 @@ public class Player extends Actor {
                 {
                     shootArrow();
                     bow = false;
-                    stackActioner.pop(new ActionObject(direction,Action.BOW));
+                    stackActioner.pop(direction,Action.BOW);
                     System.out.println("Se popea arco");
                 }
                 else if (attack) //Finished Attack (attack && !bow)
@@ -312,7 +311,7 @@ public class Player extends Actor {
                     Attack();
                     bow = false;
                     attack = false;
-                    stackActioner.pop(new ActionObject(direction, Action.ATTACK));
+                    stackActioner.pop(direction, Action.ATTACK);
                     System.out.println("Se popea espada");
                 }
                 //mAnimation.setMustComplete(false);
@@ -344,9 +343,12 @@ public class Player extends Actor {
     public void Animate() {
 
         if (mAnimation.MustComplete()){return;} //Early return, if it is a animation thats has to be complete, do not animate
-        direction = stackActioner.readCurrentAction().getDirection();
-        setMovement(stackActioner.readCurrentAction().getAction());return;
-        /* 
+        /*
+        ActionObject currentAction = stackActioner.readCurrentAction();
+        direction = currentAction.getDirection();
+        setMovement(currentAction.getAction());
+         */
+        
         if (stop){
             setMovement(Action.STOP);
             if (attack){setMovement(Action.ATTACK);}
@@ -365,7 +367,7 @@ public class Player extends Actor {
                 }
             }
         }
-        */
+        
     }
     // ------------------------------------------------------------------------
 
@@ -376,7 +378,7 @@ public class Player extends Actor {
     @Override
     public void Update() { 
         super.Update();
-        System.out.println(stackActioner);
+        //System.out.println(stackActioner);
         playerStateMachine();
         Animate();
         lifeBar.Update();
@@ -391,7 +393,7 @@ public class Player extends Actor {
     public void playerStateMachine(){
         if(dash){dashCooldawn = 0;dash();return;}
         else if (dashCooldawn<120){dashCooldawn++;}
-        if (!mAnimation.MustComplete()){Move();}
+        else {if(!mAnimation.MustComplete()){Move();}}
     }
     // ------------------------------------------------------------------------
     
@@ -413,6 +415,7 @@ public class Player extends Actor {
     */ //----------------------------------------------------------------------
     public void Move() {
         Vector2D<Float> pos = GetPosition();
+        previusPosition = new Vector2D<>(pos.x, pos.y);
         switch (direction){
             case UP:
                 if(SolveCollisions(new Vector2D<>(0, -velocity))) pos.y -= velocity;
@@ -537,6 +540,7 @@ public class Player extends Actor {
     private Player getPlayer (){return this;}
     public boolean isAble_to_takeDamage() {return able_to_takeDamage;}
     public BoxCollider getHitbox() {return hitbox;}
+    public Vector2D<Float> getPreviusPosition(){return this.previusPosition;}
 
     //------------------------------------------------------------------------
     /* Setters
@@ -604,6 +608,8 @@ public class Player extends Actor {
                 return;
         }
     }
+    public void setPreviusPosition(Vector2D<Float> previusPosition){this.previusPosition = previusPosition;}
+    public void setDash(Boolean value){this.dash = value;}
     //------------------------------------------------------------------------
 
     /* Spawn a Arrow object
@@ -732,17 +738,12 @@ public class Player extends Actor {
          *      The first arrow and player have the same instance of the vectorposition it moves modifiying the position of the arrow and the vecto at the same time
          *      The second arrow it a arrow that contais a 1 frame animation and its has a low range to emulate a dash effect
          */
-
         Asset dashaAsset = AssetManager.Instance().GetResource("Content/Animations/Link/LinkDashSpriteSheet.png");
 
-        Arrow dash_movement = new Arrow(this, new Spritesheet(dashaAsset, new Vector2D<>(90, 50)), 30, 300, true);
+        Arrow dash_movement = new Arrow(this, new Spritesheet(dashaAsset, new Vector2D<>(90, 50)), 30, 250, true);
         dash_movement.SetScale(new Vector2D<>(0f, 0f));
-        Arrow dash_animation = new Arrow(this, new Spritesheet(dashaAsset, new Vector2D<>(90, 50)), 0.3f , 1, false);
-
-        ObjectManager.GetObjectManager().AddEntity(dash_animation);
         ObjectManager.GetObjectManager().AddEntity(dash_movement);
 
-        dash = false;
         able_to_takeDamage = true;
     }
     //------------------------------------------------------------------------

@@ -35,7 +35,7 @@ public class Arrow extends Actor{
     
     private int damage = 2;
     private AnimationMachine animationMachine;
-    private float speed = 15;
+    private float speed = 0;
     private float range = 350;
     private Float distance = 0f;
     private DIRECTION direction;
@@ -67,22 +67,16 @@ public class Arrow extends Actor{
 
     public Arrow (Player Link, Spritesheet spritesheet, float speed, float range, boolean fixed){ //This is actually a dash XD
         super(Link.GetPosition());
-        //link = Link;
-        //Link.setVelocity(0);
         this.speed = speed;
         this.range = range;
         this.damage = 0;
         this.animationMachine = AddComponent(new AnimationMachine(this ,spritesheet)); 
-
-        
         allAnimation = animationMachine.GetSpriteSheet().GetSpriteArray2D();
          direction = Link.getDirection();
         if (fixed)
         {
             SetPosition(Link.GetPosition());
-            //Link.getHitbox().disable();
             this.fixed = fixed;
-            //Link.setVelocity(0);
         }
         else
         {
@@ -110,8 +104,11 @@ public class Arrow extends Actor{
     }
 
     public void Move(){
-        
         Vector2D<Float> pos = GetPosition();
+        if(fixed){
+            Player link = (Player)ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0);
+            link.setPreviusPosition(new Vector2D<>(pos.x, pos.y));
+        }
         Float currentPosition;
         switch (direction){
             case UP:
@@ -119,28 +116,36 @@ public class Arrow extends Actor{
                 if(hitbox.GetBounds().collisionTile(0, -speed) == CollisionResult.None){
                     pos.y -= speed;
                     distance += Math.abs(currentPosition - pos.y);
-                }else{endArrow = true;}
+                }else{
+                    endArrow = true;
+                }
                 return;
             case DOWN:
                 currentPosition = pos.y;
                 if(hitbox.GetBounds().collisionTile(0, +speed) == CollisionResult.None){
                     pos.y += speed;
                     distance += Math.abs(currentPosition - pos.y);
-                }else{endArrow = true;}
+                }else{
+                    endArrow = true;
+                }
                 return;
             case LEFT:
                 currentPosition = pos.x;
                 if(hitbox.GetBounds().collisionTile(-speed, 0) == CollisionResult.None){
                     pos.x -= speed;
                     distance += Math.abs(currentPosition - pos.x);
-                }else{endArrow = true;}
+                }else{
+                    endArrow = true;
+                }
                 return;
             case RIGHT:
                 currentPosition = pos.x;
                 if(hitbox.GetBounds().collisionTile(+speed, 0) == CollisionResult.None){
                     pos.x += speed;
                     distance += Math.abs(currentPosition - pos.x);
-                }else{endArrow = true;}
+                }else{
+                    endArrow = true;
+                }
                 return;
         }
         SetPosition(pos);
@@ -214,10 +219,9 @@ public class Arrow extends Actor{
             }
         }
     }
-
     @Override
     protected void despawn() {
-        //if(fixed){((Player)ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0)).setVelocity(10);}
+        if(fixed){((Player)ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0)).setDash(false);}
         super.despawn();
     }
 
