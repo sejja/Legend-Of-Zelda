@@ -9,6 +9,8 @@
 package Engine.Graphics.Tile;
 
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
 import java.util.ArrayList;
 
 import Engine.Graphics.Spritesheet;
@@ -39,22 +41,26 @@ public class TilemapNorm extends Tilemap {
                 Vector2D<Integer> positiontemp = new Vector2D<Integer>((int) (i % width) * tilewidth, (int) (i / height) * tileheight);
                 positiontemp.x += (int)(float)position.x;
                 positiontemp.y += (int)(float)position.y;
-                mBlocks[i] = new Normblock(sprite.GetSprite((int) ((temp - 1) % tilecolumns), (int) ((temp - 1) / tilecolumns)), positiontemp, tilewidth, tileheight);
+                if(sprite.GetSprite((int) ((temp - 1) % tilecolumns), (int) ((temp - 1) / tilecolumns)) != null) {
+                    AffineTransform transform = AffineTransform.getTranslateInstance(positiontemp.x, positiontemp.y);
+                    transform.concatenate(AffineTransform.getScaleInstance(tilewidth, tileheight));
+                    mBlocks[i] = new Normblock(sprite.GetSprite((int) ((temp - 1) % tilecolumns), (int) ((temp - 1) / tilecolumns)), transform);
+                }
             }
         }
     }
 
     public void Render(Graphics2D g, CameraComponent camerapos, Vector2D<Float> tilemappos) {
+        //if(true){return;}
         var cameracoord = camerapos.GetCoordinates();
-
         int x = (int) ((cameracoord.x - tilemappos.x) / mTileWidth);
         int y = (int) ((cameracoord.y - tilemappos.y) / mTileHeight);
 
         for(int i = x; i < x + (camerapos.GetDimensions().x / mTileWidth) + 1; i++) {
             for(int j = y; j < y + (camerapos.GetDimensions().y / mTileHeight) + 2; j++) {
                 if(i + (j * mHeight) > -1 && i + (j * mHeight) < mBlocks.length && mBlocks[i + (j * mHeight)] != null)
-                    mBlocks[i + (j * mHeight)].Render(g, cameracoord);
+                    mBlocks[i + (j * mHeight)].Render(g, camerapos);
             }
-        }
+         }
     }
 }

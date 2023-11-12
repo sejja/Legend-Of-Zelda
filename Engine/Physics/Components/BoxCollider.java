@@ -64,6 +64,11 @@ public class BoxCollider extends Component implements Renderable{
         this.hasCollision = hasCollision;
         ColliderManager.GetColliderManager().addCollider(this, hasCollision);
     }
+
+    public void setHitboxScale(Vector2D <Float> scale){
+        Vector2D<Float> drawnPoint = new Vector2D<Float>(GetParent().getPseudoPosition().x-(scale.x/2), GetParent().getPseudoPosition().y-(scale.y/2));
+        mBounds = new AABB(drawnPoint, scale);
+    }
     // ------------------------------------------------------------------------
     /*! Init
     *
@@ -81,7 +86,7 @@ public class BoxCollider extends Component implements Renderable{
     */ //----------------------------------------------------------------------
     @Override
     public void Update() {
-        //mBounds.SetHeight(this.GetBounds().GetWidth()); Para que sirve esto???
+        //mBounds.SetHeight(this.GetBounds().GetWidth()); Para que sirve esto??? --> Idk bro
         //mBounds.SetWidth(this.GetBounds().GetHeight());
         if(hasCollision){
             mBounds.SetPosition(new Vector2D<Float>(super.GetParent().getPseudoPosition().x-(mBounds.GetWidth()/2), super.GetParent().getPseudoPosition().y-(mBounds.GetHeight()/2)));
@@ -99,6 +104,11 @@ public class BoxCollider extends Component implements Renderable{
     @Override
     public void ShutDown() {
         GraphicsPipeline.GetGraphicsPipeline().RemoveRenderable(this);
+        try{
+            ColliderManager.GetColliderManager().removeCollider(this);
+        }catch(NullPointerException e){
+            //System.err.print("Already removed");
+        }
     }
 
     // ------------------------------------------------------------------------
@@ -117,7 +127,7 @@ public class BoxCollider extends Component implements Renderable{
     public void Render(Graphics2D g, CameraComponent camerapos) {
         var campos = camerapos.GetCoordinates();
        g.setColor(color);
-       g.drawRect((int)(float)(mBounds.GetPosition().x - campos.x), (int)(float)(mBounds.GetPosition().y - campos.y), (int)mBounds.GetWidth(), (int)mBounds.GetHeight());
+       //g.drawRect((int)(float)(mBounds.GetPosition().x - campos.x), (int)(float)(mBounds.GetPosition().y - campos.y), (int)mBounds.GetWidth(), (int)mBounds.GetHeight());
     }
 
 }

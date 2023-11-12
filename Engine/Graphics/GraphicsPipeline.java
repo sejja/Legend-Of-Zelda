@@ -48,6 +48,7 @@ public class GraphicsPipeline {
     *   creates an arraylist of renderables
     */ //----------------------------------------------------------------------
     private GraphicsPipeline() {
+        mDimensions = new Vector2D<>(0, 0);
         mRenderables = new ArrayList<>();
         mCamera = null;
     }
@@ -99,5 +100,9 @@ public class GraphicsPipeline {
 
     public CameraComponent GetCamera() {
         return mCamera;
+    }
+
+    public void UnbindCamera(CameraComponent c) {
+        mCamera = (mCamera == c) ? null : mCamera;
     }
 }

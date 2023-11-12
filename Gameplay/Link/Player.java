@@ -3,7 +3,12 @@ package Gameplay.Link;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Random;
 
+import Engine.Assets.Asset;
+import Engine.Assets.AssetManager;
+import Engine.Audio.Audio;
+import Engine.Audio.Sound;
 import Engine.ECSystem.Level;
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
@@ -13,6 +18,9 @@ import Engine.Graphics.Animations.Animation;
 import Engine.Graphics.Animations.AnimationEvent;
 import Engine.Graphics.Components.AnimationMachine;
 import Engine.Graphics.Components.ZeldaCameraComponent;
+import Engine.Graphics.Tile.Block;
+import Engine.Graphics.Tile.ObjectBlock;
+import Engine.Graphics.Tile.TileManager;
 import Engine.Input.InputFunction;
 import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
@@ -20,6 +28,7 @@ import Engine.Physics.CollisionResult;
 import Engine.Physics.Components.BoxCollider;
 import Engine.Window.GameLoop;
 import Engine.Physics.Components.ColliderManager;
+import Gameplay.Interaction;
 import Gameplay.AnimatedObject.Bomb;
 import Gameplay.Enemies.Enemy;
 import Gameplay.Interactives.Interactive;
@@ -80,7 +89,7 @@ public class Player extends Actor {
     private ZeldaCameraComponent mCamera;
     protected BoxCollider mCollider;
     protected BoxCollider hitbox;
-    final private  int damage = 2;
+    final private  int damage = 1;
     private int velocity = 0;
     final int default_velocity = 10;
     private LifeBar lifeBar;
@@ -88,7 +97,7 @@ public class Player extends Actor {
 
     /* NPC
      */
-    private Npc currentNPCinteraction;
+    private Interaction currentNPCinteraction;
     //----------------------------------------------------------------------
 
     //Methods______________________________________________________________________________________________________________________________________________________________________________
@@ -113,7 +122,7 @@ public class Player extends Actor {
         //---------------------------------------------------------------------
         lifeBar = new LifeBar(getPlayer(), getHealthPoints());
         //---------------------------------------------------------------------
-        //mCollider = (BoxCollider)AddComponent(new BoxCollider(this));
+        mCollider = (BoxCollider)AddComponent(new BoxCollider(this));
 
         setPseudoPosition(50f, 50f);
         setPseudoPositionVisible();
@@ -160,9 +169,21 @@ public class Player extends Actor {
             @Override
             public void Execute() {
                 setVelocity(0);
+                bow = false;
+                Random r = new Random();
+
+                if(!attack) {
+                    if(r.nextBoolean()) {
+                        Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/fighter-sword.wav"));
+                        Audio.Instance().Play(sound);   
+                    } else {
+                        Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/sword-2.wav"));
+                        Audio.Instance().Play(sound);
+                    }
+                }
+
                 stop = true;
                 attack = true;
-                bow = false;
             }
         });
         InputManager.SubscribeReleased(KeyEvent.VK_J, new InputFunction() {
@@ -215,6 +236,8 @@ public class Player extends Actor {
                 if(nbombs >= 0){
                     new Bomb(new Vector2D<Float>(GetPosition().x, GetPosition().y));
                     nbombs--;
+                    Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/lay-bomb.wav"));
+                    Audio.Instance().Play(sound);
                 }else{
                     System.out.println("Bombs run out");}
                 
@@ -276,7 +299,7 @@ public class Player extends Actor {
      */
     public void SetAnimation(int i, BufferedImage[] frames, int delay) {
         mCurrentAnimation = i;
-        mAnimation.SetFrames(frames);
+        mAnimation.SetFrameTrack(i);
         mAnimation.GetAnimation().SetDelay(delay);
     }
     // ------------------------------------------------------------------------
@@ -317,10 +340,10 @@ public class Player extends Actor {
         super.Update();
         playerStateMachine();
         Animate();
-        if(able_to_takeDamage){takeDamage();}
         lifeBar.Update();
         pseudoPositionUpdate();
         hitbox.Update();
+        //System.out.println(GetPosition());
     }
     public void playerStateMachine(){
         if(dash){dash();return;}//Early return dash is mostly the dominate action, so if link is dashing he can not do anything else
@@ -392,7 +415,7 @@ public class Player extends Actor {
         }
     }
     private void setBowAnimaitonSet(BufferedImage[][] temp, int size){
-        Spritesheet Bow = new Spritesheet("Content/Animations/Link/LinkArco.png", 30, 30);
+        Spritesheet Bow = new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/Link/LinkArco.png"), new Vector2D<>(30, 30));
         BufferedImage[][] animation = transposeMatrix(Bow.GetSpriteArray2D());
         for (int i = 0; i < 4; i++){
             for (int j = 0; j < 8; j++ ){
@@ -452,20 +475,6 @@ public class Player extends Actor {
         stop = false;
         attack = false;
     }
-    private void takeDamage(){ //Looking for enemies to take damage
-        //System.out.println("Vida = " + healthPoints);
-        ArrayList<Entity> allEntities = ObjectManager.GetObjectManager().GetAllObjectsOfType(Enemy.class);
-
-        if(allEntities != null)
-            for (int i = 0; i < allEntities.size(); i++){
-                Enemy enemy = (Enemy) allEntities.get(i);
-                Vector2D<Float> enemyPosition = enemy.GetPosition();
-                if (enemyPosition.getModuleDistance(this.GetPosition()) < this.GetScale().y/2){
-                    this.setDamage(enemy.getDamage());
-                    enemy.KnockBack();
-                }
-            }
-    }
     //------------------------------------------------------------------------
 
     /* Getters
@@ -488,13 +497,23 @@ public class Player extends Actor {
      * 
      */
     public void setDamage(int healthPoints) {
-        this.healthPoints -= healthPoints;
-        this.setAble_to_takeDamage(false);
-        if(this.healthPoints <= 0){dead();}
-        else{
-            ThreadInmortal thread = new ThreadInmortal(this);
-            thread.start();
-            lifeBar.setHealthPoints(this.healthPoints);
+        if(able_to_takeDamage){
+            this.healthPoints -= healthPoints;
+            this.setAble_to_takeDamage(false);
+            if(this.healthPoints <= 0){dead();}
+            else{
+                ThreadInmortal thread = new ThreadInmortal(this);
+                thread.start();
+                lifeBar.setHealthPoints(this.healthPoints);
+                Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/link-hurt.wav"));
+                Audio.Instance().Play(sound);
+            
+                if(this.healthPoints <= 2) {
+                    sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/low-hp.wav"));
+                    Audio.Instance().Play(sound);
+                    Audio.Instance().SetLoopCount(sound, -1);
+                }
+            }
         }
 
     }
@@ -505,7 +524,11 @@ public class Player extends Actor {
 
         if (type == null){
             mAnimation.setMustComplete(true);
-            if(falling && mCurrentAnimation != FALL || mAnimation.GetAnimation().GetDelay() == -1) {SetAnimation(FALL, mAnimation.GetSpriteSheet().GetSpriteArray(FALL), delay);}//Enviromental special case
+            if(falling && mCurrentAnimation != FALL || mAnimation.GetAnimation().GetDelay() == -1) {
+                SetAnimation(FALL, mAnimation.GetSpriteSheet().GetSpriteArray(FALL), delay);
+                Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/link-fall.wav"));
+                Audio.Instance().Play(sound);
+            }//Enviromental special case
             return;
         }
         int i = type.getID();
@@ -563,43 +586,80 @@ public class Player extends Actor {
                 
         It will calculate a vector to the player position to the enemy position
         If the DIRECTION of the vector Player-Enemy and The DIRECTION of the player is the same
-        It will called a KnockBack() function of that enemy
+        It will called a knockBack() function of that enemy
         */
-        ArrayList<Entity> enemies = ObjectManager.GetObjectManager().GetAllObjectsOfType(Enemy.class);
-        if(enemies == null){return;}
-        for(Entity entity : enemies){
-            Enemy currentEnemy = (Enemy) entity;
-            if(currentEnemy.getPseudoPosition().getModuleDistance(getPseudoPosition()) < this.GetScale().getModule()-40){
-                System.out.println( "leda");
-                currentEnemy.setHealthPoints(damage);
-                currentEnemy.KnockBack();
+        ArrayList<Actor> enemies = ColliderManager.GetColliderManager().getCollision(mCollider, Enemy.class, true);
+        if (!enemies.isEmpty()){
+            for(int i = 0; i < enemies.size(); i++){
+                Enemy enemy = (Enemy)enemies.get(i);
+                if(getPseudoPosition().getTargetDirection(enemy.getPseudoPosition()) == direction){
+                    enemy.setDamage(damage);
+                    enemy.knockBack();
+                }
             }
         }
+
+        ArrayList<Actor> interactives = ColliderManager.GetColliderManager().getCollision(mCollider, Interactive.class, true);
+        if (!interactives.isEmpty()){
+            for(int i = 0; i < interactives.size(); i++){
+                Interactive interactive = (Interactive)interactives.get(i);
+                if(getPseudoPosition().getTargetDirection(interactive.getPseudoPosition()) == direction){
+                    Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/bombable-wall.wav"));
+                    Audio.Instance().Play(sound);
+                }
+            }
+        }
+
+        {
+            switch (direction){
+            case UP:
+                if(!SolveCollisions(new Vector2D<>(0, -10))) {
+                    Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/tink.wav"));
+                    Audio.Instance().Play(sound);
+                }
+                break;
+            case DOWN:
+                if(!SolveCollisions(new Vector2D<>(0, 10))) {
+                    Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/tink.wav"));
+                    Audio.Instance().Play(sound);
+                }
+                break;
+            case LEFT:
+                if(!SolveCollisions(new Vector2D<>(-10, 0))) {
+                    Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/tink.wav"));
+                    Audio.Instance().Play(sound);
+                }
+                break;
+            case RIGHT:
+                if(!SolveCollisions(new Vector2D<>(10, 0))) {
+                    Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/tink.wav"));
+                    Audio.Instance().Play(sound);
+                }
+                break;
+        }
+        }
+
     }
     private void interact(){
         if(currentNPCinteraction == null){
             currentNPCinteraction = nearestNPC();
         }
         try {
-            currentNPCinteraction.interaction(this.GetPosition());
+            currentNPCinteraction.interaction();
         } catch (java.lang.NullPointerException e) {
             System.err.println("No npc found");
             this.currentNPCinteraction = null;
         }
     }
-    private Npc nearestNPC (){
-        ArrayList<Entity> NPCs = ObjectManager.GetObjectManager().GetAllObjectsOfType(Npc.class);
-        Entity min = NPCs.get(0);
-
-        for(Entity x : NPCs) {
-            if (GetPosition().getModuleDistance(x.GetPosition()) < GetPosition().getModuleDistance(min.GetPosition())){
-                min = x;
-            }
+    private Interaction nearestNPC (){
+        ArrayList<Actor> allInteraction;
+        try{
+            allInteraction =ColliderManager.GetColliderManager().getCollision(mCollider, Npc.class, true);
+            return (Interaction)allInteraction.get(0);
+        }catch(java.lang.IndexOutOfBoundsException e){
+            System.err.println("No interaction in hitbox");
+            return(null);
         }
-        if (GetPosition().getModuleDistance(min.GetPosition()) > (GetScale().getModule()/2)){ //Magic number to ajust
-            return null;
-        }
-        return (Npc) min;
     }
     public void removeInteraction(){
         currentNPCinteraction = null;
@@ -623,9 +683,12 @@ public class Player extends Actor {
          *      The first arrow and player have the same instance of the vectorposition it moves modifiying the position of the arrow and the vecto at the same time
          *      The second arrow it a arrow that contais a 1 frame animation and its has a low range to emulate a dash effect
          */
-        Arrow dash_movement = new Arrow(this, new Spritesheet("Content/Animations/Link/LinkDashSpriteSheet.png", 90 , 50), 30, 300, true);
+
+        Asset dashaAsset = AssetManager.Instance().GetResource("Content/Animations/Link/LinkDashSpriteSheet.png");
+
+        Arrow dash_movement = new Arrow(this, new Spritesheet(dashaAsset, new Vector2D<>(90, 50)), 30, 300, true);
         dash_movement.SetScale(new Vector2D<>(0f, 0f));
-        Arrow dash_animation = new Arrow(this, new Spritesheet("Content/Animations/Link/LinkDashSpriteSheet.png", 90 , 50), 0.3f , 1, false);
+        Arrow dash_animation = new Arrow(this, new Spritesheet(dashaAsset, new Vector2D<>(90, 50)), 0.3f , 1, false);
 
         ObjectManager.GetObjectManager().AddEntity(dash_animation);
         ObjectManager.GetObjectManager().AddEntity(dash_movement);
@@ -661,7 +724,7 @@ public class Player extends Actor {
         this.direction = DIRECTION.DOWN;
         setToSpawnPoint();
         hitbox.Reset();
-        mAnimation.SetFrames(mAnimation.GetSpriteSheet().GetSpriteArray2D()[DOWN+Action.STOP.getID()]);
+        mAnimation.SetFrameTrack(DOWN+Action.STOP.getID());
     }
     public void setBow(boolean bow) {this.bow = bow;}
     //------------------------------------------------------------------------

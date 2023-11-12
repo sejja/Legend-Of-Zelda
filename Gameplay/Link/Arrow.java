@@ -5,9 +5,13 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.ListIterator;
+import java.util.Random;
 
 import javax.lang.model.element.ModuleElement.DirectiveKind;
 
+import Engine.Assets.AssetManager;
+import Engine.Audio.Audio;
+import Engine.Audio.Sound;
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Entity;
@@ -37,7 +41,7 @@ public class Arrow extends Actor{
     public Arrow(Player Link){
         super(new Vector2D<Float>(Link.GetPosition().x + 28, Link.GetPosition().y + 45));
 
-        this.animationMachine = AddComponent(new AnimationMachine(this ,new Spritesheet("Content/Animations/Link/Arrow.png", 44 , 40))); //44,40
+        this.animationMachine = AddComponent(new AnimationMachine(this ,new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/Link/Arrow.png"), new Vector2D<>(44, 40)))); //44,40
         allAnimation = animationMachine.GetSpriteSheet().GetSpriteArray2D();
 
         direction = Link.getDirection();
@@ -53,6 +57,7 @@ public class Arrow extends Actor{
         }else{
             hitbox = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<>(40f,20f), true));
         }
+        ArrowSound();
     }
 
     public Arrow (Player Link, Spritesheet spritesheet, float speed, float range, boolean fixed){ //This is actually a dash XD
@@ -80,6 +85,19 @@ public class Arrow extends Actor{
         Animate();
 
         setPseudoPosition(GetScale().x/2, GetScale().y/2);
+        ArrowSound();
+    }
+
+    private void ArrowSound() {
+        Random random = new Random();
+        Sound sound = null;
+
+        if(random.nextBoolean())
+            sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/arrow.wav"));
+        else
+            sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/arrow2.wav"));
+        
+        Audio.Instance().Play(sound);
     }
 
     public void Move(){
@@ -118,6 +136,12 @@ public class Arrow extends Actor{
         }
         SetPosition(pos);
     }
+
+    public void WallSound() {
+        Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/arrow-wall.wav"));
+        Audio.Instance().Play(sound);
+    }
+
     @Override
     public void Update() {
         super.Update();
@@ -126,13 +150,12 @@ public class Arrow extends Actor{
             Animate();
         }else{ //Delete arrow
             //System.out.println("Eliminado flecha");
-            hitbox.ShutDown();
-            ObjectManager.GetObjectManager().RemoveEntity(this);
+            despawn();
         }
         if( endArrow ){
             //System.out.println("Eliminado flecha");
-            hitbox.ShutDown();
-            ObjectManager.GetObjectManager().RemoveEntity(this);
+            WallSound();
+            despawn();
         }
         Attack();
         pseudoPositionUpdate();
@@ -141,10 +164,10 @@ public class Arrow extends Actor{
     public void Animate(){
         switch(direction)
         {
-            case UP: animationMachine.SetFrames(allAnimation[3]) ;return;
-            case DOWN: animationMachine.SetFrames(allAnimation[2]) ;return;
-            case LEFT: animationMachine.SetFrames(allAnimation[1]) ;return;
-            case RIGHT: animationMachine.SetFrames(allAnimation[0]) ;return;
+            case UP: animationMachine.SetFrameTrack(3); ;return;
+            case DOWN: animationMachine.SetFrameTrack(2) ;return;
+            case LEFT: animationMachine.SetFrameTrack(1) ;return;
+            case RIGHT: animationMachine.SetFrameTrack(0) ;return;
         }
     }
     public int damage(){return damage;}
@@ -152,11 +175,12 @@ public class Arrow extends Actor{
     public void Attack(){
         ArrayList<Actor> enemies;
         if(!(enemies = ColliderManager.GetColliderManager().getCollision(hitbox, Enemy.class, true)).isEmpty()){
-            System.err.println("patata");
             Enemy enemy = (Enemy)enemies.get(0);
             enemy.setHealthPoints(damage);
-            enemy.KnockBack();
+            enemy.knockBack();
             endArrow = true;
+            if (damage ==0 ){return;}
+            else{despawn();}
         }
     }
 

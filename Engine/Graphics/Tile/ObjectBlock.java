@@ -8,31 +8,37 @@
 
 package Engine.Graphics.Tile;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-
-import Engine.Math.Vector2D;
 import Engine.Physics.AABB;
 
 public class ObjectBlock extends Block {
-    public ObjectBlock(BufferedImage img, Vector2D<Integer> position, int w, int h) {
-        super(img, position, w, h);
+    // ------------------------------------------------------------------------
+    /*! Custom Contructor
+    *
+    *   Creates an Object Block, which does have a collision
+    */ //----------------------------------------------------------------------
+    public ObjectBlock(final BufferedImage img, final AffineTransform transform) {
+        super(img, transform);
     }
 
+    // ------------------------------------------------------------------------
+    /*! Has Collision
+    *
+    *   This object DOES collide
+    */ //----------------------------------------------------------------------
     @Override
-    public boolean Update(AABB p) {
+    public boolean HasCollision(final AABB p) {
         return true;
     }
 
-    public void Render(Graphics2D g, Vector2D<Float> camerapos) {
-        super.Render(g, camerapos);
-        //g.setColor(Color.white);
-        //g.drawRect((int)(float)mPosition.x - (int)(float)camerapos.x, (int)(float)mPosition.y - (int)(float)camerapos.y, mWidth, mHeight);
-    }
-
+    // ------------------------------------------------------------------------
+    /*! Is Inside
+    *
+    *   While this object collides, the player can never step on it
+    */ //----------------------------------------------------------------------
     @Override
-    public boolean IsInside(AABB p) {
+    public boolean IsInside(final AABB p) {
         return false;
-    }  
+    }
 }

@@ -4,6 +4,9 @@ import java.awt.image.BufferedImage;
 import java.nio.Buffer;
 import java.util.ArrayList;
 
+import Engine.Assets.AssetManager;
+import Engine.Audio.Audio;
+import Engine.Audio.Sound;
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Entity;
@@ -28,12 +31,12 @@ public class Bomb extends AnimatedObject {
 
     public Bomb(Vector2D<Float> position) {
         super(position);
-        Spritesheet spritesheet = new Spritesheet("Content/Animations/bomb.png", 10,1, true);
+        Spritesheet spritesheet = new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/bomb.png"), 10,1, true);
         delay = 5;
         setAnimationMachine(spritesheet);
         this.allAnimtion  = spritesheet.GetSpriteArray2D();
         createChargeAnimation();
-        animationMachine.SetFrames(allAnimtion[1]);
+        animationMachine.SetFrameTrack(1);
         this.SetScale(new Vector2D<Float>(100f,100f));
         ObjectManager.GetObjectManager().AddEntity(this);
 
@@ -42,10 +45,7 @@ public class Bomb extends AnimatedObject {
 
             @Override
             public void OnTrigger() {
-                //System.out.println("Ha terminado");
-                ObjectManager.GetObjectManager().RemoveEntity(reference);
-                reference.SetScale(new Vector2D<>(0f,0f));
-                
+                despawn();
             }
             
         });
@@ -71,11 +71,13 @@ public class Bomb extends AnimatedObject {
     }
 
     public void countDown(){
+        if(animationMachine.GetAnimation().GetFrames() == allAnimtion[0] && animationMachine.GetAnimation().GetFrame() == 5){
+            explode();
+        }
         if(counter == limit){
             animationMachine.setMustComplete(true);
-            animationMachine.SetFrames(allAnimtion[0]);
+            animationMachine.SetFrameTrack(0);
             delay = 3;
-            explode();
             counter = 0;
         }else{
             counter++;
@@ -89,7 +91,7 @@ public class Bomb extends AnimatedObject {
             for(int i = 0; i<enemies.size(); i++){
                 Enemy enemy = (Enemy)enemies.get(i);
                 enemy.setHealthPoints(damage);
-                enemy.KnockBack();
+                enemy.knockBack();
             }
         }
         if(!interactives.isEmpty()){
@@ -98,5 +100,8 @@ public class Bomb extends AnimatedObject {
                 rock.setHealthPoints(damage);
             }
         }
+
+        Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/bomb.wav"));
+        Audio.Instance().Play(sound);
     }
 }

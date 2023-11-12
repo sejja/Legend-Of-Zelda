@@ -3,7 +3,13 @@ package Gameplay.Enemies;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Random;
 import java.util.Stack;
+
+import Engine.Assets.AssetManager;
+import Engine.Audio.Audio;
+import Engine.Audio.Sound;
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
 import Engine.Graphics.GraphicsPipeline;
@@ -14,6 +20,7 @@ import Engine.Graphics.Components.CameraComponent;
 import Engine.Graphics.Components.Renderable;
 import Engine.Math.Vector2D;
 import Engine.Physics.Components.BoxCollider;
+import Engine.Physics.Components.ColliderManager;
 import Gameplay.AnimatedObject.DeadAnimation;
 import Gameplay.Enemies.Search.*;
 import Gameplay.LifeBar.LifeBar;
@@ -35,14 +42,16 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
 
     //player detected
     protected boolean chase = false;
+    protected boolean knockback=false;
+    protected int knockbackCounter=0;
 
     //A* search
     protected static AStarSearch aStarSearch = new AStarSearch();
 
-    //Pathfinding variables
-    protected Pair finalDestination;
+    //pathfinding variables
+    protected Pair finalDestination= new Pair(0, 0);
     protected Pair lastFinalDestination= new Pair(0, 0);
-    protected Pair currentDestination;
+    protected Pair currentDestination= new Pair(0, 0);
     protected Stack<Pair> path = new Stack<Pair>();
     protected Vector2D<Float> pos = GetPosition();
     protected Vector2D<Float> pseudoPos = getPseudoPosition();
@@ -88,11 +97,11 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     }
 
     // ------------------------------------------------------------------------
-    /*! Normalize
+    /*! normalize
     *
     *   Utility Function for Normalizing a Vector
     */ //----------------------------------------------------------------------
-    public Vector2D<Float> Normalize(Vector2D<Float> vector) {
+    public Vector2D<Float> normalize(Vector2D<Float> vector) {
         float magnitude = (float) Math.sqrt(vector.x * vector.x + vector.y * vector.y);
         if (magnitude > 0) {
             return new Vector2D<Float>(vector.x / magnitude, vector.y / magnitude);
@@ -102,11 +111,11 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     }
 
     // ------------------------------------------------------------------------
-    /*! GetDirection
+    /*! getDirection
     *
     *   Utility Function for Getting the Direction of a Vector
     */ //----------------------------------------------------------------------
-    public void GetDirection(Vector2D<Float> vector) {
+    public void getDirection(Vector2D<Float> vector) {
 
         if (Math.abs(vector.x) > Math.abs(vector.y)) {
             if (vector.x < 0) {
@@ -123,12 +132,30 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
         }
     }
 
+    public DIRECTION getDirection(Vector2D<Float> vector, boolean patata) {
+        DIRECTION dir;
+        if (Math.abs(vector.x) > Math.abs(vector.y)) {
+            if (vector.x < 0) {
+                dir=DIRECTION.RIGHT;
+            } else {
+                dir=DIRECTION.LEFT;
+            }
+        } else {
+            if (vector.y < 0) {
+                dir=DIRECTION.DOWN;
+            } else {
+                dir=DIRECTION.UP;
+            }
+        }
+        return dir;
+    }
+
     // ------------------------------------------------------------------------
-    /*! Animate
+    /*! animate
     *
     *   Adds the needed animation to the Enemy
     */ //----------------------------------------------------------------------
-    public void Animate() {
+    public void animate() {
         if(mAnimation.MustComplete()){return;}
 
         if(this.healthPoints == 0){
@@ -138,52 +165,27 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
             return;
         }
 
-        if(chase){
-            switch (direction){
-                case UP:
-                    if(mCurrentAnimation != UP || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), this.delay);
-                    }
-                    break;
-                case DOWN:
-                    if(mCurrentAnimation != DOWN || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(DOWN, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN), this.delay);
-                    }
-                    break;
-                case LEFT:
-                    if(mCurrentAnimation != RIGHT || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(RIGHT, mAnimation.GetSpriteSheet().GetSpriteArray(RIGHT), this.delay);
-                    }
-                    break;
-                case RIGHT:
-                    if(mCurrentAnimation != LEFT || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(LEFT, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT), this.delay);
-                    }
-                    break;
-            }
-        }else{
-            switch (direction){
-                case UP:
-                    if(mCurrentAnimation != UP || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), this.delay);
-                    }
-                    break;
-                case DOWN:
-                    if(mCurrentAnimation != DOWN || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(DOWN, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN), this.delay);
-                    }
-                    break;
-                case LEFT:
-                    if(mCurrentAnimation != RIGHT || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(RIGHT, mAnimation.GetSpriteSheet().GetSpriteArray(RIGHT), this.delay);
-                    }
-                    break;
-                case RIGHT:
-                    if(mCurrentAnimation != LEFT || mAnimation.GetAnimation().GetDelay() == -1) {
-                        SetAnimation(LEFT, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT), this.delay);
-                    }
-                    break;
-            }
+        switch (direction){
+            case UP:
+                if(mCurrentAnimation != UP || mAnimation.GetAnimation().GetDelay() == -1) {
+                    SetAnimation(UP, mAnimation.GetSpriteSheet().GetSpriteArray(UP), this.delay);
+                }
+                break;
+            case DOWN:
+                if(mCurrentAnimation != DOWN || mAnimation.GetAnimation().GetDelay() == -1) {
+                    SetAnimation(DOWN, mAnimation.GetSpriteSheet().GetSpriteArray(DOWN), this.delay);
+                }
+                break;
+            case LEFT:
+                if(mCurrentAnimation != RIGHT || mAnimation.GetAnimation().GetDelay() == -1) {
+                    SetAnimation(RIGHT, mAnimation.GetSpriteSheet().GetSpriteArray(RIGHT), this.delay);
+                }
+                break;
+            case RIGHT:
+                if(mCurrentAnimation != LEFT || mAnimation.GetAnimation().GetDelay() == -1) {
+                    SetAnimation(LEFT, mAnimation.GetSpriteSheet().GetSpriteArray(LEFT), this.delay);
+                }
+                break;
         }
     }
 
@@ -193,25 +195,48 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     *   Adds Behavior to the Enemy
     */ //----------------------------------------------------------------------
     public void Update() {
-        playerPos = ObjectManager.GetObjectManager().GetObjectByName(Player.class, "Player").GetPosition();
-        //System.out.println("pdsofhiusf");
         super.Update();
-        Pathfinding();
-        GetDirection(normalizedDirection);
-        Animate();
-        Move();
+        //System.out.println(vision());
+        decisionMaking();
+        attack();
         pseudoPositionUpdate();
+        mCollision.Update();
         //System.out.println(playerPos.x + " " + playerPos.y + " " + normalizedDirection+ " " );
+    }
+    // ------------------------------------------------------------------------
+    /*! decisionMaking
+    *
+    *   Decides the behavior of the Enemy based on if it is being knocked back and if the player is in its vision
+    */ //----------------------------------------------------------------------
+    public void decisionMaking(){
+        if(!knockback){
+            checkVision(); 
+        }else{
+            knockbackRepeat();
+        }
+    }
+    // ------------------------------------------------------------------------
+    /*! checkVision
+    *
+    *   If player is in vision, calls pathfinding
+    */ //----------------------------------------------------------------------
+    public void checkVision(){
+        if(vision()){
+            pathfinding();
+            getDirection(normalizedDirection);
+            animate();
+            move();
+        }
     }
 
     // ------------------------------------------------------------------------
-    /*! Pathfinding
+    /*! pathfinding
     *
     *   Calculates the path to the player if the path is unblocked and is not the same as the last time A* was called
     */ //----------------------------------------------------------------------
-    public void Pathfinding() {
-        Pair enemyTile = PositionToPair(getPseudoPosition());
-        finalDestination = PositionToPair(playerPos);
+    public void pathfinding() {
+        Pair enemyTile = positionToPair(getPseudoPosition());
+        finalDestination = positionToPair(playerPos);
         if(isDestinationChanged() && isDestinationReachable()){
             lastFinalDestination = finalDestination;
             path = aStarSearch.aStarSearch(enemyTile, finalDestination);
@@ -219,11 +244,11 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     }
 
     // ------------------------------------------------------------------------
-    /*! PositionToPair
+    /*! positionToPair
     *
     *   Changes the position given to a Pair
     */ //----------------------------------------------------------------------
-    public Pair PositionToPair(Vector2D<Float> position) {
+    public Pair positionToPair(Vector2D<Float> position) {
         int divisior = 64;
         Pair pair = new Pair(Math.round((position.x/divisior)), Math.round((position.y/divisior)));
         return pair;
@@ -260,25 +285,22 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
 
 
     // ------------------------------------------------------------------------
-    /*! MovementVector
+    /*! movementVector
     *
     *   Calculates the movement of the Enemy
     */ //----------------------------------------------------------------------
-    public void MovementVector() {
-        Vector2D<Float> dir = new Vector2D<Float>(playerPos.x - pseudoPos.x, playerPos.y - pseudoPos.x);
-        normalizedDirection=Normalize(dir);
+    public void movementVector() {
+        Vector2D<Float> dir = new Vector2D<Float>(playerPos.x - pseudoPos.x, playerPos.y - pseudoPos.y);
+        normalizedDirection=normalize(dir);
     }
 
 
     // ------------------------------------------------------------------------
-    /*! Move
+    /*! move
     *
     *   Receives the movements in a stack and sets the movement of the Enemy with the A* search
     */ //----------------------------------------------------------------------
-    public void Move() {
-        if(chase){
-            speed = 3;
-        }
+    public void move() {
         if(!path.isEmpty()){
             if(!path.isEmpty()){
                 currentDestination = path.peek();
@@ -290,52 +312,77 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
             yupperBound = currentDestination.getSecond()*64 + 3;
 
             //If currentDestination reached, pop next destination
-            if(((((xlowerBound <= pseudoPos.x) && (pseudoPos.x <= xupperBound)) && ((ylowerBound <= pseudoPos.y) && (pseudoPos.y <= yupperBound)))) && (currentDestination != finalDestination) && !path.isEmpty()){
+            if(((((xlowerBound <= pseudoPos.x) && (pseudoPos.x <= xupperBound)) && ((ylowerBound <= pseudoPos.y+GetScale().y/2) && (pseudoPos.y+GetScale().y/2 <= yupperBound)))) && (currentDestination != finalDestination) && !path.isEmpty()){
                 path.pop();
                 if(!path.isEmpty()){
                     currentDestination = path.peek();
                 }
-                normalizedDirection = Normalize(new Vector2D<Float>(currentDestination.getFirst()*64 - (pseudoPos.x), currentDestination.getSecond()*64 - (pseudoPos.y)));
+                normalizedDirection = normalize(pseudoPosToDest());
                 pos.x += normalizedDirection.x * speed;
                 pos.y += normalizedDirection.y * speed;
             }else{
-                normalizedDirection = Normalize(new Vector2D<Float>(currentDestination.getFirst()*64 - (pseudoPos.x), currentDestination.getSecond()*64 - (pseudoPos.y)));
+                normalizedDirection = normalize(pseudoPosToDest());
                 pos.x += normalizedDirection.x * speed;
                 pos.y += normalizedDirection.y * speed;
             }
         //If finalDestination reached, chase player directly
         }else if(currentDestination.getFirst() == finalDestination.getFirst() && currentDestination.getSecond() == finalDestination.getSecond()){
-                MovementVector();
+                movementVector();
                 pos.x += normalizedDirection.x * speed;
                 pos.y += normalizedDirection.y * speed;
         }
 
         SetPosition(pos);
-    } 
+    }
     
-    public void KnockBack() {
+    public Vector2D<Float> pseudoPosToDest(){
+        return new Vector2D<Float>(currentDestination.getFirst()*64 - (pseudoPos.x), currentDestination.getSecond()*64 - (pseudoPos.y+GetScale().y/2));
+    }
+    
+    public void knockBack() {
+        knockback=true;
         Vector2D<Float> dir = pos.getVectorToAnotherActor(playerPos);
-        normalizedDirection=Normalize(dir);
-        pos.x -= normalizedDirection.x * 60;
-        pos.y -= normalizedDirection.y * 60;
+        normalizedDirection=normalize(dir);
+        
+        Random r = new Random();
+
+        if(r.nextBoolean()) {
+            Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/enemy-hit.wav"));
+            Audio.Instance().Play(sound);
+        } else {
+            Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/small-enemy-hit.wav"));
+            Audio.Instance().Play(sound);
+        }
+    }
+    
+    public void knockbackRepeat(){
+        if (aStarSearch.isUnBlocked(positionToPair(getPseudoPosition()).getFirst(),positionToPair(getPseudoPosition()).getSecond())){
+            pos.x -= normalizedDirection.x * 7;
+            pos.y -= normalizedDirection.y * 7;
+        }else{
+            pos.x += normalizedDirection.x * 7;
+            pos.y += normalizedDirection.y * 7;
+        }
+        
+        knockbackCounter++;
         SetPosition(pos);
+        if(knockbackCounter==10){
+            knockback=false;
+            knockbackCounter=0;
+        }
     }
 
-    public void KnockBack(Vector2D<Float> attackerPos) {
+    public void knockBack(Vector2D<Float> attackerPos) {
+        knockback=true;
         Vector2D<Float> dir = pos.getVectorToAnotherActor(attackerPos);
-        normalizedDirection=Normalize(dir);
-        pos.x -= normalizedDirection.x * 60;
-        pos.y -= normalizedDirection.y * 60;
-        SetPosition(pos);
+        normalizedDirection=normalize(dir);
     }
     
 
     public void setHealthPoints(int damage){
         this.healthPoints -= damage;
         if (healthPoints <= 0){
-            //System.out.println("aibfhdp`");
             mCollision.ShutDown();
-            //this.SetScale(new Vector2D<Float>(0f,0f));
             die();
             path.clear();
         }
@@ -344,8 +391,27 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     }
 
     private void die() {
-        System.out.println("se muere");
         DeadAnimation deadAnimation = new DeadAnimation(this);
+        Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/enemy-death.wav"));
+        Audio.Instance().Play(sound);
+    }
+
+    private boolean vision(){
+        Vector2D<Float> dir = pseudoPos.getVectorToAnotherActor(playerPos);
+        float distance = dir.getModule();
+        if ((distance < 300)){
+            if(!chase) {
+                Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/soldier.wav"));
+                Audio.Instance().Play(sound);
+            }
+
+            chase = true;
+            return true;
+        }else{
+            chase = false;
+            return false;
+        }
+        
     }
 
     @Override
@@ -387,6 +453,14 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     }
     public Enemy getEnemy(){
         return (Enemy)this;
+    }
+
+    public void attack(){
+        ArrayList<Actor> players = ColliderManager.GetColliderManager().getCollision(mCollision, Player.class, true);
+        if(!players.isEmpty()){
+            Player player = (Player)players.get(0);
+            player.setDamage(damage);
+        }
     }
 
     @Override 

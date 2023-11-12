@@ -24,6 +24,7 @@ public class AStarSearch{
         if (isValid(Column, Row)){
             Block block = TileManager.sLevelObjects.GetBlockAt(Column, Row);
             //System.out.println(Column + " " + Row);
+            if(block instanceof Normblock) return true;
             if(block instanceof HoleBlock || block instanceof ObjectBlock) return false;
             return true;
         }else{
@@ -336,29 +337,6 @@ public class AStarSearch{
         }*/
         return;
     }
-
-
-
-    /*public static void main(String[] args) {
-        int ][] = new int[][] {
-            { 1, 0, 1, 1, 1, 1, 0, 1, 1, 1 },
-            { 1, 1, 1, 0, 1, 1, 1, 0, 1, 1 },
-            { 1, 1, 1, 1, 0, 1, 1, 1, 0, 1 },
-            { 0, 0, 1, 1, 1, 1, 1, 1, 1, 1 },
-            { 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },
-            { 1, 1, 1, 1, 1, 1, 0, 1, 1, 1 },
-            { 1, 1, 0, 0, 0, 1, 0, 0, 1, 1 },
-            { 1, 0, 1, 1, 1, 1, 0, 1, 0, 1 },
-            { 1, 0, 0, 0, 1, 0, 1, 0, 0, 1 }
-        };
-
-        AStarSearch aStarSearch = new AStarSearch();
-
-        Pair src = new Pair(0, 0);
-        Pair dest = new Pair(5, 7);
-
-        aStarSearch.aStarSearch( src, dest);
-    }*/
 }
 
 

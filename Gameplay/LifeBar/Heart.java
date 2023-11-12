@@ -7,6 +7,7 @@ import java.security.AllPermission;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import Engine.Assets.AssetManager;
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Entity;
@@ -27,15 +28,15 @@ public class Heart extends Actor {
 
     public Heart (Vector2D<Float> position){
         super(position);
-        this.animationMachine = AddComponent(new AnimationMachine(this ,new Spritesheet("Content/Animations/HeartSpriteSheet.png", 19 , 14)));
+        this.animationMachine = AddComponent(new AnimationMachine(this ,new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/HeartSpriteSheet.png"), new Vector2D<>(19, 14))));
         allAnimations = animationMachine.GetSpriteSheet().GetSpriteArray2D();
-        animationMachine.SetFrames(allAnimations[0]);
+        animationMachine.SetFrameTrack(0);
         SetScale( new Vector2D<Float>(15f,11f));
         animationMachine.GetAnimation().SetDelay(1);
         Animate();
     }
     public void Animate(){
-        this.animationMachine.SetFrames(allAnimations[(int)Math.abs(healthPoints-2)]);
+        this.animationMachine.SetFrameTrack((int)Math.abs(healthPoints-2));
     }
     public void setHealthPoints(int life){
         if (life < 0){System.err.println("Error");return;}
@@ -44,7 +45,6 @@ public class Heart extends Actor {
     @Override
     public void Update(){
         Animate();
-        //popFromObjectManager();
     }
 
     public int getHealthPoints() {
@@ -54,7 +54,7 @@ public class Heart extends Actor {
         ObjectManager.GetObjectManager().AddEntity(this);
     }
     public void popFromObjectManager(){
-        ObjectManager.GetObjectManager().RemoveEntity(this);
+        despawn();
     }
     public boolean isInObjectManager(){
         return ObjectManager.GetObjectManager().GetAllObjectsOfType(GetSuperClass()).contains(this);

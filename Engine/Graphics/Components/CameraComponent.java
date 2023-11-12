@@ -13,52 +13,118 @@ import Engine.ECSystem.Types.Component;
 import Engine.Graphics.GraphicsPipeline;
 import Engine.Math.Vector2D;
 import Engine.Physics.AABB;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
 
 public class CameraComponent extends Component {
+    protected AffineTransform mViewMatrix;
+    protected AffineTransform mCameraMatrix;
+
+    // ------------------------------------------------------------------------
+    /*! Custom Constructor
+    *
+    *   Constructs a Camera Component with a parent object
+    */ //----------------------------------------------------------------------
     public CameraComponent(Actor parent) {
         super(parent);
     }
 
+    // ------------------------------------------------------------------------
+    /*! Init
+    *
+    *   EMPTY FUNCTION
+    */ //----------------------------------------------------------------------
     @Override
     public void Init() {
+        mViewMatrix = mCameraMatrix = new AffineTransform();
     }
 
+    // ------------------------------------------------------------------------
+    /*! Update
+    *
+    *   EMPTY FUNCTION
+    */ //----------------------------------------------------------------------
     @Override
     public void Update() {
+        final Vector2D<Float> pos = GetCoordinates();
+        mCameraMatrix = AffineTransform.getTranslateInstance(pos.x, pos.y);
+        
+        //Try to invert the CameraMatrix, else, set it to the identity \_(-_-)_/
+        try {
+            mViewMatrix = mCameraMatrix.createInverse();
+        } catch (NoninvertibleTransformException e) {
+            mViewMatrix.setToIdentity();
+        }
     }
 
+    // ------------------------------------------------------------------------
+    /*! Bind
+    *
+    *   Binds this Camera to the Graphics Pipeline
+    */ //----------------------------------------------------------------------
     public void Bind() {
         GraphicsPipeline.GetGraphicsPipeline().BindCamera(this);
     }
 
-    public void SetLimits(float width, float height) {
-        
+    // ------------------------------------------------------------------------
+    /*! Get View Matrix
+    *
+    *   Returns the Camera View Matrix, which is the inverse of the transform
+    */ //----------------------------------------------------------------------
+    public AffineTransform GetViewMatrix() {
+        return mViewMatrix;
     }
 
+    // ------------------------------------------------------------------------
+    /*! Get Camera Matrix
+    *
+    *   Returns the Camera Matrix, which is a matrix of the transform
+    */ //----------------------------------------------------------------------
+    public AffineTransform GetCameraMatrix() {
+        return mCameraMatrix;
+    }
+
+    // ------------------------------------------------------------------------
+    /*! On Bounds
+    *
+    *   Checks if a certain AABB is within bounds of the Camera Component
+    */ //----------------------------------------------------------------------
     public boolean OnBounds(AABB bounds) {
-        Vector2D<Float> pos = GetCoordinates();
-        Vector2D<Integer> camera = GraphicsPipeline.GetGraphicsPipeline().GetDimensions();
-
-        AABB parent = new AABB(pos, new Vector2D<>((float)(int)camera.x, (float)(int)camera.y));
-        return parent.Collides(bounds);
+        final Vector2D<Integer> camera = GraphicsPipeline.GetGraphicsPipeline().GetDimensions();
+        
+        return (new AABB(GetCoordinates(), 
+            new Vector2D<>((float)(int)camera.x, (float)(int)camera.y)))
+            .Collides(bounds);
     }
 
+    // ------------------------------------------------------------------------
+    /*! Get Coordinates
+    *
+    *   Returns the Camera Coordinate Space reference
+    */ //----------------------------------------------------------------------
     public Vector2D<Float> GetCoordinates() {
-        Vector2D<Float> pos = GetParent().GetPosition();
-        Vector2D<Integer> camera = GraphicsPipeline.GetGraphicsPipeline().GetDimensions();
-        Vector2D<Float> temp = new Vector2D<>();
-        temp.x = pos.x - camera.x / 2;
-        temp.y = pos.y - camera.y / 2;
+        final Vector2D<Float> pos = GetParent().GetPosition();
+        final Vector2D<Integer> camera = GraphicsPipeline.GetGraphicsPipeline().GetDimensions();
 
-        return temp;
+        return new Vector2D<>(pos.x - camera.x / 2, pos.y - camera.y / 2);
     }
 
+    // ------------------------------------------------------------------------
+    /*! Get Dimensions
+    *
+    *   Returns the Camera View Extent
+    */ //----------------------------------------------------------------------
     public Vector2D<Integer> GetDimensions() {
         return GraphicsPipeline.GetGraphicsPipeline().GetDimensions();
     }
 
+    // ------------------------------------------------------------------------
+    /*! Shut Down
+    *
+    *   Unbinds the Camera from the Graphics Pipeline
+    */ //----------------------------------------------------------------------
     @Override
     public void ShutDown() {
+        GraphicsPipeline.GetGraphicsPipeline().UnbindCamera(this);
     }
-    
 }

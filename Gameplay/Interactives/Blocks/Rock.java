@@ -2,8 +2,12 @@ package Gameplay.Interactives.Blocks;
 
 import javax.xml.catalog.CatalogFeatures.Feature;
 
+import Engine.Assets.AssetManager;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.AnimationMachine;
+import Engine.Graphics.Tile.Block;
+import Engine.Graphics.Tile.Normblock;
+import Engine.Graphics.Tile.TileManager;
 import Engine.Math.Vector2D;
 import Engine.Physics.StaticPlayerCollision;
 import Engine.Physics.Components.BoxCollider;
@@ -15,8 +19,8 @@ public class Rock extends Interactive implements StaticPlayerCollision{
     protected Vector2D<Float> size = new Vector2D<Float>(64f, 64f);
 
     //animation
-    protected Spritesheet sprite=new Spritesheet("Content/Animations/rock.png", 16,16);
-    
+    protected Block block;
+    protected Spritesheet sprite=new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/rock.png"), new Vector2D<>(16, 16));
 
     public Rock(Vector2D<Float> position) {
         super(position);
@@ -32,11 +36,31 @@ public class Rock extends Interactive implements StaticPlayerCollision{
 
         setPseudoPosition(GetScale().x/2, GetScale().y/2);
         setPseudoPositionVisible();
+
+        mPositionPair = PositionToPair(getPseudoPosition());
+        block = TileManager.sLevelObjects.GetBlockAt(mPositionPair.getFirst(),mPositionPair.getSecond());
+        if(block == null) {
+            TileManager.sLevelObjects.PlaceBlockAt(mPositionPair.getFirst(),mPositionPair.getSecond());
+        }
     }
     @Override
 
     public void Update(){
         super.Update();
-        playerCollision();
+        playerCollision(this.getmCollision());
+    }
+
+    public void setHealthPoints(int damage){
+        this.healthPoints -= damage;
+        if (healthPoints <= 0){
+            die();
+        }      
+    }
+
+    public void die(){
+        mCollision.ShutDown();
+        TileManager.sLevelObjects.RemoveBlockAt(mPositionPair.getFirst(),mPositionPair.getSecond());
+        this.SetScale(new Vector2D<Float>(0f,0f));
+        despawn();
     }
 }

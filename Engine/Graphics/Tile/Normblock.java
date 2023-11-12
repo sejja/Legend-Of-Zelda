@@ -8,29 +8,37 @@
 
 package Engine.Graphics.Tile;
 
-import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-
-import Engine.Math.Vector2D;
 import Engine.Physics.AABB;
 
 public class Normblock extends Block {
-
-    public Normblock(BufferedImage img, Vector2D<Integer> position, int w, int h) {
-        super(img, position, w, h);
+    // ------------------------------------------------------------------------
+    /*! Custom Constructor
+    *
+    *   Constructs a Regular Block, which does not have a collision
+    */ //----------------------------------------------------------------------
+    public Normblock(final BufferedImage img, final AffineTransform transform) {
+        super(img, transform);
     }
 
+    // ------------------------------------------------------------------------
+    /*! Has Collision
+    *
+    *   This block does NOT collide
+    */ //----------------------------------------------------------------------
     @Override
-    public boolean Update(AABB p) {
+    public boolean HasCollision(final AABB p) {
        return false;
     }
 
-    public void Render(Graphics2D g, Vector2D<Float> camerapos) {
-        super.Render(g, camerapos);
-    }
-
+    // ------------------------------------------------------------------------
+    /*! Is Inside
+    *
+    *   This block does not collide, return false
+    */ //----------------------------------------------------------------------
     @Override
-    public boolean IsInside(AABB p) {
+    public boolean IsInside(final AABB p) {
         return false;
     }
 }

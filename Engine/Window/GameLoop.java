@@ -62,26 +62,54 @@ public class GameLoop extends Thread {
     public void run() {
         Init();
 
-        final double FPS = 60.f;
-        final double TBU = 1000000000 / FPS;
+        final double GAME_HERTZ = 60.0;
+        final double TBU = 1000000000 / GAME_HERTZ;
 
-        //While the window is present
-        for(long frametime = System.nanoTime(); mRunning; frametime = System.nanoTime()) {
-            Level.mCurrentLevel.Update();
-            if(!mPause) Update();
+        final int MUBR = 3;
+
+        double lastUpdateTime = System.nanoTime();
+        double lastRenderTime;
+
+        final double TARGET_FPS = 1000;
+        final double TTBR = 1000000000 / TARGET_FPS;
+        int lastSecondTime = (int) (lastUpdateTime / 1000000000);
+
+        while (mRunning) {
+
+            double now = System.nanoTime();
+            int updateCount = 0;
+            while (((now - lastUpdateTime) > TBU) && (updateCount < MUBR)) {
+                Level.mCurrentLevel.Update();
+                if(!mPause) Update();
+                lastUpdateTime += TBU;
+                updateCount++;
+            }
+
+            if ((now - lastUpdateTime) > TBU) {
+                lastUpdateTime = now - TBU;
+            }
+
             mTargetBuffer.Render();
             mTargetBuffer.Present();
-            final long lastRenderTime = System.nanoTime();
+            lastRenderTime = now;
 
-            //If we have time to sleep until the next frame, sleep
-            for(Thread.yield(); frametime - lastRenderTime < TBU; frametime = System.nanoTime()) {
-                //Sleeping the tread is not safe, add a try/catch
-                try {
-                    Thread.sleep(((long)TBU - (frametime - lastRenderTime)) / 1000000000);
-                } catch(Exception e) {
-                    e.printStackTrace();
-                }
+            int thisSecond = (int) (lastUpdateTime / 1000000000);
+            if (thisSecond > lastSecondTime) {
+                lastSecondTime = thisSecond;
             }
+
+            while (now - lastRenderTime < TTBR && now - lastUpdateTime < TBU) {
+                Thread.yield();
+
+                try {
+                    Thread.sleep((int)(16.66666666666666666666666 - ((System.nanoTime() - now) / 1000000.f)));
+                } catch (Exception e) {
+
+                }
+
+                now = System.nanoTime();
+            }
+
         }
     }
 }

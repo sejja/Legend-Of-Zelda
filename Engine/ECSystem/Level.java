@@ -93,11 +93,12 @@ public class Level {
                 }
             }
         } else {
+            var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetCamera();
+            z.Update();
+
             if(sElapsedTime < 0.5) {
                 GameLoop.SetPaused(true);
                 Actor p = ObjectManager.GetObjectManager().GetPawn();
-
-                var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetCamera();
 
                 Vector2D<Float> goaltopright = new Vector2D<>(p.GetPosition().x, p.GetPosition().y);
 
@@ -107,8 +108,6 @@ public class Level {
                 sElapsedTime += 0.016;
             } else if(sElapsedTime < 1.f) {
                 Actor p = ObjectManager.GetObjectManager().GetPawn();
-
-                var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetCamera();
 
                 Vector2D<Float> goaltopright = new Vector2D<>(p.GetPosition().x, p.GetPosition().y);
 
@@ -123,7 +122,6 @@ public class Level {
             } else {
                 GameLoop.SetPaused(false);
                 sTransitioning = false;
-                var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetCamera();
 
                 Vector2D<Float> topright = new Vector2D<>(GetBounds().GetPosition().x + 1280.f / 2, GetBounds().GetPosition().y + 720.f / 2);
 

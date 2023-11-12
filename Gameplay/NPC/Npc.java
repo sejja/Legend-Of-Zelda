@@ -13,6 +13,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.JLabel;
 
+import Engine.Assets.AssetManager;
+import Engine.Audio.Audio;
+import Engine.Audio.Sound;
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
 import Engine.Graphics.GraphicsPipeline;
@@ -33,6 +36,7 @@ import Engine.Physics.StaticPlayerCollision;
 import Engine.Physics.Components.BoxCollider;
 import Engine.Physics.Components.ColliderManager;
 import Engine.Window.GameLoop;
+import Gameplay.Interaction;
 import Gameplay.Enemies.Search.Pair;
 import Gameplay.Interactives.Interactive;
 import Gameplay.Link.*;
@@ -40,7 +44,7 @@ import Gameplay.Link.Player;
 import Gameplay.States.PlayState;
 
 
-public class Npc extends Actor implements StaticPlayerCollision{
+public class Npc extends Actor implements StaticPlayerCollision, Interaction{
     private String name;
     protected BoxCollider boxCollider;
     static boolean interact = false;
@@ -81,9 +85,10 @@ public class Npc extends Actor implements StaticPlayerCollision{
         
         allAnimations = transposeMatrix(sprite.GetSpriteArray2D());
         setSetopAnimationSet(allAnimations, allAnimations[0].length);
+        sprite.setmSpriteArray(allAnimations);
         animationMachine = AddComponent(new AnimationMachine(this, sprite));
-        animationMachine.SetFrames(allAnimations[numberStartAnimation]); //La diferencia entre correr a una direction y parase en la misma es un + 4
-        animationMachine.GetAnimation().SetDelay(40);
+        animationMachine.SetFrameTrack(numberStartAnimation); //La diferencia entre correr a una direction y parase en la misma es un + 4
+        animationMachine.GetAnimation().SetDelay(15);
 
         typeOfMovement = movement;
 
@@ -100,13 +105,8 @@ public class Npc extends Actor implements StaticPlayerCollision{
 
         setDefaultPseudoPosition();
     }
-        /*! Transpose
-        *
-        * @Param  -> BufferedImage 2D Matrix
-        * ret     -> Transposed BufferedImage 2D Matrix
-        */ //----------------------------------------------------------------------
-    public void Update() {
 
+    public void Update(Vector2D<Float> playerPosition) {
         super.Update();
         movement();
         pseudoPositionUpdate();
@@ -136,43 +136,33 @@ public class Npc extends Actor implements StaticPlayerCollision{
     public static void setRemove() {remove = true;}
     public String getName() {return name;}
 
-    public void interaction(Vector2D<Float> playerPosition){
-        dialogueWindow.setNpc(this);
-        currentDirection = this.getDirection(); 
-        lookAtPLayer(playerPosition);
-        if (!getmComponents().contains(dialogueWindow)){
-            dialogueWindow.setJ(0);
-            AddComponent(dialogueWindow);
-            dialogueWindow.setJ(0);
-            Pause();
-        }else{
-            nextDialog();
-        }
-    }
-
     public void lookAtPLayer(Vector2D<Float> playerPosition){
         Vector2D<Float> vector = playerPosition.getVectorToAnotherActor(this.GetPosition());
         System.out.println(vector);
         if((playerPosition.x > this.GetPosition().x) && (vector.x < vector.y)){
-            animationMachine.SetFrames(allAnimations[RIGHT]);
+            animationMachine.SetFrameTrack(RIGHT);
         } else if(playerPosition.x < this.GetPosition().x && (vector.x > vector.y)){
-            animationMachine.SetFrames(allAnimations[LEFT]);
+            animationMachine.SetFrameTrack(LEFT);
         } else if(playerPosition.y < this.GetPosition().y && (vector.x < vector.y)){
-            animationMachine.SetFrames(allAnimations[UP]);
+            animationMachine.SetFrameTrack(UP);
         } else if(playerPosition.y > this.GetPosition().y && (vector.x > vector.y)){
-            animationMachine.SetFrames(allAnimations[DOWN]);
+            animationMachine.SetFrameTrack(DOWN);
         }
     }
 
     public void nextDialog(){
         if(dialogueWindow.getJ() + 1 <=  this.dialogueArrayList.size()-1){ // Si hay siguiente
             dialogueWindow.setSiguiente();
+            Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/message.wav"));
+            Audio.Instance().Play(sound);
         }else{
             RemoveComponent(dialogueWindow);
             Player link = (Player) ObjectManager.GetObjectManager().GetPawn();
             link.removeInteraction();
-            animationMachine.SetFrames(allAnimations[currentDirection]);
+            animationMachine.SetFrameTrack(currentDirection);
             Pause();
+            Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/finish.wav"));
+            Audio.Instance().Play(sound);
         }
     }
 
@@ -206,19 +196,19 @@ public class Npc extends Actor implements StaticPlayerCollision{
     }
     public void squareMovement(Vector2D<Float> pos, Vector2D<Float> distance) {
         if(pos.y == yInicial + distance.y && pos.x == xInicial){
-            animationMachine.SetFrames(allAnimations[LEFT]);
+            animationMachine.SetFrameTrack(LEFT);
             direction = LEFT;
             yInicial = pos.y;
         }else if(pos.x == xInicial - distance.x && pos.y == yInicial){
-            animationMachine.SetFrames(allAnimations[UP]);
+            animationMachine.SetFrameTrack(UP);
             direction = UP;
             xInicial = pos.x;
         }else if(pos.y == yInicial - distance.y && pos.x == xInicial){
-            animationMachine.SetFrames(allAnimations[RIGHT]);
+            animationMachine.SetFrameTrack(RIGHT);
             direction = RIGHT;
             yInicial = pos.y;
         }else if(pos.x == xInicial + distance.x && pos.y == yInicial){
-            animationMachine.SetFrames(allAnimations[DOWN]);
+            animationMachine.SetFrameTrack(DOWN);
             direction = DOWN;
             xInicial = pos.x;
         }
@@ -226,11 +216,11 @@ public class Npc extends Actor implements StaticPlayerCollision{
     
     public void xLineMovement(Vector2D<Float> pos, Vector2D<Float> distance){
         if(pos.x == xInicial - distance.x && pos.y == yInicial){
-            animationMachine.SetFrames(allAnimations[RIGHT]);
+            animationMachine.SetFrameTrack(RIGHT);
             direction = RIGHT;
             yInicial = pos.y;
         }else if(pos.x == xInicial + distance.y && pos.y == yInicial){
-            animationMachine.SetFrames(allAnimations[LEFT]);
+            animationMachine.SetFrameTrack(LEFT);
             direction = LEFT;
             yInicial = pos.y;
         }
@@ -238,11 +228,11 @@ public class Npc extends Actor implements StaticPlayerCollision{
 
     public void  yLineMovement(Vector2D<Float> pos, Vector2D<Float> distance) {
         if(pos.y == yInicial - distance.y && pos.x == xInicial){
-            animationMachine.SetFrames(allAnimations[DOWN]);
+            animationMachine.SetFrameTrack(DOWN);
             direction = DOWN;
             xInicial = pos.x;
         }else if(pos.y == yInicial + distance.y && pos.x == xInicial){
-            animationMachine.SetFrames(allAnimations[UP]);
+            animationMachine.SetFrameTrack(UP);
             direction = UP;
             xInicial = pos.x;
         }
@@ -257,4 +247,21 @@ public class Npc extends Actor implements StaticPlayerCollision{
     
     @Override 
     public Class GetSuperClass(){return Npc.class;}
+    @Override
+    public void interaction() {
+        // TODO Auto-generated method stub
+        dialogueWindow.setNpc(this);
+        currentDirection = this.getDirection(); 
+        lookAtPLayer(ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0).GetPosition());
+        if (!getmComponents().contains(dialogueWindow)){
+            dialogueWindow.setJ(0);
+            AddComponent(dialogueWindow);
+            dialogueWindow.setJ(0);
+            Pause();
+            Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/message.wav"));
+            Audio.Instance().Play(sound);
+        }else{
+            nextDialog();
+        }
+    }
 }

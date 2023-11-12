@@ -10,6 +10,7 @@ package Engine.Physics;
 
 import Engine.Graphics.Tile.Block;
 import Engine.Graphics.Tile.HoleBlock;
+import Engine.Graphics.Tile.Normblock;
 import Engine.Graphics.Tile.TileManager;
 import Engine.Graphics.Tile.TilemapObject;
 import Engine.Math.Vector2D;
@@ -129,14 +130,13 @@ public class AABB {
         for(int c = 0; c < 4; c++) {
             int xt = (int)((mPosition.x + ax) + (c % 2) * mSize.x) / 64;
             int yt = (int)((mPosition.y + ay) + (int)(c / 2) * mSize.y) / 64;
-
-            if(TileManager.sLevelObjects != null && TileManager.sLevelObjects.GetBlockAt(xt, yt) != null
+            if(!(TileManager.sLevelObjects.GetBlockAt(xt, yt) instanceof Normblock)
                 && xt < TileManager.sLevelObjects.mWidth && yt < TileManager.sLevelObjects.mHeight) {
                 Block block = TileManager.sLevelObjects.GetBlockAt(xt, yt);
                 if(block instanceof HoleBlock) {
                     return collisionHole(ax, ay, xt, yt, block) ? CollisionResult.Hole : CollisionResult.None;
                 }
-                return block.Update(this) ? CollisionResult.Wall : CollisionResult.None;
+                return block != null ? (block.HasCollision(this) ? CollisionResult.Wall : CollisionResult.None) : CollisionResult.None;
             }
         }
 
@@ -150,11 +150,11 @@ public class AABB {
         if((nextYT == yt + 1) || (nextYT == xt + 1)) {
             if(TileManager.sLevelObjects.GetBlockAt(nextXT, nextYT) != null) {
                 Block neighbour = TileManager.sLevelObjects.GetBlockAt(nextXT, nextYT);
-                return neighbour.Update(this);
+                return neighbour.HasCollision(this);
             }
         } else {
             if(block.IsInside(this)) {
-                return block.Update(this);
+                return block.HasCollision(this);
             }
         }
 

@@ -14,13 +14,13 @@ import Gameplay.Link.Player;
  *      -> Implement it at the end of update
  */
 public interface StaticPlayerCollision {
-    default void playerCollision(){
-        Interactive staticalObject = (Interactive)this;
-        if(!ColliderManager.GetColliderManager().getCollision(staticalObject.getmCollision(), Player.class,true).isEmpty()){
+    default void playerCollision(BoxCollider hitbox){
+        Actor staticalObject = (Actor)this;
+        if(!ColliderManager.GetColliderManager().getCollision(hitbox, Player.class,true).isEmpty()){
             Player link = (Player)ColliderManager.GetColliderManager().getMapAllCollision().get(Player.class).getFirst().GetParent();
             Vector2D<Float> currentPosition = link.GetPosition();
             Float difference = 1f;
-            switch(link.getDirection()){
+            switch(link.getPseudoPosition().getTargetDirection(staticalObject.getPseudoPosition())){
                 case UP :
                     difference += Math.abs(staticalObject.GetScale().y/2 + link.getHitbox().GetBounds().GetScale().y/2 - staticalObject.getPseudoPosition().getModuleDistance(link.getPseudoPosition()));
                     link.SetPosition(new Vector2D<Float>(currentPosition.x, currentPosition.y + difference));
