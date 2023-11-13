@@ -38,7 +38,7 @@ public class TestRoom extends World {
     
     public TestRoom(World right, World left, World up, World down, String tiles, Vector2D<Float> pos) {
         super(right, left, up, down, new TileManager(tiles));
-        ObjectManager.GetObjectManager().AddEntity(new Player(new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/Link/Link.png")), new Vector2D<Float>(1750f, 1700.f), new Vector2D<Float>(100.f, 100.f)));
+        ObjectManager.GetObjectManager().AddEntity(new Player(new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/Link/Link.png")), new Vector2D<Float>(1550.f, 3000.f), new Vector2D<Float>(100.f, 100.f)));
         Init(pos);
         
         ArrayList<String> dialogueArrayList = new ArrayList<String>();
