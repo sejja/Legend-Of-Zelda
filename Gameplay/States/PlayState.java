@@ -77,6 +77,7 @@ public class PlayState extends State {
         pasilloIzqArriba3.SetRightLevel(entradaArriba3);
         pasilloDerAbajo3.SetUpperLevel(pasilloDer3);
         pasilloIzqAbajo3.SetUpperLevel(pasilloIzq3);
+        //t2.SetRightLevel(OverWorld);
 
 
         var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetBindedCamera();
