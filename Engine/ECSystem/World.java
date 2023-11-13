@@ -135,7 +135,7 @@ public class World {
                     var pos = GetBounds().GetPosition();
                     pos.y -= scale.y;
 
-                    mRight.Init(pos);
+                    mUpper.Init(pos);
                     sTransitioning = true;
                     var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetBindedCamera();
                     sPreviousTopRight = z.GetTopRightBound();
