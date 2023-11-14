@@ -25,7 +25,7 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
     final int defaultRadius = 1;
 
     public Torch(Vector2D<Float> position) {
-        super(position, new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/Torch.png"), 5,2, true));
+        super(position, new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/Torch.png"), 5,2));
         delay = -1;
         this.SetScale(new Vector2D<>(50f,100f));
         radius = defaultRadius;

@@ -26,7 +26,7 @@ public class GreenKnight extends Enemy{
         setSpeed(1f);
 
         // TRANSPOSE SPRITE MATRIX
-        sprite.flip();
+        sprite.Transpose();
 
         // ADD ANIMATION COMPONENT
         mAnimation = AddComponent(new AnimationMachine(this, sprite));

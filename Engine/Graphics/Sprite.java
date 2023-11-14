@@ -9,7 +9,6 @@
 package Engine.Graphics;
 
 import Engine.Assets.Asset;
-import Engine.Assets.AssetManager;
 
 public class Sprite { 
     protected Asset mSpriteSheet;
@@ -19,8 +18,8 @@ public class Sprite {
     *
     *   Constructs an Sprite from the filename
     */ //----------------------------------------------------------------------
-    public Sprite(final String file) {
-        mSpriteSheet = AssetManager.Instance().GetResource(file);
+    public Sprite(final Asset file) {
+        mSpriteSheet = file;
     }
 
     // ------------------------------------------------------------------------

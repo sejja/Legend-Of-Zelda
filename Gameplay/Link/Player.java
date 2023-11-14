@@ -129,7 +129,7 @@ public class Player extends Actor {
         SetScale(size);
         this.direction = DIRECTION.RIGHT;
         //Lets transpose the Sprite Matrix and add all extra Animations
-        sprite.setmSpriteArray(this.completeAnimationSet(sprite.GetSpriteArray2D()));
+        sprite.ChangeSpriteFrames(this.completeAnimationSet(sprite.GetSpriteArray2D()));
         //---------------------------------------------------------------------
         mAnimation = AddComponent(new AnimationMachine(this, sprite));
         mCamera = AddComponent(new ZeldaCameraComponent(this));

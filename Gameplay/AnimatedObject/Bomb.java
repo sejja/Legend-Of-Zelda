@@ -31,7 +31,7 @@ public class Bomb extends AnimatedObject {
 
     public Bomb(Vector2D<Float> position) {
         super(position);
-        Spritesheet spritesheet = new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/bomb.png"), 10,1, true);
+        Spritesheet spritesheet = new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/bomb.png"), 10,1);
         delay = 5;
         setAnimationMachine(spritesheet);
         this.allAnimtion  = spritesheet.GetSpriteArray2D();
