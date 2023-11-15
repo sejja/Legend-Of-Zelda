@@ -291,7 +291,7 @@ public class Player extends Actor {
 
             @Override
             public void OnTrigger() {
-                System.out.println(player.actionToString());
+                //System.out.println(player.actionToString());
                 if (falling) //Finished falling animation
                 {
                     linkHasFalled();
@@ -301,7 +301,7 @@ public class Player extends Actor {
                     shootArrow();
                     bow = false;
                     stackActioner.pop(direction,Action.BOW);
-                    System.out.println("Se popea arco");
+                    //System.out.println("Se popea arco");
                 }
                 else if (attack) //Finished Attack (attack && !bow)
                 {
@@ -309,7 +309,7 @@ public class Player extends Actor {
                     bow = false;
                     attack = false;
                     stackActioner.pop(direction, Action.ATTACK);
-                    System.out.println("Se popea espada");
+                    //System.out.println("Se popea espada");
                 }
                 //mAnimation.setMustComplete(false);
             }

@@ -12,6 +12,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 
 import Engine.ECSystem.ObjectManager;
+import Engine.ECSystem.World;
 import Engine.Graphics.Spritesheet;
 import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
