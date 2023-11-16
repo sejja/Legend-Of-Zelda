@@ -21,6 +21,7 @@ import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Sprite;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.ZeldaCameraComponent;
+import Engine.Graphics.Tile.ShadowLayer;
 import Engine.Graphics.Tile.TileManager;
 import Engine.Math.Vector2D;
 import Engine.Physics.Components.ColliderManager;
@@ -51,13 +52,14 @@ public class PlayState extends State {
         var entrada = new TestRoom2(null, null, null, null, "Content/TiledProject/entrada.tmx");
         var pasilloDer3 = new TestRoom2(null, null, null, null, "Content/TiledProject/pasilloDer3.tmx");
         var pasilloIzq3 = new TestRoom2(null, null, null, null, "Content/TiledProject/pasilloIzq3.tmx");
-        var t2 = new OverWorld1Left(null, null, null, null, "Content/TiledProject/OverWorld1Left.tmx");
+        var t2 = new TestRoom2(null, null, null, null, "Content/TiledProject/OverWorld1Left.tmx");
         var OverWorld = new TestRoom2(t, t2, entrada, null, "Content/TiledProject/overworld1.tmx");
+        var t3 = new TestRoom2(null, null, null, null, "Content/TiledProject/OverlWorld_-1_1.tmx");
         var finalRoom3 = new TestRoom2(null, null, null, null, "Content/TiledProject/finalRoom3.tmx");
         var entradaArriba3 = new TestRoom2(null, null, null, null, "Content/TiledProject/entradaArriba3.tmx");
         var pasilloDerArriba3 = new TestRoom2(null, null, null, null, "Content/TiledProject/pasilloDerArriba3.tmx");
         
-        mTestLevel = new TestRoom(pasilloDer3, pasilloIzq3, entradaArriba3, null, "Content/TiledProject/entrada.tmx", new Vector2D<>(0.f, 0.f));
+        mTestLevel = new TestRoom(pasilloDer3, t2, entradaArriba3, null, "Content/TiledProject/overworld1.tmx", new Vector2D<>(0.f, 0.f));
 
 
         
@@ -78,6 +80,8 @@ public class PlayState extends State {
         pasilloDerAbajo3.SetUpperLevel(pasilloDer3);
         pasilloIzqAbajo3.SetUpperLevel(pasilloIzq3);
         //t2.SetRightLevel(OverWorld);
+        t2.SetUpperLevel(t3);
+        t3.SetLowerLevel(t2);
 
 
         var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetBindedCamera();
@@ -95,6 +99,7 @@ public class PlayState extends State {
     */ //----------------------------------------------------------------------
     @Override
     public void Update() {
+        ShadowLayer.getShadowLayer().setOn(false);
         ObjectManager.GetObjectManager().Update();
     }
 }

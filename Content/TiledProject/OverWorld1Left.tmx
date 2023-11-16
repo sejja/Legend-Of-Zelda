@@ -2,7 +2,6 @@
 <map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="16" tileheight="16" infinite="0" nextlayerid="9" nextobjectid="1">
  <tileset firstgid="1" source="asdafasdf.tsx"/>
  <tileset firstgid="4097" source="Entities.tsx"/>
- <tileset firstgid="6597" source="../../../../zelda/Legend-Of-Zelda/Content/TiledProject/asdafasdf.tsx"/>
  <layer id="1" name="fondo" width="50" height="50">
   <data encoding="csv">
 429,429,429,429,429,429,429,429,429,429,429,429,429,429,429,429,429,429,429,429,429,429,429,429,422,488,487,488,487,488,487,425,429,429,429,429,429,429,429,429,429,429,429,429,429,429,429,429,429,429,
