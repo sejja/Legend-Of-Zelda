@@ -96,7 +96,7 @@ public class Font extends Spritesheet {
         final int value = c - (int)'A';
 
         return ((BufferedImage)mSpriteSheet.Raw()).getSubimage((value % mSize.x) * mUVCoord.x, 
-            (value / mSize.y) * mUVCoord.y, mUVCoord.x, mUVCoord.y);
+            (value / mSize.x) * mUVCoord.y, mUVCoord.x, mUVCoord.y);
     }
 
     // ------------------------------------------------------------------------
