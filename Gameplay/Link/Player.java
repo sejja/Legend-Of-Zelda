@@ -179,7 +179,10 @@ public class Player extends Actor {
         });
         InputManager.SubscribePressed(KeyEvent.VK_A, new InputFunction() {
             @Override
-            public void Execute() {activateAction(LEFT);System.out.println("hola");}
+            public void Execute() {activateAction(LEFT);
+                //System.out.println("hola");
+            }
+
         });
         InputManager.SubscribePressed(KeyEvent.VK_D, new InputFunction() {
             @Override
@@ -369,8 +372,10 @@ public class Player extends Actor {
         hitbox.Update();
         terrainColliderUpdate();
         //System.out.println("Player Position: " + this.getPseudoPosition());
-        System.out.println(velocity);
+        //System.out.println(velocity);
         //System.out.println(GetPosition());
+        //System.out.println("Espacio ocupado" + Runtime.getRuntime().totalMemory()/Runtime.getRuntime().maxMemory()*100 + "%");
+        System.out.println(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory());
 //SE VE GENIAL, SI QUIERES, MERGEO CON AUDIO PARA LOS FPSs
     }
     public void playerStateMachine(){

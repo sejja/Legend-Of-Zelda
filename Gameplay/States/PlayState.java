@@ -46,32 +46,22 @@ public class PlayState extends State {
     */ //----------------------------------------------------------------------
     public PlayState() {
         var t = new TestRoom2(null, null, null, null, "Content/TiledProject/TestRoom2.tmx");
-<<<<<<< HEAD
-        var t2 = new TestRoom2(null, null, null, null, "Content/TiledProject/OverWorld1Left.tmx");
-        var t3 = new TestRoom2(null, null, null, null, "Content/TiledProject/overworldleftup.tmx");
-
-        mTestLevel = new TestRoom(t, t2, null, null, "Content/TiledProject/OverWorld1.tmx", new Vector2D<>(0.f, 0.f));
-        
-        t2.SetUpperLevel(t3);
-        t3.SetLowerLevel(t2);
-        t2.SetRightLevel(mTestLevel);
-        t.SetLeftlevel(mTestLevel);
-=======
         var pasilloDerAbajo3 = new TestRoom2(null, null, null, null, "Content/TiledProject/pasilloDerAbajo3.tmx");
         var pasilloIzqArriba3 = new TestRoom2(null, null, null, null, "Content/TiledProject/pasilloIzqArriba3.tmx");
         var pasilloIzqAbajo3 = new TestRoom2(null, null, null, null, "Content/TiledProject/pasilloIzqAbajo3.tmx");
         var entrada = new TestRoom2(null, null, null, null, "Content/TiledProject/entrada.tmx");
         var pasilloDer3 = new TestRoom2(null, null, null, null, "Content/TiledProject/pasilloDer3.tmx");
         var pasilloIzq3 = new TestRoom2(null, null, null, null, "Content/TiledProject/pasilloIzq3.tmx");
-        var t2 = new TestRoom2(null, null, null, null, "Content/TiledProject/OverWorld1Left.tmx");
-        var OverWorld = new TestRoom2(t, t2, entrada, null, "Content/TiledProject/overworld1.tmx");
-        var t3 = new TestRoom2(null, null, null, null, "Content/TiledProject/OverlWorld_-1_1.tmx");
+        //var OverWorld = new TestRoom2(t, t2, entrada, null, "Content/TiledProject/overworld1.tmx");
         var finalRoom3 = new TestRoom2(null, null, null, null, "Content/TiledProject/finalRoom3.tmx");
         var entradaArriba3 = new TestRoom2(null, null, null, null, "Content/TiledProject/entradaArriba3.tmx");
         var pasilloDerArriba3 = new TestRoom2(null, null, null, null, "Content/TiledProject/pasilloDerArriba3.tmx");
         
-        mTestLevel = new TestRoom(pasilloDer3, t2, entradaArriba3, null, "Content/TiledProject/overworld1.tmx", new Vector2D<>(0.f, 0.f));
->>>>>>> main
+        var overworld_left = new TestRoom2(null, null, null, null, "Content/TiledProject/OverWorld1Left.tmx");
+        var overworld_left_up = new TestRoom2(null, null, null, null, "Content/TiledProject/OverlWorld_-1_1.tmx");
+        var overworld_left_up_left = new TestRoom2(null, null, null, null, "Content/TiledProject/overworld1_left_up_left.tmx");
+
+        mTestLevel = new TestRoom(pasilloDer3, overworld_left, entradaArriba3, null, "Content/TiledProject/overworld1.tmx", new Vector2D<>(0.f, 0.f));
 
 
         
@@ -92,8 +82,11 @@ public class PlayState extends State {
         pasilloDerAbajo3.SetUpperLevel(pasilloDer3);
         pasilloIzqAbajo3.SetUpperLevel(pasilloIzq3);
         //t2.SetRightLevel(OverWorld);
-        t2.SetUpperLevel(t3);
-        t3.SetLowerLevel(t2);
+
+        overworld_left.SetUpperLevel(overworld_left_up);
+        overworld_left_up.SetLeftLevel(overworld_left_up_left);
+        overworld_left_up.SetLowerLevel(overworld_left);
+        overworld_left_up_left.SetRightLevel(overworld_left_up);
 
 
         var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetBindedCamera();

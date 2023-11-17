@@ -38,15 +38,15 @@ public class DecorativeLayer extends Tilemap {
                     (int) (i % scale.x) * tilescale.x + (int)(float)position.x, 
                     (int) (i / scale.y) * tilescale.y + (int)(float)position.y);
 
-                int sprite_id = 0; //Might be -1
+                int sprite_id = -1; //Might be -1
 
                 //Find the corresponding sprite
                 for(Integer j : ids) {
-                    if(j > sprite_id) break;
+                    if(j > id) break;
                     sprite_id++;
                 }
 
-                final BufferedImage sp = sprite.get(sprite_id).GetSprite((int) ((id - 1) % tilecolumns.get(0)), (int) ((id - 1) / tilecolumns.get(0)));
+                final BufferedImage sp = sprite.get(sprite_id).GetSprite((int) ((id - ids.get(sprite_id)) % tilecolumns.get(sprite_id)), (int) ((id - ids.get(sprite_id)) / tilecolumns.get(sprite_id)));
 
                 //If we have a valid subsprite
                 if(sp != null) {
