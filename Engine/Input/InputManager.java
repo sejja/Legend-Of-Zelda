@@ -34,6 +34,11 @@ public class InputManager implements KeyListener, MouseListener, MouseMotionList
         buf.addMouseListener(this);
     }
 
+    public static void Clear() {
+        mKeyPressedFuncs.clear();
+        mKeyReleasedFuncs.clear();
+    }
+
     // ------------------------------------------------------------------------
     /*! SubscribePressed
     *

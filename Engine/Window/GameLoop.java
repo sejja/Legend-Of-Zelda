@@ -1,20 +1,29 @@
 package Engine.Window;
 
+import java.awt.Color;
+import java.awt.Graphics;
+
 import Engine.Developer.Logger.Log;
 import Engine.Developer.Logger.Logger;
+import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.World;
+import Engine.Graphics.GraphicsPipeline;
+import Engine.Graphics.Tile.ShadowLayer;
 import Engine.Input.InputManager;
+import Engine.Physics.Components.ColliderManager;
 import Engine.StateMachine.StateMachine;
 
 public class GameLoop extends Thread {
     static private boolean mRunning;
-    private StateMachine mStateManager;
+    static private boolean mShouldRestart;
+    static private StateMachine mStateManager;
     private PresentBuffer mTargetBuffer;
     static private boolean mPause;
 
     public GameLoop(PresentBuffer target) {
         mTargetBuffer = target;
         mPause = false;
+        mShouldRestart = false;
     }
 
     // ------------------------------------------------------------------------
@@ -34,6 +43,20 @@ public class GameLoop extends Thread {
 
     public static void Quit() {
         mRunning = false;
+    }
+
+    public static void Restart() {
+        mShouldRestart = true;
+    }
+
+    private void _restart() {
+        PresentBuffer.SetClearColor(Color.BLACK);
+        ObjectManager.GetObjectManager().Clear();
+        GraphicsPipeline.GetGraphicsPipeline().RemoveAllRenderables();
+        ColliderManager.GetColliderManager().Clear();
+        World.Reset();
+        InputManager.Clear();
+        mStateManager.Restart();
     }
 
     // ------------------------------------------------------------------------
@@ -120,6 +143,10 @@ public class GameLoop extends Thread {
                 now = System.nanoTime();
             }
 
+            if(mShouldRestart) {
+                _restart();
+                mShouldRestart = false;
+            }
         }
 
         Log v = Logger.Instance().GetLog("GameLoop");

@@ -35,6 +35,12 @@ public class Rock extends Interactive implements StaticPlayerCollision{
 
         setPseudoPosition(GetScale().x/2, GetScale().y/2);
         setPseudoPositionVisible();
+        mPositionPair = PositionToPair(getPseudoPosition());
+        Vector2D<Integer> pos = new Vector2D<>(mPositionPair.getFirst(), mPositionPair.getSecond());
+        block = TileManager.sLevelObjects.GetBlockAt(pos);
+        if(block == null) {
+            TileManager.sLevelObjects.PlaceBlockAt(pos);
+        }
     }
     @Override
 
@@ -52,7 +58,8 @@ public class Rock extends Interactive implements StaticPlayerCollision{
 
     public void die(){
         mCollision.ShutDown();
-        TileManager.sLevelObjects.RemoveBlockAt(mPositionPair.getFirst(),mPositionPair.getSecond());
+        Vector2D<Integer> pos = new Vector2D<>(mPositionPair.getFirst(), mPositionPair.getSecond());
+        TileManager.sLevelObjects.RemoveBlockAt(pos);
         this.SetScale(new Vector2D<Float>(0f,0f));
         despawn();
     }

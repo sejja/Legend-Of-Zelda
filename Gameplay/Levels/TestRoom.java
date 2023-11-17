@@ -12,6 +12,7 @@ import Engine.Graphics.Sprite;
 import Engine.Graphics.Components.ZeldaCameraComponent;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Tile.Normblock;
+import Engine.Graphics.Tile.ShadowLayer;
 import Engine.Graphics.Tile.TileManager;
 import Engine.Graphics.Tile.TilemapEntities;
 import Engine.Math.Vector2D;
@@ -37,18 +38,19 @@ public class TestRoom extends World {
     
     public TestRoom(World right, World left, World up, World down, String tiles, Vector2D<Float> pos) {
         super(right, left, up, down, new TileManager(tiles));
-        ObjectManager.GetObjectManager().AddEntity(new Player(new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/Link/Link.png")), new Vector2D<Float>(2500f, 1700.f), new Vector2D<Float>(100.f, 100.f)));
-        ObjectManager.GetObjectManager().Update();
+        ObjectManager.GetObjectManager().AddEntity(new Player(new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/Link/Link.png")), new Vector2D<Float>(1550.f, 3000.f), new Vector2D<Float>(100.f, 100.f)));
         Init(pos);
         
         ArrayList<String> dialogueArrayList = new ArrayList<String>();
         ArrayList<String> dialogueArrayList2 = new ArrayList<String>();
-
-        ObjectManager.GetObjectManager().AddEntity(new Npc("Aelarion", new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/NPC/NPC_old.png"), new Vector2D<Integer>(68, 72)), new Vector2D<Float>(1330.f, 800.f), new Vector2D<Float>(78.f, 78.f), UP, yLineMovement) );
-        ObjectManager.GetObjectManager().AddEntity(new Npc("Juan", new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/NPC/NPC_boy.png"), new Vector2D<Integer>(64, 64)), new Vector2D<Float>(1580.f, 1550.f), new Vector2D<Float>(78.f, 78.f),4, stop) );
-        
-        ObjectManager.GetObjectManager().Update();
-
+        ShadowLayer.getShadowLayer().setOn(true);
+        ShadowLayer.getShadowLayer().buildMatrix();
+        dialogueArrayList.add("En un mundo muy lejano] vivia una princesa que buscaba a su \nprincipe] y para logralo] llamo a todos los principes del reino \nademas deberas vuscar todos los artefactos de las piedras para \necuperar el poder de hyrule");
+        dialogueArrayList.add("Ahora embarcate en una nueva aventura junto a tu espada y tu \narco");
+        dialogueArrayList2.add("Muy buenas caballero] mi nombre es Juan] y estoy aqui protegiendo \nla puerta de acceso al palacio");
+        dialogueArrayList2.add("A si que abandona este lugar por favor");
+        //ObjectManager.GetObjectManager().AddEntity(new Npc("Aelarion", new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/NPC/NPC_old.png"), new Vector2D<Integer>(68, 72)), new Vector2D<Float>(1330.f, 800.f), new Vector2D<Float>(78.f, 78.f), UP, yLineMovement) );
+        //ObjectManager.GetObjectManager().AddEntity(new Npc("Juan", new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/NPC/NPC_boy.png"), new Vector2D<Integer>(64, 64)), new Vector2D<Float>(1580.f, 1550.f), new Vector2D<Float>(78.f, 78.f),4, stop) );
         
         
         /* 
@@ -62,9 +64,9 @@ public class TestRoom extends World {
         //ObjectManager.GetObjectManager().AddEntity(new Torch(new Vector2D<Float>(1680f, 1550.f)));
         //ObjectManager.GetObjectManager().AddEntity(new Torch(new Vector2D<Float>(1500.f, 1550.f)));
         //ObjectManager.GetObjectManager().AddEntity(new Torch(new Vector2D<Float>(1400.f, 1550.f)));
-        var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetCamera();
-        ObjectManager.GetObjectManager().AddEntity(new Rock(new Vector2D<Float>(1470f, 750.f)));
-        ObjectManager.GetObjectManager().AddEntity(new Rock(new Vector2D<Float>(1356f, 750.f)));
+        var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetBindedCamera();
+        //ObjectManager.GetObjectManager().AddEntity(new Rock(new Vector2D<Float>(1470f, 750.f)));
+        //ObjectManager.GetObjectManager().AddEntity(new Rock(new Vector2D<Float>(1356f, 750.f)));
 
         Vector2D<Float> topright = new Vector2D<>(GetBounds().GetPosition().x + 1280.f / 2, GetBounds().GetPosition().y + 720.f / 2);
 

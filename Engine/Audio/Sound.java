@@ -10,7 +10,7 @@ import javax.sound.sampled.LineUnavailableException;
 import Engine.Assets.Asset;
 
 public class Sound {
-    private Asset mAudio;
+    public Asset mAudio;
     private boolean mIsPaused;
     private Long mCurrentFrame;
 

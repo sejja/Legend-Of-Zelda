@@ -16,13 +16,17 @@ import Engine.Developer.Logger.Logger;
 import Engine.ECSystem.World;
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
+import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Animations.Animation;
 import Engine.Graphics.Animations.AnimationEvent;
 import Engine.Graphics.Components.AnimationMachine;
+import Engine.Graphics.Components.FontComponent;
+import Engine.Graphics.Components.SpriteComponent;
 import Engine.Graphics.Components.ZeldaCameraComponent;
 import Engine.Graphics.Tile.Block;
 import Engine.Graphics.Tile.ObjectBlock;
+import Engine.Graphics.Tile.ShadowLayer;
 import Engine.Graphics.Tile.TileManager;
 import Engine.Input.InputFunction;
 import Engine.Input.InputManager;
@@ -30,6 +34,7 @@ import Engine.Math.Vector2D;
 import Engine.Physics.CollisionResult;
 import Engine.Physics.Components.BoxCollider;
 import Engine.Window.GameLoop;
+import Engine.Window.PresentBuffer;
 import Engine.Physics.Components.ColliderManager;
 import Gameplay.Interaction;
 import Gameplay.AnimatedObject.Bomb;
@@ -37,6 +42,8 @@ import Gameplay.Enemies.Enemy;
 import Gameplay.Interactives.Interactive;
 import Gameplay.LifeBar.LifeBar;
 import Gameplay.NPC.Npc;
+import Gameplay.NPC.SelectionArrow;
+import Engine.Graphics.Components.FontComponent;
 
 public class Player extends Actor {
     
@@ -61,6 +68,7 @@ public class Player extends Actor {
     private boolean bow = false;
     public boolean dash = false;
     private boolean falling = false;
+    private boolean canmove = true;
     //----------------------------------------------------------------------
 
     /* Animation
@@ -101,6 +109,7 @@ public class Player extends Actor {
     private int velocity = 0;
     final int default_velocity = 10;
     private LifeBar lifeBar;
+    Sound low_hp_sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/low-hp.wav"));
     //----------------------------------------------------------------------
 
     /* NPC
@@ -367,7 +376,7 @@ public class Player extends Actor {
     public void playerStateMachine(){
         if(dash){dashCooldawn = 0;dash();return;}
         else if (dashCooldawn<120){dashCooldawn++;}
-        if (!mAnimation.MustComplete()){Move();}
+        if (!mAnimation.MustComplete() && canmove){Move();}
     }
     // ------------------------------------------------------------------------
     
@@ -531,9 +540,8 @@ public class Player extends Actor {
                 Audio.Instance().Play(sound);
             
                 if(this.healthPoints <= 2) {
-                    sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/low-hp.wav"));
-                    Audio.Instance().Play(sound);
-                    Audio.Instance().SetLoopCount(sound, -1);
+                    Audio.Instance().Play(low_hp_sound);
+                    Audio.Instance().SetLoopCount(low_hp_sound, -1);
                 }
             }
         }
@@ -550,6 +558,7 @@ public class Player extends Actor {
                 SetAnimation(FALL, mAnimation.GetSpriteSheet().GetSpriteArray(FALL), delay);
                 Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/link-fall.wav"));
                 Audio.Instance().Play(sound);
+                canmove = false;
             }//Enviromental special case
             return;
         }
@@ -597,8 +606,58 @@ public class Player extends Actor {
     */
     private void dead(){ //falta hacer que link se muera y termine el juego
         Log v = Logger.Instance().GetLog("Gameplay");
-        Logger.Instance().Log(v, "I Died", Level.INFO, 1, Color.RED);
-        System.out.println("Ha muerto");
+        Logger.Instance().Log(v, "I Died", Level.INFO, 1, Color.BLACK);
+        canmove = false;
+        GraphicsPipeline.GetGraphicsPipeline().RemoveAllRenderables();
+        GraphicsPipeline.GetGraphicsPipeline().AddRenderable(mAnimation);
+        PresentBuffer.SetClearColor(Color.red);
+        ShadowLayer.getShadowLayer().setOn(false);
+        mAnimation.setMustComplete(true);
+        SetAnimation(FALL, mAnimation.GetSpriteSheet().GetSpriteArray(FALL), 10);
+        Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/link-death.wav"));
+        Audio.Instance().Play(sound);  
+        Audio.Instance().Stop(low_hp_sound);
+        Audio.Instance().SetLoopCount(low_hp_sound, 0);
+        Sound bg = new Sound(AssetManager.Instance().GetResource("Content/Audio/overworld.wav"));
+        Audio.Instance().Stop(bg);
+        Audio.Instance().SetLoopCount(bg, -1);
+        mAnimation.AddFinishedListener(new AnimationEvent() {
+            @Override
+            public void OnTrigger() {
+                GraphicsPipeline.GetGraphicsPipeline().RemoveAllRenderables();
+                
+                Vector2D<Float> posincamspace = GraphicsPipeline.GetGraphicsPipeline().GetBindedCamera().GetCoordinates();
+                Vector2D<Integer> scale = GraphicsPipeline.GetGraphicsPipeline().GetDimensions();
+                Actor gameovertext = new Actor(new Vector2D<>(posincamspace.x + scale.x / 2 - 250, posincamspace.y + scale.y / 4)) {};
+                gameovertext.SetScale(GetScale());
+                FontComponent font = new FontComponent(gameovertext, AssetManager.Instance().GetResource("Content/Fonts/ZeldaFont.png"));
+
+                Actor continuet = new Actor(new Vector2D<>(posincamspace.x + scale.x / 2 - 200, posincamspace.y + scale.y / 2 + 100)) {};
+                continuet.SetScale(new Vector2D<>(GetScale().x / 2, GetScale().y / 2));
+                FontComponent continuefFontComponent = new FontComponent(continuet, AssetManager.Instance().GetResource("Content/Fonts/ZeldaFont.png"));
+                Actor qyuit = new Actor(new Vector2D<>(posincamspace.x + scale.x / 2 - 200, posincamspace.y + 3 * scale.y / 4)) {};
+                qyuit.SetScale(new Vector2D<>(GetScale().x / 2, GetScale().y / 2));
+                FontComponent quitfont = new FontComponent(qyuit, AssetManager.Instance().GetResource("Content/Fonts/ZeldaFont.png"));
+                font.SetString("Game Over");
+                gameovertext.AddComponent(font);
+                continuefFontComponent.SetString("Continue");
+                continuet.AddComponent(continuefFontComponent);
+                quitfont.SetString("Quit");
+                qyuit.AddComponent(quitfont);
+
+                SelectionArrow arrow = new SelectionArrow(new Vector2D<>(continuet.GetPosition().x - 100,
+                                                                        continuet.GetPosition().y),
+                                                        new Vector2D<>(qyuit.GetPosition().x - 100,
+                                                                        qyuit.GetPosition().y));
+
+                arrow.SetScale(new Vector2D<>(GetScale().x / 2, GetScale().y / 2));
+                ObjectManager.GetObjectManager().AddEntity(arrow);
+
+                Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/crystal.wav"));
+                Audio.Instance().Play(sound);  
+                Audio.Instance().SetLoopCount(sound, -1);
+            }
+        });
     }
     //------------------------------------------------------------------------
     
@@ -750,6 +809,7 @@ public class Player extends Actor {
         setToSpawnPoint();
         hitbox.Reset();
         mAnimation.SetFrameTrack(DOWN+Action.STOP.getID());
+        canmove = true;
     }
     public void setBow(boolean bow) {this.bow = bow;}
     //------------------------------------------------------------------------

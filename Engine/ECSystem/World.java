@@ -6,6 +6,7 @@ import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.ZeldaCameraComponent;
 import Engine.Graphics.Tile.TileManager;
+import Engine.Graphics.Tile.TilemapEntities;
 import Engine.Math.Util;
 import Engine.Math.Vector2D;
 import Engine.Physics.AABB;
@@ -31,6 +32,12 @@ public class World {
     
     private boolean visited = false;
 
+    public static void Reset() {
+        mCurrentLevel = null;
+        sTransitioning = false;
+        sElapsedTime = 0;
+    }
+
     protected World(World right, World left, World up, World down, TileManager tiles) {
         mRight = right;
         mLeft = left;
@@ -45,7 +52,7 @@ public class World {
 
     public void Init(Vector2D<Float> position) {
         mCurrentLevel = this;
-        mTilemap.CreateTileMap(64, 64, position);
+        mTilemap.CreateTileMap(position, new Vector2D<>(64, 64));
         if(!visited) {
             visited = true;
             spawnEntities();
@@ -76,7 +83,7 @@ public class World {
 
     private void spawnEntities() {
         //System.out.println(mTilemap.entityQueue);
-        int firstEntity = mTilemap.firstEntity;
+        int firstEntity = TilemapEntities.firstEntity;
         while(mTilemap.entityQueue != null && !mTilemap.entityQueue.isEmpty() ) {
             //System.out.println("Juan");
             var e = mTilemap.entityQueue.poll();
@@ -103,34 +110,34 @@ public class World {
                 if(position.x > (GetBounds().GetPosition().x + GetBounds().GetWidth()) && mRight != null) {
                     mRight.Init(new Vector2D<>(GetBounds().GetPosition().x + GetBounds().GetWidth(), GetBounds().GetPosition().y));
                     sTransitioning = true;
-                     var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetCamera();
+                     var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetBindedCamera();
                     sPreviousTopRight = z.GetTopRightBound();
                     sPreviousBottomLeft = z.GetBottomLeftBound();
                 }
 
                 //RIGHT
                 if(position.x < (GetBounds().GetPosition().x) && mLeft != null) {
-                    var b = mLeft.mTilemap.EstimateBounds(64, 64);
+                    var b = mLeft.mTilemap.EstimateBounds(new Vector2D<>(64, 64));
                     Vector2D<Float> scale = new Vector2D<>(b.GetWidth(), b.GetHeight());
                     var pos = GetBounds().GetPosition();
                     pos.x -= scale.x;
 
                     mLeft.Init(pos);
                     sTransitioning = true;
-                    var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetCamera();
+                    var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetBindedCamera();
                     sPreviousTopRight = z.GetTopRightBound();
                     sPreviousBottomLeft = z.GetBottomLeftBound();
                 }
                 //UP
                 if(position.y < (GetBounds().GetPosition().y) && mUpper != null) {
-                    var b = mUpper.mTilemap.EstimateBounds(64, 64);
+                    var b = mUpper.mTilemap.EstimateBounds(new Vector2D<>(64, 64));
                     Vector2D<Float> scale = new Vector2D<>(b.GetWidth(), b.GetHeight());
                     var pos = GetBounds().GetPosition();
                     pos.y -= scale.y;
 
-                    mRight.Init(pos);
+                    mUpper.Init(pos);
                     sTransitioning = true;
-                    var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetCamera();
+                    var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetBindedCamera();
                     sPreviousTopRight = z.GetTopRightBound();
                     sPreviousBottomLeft = z.GetBottomLeftBound();
                 }
@@ -139,13 +146,13 @@ public class World {
                 if(position.y > (GetBounds().GetPosition().y + GetBounds().GetHeight()) && mLower != null) {
                     mLower.Init(new Vector2D<>(GetBounds().GetPosition().x, GetBounds().GetPosition().y + GetBounds().GetHeight()));
                     sTransitioning = true;
-                    var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetCamera();
+                    var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetBindedCamera();
                     sPreviousTopRight = z.GetTopRightBound();
                     sPreviousBottomLeft = z.GetBottomLeftBound();
                 }
             }
         } else {
-            var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetCamera();
+            var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetBindedCamera();
             z.Update();
 
             if(sElapsedTime < 0.5) {
@@ -215,7 +222,7 @@ public class World {
         mLower = l;
     }
 
-    public void SetLeftlevel(World l) {
+    public void SetLeftLevel(World l) {
         mLeft = l;
     }
 

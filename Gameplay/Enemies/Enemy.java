@@ -58,8 +58,8 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     protected Stack<Pair> path = new Stack<Pair>();
     protected Vector2D<Float> pos = GetPosition();
     protected Vector2D<Float> pseudoPos = getPseudoPosition();
-    protected Player player = (Player) ObjectManager.GetObjectManager().GetObjectByName(Player.class, "Player");
-    protected Vector2D<Float> playerPos = player.getPseudoPosition();
+    protected Player player = null;
+    protected Vector2D<Float> playerPos;
     protected Vector2D<Float> lowerBounds;
     protected Vector2D<Float> upperBounds;
 
@@ -203,13 +203,18 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     *   Adds Behavior to the Enemy
     */ //----------------------------------------------------------------------
     public void Update() {
-        super.Update();
-        //System.out.println(vision());
-        decisionMaking();
-        attack();
-        pseudoPositionUpdate();
-        mCollision.Update();
-        //System.out.println(playerPos.x + " " + playerPos.y + " " + normalizedDirection+ " " );
+        if(player == null) {
+            player = (Player)ObjectManager.GetObjectManager().GetPawn();
+            playerPos = player.getPseudoPosition();
+        } else {
+             super.Update();
+            //System.out.println(vision());
+            decisionMaking();
+            attack();
+            pseudoPositionUpdate();
+            mCollision.Update();
+            //System.out.println(playerPos.x + " " + playerPos.y + " " + normalizedDirection+ " " );
+        }
     }
     // ------------------------------------------------------------------------
     /*! decisionMaking

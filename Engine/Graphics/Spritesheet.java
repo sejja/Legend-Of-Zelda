@@ -153,6 +153,10 @@ public class Spritesheet {
     *   Given an UV coordinate, returns the sprite located at a point in the spritesheet
     */ //----------------------------------------------------------------------
     public BufferedImage GetSprite(int x, int y) {
+        var aux = Math.max(Math.min(y, mHeight - 1), 0);
+        if(y != aux) {
+            y = y % (mHeight - 1); 
+        }
         return ((BufferedImage)mSpriteSheet.Raw()).getSubimage(x * mUVCoord.x, y * mUVCoord.y, mUVCoord.x, mUVCoord.y);
     }
 

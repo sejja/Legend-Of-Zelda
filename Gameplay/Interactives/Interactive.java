@@ -40,9 +40,10 @@ public abstract class Interactive extends Actor{
     public Interactive( Vector2D<Float> position) {
         super(position);
         mPositionPair = PositionToPair(getPseudoPosition());
-        block = TileManager.sLevelObjects.GetBlockAt(mPositionPair.getFirst(),mPositionPair.getSecond());
+        Vector2D<Integer> pos = new Vector2D<>(mPositionPair.getFirst(), mPositionPair.getSecond());
+        block = TileManager.sLevelObjects.GetBlockAt(pos);
         if(block == null) {
-            TileManager.sLevelObjects.PlaceBlockAt(mPositionPair.getFirst(),mPositionPair.getSecond());
+            TileManager.sLevelObjects.PlaceBlockAt(pos);
         }
     }
 

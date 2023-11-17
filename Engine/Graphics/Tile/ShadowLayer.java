@@ -3,7 +3,10 @@ package Engine.Graphics.Tile;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Arrays;
 
+import Engine.ECSystem.Types.Entity;
 import Engine.ECSystem.World;
 import Engine.ECSystem.ObjectManager;
 import Engine.Graphics.Components.CameraComponent;
@@ -44,7 +47,7 @@ public class ShadowLayer {
 
         if(matrixOpacity == null){buildMatrix();}
 
-        if(!isOn){return;}
+        if(!isOn || mCamera == null){return;}
 
         final int scaleX = 64;
         final int scaleY = 64;
@@ -77,7 +80,10 @@ public class ShadowLayer {
      * 
      */
     private Vector2D<Integer> getDrawPointPosition(CameraComponent mCamera){
-        Player link = (Player)ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0);
+        ArrayList<Entity> p = ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class);
+        
+        if(!p.isEmpty()) {
+            Player link = (Player)ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0);
         Vector2D<Integer> blockPosition = World.GetLevelSpaceCoordinates(link.getPseudoPosition()).getTilePosition();
         int gapX = mCamera.GetDimensions().x/(2*64);
         int gapY = mCamera.GetDimensions().x/(2*64);
@@ -92,7 +98,6 @@ public class ShadowLayer {
         else if(cameraDrawPointX > limitX){cameraDrawPointX = limitX;}
         if(cameraDrawPointY <0){cameraDrawPointY = 0;}
         else if(cameraDrawPointY > limitY){cameraDrawPointY = limitY;}
-
         Vector2D<Float> result =  new Vector2D<Float>((Float)(float)cameraDrawPointX*64, (Float)(float)cameraDrawPointY*64);
         //To see where is the cameraDrawPoint
         /*
@@ -105,6 +110,13 @@ public class ShadowLayer {
         */
         Vector2D<Integer> _result =  new Vector2D<Integer>((int)(result.x/64), (int)(result.y/64));
         return _result;
+        }
+
+        return new Vector2D<Integer>(0, 0);
+    }
+
+    public void Clear(int opacity){
+        this.opacity = opacity;
     }
 
     private int getOpacity (Vector2D<Integer> cameraDrawPoint){

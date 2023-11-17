@@ -66,7 +66,7 @@ public class Logger {
     }
 
     public void Log(Log log, String message, Level messagelevel) {
-        String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new java.util.Date());
+        /*String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new java.util.Date());
         
         if(messagelevel == Level.CONFIG) {
             log.GetInnerLogger().config(message);
@@ -84,7 +84,7 @@ public class Logger {
             log.GetInnerLogger().warning("[" + timeStamp + "]: " + message);
         } else {
             log.GetInnerLogger().fine(message);
-        }
+        }*/
     }
 
     public void Log(Log log, String message, Level messagelevel, float screentime, Color screencolor) {
