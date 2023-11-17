@@ -38,7 +38,7 @@ public class GameLoop extends Thread {
 
         mRunning = true;
         mStateManager = new StateMachine();
-        new InputManager(mTargetBuffer);
+        InputManager.Instance().SetSpeakingBuffer(mTargetBuffer);
     }
 
     public static void Quit() {
@@ -55,7 +55,7 @@ public class GameLoop extends Thread {
         GraphicsPipeline.GetGraphicsPipeline().RemoveAllRenderables();
         ColliderManager.GetColliderManager().Clear();
         World.Reset();
-        InputManager.Clear();
+        InputManager.Instance().Clear();
         mStateManager.Restart();
     }
 
