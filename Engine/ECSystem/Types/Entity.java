@@ -24,7 +24,7 @@ public abstract class Entity implements Base,ClassClasifier{
     *   Returns the Position of the actor
     */ //----------------------------------------------------------------------
     public Vector2D<Float> GetPosition() {
-        return mTransform.mPosition;
+        return mTransform.GetPosition();
     }
 
     // ------------------------------------------------------------------------
@@ -33,7 +33,7 @@ public abstract class Entity implements Base,ClassClasifier{
     *   Sets the position of the actor
     */ //----------------------------------------------------------------------
     public void SetPosition(Vector2D<Float> p) {
-        mTransform.mPosition = p;
+        mTransform.SetPosition(p);
     }
 
     // ------------------------------------------------------------------------
@@ -42,7 +42,7 @@ public abstract class Entity implements Base,ClassClasifier{
     *   Returns the Position of the actor
     */ //----------------------------------------------------------------------
     public Vector2D<Float> GetScale() {
-        return mTransform.mScale;
+        return mTransform.GetScale();
     }
 
     // ------------------------------------------------------------------------
@@ -51,7 +51,7 @@ public abstract class Entity implements Base,ClassClasifier{
     *   Sets the position of the actor
     */ //----------------------------------------------------------------------
     public void SetScale(Vector2D<Float> p) {
-        mTransform.mScale = p;
+        mTransform.SetScale(p);
     }
     
     // ------------------------------------------------------------------------

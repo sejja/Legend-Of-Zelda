@@ -16,6 +16,7 @@ import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Component;
 import Engine.Graphics.GraphicsPipeline;
 import Engine.Math.Vector2D;
+import Engine.Physics.AABB;
 
 public final class SpriteComponent extends Component implements Renderable {
     private Asset mSprite;
@@ -87,6 +88,9 @@ public final class SpriteComponent extends Component implements Renderable {
         final Vector2D<Float> pos = parent.GetPosition();
         final Vector2D<Float> sca = parent.GetScale();
         final Vector2D<Float> camcoord = camera.GetCoordinates();
-        g.drawImage((BufferedImage)mSprite.Raw(), (int)(float)pos.x - (int)(float)camcoord.x, (int)(float)pos.y - (int)(float)camcoord.y, (int)(float)sca.x, (int)(float)sca.y, null);
+
+        //If the camera is on the bounds of the object, render it
+        if(camera.OnBounds(new AABB(pos, sca)))
+            g.drawImage((BufferedImage)mSprite.Raw(), (int)(float)pos.x - (int)(float)camcoord.x, (int)(float)pos.y - (int)(float)camcoord.y, (int)(float)sca.x, (int)(float)sca.y, null);
     }
 }
