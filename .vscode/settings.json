@@ -4,5 +4,9 @@
     },
     "vscode_custom_css.imports": [
         "file:///C:/Users/Usuario/.vscode/extensions/webrender.synthwave-x-fluoromachine-0.0.14/synthwave-x-fluoromachine.css"
+        ],
+        "java.project.referencedLibraries": [
+            "lib/**/*.jar",
+            "Libraries/sqlite-jdbc-3.44.0.0.jar"
         ]
 }

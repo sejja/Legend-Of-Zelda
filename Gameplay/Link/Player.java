@@ -129,7 +129,7 @@ public class Player extends Actor {
         SetScale(size);
         this.direction = DIRECTION.RIGHT;
         //Lets transpose the Sprite Matrix and add all extra Animations
-        sprite.setmSpriteArray(this.completeAnimationSet(sprite.GetSpriteArray2D()));
+        sprite.ChangeSpriteFrames(this.completeAnimationSet(sprite.GetSpriteArray2D()));
         //---------------------------------------------------------------------
         mAnimation = AddComponent(new AnimationMachine(this, sprite));
         mCamera = AddComponent(new ZeldaCameraComponent(this));
@@ -159,7 +159,7 @@ public class Player extends Actor {
     private void implementsActions (){ // it can be coptimazed
         int[] stop_run = new int[]{KeyEvent.VK_D, KeyEvent.VK_A, KeyEvent.VK_S, KeyEvent.VK_W};
         for (int i = 0; i<stop_run.length; i++){
-            InputManager.SubscribeReleased(stop_run[i], new InputFunction() {
+            InputManager.Instance().SubscribeReleased(stop_run[i], new InputFunction() {
             @Override
             public void Execute() {
                 setVelocity(0);
@@ -169,28 +169,28 @@ public class Player extends Actor {
             });
         }
         //RUN______________________________________________________________________________________________
-        InputManager.SubscribePressed(KeyEvent.VK_W, new InputFunction() {
+        InputManager.Instance().SubscribePressed(KeyEvent.VK_W, new InputFunction() {
             @Override
             public void Execute() {activateAction(UP);}
         });
-        InputManager.SubscribePressed(KeyEvent.VK_S, new InputFunction() {
+        InputManager.Instance().SubscribePressed(KeyEvent.VK_S, new InputFunction() {
             @Override
             public void Execute() {activateAction(DOWN);}
         });
-        InputManager.SubscribePressed(KeyEvent.VK_A, new InputFunction() {
+        InputManager.Instance().SubscribePressed(KeyEvent.VK_A, new InputFunction() {
             @Override
             public void Execute() {activateAction(LEFT);System.out.println("hola");}
         });
-        InputManager.SubscribePressed(KeyEvent.VK_D, new InputFunction() {
+        InputManager.Instance().SubscribePressed(KeyEvent.VK_D, new InputFunction() {
             @Override
             public void Execute() {activateAction(RIGHT);}
         });
-        InputManager.SubscribePressed(KeyEvent.VK_ESCAPE, new InputFunction() {
+        InputManager.Instance().SubscribePressed(KeyEvent.VK_ESCAPE, new InputFunction() {
             @Override
             public void Execute() {GameLoop.Quit(); }
         });
         //ATTACK_____________________________________________________________________________________________
-        InputManager.SubscribePressed(KeyEvent.VK_J, new InputFunction() {
+        InputManager.Instance().SubscribePressed(KeyEvent.VK_J, new InputFunction() {
             @Override
             public void Execute() {
                 setVelocity(0);
@@ -211,7 +211,7 @@ public class Player extends Actor {
                 attack = true;
             }
         });
-        InputManager.SubscribeReleased(KeyEvent.VK_J, new InputFunction() {
+        InputManager.Instance().SubscribeReleased(KeyEvent.VK_J, new InputFunction() {
             @Override
             public void Execute() {
                 setVelocity(0);
@@ -222,7 +222,7 @@ public class Player extends Actor {
             }
         });
         //BOW________________________________________________________________________________________________
-        InputManager.SubscribePressed(KeyEvent.VK_K, new InputFunction() {
+        InputManager.Instance().SubscribePressed(KeyEvent.VK_K, new InputFunction() {
             @Override
             public void Execute() {
                 setVelocity(0);
@@ -233,7 +233,7 @@ public class Player extends Actor {
                 dash = false;
             }
         });
-        InputManager.SubscribeReleased(KeyEvent.VK_K, new InputFunction() {
+        InputManager.Instance().SubscribeReleased(KeyEvent.VK_K, new InputFunction() {
             @Override
             public void Execute() {
                 setVelocity(0);
@@ -242,7 +242,7 @@ public class Player extends Actor {
             }
         });
         //DASH_______________________________________________________________________________________________
-        InputManager.SubscribeReleased(KeyEvent.VK_SHIFT, new InputFunction() {
+        InputManager.Instance().SubscribeReleased(KeyEvent.VK_SHIFT, new InputFunction() {
             @Override
             public void Execute() {
                 if (dashCooldawn >= dashDelay){
@@ -254,7 +254,7 @@ public class Player extends Actor {
             }
         });
 
-        InputManager.SubscribeReleased(KeyEvent.VK_B, new InputFunction() {
+        InputManager.Instance().SubscribeReleased(KeyEvent.VK_B, new InputFunction() {
             @Override
             public void Execute() {
                 if(nbombs >= 0){
@@ -268,20 +268,20 @@ public class Player extends Actor {
             }
         });
         //Show LifeBar_______________________________________________________________________________________
-        InputManager.SubscribePressed(KeyEvent.VK_M, new InputFunction() {
+        InputManager.Instance().SubscribePressed(KeyEvent.VK_M, new InputFunction() {
             @Override
             public void Execute() {lifeBar.setVisible(true);}
         });
-        InputManager.SubscribeReleased(KeyEvent.VK_M, new InputFunction() {
+        InputManager.Instance().SubscribeReleased(KeyEvent.VK_M, new InputFunction() {
             @Override
             public void Execute() {lifeBar.setVisible(false);}
         });
-        InputManager.SubscribePressed(KeyEvent.VK_P, new InputFunction() { //Pause
+        InputManager.Instance().SubscribePressed(KeyEvent.VK_P, new InputFunction() { //Pause
             @Override
             public void Execute() {Pause();}
         });
         ///Interaction_______________________________________________________________________________________
-        InputManager.SubscribePressed(KeyEvent.VK_E, new InputFunction() {
+        InputManager.Instance().SubscribePressed(KeyEvent.VK_E, new InputFunction() {
             @Override
             public void Execute() {interact();}
         });
@@ -309,7 +309,7 @@ public class Player extends Actor {
             }
         });
 
-        InputManager.SubscribePressed(KeyEvent.VK_T, new InputFunction() {
+        InputManager.Instance().SubscribePressed(KeyEvent.VK_T, new InputFunction() {
             @Override
             public void Execute() {
                 System.out.println(ColliderManager.GetColliderManager().getCollision(hitbox, Interactive.class, true));

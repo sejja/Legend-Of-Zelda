@@ -32,6 +32,11 @@ public class Vector2D<T> {
         this.y = y;
     }
 
+    public void set(T x, T y) {
+        this.x = x;
+        this.y = y;
+    }
+
     // ------------------------------------------------------------------------
     /*! Copy Constructor
     *
