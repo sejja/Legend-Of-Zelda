@@ -60,6 +60,7 @@ public class PlayState extends State {
         var overworld_left = new TestRoom2(null, null, null, null, "Content/TiledProject/OverWorld1Left.tmx");
         var overworld_left_up = new TestRoom2(null, null, null, null, "Content/TiledProject/OverlWorld_-1_1.tmx");
         var overworld_left_up_left = new TestRoom2(null, null, null, null, "Content/TiledProject/overworld1_left_up_left.tmx");
+        var overworld1_left_left = new TestRoom2(null, null, null, null, "Content/TiledProject/overworld1_left_left.tmx");
 
         mTestLevel = new TestRoom(pasilloDer3, overworld_left, entradaArriba3, null, "Content/TiledProject/overworld1.tmx", new Vector2D<>(0.f, 0.f));
 
@@ -87,6 +88,7 @@ public class PlayState extends State {
         overworld_left_up.SetLeftLevel(overworld_left_up_left);
         overworld_left_up.SetLowerLevel(overworld_left);
         overworld_left_up_left.SetRightLevel(overworld_left_up);
+        overworld_left_up_left.SetLowerLevel(overworld1_left_left);
 
 
         var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetBindedCamera();
