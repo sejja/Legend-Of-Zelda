@@ -21,6 +21,7 @@ import Engine.Graphics.Animations.Animation;
 import Engine.Graphics.Components.AnimationMachine;
 import Engine.Graphics.Components.CameraComponent;
 import Engine.Graphics.Components.Renderable;
+import Engine.Math.EuclideanCoordinates;
 import Engine.Math.Vector2D;
 import Engine.Physics.Components.BoxCollider;
 import Engine.Physics.Components.ColliderManager;
@@ -358,7 +359,7 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     
     public void knockBack() {
         knockback=true;
-        Vector2D<Float> dir = pos.getVectorToAnotherActor(playerPos);
+        Vector2D<Float> dir = new EuclideanCoordinates(pos).getVectorToAnotherActor(playerPos);
         normalizedDirection=normalize(dir);
         
     }
@@ -382,7 +383,7 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
 
     public void knockBack(Vector2D<Float> attackerPos) {
         knockback=true;
-        Vector2D<Float> dir = pos.getVectorToAnotherActor(attackerPos);
+        Vector2D<Float> dir = new EuclideanCoordinates(pos).getVectorToAnotherActor(attackerPos);
         normalizedDirection=normalize(dir);
     }
     
@@ -408,7 +409,8 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     }
 
     private boolean vision(){
-        Vector2D<Float> dir = pseudoPos.getVectorToAnotherActor(playerPos);
+        EuclideanCoordinates enemyPos = new EuclideanCoordinates(pseudoPos);
+        EuclideanCoordinates dir = new EuclideanCoordinates(enemyPos.getVectorToAnotherActor(playerPos));
         float distance = dir.getModule();
         if ((distance < 700)){
             if(!chase) {

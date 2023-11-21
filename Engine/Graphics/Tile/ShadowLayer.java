@@ -10,6 +10,7 @@ import Engine.ECSystem.Types.Entity;
 import Engine.ECSystem.World;
 import Engine.ECSystem.ObjectManager;
 import Engine.Graphics.Components.CameraComponent;
+import Engine.Math.TileCoordinates;
 import Engine.Math.Vector2D;
 import Engine.Physics.Components.BoxCollider;
 import Gameplay.Enemies.Search.pPair;
@@ -84,7 +85,7 @@ public class ShadowLayer {
         
         if(!p.isEmpty()) {
             Player link = (Player)ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0);
-        Vector2D<Integer> blockPosition = World.GetLevelSpaceCoordinates(link.getPseudoPosition()).getTilePosition();
+        Vector2D<Integer> blockPosition = TileCoordinates.ToTilePosition(World.GetLevelSpaceCoordinates(link.getPseudoPosition()));
         int gapX = mCamera.GetDimensions().x/(2*64);
         int gapY = mCamera.GetDimensions().x/(2*64);
 

@@ -30,6 +30,7 @@ import Engine.Graphics.Tile.ShadowLayer;
 import Engine.Graphics.Tile.TileManager;
 import Engine.Input.InputFunction;
 import Engine.Input.InputManager;
+import Engine.Math.EuclideanCoordinates;
 import Engine.Math.Vector2D;
 import Engine.Physics.CollisionResult;
 import Engine.Physics.Components.BoxCollider;
@@ -675,7 +676,7 @@ public class Player extends Actor {
         if (!enemies.isEmpty()){
             for(int i = 0; i < enemies.size(); i++){
                 Enemy enemy = (Enemy)enemies.get(i);
-                if(getPseudoPosition().getTargetDirection(enemy.getPseudoPosition()) == direction){
+                if(new EuclideanCoordinates(getPseudoPosition()).getTargetDirection(enemy.getPseudoPosition()) == direction){
                     enemy.setHealthPoints(damage);
                     enemy.knockBack();
                     System.out.println("Le da");
@@ -687,7 +688,7 @@ public class Player extends Actor {
         if (!interactives.isEmpty()){
             for(int i = 0; i < interactives.size(); i++){
                 Interactive interactive = (Interactive)interactives.get(i);
-                if(getPseudoPosition().getTargetDirection(interactive.getPseudoPosition()) == direction){
+                if(new EuclideanCoordinates(getPseudoPosition()).getTargetDirection(interactive.getPseudoPosition()) == direction){
                     Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/bombable-wall.wav"));
                     Audio.Instance().Play(sound);
                 }

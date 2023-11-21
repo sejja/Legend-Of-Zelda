@@ -9,7 +9,9 @@ import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Animations.AnimationEvent;
 import Engine.Graphics.Tile.ShadowLayer;
+import Engine.Math.EuclideanCoordinates;
 import Engine.Math.Vector2D;
+import Engine.Math.TileCoordinates;
 import Engine.Physics.StaticPlayerCollision;
 import Engine.Physics.Components.BoxCollider;
 import Gameplay.Interaction;
@@ -102,7 +104,7 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
     public Class GetSuperClass(){return Npc.class;}
 
     private void addIlumination(){
-        Vector2D<Integer> tilePosition = this.getPseudoPosition().getTilePosition();
+        Vector2D<Integer> tilePosition = new TileCoordinates(getPseudoPosition()).getTilePosition();
         final int maxDisctance = (int)Math.round(Math.sqrt(2)*radius);
         for (int i = tilePosition.x - maxDisctance; i <= tilePosition.x + maxDisctance; i++){
             for(int j = tilePosition.y - maxDisctance; j <= tilePosition.y+maxDisctance; j++){
@@ -113,7 +115,7 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
     }
 
     private void removeIlumination(){
-        Vector2D<Integer> tilePosition = this.getPseudoPosition().getTilePosition();
+        Vector2D<Integer> tilePosition = new TileCoordinates(getPseudoPosition()).getTilePosition();
         final int maxDisctance = (int)Math.round(Math.sqrt(2)*radius);
         for (int i = tilePosition.x - maxDisctance; i <= tilePosition.x + maxDisctance; i++){
             for(int j = tilePosition.y - maxDisctance; j <= tilePosition.y + maxDisctance; j++){

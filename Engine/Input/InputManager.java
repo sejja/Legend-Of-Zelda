@@ -188,7 +188,7 @@ final public class InputManager implements KeyListener, MouseListener, MouseMoti
     */ //----------------------------------------------------------------------
     @Override
     public void mouseDragged(final MouseEvent e) {
-        mMouseCoords.set(e.getX(), e.getY());
+        mMouseCoords.Set(e.getX(), e.getY());
     }
 
     // ------------------------------------------------------------------------

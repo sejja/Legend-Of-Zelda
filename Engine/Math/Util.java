@@ -14,7 +14,7 @@ public class Util {
     *
     *   Interpolate between an "a" and "b" values within an alpha value
     */ //----------------------------------------------------------------------
-    static public float LinearInterpolate(float a, float b, float alpha) {
+    static public float LinearInterpolate(final float a, final float b, final float alpha) {
         return a + alpha * (b - a);
     }
 }

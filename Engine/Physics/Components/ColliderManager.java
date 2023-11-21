@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 
 import Engine.ECSystem.Types.Actor;
+import Engine.Math.EuclideanCoordinates;
 import Gameplay.Link.Player;
 /* ColliderManager is a static object thats manage the colision between objects
  *      -> All BoxCollider thats hasCollision it is added automatically to the colliderManager
@@ -92,8 +93,11 @@ public class ColliderManager {
             ListIterator<BoxCollider> iterator = listActors.listIterator();
             while(iterator.hasNext()){
                 BoxCollider otherCollider = iterator.next();
-                Float pseudoPositionDistance = collider.GetParent().getPseudoPosition().getModuleDistance(otherCollider.GetParent().getPseudoPosition()); //This is the distance between the 2 pseudopositions
-                Float limit = (collider.GetBounds().GetScale().getModule() + otherCollider.GetBounds().GetScale().getModule())/2;
+                EuclideanCoordinates cords = new EuclideanCoordinates(collider.GetParent().getPseudoPosition());
+                Float pseudoPositionDistance = cords.GetModulusDistance(otherCollider.GetParent().getPseudoPosition()); //This is the distance between the 2 pseudopositions
+                EuclideanCoordinates desc = new EuclideanCoordinates(collider.GetBounds().GetScale());
+                EuclideanCoordinates desc2 = new EuclideanCoordinates(otherCollider.GetBounds().GetScale());
+                Float limit = (desc.getModule() + desc2.getModule())/2;
                 if (pseudoPositionDistance < limit){
                     if(hasCollided(collider, otherCollider)){
                         result.add(otherCollider.GetParent());
@@ -105,9 +109,10 @@ public class ColliderManager {
     }
 
     private boolean hasCollided(BoxCollider colliderA, BoxCollider colliderB){
-        Float distanceY = Math.abs(colliderA.GetParent().getPseudoPosition().getVectorToAnotherActor(colliderB.GetParent().getPseudoPosition()).y);
+        EuclideanCoordinates coords = new EuclideanCoordinates(colliderA.GetParent().getPseudoPosition());
+        Float distanceY = Math.abs(coords.getVectorToAnotherActor(colliderB.GetParent().getPseudoPosition()).y);
         Float limitY = (colliderA.GetBounds().GetScale().y + colliderB.GetBounds().GetScale().y)/2;
-        Float distanceX = Math.abs(colliderA.GetParent().getPseudoPosition().getVectorToAnotherActor(colliderB.GetParent().getPseudoPosition()).x);
+        Float distanceX = Math.abs(coords.getVectorToAnotherActor(colliderB.GetParent().getPseudoPosition()).x);
         Float limitX = (colliderA.GetBounds().GetScale().x + colliderB.GetBounds().GetScale().x)/2;
         return distanceX < limitX && distanceY < limitY;
     }
