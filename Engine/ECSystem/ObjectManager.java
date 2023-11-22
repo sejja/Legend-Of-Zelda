@@ -61,7 +61,9 @@ public class ObjectManager {
         //If we already contain the key, perfect
         if(mAliveEntities.containsKey(type)) {
             //System.out.println(type);
-            mNewEntities.get(type).add(e);
+            if(!mAliveEntities.get(e.GetSuperClass()).contains(e)){
+                 mNewEntities.get(type).add(e);
+            }
             //System.out.println("Se añade :" + e.getClass() + " a " + e.GetSuperClass());
             //System.out.println(mAliveEntities.get(e.GetSuperClass()));
             //System.out.println(mAliveEntities);
