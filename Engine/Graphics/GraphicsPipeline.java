@@ -10,21 +10,29 @@ package Engine.Graphics;
 
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Vector;
 
 import Engine.Developer.Logger.Logger;
 import Engine.ECSystem.ObjectManager;
+import Engine.ECSystem.World;
 import Engine.ECSystem.Types.Component;
+import Engine.Graphics.Components.AnimationMachine;
 import Engine.Graphics.Components.CameraComponent;
 import Engine.Graphics.Components.Renderable;
+import Engine.Graphics.Components.ZeldaCameraComponent;
 import Engine.Graphics.Tile.ShadowLayer;
+import Engine.Graphics.Tile.TileManager;
 import Engine.Math.Vector2D;
+import Gameplay.LifeBar.Heart;
+import Gameplay.LifeBar.LifeBar;
 import Gameplay.Link.Player;
 
 public class GraphicsPipeline {
     private ArrayList<Renderable> mRenderables;
     private ArrayList<Renderable> mNewRenderables = new ArrayList<>();
     private ArrayList<Renderable> mOldRenderables = new ArrayList<>();
+    private ArrayList<Renderable> unremovableRenderables;
 
     static private GraphicsPipeline sPipe = new GraphicsPipeline();
     private CameraComponent mCamera;
@@ -98,6 +106,14 @@ public class GraphicsPipeline {
         shadowLayer.Render(g, mCamera);
         Logger.Instance().Render(g);
         //renderableInfo();
+        for(Renderable x : mRenderables){
+            if(unremovableRenderables == null){
+                break;
+            }
+            if(x instanceof AnimationMachine && !unremovableRenderables.contains(x)){
+                System.out.println(((AnimationMachine)x).GetParent());
+            }
+        }
     }
 
     // ------------------------------------------------------------------------
@@ -123,8 +139,31 @@ public class GraphicsPipeline {
     }
 
     public void flush(){
-        Player player = (Player) ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0);
-        ArrayList<Component> playerComponents = player.getmComponents();
-        System.out.println(playerComponents.size());
+        
+        if(unremovableRenderables == null){
+            Player player = (Player) ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0);
+            ArrayList<Component> playerComponents = new ArrayList<>(player.getmComponents());
+            LifeBar lifeBar = player.getLifebar();
+            Heart[] hearts = lifeBar.getHearts();
+            ArrayList<AnimationMachine> animation = new ArrayList<AnimationMachine>();
+            for(Heart heart : hearts){
+                animation.add((AnimationMachine)heart.getmComponents().get(0));
+            }
+            System.out.println(playerComponents);
+            System.out.println(animation.size());
+            TileManager managerDeTiles = World.mCurrentLevel.mTilemap;
+            for(int i=0; i< playerComponents.size(); i++){
+                if(playerComponents.get(i) instanceof ZeldaCameraComponent){
+                    playerComponents.remove(i);
+                }
+            }
+            unremovableRenderables = new ArrayList<>();
+            unremovableRenderables.add(managerDeTiles);
+            unremovableRenderables.addAll(animation);
+            unremovableRenderables.addAll((Collection<? extends Renderable>)playerComponents);
+        }
+        mRenderables.clear();
+        
+        mRenderables.addAll(unremovableRenderables);
     }
 }

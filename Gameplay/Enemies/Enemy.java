@@ -233,12 +233,13 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
             pathfinding();
             getDirection(normalizedDirection);
             animate();
-            move();
+            move(); // Move makes enemy visible. Idk bro
         }else{
             animate();
             if(!path.empty()){
                 path.clear();
             }
+            SetPosition(pos);
             
         }
     }

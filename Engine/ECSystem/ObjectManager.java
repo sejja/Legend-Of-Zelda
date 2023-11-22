@@ -65,7 +65,7 @@ public class ObjectManager {
             if(!mAliveEntities.get(e.GetSuperClass()).contains(e)){
                  mNewEntities.get(type).add(e);
             }
-            else{System.err.println("Ya esta dentro mamarracho");}
+            else{System.err.println("Ya esta dentro MAMARRACHO");}
 
         //else, create a new chunk
         } else {

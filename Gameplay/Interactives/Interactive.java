@@ -24,6 +24,7 @@ public abstract class Interactive extends Actor{
 
     protected Pair mPositionPair;
     protected Block block;
+    protected Vector2D<Float> pos; // position for invisible blocks
 
     //stats
     protected int healthPoints = 1;
@@ -39,6 +40,7 @@ public abstract class Interactive extends Actor{
     */ //----------------------------------------------------------------------
     public Interactive( Vector2D<Float> position) {
         super(position);
+        pos = position;
         mPositionPair = PositionToPair(getPseudoPosition());
         block = TileManager.sLevelObjects.GetBlockAt(mPositionPair.getFirst(),mPositionPair.getSecond());
         if(block == null) {
@@ -93,7 +95,7 @@ public abstract class Interactive extends Actor{
     *   Receives the movements in a stack and sets the movement
     */ //----------------------------------------------------------------------
     public void Move() {
-        
+        SetPosition(pos); // This somehow fixes invisible blocks
     }
 
 

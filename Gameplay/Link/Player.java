@@ -781,6 +781,10 @@ public class Player extends Actor {
         mAnimation.SetFrameTrack(DOWN+Action.STOP.getID());
     }
     public void setBow(boolean bow) {this.bow = bow;}
+
+    public LifeBar getLifebar(){
+        return lifeBar;
+    }
     //------------------------------------------------------------------------
 
     @Override 
