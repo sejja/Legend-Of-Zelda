@@ -151,7 +151,7 @@ public class World {
 
             if(sElapsedTime < 0.5) {
                 GameLoop.SetPaused(true);
-                Actor p = ObjectManager.GetObjectManager().GetPawn();
+                Actor p = ObjectManager.GetObjectManager().GetPawn(); //<--- Its Link
 
                 Vector2D<Float> goaltopright = new Vector2D<>(p.GetPosition().x, p.GetPosition().y);
 
