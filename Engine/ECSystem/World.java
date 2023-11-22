@@ -46,10 +46,13 @@ public class World {
     public void Init(Vector2D<Float> position) {
         mCurrentLevel = this;
         mTilemap.CreateTileMap(64, 64, position);
-        if(!visited) {
-            visited = true;
-            spawnEntities();
+        try {
+            ObjectManager.GetObjectManager().Flush();
+        }catch(NullPointerException e){
+            System.out.println("patata");
         }
+        
+        spawnEntities();
     }
 
     public static Vector2D<Float> GetWorldSpaceCoordinates(Vector2D<Float> levelcoordinate) {
@@ -76,7 +79,7 @@ public class World {
 
     // Spawns the entities of entityQueue based on the ID and in the position specified
     private void spawnEntities() {
-        System.out.println(mTilemap.entityQueue);
+        //System.out.println(mTilemap.entityQueue);
         int firstEntity = mTilemap.firstEntity;
         while(mTilemap.entityQueue != null && !mTilemap.entityQueue.isEmpty() ) {
             var e = mTilemap.entityQueue.poll();

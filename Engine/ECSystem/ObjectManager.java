@@ -151,6 +151,7 @@ public class ObjectManager {
 
         //mNewEntities.clear();
         mNewEntities.values().stream().forEach(x -> x.clear());
+        managerInfo();
     }
 
     /** Inform aboout the content of the ObjectManager
@@ -160,7 +161,7 @@ public class ObjectManager {
         System.out.println("------------------------------------------------------------------------------------------");
         for (Class code: mAliveEntities.keySet()){
             System.out.println(code.descriptorString() + "Num: " + mAliveEntities.get(code).size());
-            System.out.println("Contend : \n" + mAliveEntities.get(code));
+            //System.out.println("Contend : \n" + mAliveEntities.get(code));
         }
     }
     public void mNewEntitiesInfo(){
