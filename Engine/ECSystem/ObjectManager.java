@@ -137,7 +137,6 @@ public class ObjectManager {
 
         mDeadEntities.keySet().stream().forEach( x -> {
             final ArrayList<Entity> chunk = mAliveEntities.get(x);
-
             mDeadEntities.get(x).stream().forEach(y -> chunk.remove(y));
         });
 
@@ -177,8 +176,22 @@ public class ObjectManager {
     public void Flush(){
         ArrayList<Entity> player = mAliveEntities.get(Player.class);
         ArrayList<Entity> NPCs = mAliveEntities.get(Npc.class);
+        for(Entity enemy: mAliveEntities.get(Enemy.class)){
+            ((Enemy)enemy).die();
+        }
         mAliveEntities.clear();
         mAliveEntities.put(Player.class, player);
         mAliveEntities.put(Npc.class, NPCs);
+        /* 
+        for(Class code: mAliveEntities.keySet()){
+            if( ! ( code.equals(Npc.class) || code.equals(Player.class)) ){
+                if(mDeadEntities.contains(code)){
+                    mDeadEntities.get(code).addAll(mAliveEntities.get(code));
+                }else{
+                    mDeadEntities.put(code, mAliveEntities.get(code));
+                }
+            }
+        }
+        */
     }
 }

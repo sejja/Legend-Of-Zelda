@@ -391,7 +391,7 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
         //______________________
     }
 
-    private void die() {
+    public void die() {
         //Log v = Logger.Instance().GetLog("Gameplay");
         //Logger.Instance().Log(v, "Enemy died", Level.INFO, 1, Color.GREEN);
 
