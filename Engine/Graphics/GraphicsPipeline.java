@@ -94,6 +94,7 @@ public class GraphicsPipeline {
 
         shadowLayer.Render(g, mCamera);
         Logger.Instance().Render(g);
+        renderableInfo();
     }
 
     // ------------------------------------------------------------------------

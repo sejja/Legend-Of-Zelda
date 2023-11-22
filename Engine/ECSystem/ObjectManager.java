@@ -150,7 +150,7 @@ public class ObjectManager {
 
         //mNewEntities.clear();
         mNewEntities.values().stream().forEach(x -> x.clear());
-        managerInfo();
+        //managerInfo();
     }
 
     /** Inform aboout the content of the ObjectManager
@@ -179,6 +179,7 @@ public class ObjectManager {
         for(Entity enemy: mAliveEntities.get(Enemy.class)){
             ((Enemy)enemy).superDie();
         }
+        
         mAliveEntities.clear();
         mAliveEntities.put(Player.class, player);
         mAliveEntities.put(Npc.class, NPCs);
