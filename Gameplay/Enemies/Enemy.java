@@ -391,7 +391,7 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
         //______________________
     }
 
-    public void die() {
+    private void die() {
         //Log v = Logger.Instance().GetLog("Gameplay");
         //Logger.Instance().Log(v, "Enemy died", Level.INFO, 1, Color.GREEN);
 
@@ -400,6 +400,14 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
         new DeadAnimation(this);
         Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/enemy-death.wav"));
         Audio.Instance().Play(sound);
+    }
+    /** Used to kill the enemy via code
+     * 
+     */
+    public void superDie() {
+        mCollision.ShutDown();
+        path.clear();
+        SetScale(new Vector2D<>(0f, 0f));
     }
 
     private boolean vision(){

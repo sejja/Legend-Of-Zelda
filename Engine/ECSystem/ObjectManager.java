@@ -177,7 +177,7 @@ public class ObjectManager {
         ArrayList<Entity> player = mAliveEntities.get(Player.class);
         ArrayList<Entity> NPCs = mAliveEntities.get(Npc.class);
         for(Entity enemy: mAliveEntities.get(Enemy.class)){
-            ((Enemy)enemy).die();
+            ((Enemy)enemy).superDie();
         }
         mAliveEntities.clear();
         mAliveEntities.put(Player.class, player);
