@@ -138,8 +138,10 @@ public class GraphicsPipeline {
         System.out.println(mRenderables.size());;
     }
 
+    /** This function remove all renderable of the previus level expept Zelda's components
+     * 
+     */
     public void flush(){
-        
         if(unremovableRenderables == null){
             Player player = (Player) ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0);
             ArrayList<Component> playerComponents = new ArrayList<>(player.getmComponents());
