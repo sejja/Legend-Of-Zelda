@@ -17,6 +17,7 @@ import Engine.Developer.Logger.Logger;
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.World;
 import Engine.ECSystem.Types.Component;
+import Engine.ECSystem.Types.Entity;
 import Engine.Graphics.Components.AnimationMachine;
 import Engine.Graphics.Components.CameraComponent;
 import Engine.Graphics.Components.Renderable;
@@ -27,6 +28,7 @@ import Engine.Math.Vector2D;
 import Gameplay.LifeBar.Heart;
 import Gameplay.LifeBar.LifeBar;
 import Gameplay.Link.Player;
+import Gameplay.NPC.Npc;
 
 public class GraphicsPipeline {
     private ArrayList<Renderable> mRenderables;
@@ -106,14 +108,14 @@ public class GraphicsPipeline {
         shadowLayer.Render(g, mCamera);
         Logger.Instance().Render(g);
         //renderableInfo();
-        for(Renderable x : mRenderables){
+        /*for(Renderable x : mRenderables){
             if(unremovableRenderables == null){
                 break;
             }
             if(x instanceof AnimationMachine && !unremovableRenderables.contains(x)){
                 System.out.println(((AnimationMachine)x).GetParent());
             }
-        }
+        }*/
     }
 
     // ------------------------------------------------------------------------
@@ -142,6 +144,7 @@ public class GraphicsPipeline {
         
         if(unremovableRenderables == null){
             Player player = (Player) ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0);
+            ArrayList<Entity> npcArraylist = ObjectManager.GetObjectManager().GetAllObjectsOfType(Npc.class);
             ArrayList<Component> playerComponents = new ArrayList<>(player.getmComponents());
             LifeBar lifeBar = player.getLifebar();
             Heart[] hearts = lifeBar.getHearts();
@@ -149,8 +152,8 @@ public class GraphicsPipeline {
             for(Heart heart : hearts){
                 animation.add((AnimationMachine)heart.getmComponents().get(0));
             }
-            System.out.println(playerComponents);
-            System.out.println(animation.size());
+            //System.out.println(playerComponents);
+            //System.out.println(animation.size());
             TileManager managerDeTiles = World.mCurrentLevel.mTilemap;
             for(int i=0; i< playerComponents.size(); i++){
                 if(playerComponents.get(i) instanceof ZeldaCameraComponent){
@@ -161,6 +164,11 @@ public class GraphicsPipeline {
             unremovableRenderables.add(managerDeTiles);
             unremovableRenderables.addAll(animation);
             unremovableRenderables.addAll((Collection<? extends Renderable>)playerComponents);
+            for( Entity npc : npcArraylist){
+                if(npc instanceof Npc){
+                    unremovableRenderables.addAll((Collection<? extends Renderable>)((Npc)npc).getmComponents()); //getAnimationMachine from Npc
+                }
+            }
         }
         mRenderables.clear();
         

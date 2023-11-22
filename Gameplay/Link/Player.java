@@ -27,6 +27,7 @@ import Engine.Physics.Components.BoxCollider;
 import Engine.Window.GameLoop;
 import Engine.Physics.Components.ColliderManager;
 import Gameplay.Interaction;
+import Gameplay.AnimatedObject.AnimatedObject;
 import Gameplay.AnimatedObject.Bomb;
 import Gameplay.Enemies.Enemy;
 import Gameplay.Interactives.Interactive;
@@ -318,7 +319,7 @@ public class Player extends Actor {
         InputManager.SubscribePressed(KeyEvent.VK_T, new InputFunction() {
             @Override
             public void Execute() {
-                System.out.println(ColliderManager.GetColliderManager().getCollision(hitbox, Interactive.class, true));
+                System.out.println(ColliderManager.GetColliderManager().getCollision(hitbox, Npc.class, true));
             }
         });
     }
