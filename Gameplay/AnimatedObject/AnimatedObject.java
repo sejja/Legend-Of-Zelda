@@ -31,7 +31,7 @@ public abstract class AnimatedObject extends Actor{
         super(position);
         setAnimationMachine(spritesheet);
         animation = spritesheet.GetSpriteArray2D()[defaultAnimationIndex];
-        spawn();
+        //spawn();
     }
 
     public AnimatedObject(Vector2D<Float> position) {

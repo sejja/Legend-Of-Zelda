@@ -150,7 +150,7 @@ public class ObjectManager {
 
         //mNewEntities.clear();
         mNewEntities.values().stream().forEach(x -> x.clear());
-        //managerInfo();
+        managerInfo();
     }
 
     /** Inform aboout the content of the ObjectManager
