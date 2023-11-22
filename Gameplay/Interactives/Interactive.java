@@ -59,7 +59,7 @@ public abstract class Interactive extends Actor{
     // ------------------------------------------------------------------------
     /*! Animate
     *
-    *   Adds the needed animation to the Enemy
+    *   Adds the needed animation
     */ //----------------------------------------------------------------------
     public void Animate() {
         SetAnimation(0, mAnimation.GetSpriteSheet().GetSpriteArray(0), -1);
@@ -68,7 +68,7 @@ public abstract class Interactive extends Actor{
     // ------------------------------------------------------------------------
     /*! Update
     *
-    *   Adds Behavior to the Enemy
+    *   Updates
     */ //----------------------------------------------------------------------
     public void Update() {
         super.Update();
@@ -90,7 +90,7 @@ public abstract class Interactive extends Actor{
     // ------------------------------------------------------------------------
     /*! Move
     *
-    *   Receives the movements in a stack and sets the movement of the Enemy with the A* search
+    *   Receives the movements in a stack and sets the movement
     */ //----------------------------------------------------------------------
     public void Move() {
         

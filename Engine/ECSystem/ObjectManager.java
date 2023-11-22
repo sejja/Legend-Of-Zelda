@@ -61,9 +61,9 @@ public class ObjectManager {
         if(mAliveEntities.containsKey(type)) {
             //System.out.println(type);
             mNewEntities.get(type).add(e);
-            System.out.println("Se añade :" + e.getClass() + " a " + e.GetSuperClass());
-            System.out.println(mAliveEntities.get(e.GetSuperClass()));
-            System.out.println(mAliveEntities);
+            //System.out.println("Se añade :" + e.getClass() + " a " + e.GetSuperClass());
+            //System.out.println(mAliveEntities.get(e.GetSuperClass()));
+            //System.out.println(mAliveEntities);
 
         //else, create a new chunk
         } else {
