@@ -122,10 +122,12 @@ public class Database {
 	 * @param con	Conexión abierta de la BD
 	 * @param st	Sentencia abierta de la BD
 	 */
-	public static void cerrarBD( Connection con, Statement st ) {
+	public void cerrarBD() {
+
 		try {
-			if (st!=null) st.close();
-			if (con!=null) con.close();
+			mConnection.execute("INSERT INTO \"main\".\"PlayerSession\"(\"ID\",\"PlayTime\",\"Arrows\",\"Bombs\",\"FirstLevel\",\"LastLevel\") VALUES (2,'',0,0,'','');");
+
+			if (mConnection!=null) mConnection.close();
 		} catch (SQLException e) {
 			lastError = e;
 			e.printStackTrace();

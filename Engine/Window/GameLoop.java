@@ -3,6 +3,8 @@ package Engine.Window;
 import java.awt.Color;
 import java.awt.Graphics;
 
+import javax.xml.crypto.Data;
+
 import Engine.Developer.DataBase.Database;
 import Engine.Developer.Logger.Log;
 import Engine.Developer.Logger.Logger;
@@ -45,6 +47,7 @@ public class GameLoop extends Thread {
 
     public static void Quit() {
         mRunning = false;
+        Database.Instance().cerrarBD();
     }
 
     public static void Restart() {
