@@ -113,4 +113,8 @@ public class GraphicsPipeline {
     public void UnbindCamera(CameraComponent c) {
         mCamera = (mCamera == c) ? null : mCamera;
     }
+
+    public void renderableInfo(){
+        System.out.println(mRenderables.size());;
+    }
 }
