@@ -61,6 +61,9 @@ public class ObjectManager {
         if(mAliveEntities.containsKey(type)) {
             //System.out.println(type);
             mNewEntities.get(type).add(e);
+            System.out.println("Se añade :" + e.getClass() + " a " + e.GetSuperClass());
+            System.out.println(mAliveEntities.get(e.GetSuperClass()));
+            System.out.println(mAliveEntities);
 
         //else, create a new chunk
         } else {
@@ -147,5 +150,24 @@ public class ObjectManager {
 
         //mNewEntities.clear();
         mNewEntities.values().stream().forEach(x -> x.clear());
+        //managerInfo();
+    }
+
+    /** Inform aboout the content of the ObjectManager
+     * 
+     */
+    public void managerInfo(){
+        System.out.println("------------------------------------------------------------------------------------------");
+        for (Class code: mAliveEntities.keySet()){
+            System.out.println(code.descriptorString() + "Num: " + mAliveEntities.get(code).size());
+            System.out.println("Contend : \n" + mAliveEntities.get(code));
+        }
+    }
+    public void mNewEntitiesInfo(){
+        System.out.println("------------------------------------------------------------------------------------------");
+        for (Class code: mNewEntities.keySet()){
+            System.out.println(code.descriptorString() + "Num: " + mAliveEntities.get(code).size());
+            System.out.println("Contend : \n" + mAliveEntities.get(code));
+        }
     }
 }

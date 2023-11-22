@@ -406,7 +406,8 @@ public class Player extends Actor {
         CollisionResult res_3 = terrainCollider.GetBounds().collisionTile(topLeftX + terrainCollider.GetBounds().GetWidth(), topLeftY + terrainCollider.GetBounds().GetHeight());
         boolean result = (res == CollisionResult.None) && (res_1 == CollisionResult.None) && (res_2 == CollisionResult.None) && (res_3 == CollisionResult.None);
         falling = (res == CollisionResult.Hole);
-        return (result);
+        //return (result);
+        return true;
     }
     // ------------------------------------------------------------------------
     

@@ -87,6 +87,7 @@ public class World {
                 SpawnEntity(new Rock(e.position));
             }else if(e.type == firstEntity+2) {
                 SpawnEntity(new Torch(e.position));
+                //ObjectManager.GetObjectManager().mNewEntitiesInfo();
             }
             
         }
@@ -144,7 +145,7 @@ public class World {
                     sPreviousBottomLeft = z.GetBottomLeftBound();
                 }
             }
-        } else {
+        } else { //Transitioning TRUE
             var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetCamera();
             z.Update();
 
@@ -171,7 +172,7 @@ public class World {
                 z.SetBounds(new Vector2D<Float>(Util.LinearInterpolate(goaltopright.x, goaltopright2.x, (sElapsedTime - 0.5f) * 2), Util.LinearInterpolate(goaltopright.y, goaltopright2.y, (sElapsedTime - 0.5f) * 2)),
                             new Vector2D<Float>(Util.LinearInterpolate(goaltopleft.x, goaltopleft2.x, (sElapsedTime - 0.5f) * 2), Util.LinearInterpolate(goaltopleft.x, goaltopleft2.y, (sElapsedTime - 0.5f) * 2)));
                 sElapsedTime += 0.016;
-            } else {
+            } else { //END TRANSITION
                 GameLoop.SetPaused(false);
                 sTransitioning = false;
 

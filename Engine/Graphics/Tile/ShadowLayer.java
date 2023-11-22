@@ -102,7 +102,7 @@ public class ShadowLayer {
         }else{
             seeker.GetBounds().SetPosition(result);
         }
-        */
+         */
         Vector2D<Integer> _result =  new Vector2D<Integer>((int)(result.x/64), (int)(result.y/64));
         return _result;
     }

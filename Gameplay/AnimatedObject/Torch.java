@@ -135,4 +135,9 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
     public Vector2D<Float> getPseudoPosition(){
         return World.GetLevelSpaceCoordinates(super.getPseudoPosition());
     }
+
+    @Override
+    public String toString() {
+        return this.getPseudoPosition().toString();
+    }
 }
