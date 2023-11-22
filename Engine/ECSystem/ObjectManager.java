@@ -15,6 +15,7 @@ import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Entity;
 import Engine.Math.Vector2D;
 import Gameplay.Enemies.Enemy;
+import Gameplay.Link.Player;
 import Gameplay.NPC.Npc;
 
 //This is a Singleton
@@ -168,5 +169,15 @@ public class ObjectManager {
             System.out.println(code.descriptorString() + "Num: " + mAliveEntities.get(code).size());
             System.out.println("Contend : \n" + mAliveEntities.get(code));
         }
+    }
+    /** Remove all aliveEntities except NPC,Actor
+     * 
+     */
+    public void Flush(){
+        ArrayList<Entity> player = mAliveEntities.get(Player.class);
+        ArrayList<Entity> NPCs = mAliveEntities.get(Npc.class);
+        mAliveEntities.clear();
+        mAliveEntities.put(Player.class, player);
+        mAliveEntities.put(Npc.class, NPCs);
     }
 }
