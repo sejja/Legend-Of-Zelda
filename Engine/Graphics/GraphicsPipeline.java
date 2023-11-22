@@ -138,7 +138,7 @@ public class GraphicsPipeline {
         System.out.println(mRenderables.size());;
     }
 
-    /** This function remove all renderable of the previus level expept Zelda's components
+    /** This function remove all renderable of the previus level expept Zelda's components and NPC
      * 
      */
     public void flush(){
