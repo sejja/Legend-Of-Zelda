@@ -144,19 +144,8 @@ public abstract class Actor extends Entity implements ClassClasifier{
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
         Actor other = (Actor) obj;
-        if (GetPosition() == null) {
-            if (other.GetPosition() != null)
-                return false;
-        } else if (!GetPosition().equals(other.GetPosition()))
-            return false;
-        return true;
+        return this.GetPosition().equals(other.GetPosition());
     }
 
 }
