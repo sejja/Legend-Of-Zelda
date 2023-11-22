@@ -182,16 +182,5 @@ public class ObjectManager {
         mAliveEntities.clear();
         mAliveEntities.put(Player.class, player);
         mAliveEntities.put(Npc.class, NPCs);
-        /* 
-        for(Class code: mAliveEntities.keySet()){
-            if( ! ( code.equals(Npc.class) || code.equals(Player.class)) ){
-                if(mDeadEntities.contains(code)){
-                    mDeadEntities.get(code).addAll(mAliveEntities.get(code));
-                }else{
-                    mDeadEntities.put(code, mAliveEntities.get(code));
-                }
-            }
-        }
-        */
     }
 }

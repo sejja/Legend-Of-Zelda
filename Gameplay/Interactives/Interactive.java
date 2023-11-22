@@ -62,7 +62,7 @@ public abstract class Interactive extends Actor{
     *   Adds the needed animation
     */ //----------------------------------------------------------------------
     public void Animate() {
-        SetAnimation(0, mAnimation.GetSpriteSheet().GetSpriteArray(0), -1);
+        SetAnimation(0, mAnimation.GetSpriteSheet().GetSpriteArray(0), 1);
     }
 
     // ------------------------------------------------------------------------
