@@ -49,7 +49,7 @@ public class World {
         try {
             ObjectManager.GetObjectManager().flush();
         }catch(NullPointerException e){
-            System.out.println("patata");
+            System.out.println("No hay nada que borrar MAMARRACHO");
         }
         
         spawnEntities();
