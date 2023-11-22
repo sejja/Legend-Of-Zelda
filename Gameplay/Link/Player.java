@@ -319,7 +319,7 @@ public class Player extends Actor {
         InputManager.SubscribePressed(KeyEvent.VK_T, new InputFunction() {
             @Override
             public void Execute() {
-                System.out.println(ColliderManager.GetColliderManager().getCollision(hitbox, Npc.class, true));
+                System.out.println(ColliderManager.GetColliderManager().getCollision(mCollider, Npc.class, true));
             }
         });
     }
@@ -701,6 +701,7 @@ public class Player extends Actor {
     private void interact(){
         if(currentNPCinteraction == null){
             currentNPCinteraction = nearestNPC();
+            System.out.println(currentNPCinteraction);
         }
         try {
             currentNPCinteraction.INTERACTION();

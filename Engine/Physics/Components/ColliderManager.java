@@ -42,7 +42,10 @@ public class ColliderManager {
                     mapAllNonCollision.get(CLASS).add(collider);
                 }
             }
-            else{return;}
+            else{
+                removeCollider(collider);
+                addCollider(collider, itCollides);
+            }
         }
         //System.out.println(mapAllCollision);
     }
