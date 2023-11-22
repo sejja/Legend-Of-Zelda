@@ -147,8 +147,7 @@ public class Player extends Actor {
         setPseudoPositionVisible();
         hitbox = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<Float>(55f, 60f), true));
         terrainCollider = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<Float>(55f, 20f), false));
-        terrainCollider.setPosition(new Vector2D<>(getPseudoPosition().x - terrainCollider.GetBounds().GetWidth()/2, getPseudoPosition().y+20));
-        terrainCollider.setColor(Color.RED);
+        terrainCollider.SetPosition(new Vector2D<>(getPseudoPosition().x - terrainCollider.GetBounds().GetWidth()/2, getPseudoPosition().y+20));
         ColliderManager.GetColliderManager().addCollider(hitbox, true);
         ObjectManager.GetObjectManager().SetPawn(this);
     }
@@ -417,7 +416,7 @@ public class Player extends Actor {
     }
     private void terrainColliderUpdate(){
         //terrainCollider.Update();
-        terrainCollider.setPosition(new Vector2D<>(getPseudoPosition().x - terrainCollider.GetBounds().GetWidth()/2, getPseudoPosition().y+20));
+        terrainCollider.SetPosition(new Vector2D<>(getPseudoPosition().x - terrainCollider.GetBounds().GetWidth()/2, getPseudoPosition().y+20));
     }
     // ------------------------------------------------------------------------
 
@@ -808,7 +807,8 @@ public class Player extends Actor {
         setDamage(2);
         this.direction = DIRECTION.DOWN;
         setToSpawnPoint();
-        hitbox.Reset();
+        hitbox.SetPosition(GetPosition());
+        hitbox.SetScale(GetScale());;
         mAnimation.SetFrameTrack(DOWN+Action.STOP.getID());
         canmove = true;
     }

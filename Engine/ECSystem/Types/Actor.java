@@ -135,7 +135,6 @@ public abstract class Actor extends Entity implements ClassClasifier{
     public void setPseudoPositionVisible (){
         mCollider = new BoxCollider(this);
         mCollider.GetBounds().SetBox(pseudoPosition, new Vector2D<>(5f,5f));
-        mCollider.setColor(Color.RED);
         AddComponent(mCollider);
     }
 

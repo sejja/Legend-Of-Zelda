@@ -8,16 +8,8 @@
 
 package Engine.Physics.Components;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.util.HashMap;
-import java.util.LinkedList;
-
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Component;
-import Engine.Graphics.GraphicsPipeline;
-import Engine.Graphics.Components.CameraComponent;
-import Engine.Graphics.Components.Renderable;
 import Engine.Math.Vector2D;
 import Engine.Physics.AABB;
 /* Hitbox Implementation
@@ -28,20 +20,18 @@ import Engine.Physics.AABB;
  *      -> Add pseudoPositionUpdate() at the end of the Actor.Update()
  * 
  */
-public class BoxCollider extends Component implements Renderable{
-
+public class BoxCollider extends Component {
     private AABB mBounds;
-    private boolean hasCollision;
-    private Color color = Color.BLUE;
-    private Vector2D<Float> size;
+    private boolean mRigid;
+
     // ------------------------------------------------------------------------
     /*! Conversion Constructor
     *
     *   Constructs a Box Collider from a parent actor
     */ //----------------------------------------------------------------------
-    public BoxCollider(Actor parent) {
+    public BoxCollider(final Actor parent) {
         super(parent);
-        mBounds = new AABB(parent.GetPosition(), parent.GetScale());
+        SetUp(true, GetParent().GetScale());
     }
 
     // ------------------------------------------------------------------------
@@ -49,31 +39,43 @@ public class BoxCollider extends Component implements Renderable{
     *
     *   Constructs a Box Collider from a parent actor and a scale
     */ //----------------------------------------------------------------------
-    public BoxCollider(Actor parent, Vector2D<Float> scale) {
+    public BoxCollider(final Actor parent, final Vector2D<Float> scale) {
         super(parent);
-        mBounds = new AABB(parent.GetPosition(), scale);
+        SetUp(true, scale);
     }
 
-    public BoxCollider(Actor parent,Vector2D<Float> scale, boolean hasCollision){ //This construct will bild a Hitbox
+    // ------------------------------------------------------------------------
+    /*! Conversion Constructor
+    *
+    *   Constructs a Box Collider from a parent actor and a scale, along with collision information
+    */ //----------------------------------------------------------------------
+    public BoxCollider(final Actor parent, final Vector2D<Float> scale, 
+        final boolean hasCollision){ //This construct will bild a Hitbox
         super(parent);
-        Vector2D<Float> drawnPoint = new Vector2D<Float>(parent.getPseudoPosition().x-(scale.x/2), parent.getPseudoPosition().y-(scale.y/2));
-        mBounds = new AABB(drawnPoint, scale);
-        if(hasCollision){
-            color = Color.MAGENTA;
-        }
-        this.hasCollision = hasCollision;
-        ColliderManager.GetColliderManager().addCollider(this, hasCollision);
+        SetUp(hasCollision, scale);
     }
 
-    public BoxCollider(Actor parent, Vector2D<Float> position, int seeker){ //This construct will bild a Hitbox
-        super(parent);
-        mBounds = new AABB(position, new Vector2D<Float>(64f, 64f));
+    // ------------------------------------------------------------------------
+    /*! Set Up
+    *
+    *   Builds the Box Collider and adds it to the collider manager
+    */ //----------------------------------------------------------------------
+    private void SetUp(final boolean rigid, final Vector2D<Float> scale) {
+        mBounds = new AABB(GetParent().GetPosition(), scale);
+        mRigid = rigid;
+        ColliderManager.GetColliderManager().addCollider(this, mRigid);
     }
 
-    public void setHitboxScale(Vector2D <Float> scale){
-        Vector2D<Float> drawnPoint = new Vector2D<Float>(GetParent().getPseudoPosition().x-(scale.x/2), GetParent().getPseudoPosition().y-(scale.y/2));
-        mBounds = new AABB(drawnPoint, scale);
+    // ------------------------------------------------------------------------
+    /*! Set Scale
+    *
+    *  Sets the scale of the box collider
+    */ //----------------------------------------------------------------------
+    public void SetScale(final Vector2D <Float> scale){
+        mBounds = new AABB(new Vector2D<Float>(GetParent().getPseudoPosition().x
+            -(scale.x/2), GetParent().getPseudoPosition().y-(scale.y/2)), scale);
     }
+
     // ------------------------------------------------------------------------
     /*! Init
     *
@@ -81,7 +83,6 @@ public class BoxCollider extends Component implements Renderable{
     */ //----------------------------------------------------------------------
     @Override
     public void Init() {
-        GraphicsPipeline.GetGraphicsPipeline().AddRenderable(this);
     }
 
     // ------------------------------------------------------------------------
@@ -91,16 +92,15 @@ public class BoxCollider extends Component implements Renderable{
     */ //----------------------------------------------------------------------
     @Override
     public void Update() {
-        //mBounds.SetHeight(this.GetBounds().GetWidth()); Para que sirve esto??? --> Idk bro
-        //mBounds.SetWidth(this.GetBounds().GetHeight());
-        if(hasCollision){
-            mBounds.SetPosition(new Vector2D<Float>(super.GetParent().getPseudoPosition().x-(mBounds.GetWidth()/2), super.GetParent().getPseudoPosition().y-(mBounds.GetHeight()/2)));
-        }
+        mBounds.SetPosition(GetParent().getPseudoPosition());
+
+        //If the box collider is rigid
+        if(mRigid)
+            mBounds.SetPosition(new Vector2D<Float>(super.GetParent().
+                getPseudoPosition().x-(mBounds.GetWidth()/2), 
+                super.GetParent().getPseudoPosition().y-(mBounds.GetHeight()/2)));
     }
 
-    public void Reset(){
-        mBounds.SetBox(super.GetParent().GetPosition(), mBounds.GetScale());
-    }
     // ------------------------------------------------------------------------
     /*! Shutdown
     *
@@ -108,12 +108,6 @@ public class BoxCollider extends Component implements Renderable{
     */ //----------------------------------------------------------------------
     @Override
     public void ShutDown() {
-        GraphicsPipeline.GetGraphicsPipeline().RemoveRenderable(this);
-        try{
-            ColliderManager.GetColliderManager().removeCollider(this);
-        }catch(NullPointerException e){
-            //System.err.print("Already removed");
-        }
     }
 
     // ------------------------------------------------------------------------
@@ -125,27 +119,12 @@ public class BoxCollider extends Component implements Renderable{
         return mBounds;
     }
 
-    public void setPosition(Vector2D<Float> position){
-        this.mBounds.SetPosition(position);
-    }
-
-    public void setColor (Color color ){
-        this.color = color;
-    }
-    @Override
-    public void Render(Graphics2D g, CameraComponent camerapos) {
-        var campos = camerapos.GetCoordinates();
-       g.setColor(color);
-       g.drawRect((int)(float)(mBounds.GetPosition().x - campos.x), (int)(float)(mBounds.GetPosition().y - campos.y), (int)mBounds.GetWidth(), (int)mBounds.GetHeight());
-    }
-
-    public void disable(){
-        size = mBounds.GetScale();
-        mBounds.SetSize(new Vector2D<>(0f,0f));
-    }
-
-    public void enable(){
-        if(size == null){System.out.println("AlreadyEnabled");}
-        else{this.mBounds.SetSize(size);}
+    // ------------------------------------------------------------------------
+    /*! Set Position
+    *
+    *   Sets the position of the box collider
+    */ //----------------------------------------------------------------------
+    public void SetPosition(final Vector2D<Float> position){
+        mBounds.SetPosition(position);
     }
 }
