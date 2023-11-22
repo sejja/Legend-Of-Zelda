@@ -74,11 +74,11 @@ public class World {
         return new Pair(x,y);
     }
 
+    // Spawns the entities of entityQueue based on the ID and in the position specified
     private void spawnEntities() {
-        //System.out.println(mTilemap.entityQueue);
+        System.out.println(mTilemap.entityQueue);
         int firstEntity = mTilemap.firstEntity;
         while(mTilemap.entityQueue != null && !mTilemap.entityQueue.isEmpty() ) {
-            //System.out.println("Juan");
             var e = mTilemap.entityQueue.poll();
             //System.out.println(e.type+"  "+ firstEntity);
             if(e.type == firstEntity) {
@@ -87,7 +87,6 @@ public class World {
                 SpawnEntity(new Rock(e.position));
             }else if(e.type == firstEntity+2) {
                 SpawnEntity(new Torch(e.position));
-                //ObjectManager.GetObjectManager().mNewEntitiesInfo();
             }
             
         }
