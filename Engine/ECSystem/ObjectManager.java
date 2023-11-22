@@ -171,7 +171,7 @@ public class ObjectManager {
             System.out.println("Contend : \n" + mAliveEntities.get(code));
         }
     }
-    /** RemoveAll aliveEntities except NPC,Actor
+    /** Remove all aliveEntities except NPC,Actor
      * 
      */
     public void Flush(){
