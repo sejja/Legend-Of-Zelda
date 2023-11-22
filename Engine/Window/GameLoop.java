@@ -3,6 +3,7 @@ package Engine.Window;
 import java.awt.Color;
 import java.awt.Graphics;
 
+import Engine.Developer.DataBase.Database;
 import Engine.Developer.Logger.Log;
 import Engine.Developer.Logger.Logger;
 import Engine.ECSystem.ObjectManager;
@@ -36,6 +37,7 @@ public class GameLoop extends Thread {
 
         Logger.Instance().Log(v, "Engine Started!", java.util.logging.Level.INFO);
 
+        Database.Instance().InitConnection("game.db");
         mRunning = true;
         mStateManager = new StateMachine();
         InputManager.Instance().SetSpeakingBuffer(mTargetBuffer);

@@ -1,10 +1,13 @@
 package Gameplay.Levels;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import Engine.Assets.AssetManager;
 import Engine.Audio.Audio;
 import Engine.Audio.Sound;
+import Engine.Developer.DataBase.Database;
 import Engine.ECSystem.World;
 import Engine.ECSystem.ObjectManager;
 import Engine.Graphics.GraphicsPipeline;
@@ -36,10 +39,10 @@ public class TestRoom extends World {
     private final int yLineMovement = 6;
     private final int stop = 7;
     
-    public TestRoom(World right, World left, World up, World down, String tiles, Vector2D<Float> pos) {
-        super(right, left, up, down, new TileManager(tiles));
-        ObjectManager.GetObjectManager().AddEntity(new Player(new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/Link/Link.png")), new Vector2D<Float>(1550.f, 3000.f), new Vector2D<Float>(100.f, 100.f)));
-        Init(pos);
+    public TestRoom(Integer id) {
+        super(id);
+        ObjectManager.GetObjectManager().AddEntity(new Player(new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/Link/Link.png")), new Vector2D<Float>(1350.f, 800.f), new Vector2D<Float>(100.f, 100.f)));
+        Init(new Vector2D<Float>(0.f, 0.f));
         
         ArrayList<String> dialogueArrayList = new ArrayList<String>();
         ArrayList<String> dialogueArrayList2 = new ArrayList<String>();
