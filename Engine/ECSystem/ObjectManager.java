@@ -13,6 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Entity;
+import Engine.Graphics.GraphicsPipeline;
 import Engine.Math.Vector2D;
 import Gameplay.Enemies.Enemy;
 import Gameplay.Link.Player;
@@ -173,12 +174,13 @@ public class ObjectManager {
     /** Remove all aliveEntities except NPC,Actor
      * 
      */
-    public void Flush(){
+    public void flush(){
         ArrayList<Entity> player = mAliveEntities.get(Player.class);
         ArrayList<Entity> NPCs = mAliveEntities.get(Npc.class);
         for(Entity enemy: mAliveEntities.get(Enemy.class)){
             ((Enemy)enemy).superDie();
         }
+        GraphicsPipeline.GetGraphicsPipeline().flush();
         mAliveEntities.clear();
         mAliveEntities.put(Player.class, player);
         mAliveEntities.put(Npc.class, NPCs);

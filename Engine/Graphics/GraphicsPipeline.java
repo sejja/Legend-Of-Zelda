@@ -13,10 +13,13 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 import Engine.Developer.Logger.Logger;
+import Engine.ECSystem.ObjectManager;
+import Engine.ECSystem.Types.Component;
 import Engine.Graphics.Components.CameraComponent;
 import Engine.Graphics.Components.Renderable;
 import Engine.Graphics.Tile.ShadowLayer;
 import Engine.Math.Vector2D;
+import Gameplay.Link.Player;
 
 public class GraphicsPipeline {
     private ArrayList<Renderable> mRenderables;
@@ -116,5 +119,11 @@ public class GraphicsPipeline {
 
     public void renderableInfo(){
         System.out.println(mRenderables.size());;
+    }
+
+    public void flush(){
+        Player player = (Player) ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0);
+        ArrayList<Component> playerComponents = player.getmComponents();
+        System.out.println(playerComponents.size());
     }
 }

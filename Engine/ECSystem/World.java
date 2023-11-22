@@ -47,7 +47,7 @@ public class World {
         mCurrentLevel = this;
         mTilemap.CreateTileMap(64, 64, position);
         try {
-            ObjectManager.GetObjectManager().Flush();
+            ObjectManager.GetObjectManager().flush();
         }catch(NullPointerException e){
             System.out.println("patata");
         }
