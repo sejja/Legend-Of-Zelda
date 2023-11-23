@@ -22,9 +22,9 @@ import Engine.ECSystem.Types.Entity;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.AnimationMachine;
 import Engine.Math.Vector2D;
+import Engine.Physics.ColliderManager;
 import Engine.Physics.CollisionResult;
 import Engine.Physics.Components.BoxCollider;
-import Engine.Physics.Components.ColliderManager;
 import Gameplay.Enemies.Enemy;
 import Gameplay.Enemies.Units.GreenKnight;
 import Gameplay.Interactives.Interactive;
@@ -116,28 +116,28 @@ public class Arrow extends Actor{
         switch (direction){
             case UP:
                 currentPosition = pos.y;
-                if(hitbox.GetBounds().collisionTile(0, -speed) == CollisionResult.None){
+                if(hitbox.GetBounds().CollisionTile(0, -speed) == CollisionResult.None){
                     pos.y -= speed;
                     distance += Math.abs(currentPosition - pos.y);
                 }else{endArrow = true;}
                 return;
             case DOWN:
                 currentPosition = pos.y;
-                if(hitbox.GetBounds().collisionTile(0, +speed) == CollisionResult.None){
+                if(hitbox.GetBounds().CollisionTile(0, +speed) == CollisionResult.None){
                     pos.y += speed;
                     distance += Math.abs(currentPosition - pos.y);
                 }else{endArrow = true;}
                 return;
             case LEFT:
                 currentPosition = pos.x;
-                if(hitbox.GetBounds().collisionTile(-speed, 0) == CollisionResult.None){
+                if(hitbox.GetBounds().CollisionTile(-speed, 0) == CollisionResult.None){
                     pos.x -= speed;
                     distance += Math.abs(currentPosition - pos.x);
                 }else{endArrow = true;}
                 return;
             case RIGHT:
                 currentPosition = pos.x;
-                if(hitbox.GetBounds().collisionTile(+speed, 0) == CollisionResult.None){
+                if(hitbox.GetBounds().CollisionTile(+speed, 0) == CollisionResult.None){
                     pos.x += speed;
                     distance += Math.abs(currentPosition - pos.x);
                 }else{endArrow = true;}

@@ -12,6 +12,7 @@ import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Component;
 import Engine.Math.Vector2D;
 import Engine.Physics.AABB;
+import Engine.Physics.ColliderManager;
 /* Hitbox Implementation
  *      -> Add a hitbox properties in the Actor
  *      -> Use BoxCollider(Actor parent,Vector2D<Float> scale, boolean itCollides) 
@@ -31,7 +32,7 @@ public class BoxCollider extends Component {
     */ //----------------------------------------------------------------------
     public BoxCollider(final Actor parent) {
         super(parent);
-        SetUp(true, GetParent().GetScale());
+        SetUp(false, GetParent().GetScale());
     }
 
     // ------------------------------------------------------------------------
@@ -41,7 +42,7 @@ public class BoxCollider extends Component {
     */ //----------------------------------------------------------------------
     public BoxCollider(final Actor parent, final Vector2D<Float> scale) {
         super(parent);
-        SetUp(true, scale);
+        SetUp(false, scale);
     }
 
     // ------------------------------------------------------------------------

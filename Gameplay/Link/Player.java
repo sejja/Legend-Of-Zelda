@@ -32,11 +32,11 @@ import Engine.Input.InputFunction;
 import Engine.Input.InputManager;
 import Engine.Math.EuclideanCoordinates;
 import Engine.Math.Vector2D;
+import Engine.Physics.ColliderManager;
 import Engine.Physics.CollisionResult;
 import Engine.Physics.Components.BoxCollider;
 import Engine.Window.GameLoop;
 import Engine.Window.PresentBuffer;
-import Engine.Physics.Components.ColliderManager;
 import Gameplay.Interaction;
 import Gameplay.AnimatedObject.Bomb;
 import Gameplay.Enemies.Enemy;
@@ -384,7 +384,7 @@ public class Player extends Actor {
      *      -> True if there is no collision
      */
     public boolean SolveCollisions(Vector2D<Integer> dif) {
-        CollisionResult res = terrainCollider.GetBounds().collisionTile(
+        CollisionResult res = terrainCollider.GetBounds().CollisionTile(
             dif.x - World.mCurrentLevel.GetBounds().GetPosition().x, 
             dif.y - World.mCurrentLevel.GetBounds().GetPosition().y);
         falling = res == CollisionResult.Hole;

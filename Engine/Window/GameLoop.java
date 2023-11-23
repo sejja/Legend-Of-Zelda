@@ -13,7 +13,7 @@ import Engine.ECSystem.World;
 import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Tile.ShadowLayer;
 import Engine.Input.InputManager;
-import Engine.Physics.Components.ColliderManager;
+import Engine.Physics.ColliderManager;
 import Engine.StateMachine.StateMachine;
 
 public class GameLoop extends Thread {

@@ -27,7 +27,7 @@ import Engine.Graphics.Components.ZeldaCameraComponent;
 import Engine.Graphics.Tile.ShadowLayer;
 import Engine.Graphics.Tile.TileManager;
 import Engine.Math.Vector2D;
-import Engine.Physics.Components.ColliderManager;
+import Engine.Physics.ColliderManager;
 import Engine.StateMachine.State;
 import Gameplay.Enemies.*;
 import Gameplay.Levels.TestRoom;

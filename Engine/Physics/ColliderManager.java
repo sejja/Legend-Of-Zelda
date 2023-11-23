@@ -1,4 +1,4 @@
-package Engine.Physics.Components;
+package Engine.Physics;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,6 +7,7 @@ import java.util.ListIterator;
 
 import Engine.ECSystem.Types.Actor;
 import Engine.Math.EuclideanCoordinates;
+import Engine.Physics.Components.BoxCollider;
 import Gameplay.Link.Player;
 /* ColliderManager is a static object thats manage the colision between objects
  *      -> All BoxCollider thats hasCollision it is added automatically to the colliderManager

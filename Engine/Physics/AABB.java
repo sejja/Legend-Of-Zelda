@@ -10,9 +10,7 @@ package Engine.Physics;
 
 import Engine.Graphics.Tile.Block;
 import Engine.Graphics.Tile.HoleBlock;
-import Engine.Graphics.Tile.Normblock;
 import Engine.Graphics.Tile.TileManager;
-import Engine.Graphics.Tile.CollisionLayer;
 import Engine.Math.Vector2D;
 
 public class AABB {
@@ -24,7 +22,7 @@ public class AABB {
     *
     *   Constructs an AABB with a position, a width and a height
     */ //----------------------------------------------------------------------
-    public AABB(Vector2D<Float> pos, Vector2D<Float> size) {
+    public AABB(final Vector2D<Float> pos, final Vector2D<Float> size) {
         mPosition = pos;
         mSize = size;
     }
@@ -37,12 +35,25 @@ public class AABB {
     public Vector2D<Float> GetPosition() {
         return mPosition;
     }
-    public void SetPosition (Vector2D<Float> position){
+
+    // ------------------------------------------------------------------------
+    /*! Set Position
+    *
+    *   Sets the position of the AABB (as an offset)
+    */ //----------------------------------------------------------------------
+    public void SetPosition (final Vector2D<Float> position) {
         this.mPosition = position;
     }
-    public Vector2D<Float> GetScale(){
+
+    // ------------------------------------------------------------------------
+    /*! Get Scale
+    *
+    *   Returns the scale
+    */ //----------------------------------------------------------------------
+    public Vector2D<Float> GetScale() {
         return this.mSize;
     }
+
     // ------------------------------------------------------------------------
     /*! Get Height
     *
@@ -66,20 +77,26 @@ public class AABB {
     *
     *   Sets the box, as with a position, a width and a height
     */ //----------------------------------------------------------------------
-    public void SetBox(Vector2D<Float> pos, Vector2D<Float> size) {
+    public void SetBox(final Vector2D<Float> pos, final Vector2D<Float> size) {
         mPosition = pos;
         mSize = size;
     }
 
-    public void SetSize(Vector2D<Float> size){
+    // ------------------------------------------------------------------------
+    /*! Set Size
+    *
+    *   Sets the Size of the AABB
+    */ //----------------------------------------------------------------------
+    public void SetSize(final Vector2D<Float> size){
         this.mSize = size;
     }
+
     // ------------------------------------------------------------------------
     /*! Set WIdth
     *
     *   Sets the Width
     */ //----------------------------------------------------------------------
-    public void SetWidth(float f) {
+    public void SetWidth(final float f) {
         mSize.x = f;
     }
 
@@ -88,7 +105,7 @@ public class AABB {
     *
     *   Sets the Height
     */ //----------------------------------------------------------------------
-    public void SetHeight(float f) {
+    public void SetHeight(final float f) {
         mSize.y = f;
     }
 
@@ -97,72 +114,67 @@ public class AABB {
     *
     *   Returns wether two boxes collide or not
     */ //----------------------------------------------------------------------
-    public boolean Collides(AABB box) {
-        /*final float halfxsize = mSize.x / 2;
-        final float halfysize = mSize.y / 2;
-
-        //If they overlap on the X axis
-        if(Math.abs(((mPosition.x) + halfxsize) - ((box.mPosition.x) + halfxsize)) < halfxsize + (box.mSize.x / 2))
-
-            //If they overlap on the Y Axis
-            if(Math.abs(((mPosition.y) + halfysize) - ((box.mPosition.x) + halfysize)) < halfysize + (box.mSize.x / 2))
-                return true;
-
-        return false;*/
-
-        if(mPosition.x < box.mPosition.x + box.mSize.x &&
-            mPosition.x + mSize.x > box.mPosition.x &&
-            mPosition.y < box.mPosition.y + box.mSize.y &&
-            mPosition.y + mSize.y > box.mPosition.y)
-                return true;
-        return false;
+    public boolean Collides(final AABB box) {
+        return mPosition.x < box.mPosition.x + box.mSize.x &&
+        mPosition.x + mSize.x > box.mPosition.x &&
+        mPosition.y < box.mPosition.y + box.mSize.y &&
+        mPosition.y + mSize.y > box.mPosition.y;
     }
 
     // ------------------------------------------------------------------------
     /*! Collides a Circle with a Box
     *
-    *   CPretty much the name. A collision test
+    *   Pretty much the name. A collision test
     */ //----------------------------------------------------------------------
-    public boolean CollidesCircleBox(AABB box) {
+    public boolean CollidesCircleBox(final AABB box) {
         return (Math.pow(mPosition.x - Math.max(box.mPosition.x + box.GetWidth() / 2, Math.min(mPosition.x, box.mPosition.x)), 2) 
             + Math.pow(mPosition.y - Math.max(box.mPosition.y + box.GetHeight() / 2,  Math.min(mPosition.y, box.mPosition.y)), 2))
             < Math.pow(Math.max(mSize.x, mSize.y) / Math.sqrt(2), 2);
     }
 
-    public CollisionResult collisionTile(float ax, float ay) {
+    // ------------------------------------------------------------------------
+    /*! Collision Tile
+    *
+    *   Test against tile collision
+    */ //----------------------------------------------------------------------
+    public CollisionResult CollisionTile(final float ax, final float ay) {
+        //Loop for 4 bytes
         for(int c = 0; c < 4; c++) {
-            int xt = (int)((mPosition.x + ax) + (c % 2) * mSize.x) / 64;
-            int yt = (int)((mPosition.y + ay) + (int)(c / 2) * mSize.y) / 64;
-            Vector2D<Integer> pos = new Vector2D<>(xt, yt);
-            if(!(TileManager.sLevelObjects.GetBlockAt(pos) instanceof Normblock)
-                && xt < TileManager.sLevelObjects.mWidth && yt < TileManager.sLevelObjects.mHeight) {
-                Block block = TileManager.sLevelObjects.GetBlockAt(pos);
-                if(block instanceof HoleBlock) {
-                    return collisionHole(ax, ay, xt, yt, block) ? CollisionResult.Hole : CollisionResult.None;
-                }
-                return block != null ? (block.HasCollision() ? CollisionResult.Wall : CollisionResult.None) : CollisionResult.None;
+            final Vector2D<Integer> pos = new Vector2D<>(
+                (int)((mPosition.x + ax) + (c % 2) * mSize.x) / 64, 
+                (int)((mPosition.y + ay) + (int)(c / 2) * mSize.y) / 64);
+
+            //If we are within bounds
+            if(pos.x < TileManager.sLevelObjects.mWidth && pos.y < 
+                TileManager.sLevelObjects.mHeight) {
+                final Block block = TileManager.sLevelObjects.GetBlockAt(pos);
+                return block != null ? 
+                    (block instanceof HoleBlock ? 
+                    CollisionHole(ax, ay, pos.x, pos.y, block) ? 
+                        CollisionResult.Hole : CollisionResult.None 
+                    : block.HasCollision() ? 
+                        CollisionResult.Wall : CollisionResult.None) 
+                    : CollisionResult.None;
             }
         }
 
         return CollisionResult.None;
     }
 
-    private boolean collisionHole(float ax, float ay, float xt, float yt, Block block) {
-        int nextXT = (int)((mPosition.x + ax) / 64 + mSize.x / 64);
-        int nextYT = (int)((mPosition.y + ay) / 64 + mSize.y / 64);
+    // ------------------------------------------------------------------------
+    /*! Collision Hole
+    *
+    *   Test against a Hole
+    */ //----------------------------------------------------------------------
+    private boolean CollisionHole(final float ax, final float ay, final float xt,
+        final float yt, final Block block) {
+        final Vector2D<Integer> pos = new Vector2D<>(
+            (int)((mPosition.x + ax) / 64 + mSize.x / 64), 
+            (int)((mPosition.y + ay) / 64 + mSize.y / 64));
 
-        if((nextYT == yt + 1) || (nextYT == xt + 1)) {
-            Vector2D<Integer> pos = new Vector2D<>(nextXT, nextYT);
-            if(TileManager.sLevelObjects.GetBlockAt(pos) != null) {
-                Block neighbour = TileManager.sLevelObjects.GetBlockAt(pos);
-                return neighbour.HasCollision();
-            }
-        } else {
-            if(block.IsInside(this)) {
-                return block.HasCollision();
-            }
-        }
-
-        return false;
+        return (pos.y == yt + 1) || (pos.x == xt + 1) ? 
+            (TileManager.sLevelObjects.GetBlockAt(pos) != null ? 
+            TileManager.sLevelObjects.GetBlockAt(pos).HasCollision() : false) 
+            : block.IsInside(this) ? block.HasCollision() : false;
     }
 }
