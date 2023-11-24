@@ -8,10 +8,6 @@
 
 package Engine.StateMachine;
 
-import java.awt.Graphics2D;
-
-import Engine.Input.InputManager;
-
 public abstract class State {
     public abstract void Update();
 }
