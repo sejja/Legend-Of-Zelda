@@ -49,9 +49,9 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
         hitbox.Update();
         playerCollision(hitbox);
         if (this.animationMachine.MustComplete()){
-            System.out.println("Animacion que debe terminal");
+            //System.out.println("Animacion que debe terminal");
             if(this.animationMachine.GetAnimation().GetFrame() != previusFrameCount){
-                System.out.println("sigue iluminando");
+                //System.out.println("sigue iluminando");
                 previusFrameCount = this.animationMachine.GetAnimation().GetFrame();
                 removeIlumination();
                 radius++;
@@ -66,7 +66,7 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
            if (isIluminating){
                 turnOff();
             }else{
-                System.out.println("Se ilumina");
+                //System.out.println("Se ilumina");
                 turnON();
             }
         }
@@ -76,7 +76,7 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
     private void turnON(){
         animationMachine.setMustComplete(true);
 
-        System.out.println("Esta en el ObjectManager -> " + ObjectManager.GetObjectManager().containsInstance(this.GetSuperClass(), this));
+        //System.out.println("Esta en el ObjectManager -> " + ObjectManager.GetObjectManager().containsInstance(this.GetSuperClass(), this));
         delay = 8;
         Animate(0);
         Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/fire.wav"));
