@@ -26,6 +26,7 @@ import Engine.Graphics.Components.ZeldaCameraComponent;
 import Engine.Graphics.Tile.ShadowLayer;
 import Engine.Graphics.Tile.TileManager;
 import Engine.Math.Vector2D;
+import Engine.Window.GameLoop;
 import Gameplay.LifeBar.Heart;
 import Gameplay.LifeBar.LifeBar;
 import Gameplay.Link.Player;
@@ -97,8 +98,8 @@ public class GraphicsPipeline {
     public void Render(Graphics2D g) {
         //System.out.println("SortPrevius: ");
         //ySortInfo();
+        int i = 0;
         try {
-            int i = 0;
             while (mRenderables.get(i) instanceof TileManager) {
                 i++;
             }
@@ -106,7 +107,15 @@ public class GraphicsPipeline {
         } catch (java.lang.IndexOutOfBoundsException indexError) {
             System.err.println("Init");
         } catch (java.lang.ClassCastException castError){
-            System.out.println(mRenderables);
+            System.err.println("Contenido de los renders");
+            System.err.println(mRenderables);
+            System.err.println("Se ha añadido algo que no deberia ser ordenado : ");
+            for(int k = i; k < mRenderables.size(); k++){
+                if( !(mRenderables.get(k) instanceof Component) ){
+                    System.out.println(mRenderables.get(i).getClass());
+                }
+            }
+            GameLoop.Quit();
         }
         //System.out.println("SortPos: ");
         //ySortInfo();
