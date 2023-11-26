@@ -72,6 +72,7 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     protected int mCurrentAnimation;
     protected AnimationMachine mAnimation;
     protected BoxCollider mCollision;
+    protected PathRender pathRender;
 
     private int delay = 10;
     
@@ -84,7 +85,8 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     public Enemy( Vector2D<Float> position) {
         super(position);
         //Render path (add to pipeline)
-        GraphicsPipeline.GetGraphicsPipeline().AddRenderable(this);
+        //GraphicsPipeline.GetGraphicsPipeline().AddRenderable(this);
+        pathRender = (PathRender)AddComponent(new PathRender(this));
     }
 
     public void SetAnimation(int i, BufferedImage[] frames, int delay) {

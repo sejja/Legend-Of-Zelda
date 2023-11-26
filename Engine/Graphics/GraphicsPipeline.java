@@ -11,6 +11,7 @@ package Engine.Graphics;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Vector;
 
 import Engine.Developer.Logger.Logger;
@@ -94,6 +95,23 @@ public class GraphicsPipeline {
     *   Renders every component
     */ //----------------------------------------------------------------------
     public void Render(Graphics2D g) {
+        //System.out.println("SortPrevius: ");
+        //ySortInfo();
+        try {
+            int i = 0;
+            while (mRenderables.get(i) instanceof TileManager) {
+                i++;
+            }
+            insertionSort(i);
+        } catch (java.lang.IndexOutOfBoundsException indexError) {
+            System.err.println("Init");
+        } catch (java.lang.ClassCastException castError){
+            System.out.println(mRenderables);
+        }
+        //System.out.println("SortPos: ");
+        //ySortInfo();
+
+
         //Renderable
         for (Renderable r: mRenderables) 
             r.Render(g, mCamera);
@@ -104,7 +122,6 @@ public class GraphicsPipeline {
         mOldRenderables.clear();
         mRenderables.addAll(mNewRenderables);
         mNewRenderables.clear();
-
         shadowLayer.Render(g, mCamera);
         Logger.Instance().Render(g);
         //renderableInfo();
@@ -116,6 +133,7 @@ public class GraphicsPipeline {
                 System.out.println(((AnimationMachine)x).GetParent());
             }
         }*/
+        //System.out.println(mRenderables);
     }
 
     // ------------------------------------------------------------------------
@@ -138,6 +156,12 @@ public class GraphicsPipeline {
 
     public void renderableInfo(){
         System.out.println(mRenderables.size());;
+    }
+
+    public void ySortInfo(){
+        for(int i = 1; i < mRenderables.size(); i++){
+            System.out.print( ((Component)mRenderables.get(i)).GetParent().GetPosition().y + " -> " );
+        }
     }
 
     /** This function remove all renderable of the previus level expept Zelda's components and NPC
@@ -175,5 +199,25 @@ public class GraphicsPipeline {
         mRenderables.clear();
         
         mRenderables.addAll(unremovableRenderables);
+    }
+    private void insertionSort(int i){
+        for(int j = i; j < mRenderables.size()-1; j++){
+            if(((Component)mRenderables.get(j)).compareTo((Component)mRenderables.get(j+1)) > 0){ //component.y > nextComponent.y
+                int a = j; 
+                int b = j+1;
+                while (a >= i) {
+                    //System.out.println("ytd");
+                    Component componentA = (Component)mRenderables.get(a);
+                    Component componentB = (Component)mRenderables.get(b);
+                    if(componentA.compareTo(componentB) > 0){ //A.y > B.y
+                        Collections.swap(mRenderables, a, b);
+                        a--;
+                        b--;
+                    }else{
+                        a = -1; //End loop
+                    }
+                }
+            }
+        }
     }
 }
