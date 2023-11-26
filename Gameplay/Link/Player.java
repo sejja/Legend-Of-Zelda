@@ -701,7 +701,8 @@ public class Player extends Actor {
     private void interact(){
         if(currentNPCinteraction == null){
             currentNPCinteraction = nearestNPC();
-            System.out.println(currentNPCinteraction);
+            System.out.println("Interacion: " + currentNPCinteraction);
+            //System.out.println("Contenido en el ObjectManager: " + ObjectManager.GetObjectManager().GetAllObjectsOfType(Npc.class));
         }
         try {
             currentNPCinteraction.INTERACTION();

@@ -147,5 +147,4 @@ public abstract class Actor extends Entity implements ClassClasifier{
         Actor other = (Actor) obj;
         return this.GetPosition().equals(other.GetPosition());
     }
-
 }

@@ -14,7 +14,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Entity;
 import Engine.Graphics.GraphicsPipeline;
+import Engine.Graphics.Tile.ShadowLayer;
 import Engine.Math.Vector2D;
+import Gameplay.AnimatedObject.Torch;
 import Gameplay.Enemies.Enemy;
 import Gameplay.Link.Player;
 import Gameplay.NPC.Npc;
@@ -65,7 +67,13 @@ public class ObjectManager {
             if(!mAliveEntities.get(e.GetSuperClass()).contains(e)){
                  mNewEntities.get(type).add(e);
             }
-            else{System.err.println("Ya esta dentro MAMARRACHO");}
+            else{
+                for(int i = 0; i < mAliveEntities.get(type).size(); i++){
+                    if( (mAliveEntities.get(type).get(i) != e ) &&  ((Actor)mAliveEntities.get(type).get(i)).equals((Actor)e) ){ //If it is the same Actor but different instance
+                        mAliveEntities.get(type).set(i, e);
+                    }
+                }
+            }
 
         //else, create a new chunk
         } else {
@@ -177,12 +185,21 @@ public class ObjectManager {
     public void flush(){
         ArrayList<Entity> player = mAliveEntities.get(Player.class);
         ArrayList<Entity> NPCs = mAliveEntities.get(Npc.class);
-        for(Entity enemy: mAliveEntities.get(Enemy.class)){
+        for(Entity enemy: mAliveEntities.get(Enemy.class)){ //Kill all enemy
             ((Enemy)enemy).superDie();
         }
+        ShadowLayer.getShadowLayer().resetMatrix();
         GraphicsPipeline.GetGraphicsPipeline().flush();
         mAliveEntities.clear();
         mAliveEntities.put(Player.class, player);
         mAliveEntities.put(Npc.class, NPCs);
+    }
+
+    public boolean containsInstance(Class type, Entity entity){
+        boolean result = false;
+        for(Entity e: mAliveEntities.get(type)){
+            result = (result || (e == entity));
+        }
+        return result;
     }
 }
