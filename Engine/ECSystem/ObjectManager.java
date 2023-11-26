@@ -53,11 +53,11 @@ public class ObjectManager {
         return null;
     }
 
-    // ------------------------------------------------------------------------
-    /*! Add Entity
-    *
-    *   Adds an entity to the Object Manager, classifying it
-    */ //----------------------------------------------------------------------
+    /** Add a entity, if it is an actor and it already contains the same actor but different instance it will remove the previus instance and add the new instance
+     * 
+     * @param e entity to add
+     * @return
+     */
     public Entity AddEntity(Entity e) {
         final Class<?> type = e.GetSuperClass();
 
@@ -68,9 +68,11 @@ public class ObjectManager {
                  mNewEntities.get(type).add(e);
             }
             else{
-                for(int i = 0; i < mAliveEntities.get(type).size(); i++){
-                    if( (mAliveEntities.get(type).get(i) != e ) &&  ((Actor)mAliveEntities.get(type).get(i)).equals((Actor)e) ){ //If it is the same Actor but different instance
-                        mAliveEntities.get(type).set(i, e);
+                if(e instanceof Actor){
+                    for(int i = 0; i < mAliveEntities.get(type).size(); i++){
+                        if( (mAliveEntities.get(type).get(i) != e ) &&  ((Actor)mAliveEntities.get(type).get(i)).equals((Actor)e) ){ //If it is the same Actor but different instance
+                            mAliveEntities.get(type).set(i, e);
+                        }
                     }
                 }
             }
