@@ -56,8 +56,8 @@ public class ShadowLayer {
         int cameraSizeY = mCamera.GetDimensions().y;
 
 
-        Vector2D<Integer> cameraDrawPoint = getDrawPointPosition(mCamera); //Superior Izquierdo donde empieza a dibujar la camara
-        Vector2D<Integer> windowShadowDrawPoint = getWindowViewedDrawPoint(cameraDrawPoint, mCamera); //Position de cada bloque de oscuridad que va dibujando con respecto a la ventana
+        Vector2D<Integer> cameraDrawPoint = World.GetLevelSpaceIntegerCoordinates(getDrawPointPosition(mCamera)); //Superior Izquierdo donde empieza a dibujar la camara
+        Vector2D<Integer> windowShadowDrawPoint = World.GetLevelSpaceIntegerCoordinates(getWindowViewedDrawPoint(cameraDrawPoint, mCamera)); //Position de cada bloque de oscuridad que va dibujando con respecto a la ventana
         System.out.println("DrawPoint = " + cameraDrawPoint);
         System.out.println("WindowShadowDrawPoint = " + windowShadowDrawPoint);
 

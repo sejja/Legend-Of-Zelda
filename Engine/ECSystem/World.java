@@ -68,6 +68,12 @@ public class World {
         finalpos.y -= mCurrentLevel.GetBounds().GetPosition().y;
         return finalpos;
     }
+    public static Vector2D<Integer> GetLevelSpaceIntegerCoordinates(Vector2D<Integer> worldcoordinate) {
+        Vector2D<Integer> finalpos = new Vector2D<Integer>(worldcoordinate.x,worldcoordinate.y);
+        finalpos.x -= (int)(float)mCurrentLevel.GetBounds().GetPosition().x;
+        finalpos.y -= (int)(float) mCurrentLevel.GetBounds().GetPosition().y;
+        return finalpos;
+    }
 
     public static Pair GetLevelPair(Pair pair) {
         int x= pair.getFirst();
