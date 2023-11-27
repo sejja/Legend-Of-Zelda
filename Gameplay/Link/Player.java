@@ -127,7 +127,7 @@ public class Player extends Actor {
     public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size) {
         super(position);
         SetScale(size);
-        this.direction = DIRECTION.RIGHT;
+        this.direction = DIRECTION.DOWN;
         //Lets transpose the Sprite Matrix and add all extra Animations
         sprite.setmSpriteArray(this.completeAnimationSet(sprite.GetSpriteArray2D()));
         //---------------------------------------------------------------------
