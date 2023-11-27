@@ -61,15 +61,16 @@ public class PlayState extends State {
         var overworld_left_up = new TestRoom2(null, null, null, null, "Content/TiledProject/OverlWorld_-1_1.tmx");
         var overworld_left_up_left = new TestRoom2(null, null, null, null, "Content/TiledProject/overworld1_left_up_left.tmx");
         var overworld1_left_left = new TestRoom2(null, null, null, null, "Content/TiledProject/overworld1_left_left.tmx");
+        var overworld1_left_left_left = new TestRoom2(null, null, null, null, "Content/TiledProject/overworld_left_left_left.tmx");
 
-        mTestLevel = new TestRoom(pasilloDer3, overworld_left, entradaArriba3, null, "Content/TiledProject/overworld1.tmx", new Vector2D<>(0.f, 0.f));
+        mTestLevel = new TestRoom(null, overworld_left, null, null, "Content/TiledProject/overworld1.tmx", new Vector2D<>(0.f, 0.f));
 
 
         
-        pasilloDer3.SetLeftLevel(mTestLevel);
+        pasilloDer3.SetLeftLevel(entrada);
         pasilloDer3.SetUpperLevel(pasilloDerArriba3);
         pasilloDer3.SetLowerLevel(pasilloDerAbajo3);
-        pasilloIzq3.SetRightLevel(mTestLevel); 
+        pasilloIzq3.SetRightLevel(entrada); 
         pasilloIzq3.SetUpperLevel(pasilloIzqArriba3);
         pasilloIzq3.SetLowerLevel(pasilloIzqAbajo3);
         entradaArriba3.SetUpperLevel(finalRoom3);
@@ -89,7 +90,13 @@ public class PlayState extends State {
         overworld_left_up.SetLowerLevel(overworld_left);
         overworld_left_up_left.SetRightLevel(overworld_left_up);
         overworld_left_up_left.SetLowerLevel(overworld1_left_left);
-
+        overworld1_left_left.SetLeftLevel(overworld1_left_left_left);
+        overworld1_left_left_left.SetRightLevel(overworld1_left_left);
+        overworld1_left_left_left.SetUpperLevel(entrada);
+        entrada.SetLowerLevel(overworld1_left_left_left);
+        entrada.SetUpperLevel(entradaArriba3);
+        entrada.SetRightLevel(pasilloDer3);
+        entrada.SetLeftLevel(pasilloIzq3);
 
         var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetBindedCamera();
         Vector2D<Float> topright = new Vector2D<>(mTestLevel.GetBounds().GetPosition().x + 1280.f / 2, mTestLevel.GetBounds().GetPosition().y + 720.f / 2);
