@@ -158,7 +158,12 @@ public class TileManager extends ECObject implements Renderable {
         int layers = 0;
         DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder;
-        try {
+        try { // hermano que onda no hace nada 8=======3--
+            /*                                            \
+                                                           \
+                                                           0
+                                                          /-\
+                                                           /\
             builder = builderFactory.newDocumentBuilder();
             Document doc = builder.parse(new File(getClass().getClassLoader().getResource(mPath).toURI()));
             doc.getDocumentElement().normalize();
@@ -177,24 +182,26 @@ public class TileManager extends ECObject implements Renderable {
             Element element2 = (Element) node2;
             Node node3 = imagedata.item(0);
             Element element3 = (Element) node3;
-            int width = 0;
-            int height = 0;
+            */
+            int width = 50;
+            int height = 50;
 
-            list = doc.getElementsByTagName("layer");
-            layers = list.getLength();
-
+            //list = doc.getElementsByTagName("layer");
+            //layers = list.getLength();
+            /* Este for no hace nada????
             for(int i = 0; i < layers; i++) {
                 node = list.item(i);
                 eElement = (Element) node;
                 if(i <= 0) {
-                    width = Math.max(width, Integer.parseInt(eElement.getAttribute("width")));
-                    height = Math.min(height, Integer.parseInt(eElement.getAttribute("height")));
+                    //width = Math.max(width, Integer.parseInt(eElement.getAttribute("width"))); //<---------------Brother esta como muy mal no?
+                    //height = Math.min(height, Integer.parseInt(eElement.getAttribute("height")));
                 }
             }
-
+            */
             return new AABB(new Vector2D<>(0.f, 0.f), new Vector2D<Float>((float)(width * blockwith), (float)(height * blockheigh)));
         } catch (Exception e) {
             // TODO Auto-generated catch block
+            System.err.println("Ha saltado error en tileManager puto 8========3");
             e.printStackTrace();
         }
 

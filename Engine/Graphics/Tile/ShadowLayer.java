@@ -58,7 +58,7 @@ public class ShadowLayer {
 
         Vector2D<Integer> cameraDrawPoint = getDrawPointPosition(mCamera); //Superior Izquierdo donde empieza a dibujar la camara
         Vector2D<Integer> windowShadowDrawPoint = World.GetLevelSpaceIntegerCoordinates(getWindowViewedDrawPoint(cameraDrawPoint, mCamera)); //Position de cada bloque de oscuridad que va dibujando con respecto a la ventana
-
+        System.out.println(windowShadowDrawPoint);
         //Primero dibuja cada columna y luego cada fila
         //______________________________________________________________________________________________________
         for (int drawPointX = windowShadowDrawPoint.x; drawPointX < cameraSizeX; drawPointX+=scaleX ){
@@ -108,7 +108,7 @@ public class ShadowLayer {
         }
         //____________________________________________________________________________________________________________
 
-        Vector2D<Integer> _result =  new Vector2D<Integer>(Math.round(result.x/64), Math.round(result.y/64));
+        Vector2D<Integer> _result =  new Vector2D<Integer>((int)(float)(result.x/64), (int)(float)(result.y/64));
         return _result;
     }
 
@@ -126,10 +126,13 @@ public class ShadowLayer {
             return opacity;
         }
     }
-
+    //Este es un cast a formato tile de pixeles
     private Vector2D<Integer> getWindowViewedDrawPoint (Vector2D<Integer> cameraTilePositionn, CameraComponent cameraComponent){
-        Vector2D<Float> cameraAABBPosition = new Vector2D<Float>(cameraComponent.GetCoordinates().x - cameraComponent.GetDimensions().x/2, cameraComponent.GetCoordinates().y - cameraComponent.GetDimensions().y/2);
-        return new Vector2D<Integer>( (cameraTilePositionn.x*64) - (int)(float)cameraAABBPosition.x - 640, (cameraTilePositionn.y*64) - (int)(float)cameraAABBPosition.y - 360);
+        //cameraComponentCoordinate = The middle of the camera
+        Vector2D<Float> cameraAABBPosition = new Vector2D<Float>(cameraComponent.GetCoordinates().x , cameraComponent.GetCoordinates().y );
+        cameraAABBPosition = World.GetLevelSpaceCoordinates(cameraAABBPosition);
+        //return new Vector2D<Integer>( (cameraTilePositionn.x*64) - (int)(float)cameraAABBPosition.x - 640, (cameraTilePositionn.y*64) - (int)(float)cameraAABBPosition.y - 360);
+        return new Vector2D<Integer>( (cameraTilePositionn.x*64) - (int)(float)(cameraAABBPosition.x) , (cameraTilePositionn.y*64) - (int)(float)(cameraAABBPosition.y ));
     }
 
     public void setOn(boolean isOn) {
@@ -137,7 +140,7 @@ public class ShadowLayer {
     }
 
     public void buildMatrix(){
-        matrixOpacity = new int[(int)(float)World.mCurrentLevel.GetBounds().GetScale().x/64][(int)(float)World.mCurrentLevel.GetBounds().GetScale().y/64];
+        matrixOpacity = new int[(int)(float)(World.mCurrentLevel.GetBounds().GetScale().x/64f)][(int)(float)(World.mCurrentLevel.GetBounds().GetScale().y/64f)];
         //matrixOpacity = new int[50][50];
         for (int i = 0; i<matrixOpacity.length; i++){
             for(int j=0; j<matrixOpacity[0].length; j++){
