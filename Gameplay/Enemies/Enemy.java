@@ -62,9 +62,6 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     protected Vector2D<Float> playerPos = player.getPseudoPosition();
     protected Vector2D<Float> lowerBounds;
     protected Vector2D<Float> upperBounds;
-    protected Pair enemyTile;
-    protected Pair lastLevelPair;
-    protected Pair finalLevelPair;
 
     //stats
     protected int healthPoints = 1;
@@ -255,8 +252,8 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     *   Calculates the path to the player if the path is unblocked and is not the same as the last time A* was called
     */ //----------------------------------------------------------------------
     public void pathfinding() {
-        enemyTile = positionToPair(getPseudoPosition());
-        finalDestination = positionToPair(playerPos);
+        Pair enemyTile = positionToPair(World.GetLevelSpaceCoordinates(getPseudoPosition()));
+        finalDestination = positionToPair(World.GetLevelSpaceCoordinates(playerPos));
         if(isDestinationChanged() && isDestinationReachable()){
             lastFinalDestination = finalDestination;
             path = aStarSearch.aStarSearch(enemyTile, finalDestination);
@@ -282,9 +279,7 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     *   Checks if the destination (Player) has changed of Tile
     */ //----------------------------------------------------------------------
     public boolean isDestinationChanged() {
-        finalLevelPair = World.GetLevelPair(finalDestination);
-        lastLevelPair = World.GetLevelPair(lastFinalDestination);
-        if(lastLevelPair.getFirst() != finalLevelPair.getFirst() || lastLevelPair.getSecond() != finalLevelPair.getSecond()){
+        if(lastFinalDestination.getFirst() != finalDestination.getFirst() || lastFinalDestination.getSecond() != finalDestination.getSecond()){
             return true;
         }else{
             return false;
@@ -297,12 +292,9 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     *   Checks if the destination is reachable by the Enemy
     */ //----------------------------------------------------------------------
     public boolean isDestinationReachable() {
-        lastLevelPair = World.GetLevelPair(finalDestination);
-        if(aStarSearch.isUnBlocked(lastLevelPair.getFirst(), lastLevelPair.getSecond())){
-            System.out.println("yeah boi at " + lastLevelPair.getFirst() + " " + lastLevelPair.getSecond() + "");
+        if(aStarSearch.isUnBlocked(finalDestination.getFirst(), finalDestination.getSecond())){
             return true;
         }else{
-            System.out.println("Destination unreachable at " + lastLevelPair.getFirst() + " " + lastLevelPair.getSecond() + "");
             return false;
         }
     }

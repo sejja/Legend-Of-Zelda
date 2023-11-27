@@ -5,7 +5,6 @@ import java.awt.Graphics2D;
 import java.util.Stack;
 
 import Engine.ECSystem.ObjectManager;
-import Engine.ECSystem.World;
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Component;
 import Engine.Graphics.GraphicsPipeline;
@@ -43,7 +42,7 @@ public class PathRender extends Component implements Renderable{
 
         while (!mPath.isEmpty()) {
             Pair x = mPath.pop();
-            Pair p = World.GetWorldPair(x);
+            Pair p = Engine.ECSystem.World.GetLevelPair(x);
             g.drawRect(p.getFirst() * 64 - (int)(float)camcoord.x, p.getSecond() * 64 - (int)(float)camcoord.y, 64, 64);
         }
     }

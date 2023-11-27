@@ -1,16 +1,12 @@
 package Gameplay.Enemies.Search;
 import java.util.*;
-
-import Engine.ECSystem.World;
 import Engine.Graphics.Tile.*;
-import Engine.Math.Vector2D;
 
 
 public class AStarSearch{
     static Stack<Pair> Path = new Stack<>();
     static final int COL = 50;
     static final int ROW = 50;
-    Block block;
 
 
     // A Utility Function to check whether given cell (Column, Row)
@@ -26,7 +22,7 @@ public class AStarSearch{
     public boolean isUnBlocked(int Column, int Row) {
         // Returns true if the cell is not blocked else false
         if (isValid(Column, Row)){
-            block = TileManager.sLevelObjects.GetBlockAt(Column,Row);
+            Block block = TileManager.sLevelObjects.GetBlockAt(Column, Row);
             //System.out.println(Column + " " + Row);
             if(block == null){
                 return true;
@@ -55,27 +51,23 @@ public class AStarSearch{
     // a given source cell to a destination cell according
     // to A* Search Algorithm
     public Stack<Pair> aStarSearch( Pair src, Pair dest) {
-        src = World.GetLevelPair(src);
-        dest = World.GetLevelPair(dest);
-        //System.out.println("Destino: "+dest.first + " " + dest.second);
-        //System.out.println("Enemigo en: " + src.first + " " + src.second);
         if (!isValid(src.first, src.second)) {
-            System.out.println("Source is invalid");
+            //System.out.println("Source is invalid");
             return Path;
         }
 
         if (!isValid(dest.first, dest.second)) {
-            System.out.println("Destination is invalid");
+            //System.out.println("Destination is invalid");
             return Path;
         }
 
         if (!isUnBlocked( src.first, src.second) || !isUnBlocked( dest.first, dest.second)) {
-            System.out.println("Source or the destination is blocked");
+            //System.out.println("Source or the destination is blocked");
             return Path;
         }
 
         if (isDestination(src.first, src.second, dest)) {
-            System.out.println("We are already at the destination");
+            //System.out.println("We are already at the destination");
             return Path;
         }
 

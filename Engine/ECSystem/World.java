@@ -75,22 +75,7 @@ public class World {
         return finalpos;
     }
 
-    public static Vector2D<Integer> GetPairLevelSpaceCoordinates(Vector2D<Integer> worldcoordinate) {
-        Vector2D<Integer> finalpos = new Vector2D<Integer>(worldcoordinate.x,worldcoordinate.y);
-        finalpos.x -= (int)Math.floor(mCurrentLevel.GetBounds().GetPosition().x/64);
-        finalpos.y -= (int)Math.floor(mCurrentLevel.GetBounds().GetPosition().y/64);
-        return finalpos;
-    }
-
     public static Pair GetLevelPair(Pair pair) {
-        int x= pair.getFirst();
-        int y= pair.getSecond();
-        x -= mCurrentLevel.GetBounds().GetPosition().x/64;
-        y -= mCurrentLevel.GetBounds().GetPosition().y/64;
-        return new Pair(x,y);
-    }
-
-    public static Pair GetWorldPair(Pair pair) {
         int x= pair.getFirst();
         int y= pair.getSecond();
         x += mCurrentLevel.GetBounds().GetPosition().x/64;
