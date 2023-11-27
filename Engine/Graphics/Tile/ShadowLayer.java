@@ -34,8 +34,11 @@ public class ShadowLayer {
         }
 
         try{
+
             matrixOpacity[tilePosition.x][tilePosition.y] += opacity;
+
         }catch(java.lang.ArrayIndexOutOfBoundsException e){
+            System.err.println("tilePosition out of the bounds error -> " + tilePosition);
             matrixOpacity[tilePosition.x][tilePosition.y] = this.opacity;
         }
     }
@@ -53,10 +56,12 @@ public class ShadowLayer {
         int cameraSizeY = mCamera.GetDimensions().y;
 
 
-        Vector2D<Integer> cameraDrawPoint = getDrawPointPosition(mCamera);
-        Vector2D<Integer> windowShadowDrawPoint = getWindowViewedDrawPoint(cameraDrawPoint, mCamera);
+        Vector2D<Integer> cameraDrawPoint = getDrawPointPosition(mCamera); //Superior Izquierdo donde empieza a dibujar la camara
+        Vector2D<Integer> windowShadowDrawPoint = getWindowViewedDrawPoint(cameraDrawPoint, mCamera); //Position de cada bloque de oscuridad que va dibujando con respecto a la ventana
+        System.out.println("DrawPoint = " + cameraDrawPoint);
+        System.out.println("WindowShadowDrawPoint = " + windowShadowDrawPoint);
 
-
+        //Primero dibuja cada columna y luego cada fila
         //______________________________________________________________________________________________________
         for (int drawPointX = windowShadowDrawPoint.x; drawPointX < cameraSizeX; drawPointX+=scaleX ){
             int temp = cameraDrawPoint.y;
@@ -93,16 +98,16 @@ public class ShadowLayer {
         if(cameraDrawPointY <0){cameraDrawPointY = 0;}
         else if(cameraDrawPointY > limitY){cameraDrawPointY = limitY;}
 
-        Vector2D<Float> result =  new Vector2D<Float>((Float)(float)cameraDrawPointX*64, (Float)(float)cameraDrawPointY*64);
+        Vector2D<Float> result =  new Vector2D<Float>((Float)(float)(cameraDrawPointX+1)*64, (Float)(float)(cameraDrawPointY+1)*64); // <---- quitar +1
         //To see where is the cameraDrawPoint
-        /*
+
         if(seeker == null){
             seeker = new BoxCollider(link, result, 1);
             link.AddComponent(seeker);
         }else{
             seeker.GetBounds().SetPosition(result);
         }
-         */
+
         Vector2D<Integer> _result =  new Vector2D<Integer>((int)(result.x/64), (int)(result.y/64));
         return _result;
     }
@@ -117,8 +122,7 @@ public class ShadowLayer {
 
             return matrixOpacity[cameraDrawPoint.x][cameraDrawPoint.y];
         }catch(java.lang.ArrayIndexOutOfBoundsException e){
-
-
+            e.printStackTrace();
             return opacity;
         }
     }
@@ -134,6 +138,7 @@ public class ShadowLayer {
 
     public void buildMatrix(){
         matrixOpacity = new int[(int)(float)World.mCurrentLevel.GetBounds().GetScale().x/64][(int)(float)World.mCurrentLevel.GetBounds().GetScale().y/64];
+        //matrixOpacity = new int[50][50];
         for (int i = 0; i<matrixOpacity.length; i++){
             for(int j=0; j<matrixOpacity[0].length; j++){
                 matrixOpacity[i][j] = opacity;

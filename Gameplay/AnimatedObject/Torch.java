@@ -22,10 +22,13 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
     private boolean isIluminating = false;
     private int radius;
     private int previusFrameCount = 0;
+    private Vector2D<Float> pos;
     final int defaultRadius = 1;
 
     public Torch(Vector2D<Float> position) {
         super(position, new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/Torch.png"), 5,2, true));
+
+        this.pos = position;
         delay = -1;
         this.SetScale(new Vector2D<>(50f,100f));
         radius = defaultRadius;
@@ -58,6 +61,7 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
                 addIlumination();
             }
         }
+        SetPosition(pos);
     }
 
     @Override
@@ -107,7 +111,7 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
     public Class GetSuperClass(){return Npc.class;}
 
     private void addIlumination(){
-        Vector2D<Integer> tilePosition = this.getPseudoPosition().getTilePosition();
+        Vector2D<Integer> tilePosition = this.getWorldPseudoPosition().getTilePosition();
         final int maxDisctance = (int)Math.round(Math.sqrt(2)*radius);
         for (int i = tilePosition.x - maxDisctance; i <= tilePosition.x + maxDisctance; i++){
             for(int j = tilePosition.y - maxDisctance; j <= tilePosition.y+maxDisctance; j++){
@@ -118,7 +122,7 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
     }
 
     public void removeIlumination(){
-        Vector2D<Integer> tilePosition = this.getPseudoPosition().getTilePosition();
+        Vector2D<Integer> tilePosition = this.getWorldPseudoPosition().getTilePosition();
         final int maxDisctance = (int)Math.round(Math.sqrt(2)*radius);
         for (int i = tilePosition.x - maxDisctance; i <= tilePosition.x + maxDisctance; i++){
             for(int j = tilePosition.y - maxDisctance; j <= tilePosition.y + maxDisctance; j++){
@@ -136,10 +140,10 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
         return (int) difference;
     }
 
-    @Override
-    public Vector2D<Float> getPseudoPosition(){
+    public Vector2D<Float> getWorldPseudoPosition(){
         return World.GetLevelSpaceCoordinates(super.getPseudoPosition());
     }
+
     @Override
     public void RemoveAllComponent(){
         super.RemoveAllComponent();

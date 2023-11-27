@@ -196,7 +196,12 @@ public class ObjectManager {
         mAliveEntities.put(Player.class, player);
         mAliveEntities.put(Npc.class, NPCs);
     }
-
+    /** This function checks if the objectManager contais the INSTANCE of the entity, not the entity. So it does not call compareTo or equals.
+     * 
+     * @param type the superclass of the entity
+     * @param entity entity to search
+     * @return if the object Manager has the instance ? True : False
+     */
     public boolean containsInstance(Class type, Entity entity){
         boolean result = false;
         for(Entity e: mAliveEntities.get(type)){
