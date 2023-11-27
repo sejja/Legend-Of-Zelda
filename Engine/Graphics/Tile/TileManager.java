@@ -158,6 +158,8 @@ public class TileManager extends ECObject implements Renderable {
         int layers = 0;
         DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder;
+        int width = 50;
+        int height = 50;
         try { // hermano que onda no hace nada 8=======3--
             /*                                            \
                                                            \
@@ -183,8 +185,6 @@ public class TileManager extends ECObject implements Renderable {
             Node node3 = imagedata.item(0);
             Element element3 = (Element) node3;
             */
-            int width = 50;
-            int height = 50;
 
             //list = doc.getElementsByTagName("layer");
             //layers = list.getLength();
@@ -198,14 +198,14 @@ public class TileManager extends ECObject implements Renderable {
                 }
             }
             */
-            return new AABB(new Vector2D<>(0.f, 0.f), new Vector2D<Float>((float)(width * blockwith), (float)(height * blockheigh)));
+            //return new AABB(new Vector2D<>(0.f, 0.f), new Vector2D<Float>((float)(width * blockwith), (float)(height * blockheigh)));
         } catch (Exception e) {
             // TODO Auto-generated catch block
             System.err.println("Ha saltado error en tileManager puto 8========3");
             e.printStackTrace();
         }
-
-        return null;
+        return new AABB(new Vector2D<>(0.f, 0.f), new Vector2D<Float>((float)(width * blockwith), (float)(height * blockheigh)));
+        //return null;
     }
 
     public AABB GetBounds() {
