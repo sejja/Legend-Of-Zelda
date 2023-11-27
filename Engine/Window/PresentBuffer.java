@@ -31,7 +31,7 @@ public class PresentBuffer extends JPanel {
     *
     *   As a JPanel, which behaves as a FrameBuffer, request the focus and sets the size
     */ //----------------------------------------------------------------------
-    public PresentBuffer(int width, int height) {
+    public PresentBuffer(final int width, final int height) {
         setPreferredSize(new Dimension(mWidth = width, mHeight = height));
         setFocusable(true);
         requestFocus();
@@ -39,7 +39,12 @@ public class PresentBuffer extends JPanel {
         mGFX = (Graphics2D)(mFrameBuffer = new BufferedImage(mWidth, mHeight, BufferedImage.TYPE_INT_ARGB)).getGraphics();
     }
 
-    static public void SetClearColor(Color c) {
+    // ------------------------------------------------------------------------
+    /*! Set Clear Color
+    *
+    *   Sets the color of the clear frame buffer
+    */ //----------------------------------------------------------------------
+    static public void SetClearColor(final Color c) {
         mClearColor = c;
     }
 
