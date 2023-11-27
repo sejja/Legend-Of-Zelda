@@ -8,9 +8,11 @@ public interface Interaction{
     default void INTERACTION(){
         if(playerIsLooking()){
             interaction();
-        }
+        }else{shutDownInteraction();}
     }
+
     public void interaction();
+
     default void shutDownInteraction(){
         ((Player)ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0)).removeInteraction();
     }

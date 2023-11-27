@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 import java.util.logging.Level;
 import Engine.Assets.AssetManager;
@@ -30,6 +31,7 @@ import Gameplay.Interaction;
 import Gameplay.AnimatedObject.AnimatedObject;
 import Gameplay.AnimatedObject.Bomb;
 import Gameplay.Enemies.Enemy;
+import Gameplay.Enemies.Search.pPair;
 import Gameplay.Interactives.Interactive;
 import Gameplay.LifeBar.LifeBar;
 import Gameplay.NPC.Npc;
@@ -701,7 +703,6 @@ public class Player extends Actor {
     private void interact(){
         if(currentNPCinteraction == null){
             currentNPCinteraction = nearestNPC();
-            System.out.println("Interacion: " + currentNPCinteraction);
             //System.out.println("Contenido en el ObjectManager: " + ObjectManager.GetObjectManager().GetAllObjectsOfType(Npc.class));
         }
         try {
@@ -710,12 +711,22 @@ public class Player extends Actor {
             System.err.println("No npc found");
             this.currentNPCinteraction = null;
         }
+        System.out.println("Interacion: " + currentNPCinteraction);
     }
     private Interaction nearestNPC (){
         ArrayList<Actor> allInteraction;
         try{
             allInteraction =ColliderManager.GetColliderManager().getCollision(mCollider, Npc.class, true);
+            npcInsertionSort(allInteraction);
+            Actor result;
+            for(Actor actor: allInteraction){
+                if(((Interaction)actor).playerIsLooking()){
+                    result = actor;
+                    return (Interaction)result;
+                }
+            }
             return (Interaction)allInteraction.get(0);
+
         }catch(java.lang.IndexOutOfBoundsException e){
             System.err.println("No interaction in hitbox");
             return(null);
@@ -733,12 +744,33 @@ public class Player extends Actor {
             else {return DIRECTION.UP;}
         }
     }
+    private void npcInsertionSort(ArrayList<Actor> npcs){
+        for(int i = 0; i < npcs.size()-1; i++){
+            Float distance = npcs.get(i).getPseudoPosition().getModuleDistance(this.getPseudoPosition());
+            Float distanceNext = npcs.get(i+1).getPseudoPosition().getModuleDistance(this.getPseudoPosition());
+            if(distanceNext < distance){
+                int a = i;
+                int b = i+1;
+                while (a>= 0) {
+                    Float distanceA = npcs.get(i).getPseudoPosition().getModuleDistance(this.getPseudoPosition());
+                    Float distanceB = npcs.get(i+1).getPseudoPosition().getModuleDistance(this.getPseudoPosition());
+                    if(distanceB < distanceA){
+                        Collections.swap(npcs, a, b);
+                        a--;
+                        b--;
+                    }else{
+                        a = -1;
+                    }
+                }
+            }
+        }
+    }
     //------------------------------------------------------------------------
     
     /* Dash mecanics functions
      * 
      */
-    public void dash (){
+    private void dash (){
         /*  This function used to arrows to simulate a classic dash
          *      The first arrow and player have the same instance of the vectorposition it moves modifiying the position of the arrow and the vecto at the same time
          *      The second arrow it a arrow that contais a 1 frame animation and its has a low range to emulate a dash effect
