@@ -122,7 +122,7 @@ public class ShadowLayer {
 
             return matrixOpacity[cameraDrawPoint.x][cameraDrawPoint.y];
         }catch(java.lang.ArrayIndexOutOfBoundsException e){
-            e.printStackTrace();
+            //e.printStackTrace();
             return opacity;
         }
     }
