@@ -13,6 +13,7 @@ public class Log {
     private Logger mLogger;
 
     public Log(String name) {
+        /* 
         mLogger = Logger.getLogger(name);
         String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new java.util.Date());
         String path = timeStamp + "/[" + timeStamp + "]_" + name + ".log";
@@ -35,6 +36,7 @@ public class Log {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        */
     }
 
     public Logger GetInnerLogger() {
