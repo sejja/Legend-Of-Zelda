@@ -8,9 +8,7 @@
 
 package Engine.StateMachine;
 
-import java.awt.Graphics2D;
 import java.util.ArrayList;
-
 import Gameplay.States.PlayState;
 
 public class StateMachine {
@@ -26,10 +24,20 @@ public class StateMachine {
         Init();
     }
 
+    // ------------------------------------------------------------------------
+    /*! Init
+    *
+    *   Adds the initial state
+    */ //----------------------------------------------------------------------
     private void Init() {
         mStates.add(new PlayState());
     }
 
+    // ------------------------------------------------------------------------
+    /*! Restart
+    *
+    *   Clears the state machine and re-inits
+    */ //----------------------------------------------------------------------
     public void Restart() {
         mStates.clear();
         Init();
@@ -41,9 +49,7 @@ public class StateMachine {
     *   Calls the Update method on every sub-state
     */ //----------------------------------------------------------------------
     public void Update() {
-        //Iterate through every state
-        for(State x : mStates)
-            x.Update();
+        mStates.stream().forEach(x -> x.Update());
     }
 
     // ------------------------------------------------------------------------
