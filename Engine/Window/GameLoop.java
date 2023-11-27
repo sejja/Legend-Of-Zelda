@@ -12,6 +12,8 @@ import java.awt.Color;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import javax.swing.JFrame;
+
 import Engine.Developer.DataBase.Database;
 import Engine.Developer.Logger.Logger;
 import Engine.ECSystem.ObjectManager;
@@ -28,17 +30,19 @@ public class GameLoop extends Thread {
     static private StateMachine mStateManager;
     private PresentBuffer mTargetBuffer;
     private ExecutorService mThreadPool;
+    private JFrame mOwner;
 
     // ------------------------------------------------------------------------
     /*! Custom Constructor
     *
     *   Creates the FrameBuffer (a BufferedImage)
     */ //----------------------------------------------------------------------
-    public GameLoop(final PresentBuffer target) {
+    public GameLoop(final PresentBuffer target, final JFrame window) {
         mTargetBuffer = target;
         mPause = false;
         mShouldRestart = false;
         mThreadPool = Executors.newFixedThreadPool(1);
+        mOwner = window;
     }
 
     // ------------------------------------------------------------------------
@@ -181,6 +185,7 @@ public class GameLoop extends Thread {
             }
         }
 
+        mOwner.dispose();
         Logger.Instance().Log(Logger.Instance().GetLog("GameLoop"),
          "Bye bye", java.util.logging.Level.FINE);
     }
