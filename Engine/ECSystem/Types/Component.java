@@ -8,7 +8,7 @@
 
 package Engine.ECSystem.Types;
 
-public abstract class Component implements Base {
+public abstract class Component implements Base, Comparable {
     private Actor mParent;
 
     // ------------------------------------------------------------------------
@@ -32,4 +32,9 @@ public abstract class Component implements Base {
     public abstract void Init();
     public abstract void Update();
     public abstract void ShutDown();
+    @Override
+    public int compareTo(Object o){
+        Actor other = ((Component)o).GetParent();
+        return Math.round(mParent.GetPosition().y - other.GetPosition().y);
+    }
 }

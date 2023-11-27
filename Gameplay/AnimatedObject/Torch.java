@@ -43,13 +43,15 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
             }
         });
     }
-
+    @Override
     public void Update(){
         super.Update();
         hitbox.Update();
         playerCollision(hitbox);
         if (this.animationMachine.MustComplete()){
+            //System.out.println("Animacion que debe terminal");
             if(this.animationMachine.GetAnimation().GetFrame() != previusFrameCount){
+                //System.out.println("sigue iluminando");
                 previusFrameCount = this.animationMachine.GetAnimation().GetFrame();
                 removeIlumination();
                 radius++;
@@ -64,6 +66,7 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
            if (isIluminating){
                 turnOff();
             }else{
+                //System.out.println("Se ilumina");
                 turnON();
             }
         }
@@ -72,6 +75,8 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
     
     private void turnON(){
         animationMachine.setMustComplete(true);
+
+        //System.out.println("Esta en el ObjectManager -> " + ObjectManager.GetObjectManager().containsInstance(this.GetSuperClass(), this));
         delay = 8;
         Animate(0);
         Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/fire.wav"));
@@ -112,7 +117,7 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
         }
     }
 
-    private void removeIlumination(){
+    public void removeIlumination(){
         Vector2D<Integer> tilePosition = this.getPseudoPosition().getTilePosition();
         final int maxDisctance = (int)Math.round(Math.sqrt(2)*radius);
         for (int i = tilePosition.x - maxDisctance; i <= tilePosition.x + maxDisctance; i++){
@@ -134,6 +139,11 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
     @Override
     public Vector2D<Float> getPseudoPosition(){
         return World.GetLevelSpaceCoordinates(super.getPseudoPosition());
+    }
+    @Override
+    public void RemoveAllComponent(){
+        super.RemoveAllComponent();
+        this.removeIlumination();
     }
     /*
     @Override

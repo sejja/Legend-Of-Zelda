@@ -141,4 +141,10 @@ public abstract class Actor extends Entity implements ClassClasifier{
     }
 
     public Class GetSuperClass(){return Actor.class;}
+
+    @Override
+    public boolean equals(Object obj) {
+        Actor other = (Actor) obj;
+        return this.GetPosition().equals(other.GetPosition());
+    }
 }

@@ -26,6 +26,11 @@ public class ColliderManager {
 
     public static ColliderManager GetColliderManager (){return colliderManager;}
 
+    /** Adds a collider; if it has the same collider but different instance it will remove the previus instance and add the next one
+     * 
+     * @param collider collider to add
+     * @param itCollides if it has collision
+     */
     public void addCollider(BoxCollider collider, boolean itCollides){
         Class CLASS = collider.GetParent().GetSuperClass();
         if(!mapAllCollider.containsKey(CLASS)){
@@ -42,7 +47,10 @@ public class ColliderManager {
                     mapAllNonCollision.get(CLASS).add(collider);
                 }
             }
-            else{return;}
+            else{
+                removeCollider(collider);
+                addCollider(collider, itCollides);
+            }
         }
         //System.out.println(mapAllCollision);
     }

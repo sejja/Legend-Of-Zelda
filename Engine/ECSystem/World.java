@@ -46,10 +46,13 @@ public class World {
     public void Init(Vector2D<Float> position) {
         mCurrentLevel = this;
         mTilemap.CreateTileMap(64, 64, position);
-        if(!visited) {
-            visited = true;
-            spawnEntities();
+        try {
+            ObjectManager.GetObjectManager().flush();
+        }catch(NullPointerException e){
+            System.out.println("No hay nada que borrar MAMARRACHO");
         }
+        
+        spawnEntities();
     }
 
     public static Vector2D<Float> GetWorldSpaceCoordinates(Vector2D<Float> levelcoordinate) {
@@ -74,11 +77,11 @@ public class World {
         return new Pair(x,y);
     }
 
+    // Spawns the entities of entityQueue based on the ID and in the position specified
     private void spawnEntities() {
         //System.out.println(mTilemap.entityQueue);
         int firstEntity = mTilemap.firstEntity;
         while(mTilemap.entityQueue != null && !mTilemap.entityQueue.isEmpty() ) {
-            //System.out.println("Juan");
             var e = mTilemap.entityQueue.poll();
             //System.out.println(e.type+"  "+ firstEntity);
             if(e.type == firstEntity) {
@@ -87,7 +90,6 @@ public class World {
                 SpawnEntity(new Rock(e.position));
             }else if(e.type == firstEntity+2) {
                 SpawnEntity(new Torch(e.position));
-                //ObjectManager.GetObjectManager().mNewEntitiesInfo();
             }
             
         }
@@ -151,7 +153,7 @@ public class World {
 
             if(sElapsedTime < 0.5) {
                 GameLoop.SetPaused(true);
-                Actor p = ObjectManager.GetObjectManager().GetPawn();
+                Actor p = ObjectManager.GetObjectManager().GetPawn(); //<--- Its Link
 
                 Vector2D<Float> goaltopright = new Vector2D<>(p.GetPosition().x, p.GetPosition().y);
 

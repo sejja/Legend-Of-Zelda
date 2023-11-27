@@ -18,7 +18,7 @@ public class ShadowLayer {
     private int[][] matrixOpacity; //Array de los gradients (width x height)
     public int opacity;
     private BoxCollider seeker;
-    private boolean isOn = false;
+    private boolean isOn = true;
 
     public ShadowLayer(int defaultOpacity){
         this.opacity = defaultOpacity;
@@ -144,7 +144,7 @@ public class ShadowLayer {
     public void resetMatrix(){
         for (int i = 0; i<matrixOpacity.length; i++){
             for(int j=0; j<matrixOpacity[0].length; j++){
-                matrixOpacity[i][j] = 0;
+                matrixOpacity[i][j] = opacity;
             }
         }
     }

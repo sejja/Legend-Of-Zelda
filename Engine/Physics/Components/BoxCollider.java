@@ -148,4 +148,24 @@ public class BoxCollider extends Component implements Renderable{
         if(size == null){System.out.println("AlreadyEnabled");}
         else{this.mBounds.SetSize(size);}
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((mBounds == null) ? 0 : mBounds.hashCode());
+        result = prime * result + (hasCollision ? 1231 : 1237);
+        result = prime * result + ((color == null) ? 0 : color.hashCode());
+        result = prime * result + ((size == null) ? 0 : size.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof BoxCollider){
+            BoxCollider other = (BoxCollider) obj;
+            return this.GetParent().equals(other.GetParent());
+        }
+        return false;
+    }
 }
