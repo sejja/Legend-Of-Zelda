@@ -68,17 +68,15 @@ public class World {
         finalpos.y -= mCurrentLevel.GetBounds().GetPosition().y;
         return finalpos;
     }
-    public static Vector2D<Integer> GetLevelSpaceIntegerCoordinates(Vector2D<Integer> worldcoordinate) {
-        Vector2D<Integer> finalpos = new Vector2D<Integer>(worldcoordinate.x,worldcoordinate.y);
-        finalpos.x -= (int)(float)mCurrentLevel.GetBounds().GetPosition().x;
-        finalpos.y -= (int)(float) mCurrentLevel.GetBounds().GetPosition().y;
-        return finalpos;
-    }
 
     public static Vector2D<Integer> GetPairLevelSpaceCoordinates(Vector2D<Integer> worldcoordinate) {
         Vector2D<Integer> finalpos = new Vector2D<Integer>(worldcoordinate.x,worldcoordinate.y);
-        finalpos.x -= (int)Math.floor(mCurrentLevel.GetBounds().GetPosition().x/64);
-        finalpos.y -= (int)Math.floor(mCurrentLevel.GetBounds().GetPosition().y/64);
+        int diffX = (int)Math.floor(mCurrentLevel.GetBounds().GetPosition().x/64);
+        int diffY = (int)Math.floor(mCurrentLevel.GetBounds().GetPosition().y/64);
+        //System.out.println("Diff X = " + diffX);
+        //System.out.println("Diff Y = " + diffY);
+        finalpos.x -= diffX;
+        finalpos.y -= diffY;
         return finalpos;
     }
 

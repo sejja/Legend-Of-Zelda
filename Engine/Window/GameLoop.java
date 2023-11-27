@@ -98,8 +98,8 @@ public class GameLoop extends Thread {
             if ((now - lastUpdateTime) > TBU) {
                 lastUpdateTime = now - TBU;
             }
-
-            mTargetBuffer.Render();
+            if(!mPause) mTargetBuffer.Render();
+            //mTargetBuffer.Render();
             mTargetBuffer.Present();
             lastRenderTime = now;
 
