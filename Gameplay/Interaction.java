@@ -3,14 +3,18 @@ package Gameplay;
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
 import Gameplay.Link.Player;
-
+/** This interface allows actors to have interaction withe the player, overriding interaction()
+ *  @author LFenome | Lingfeng
+ */
 public interface Interaction{
     default void INTERACTION(){
         if(playerIsLooking()){
             interaction();
         }else{shutDownInteraction();}
     }
-
+    /** This function will be call only if the player has press the interact buttom and is looking at the player
+     * 
+     */
     public void interaction();
 
     default void shutDownInteraction(){
