@@ -60,11 +60,34 @@ public class TilemapObject extends Tilemap {
     }
 
     public Block PlaceBlockAt(int x, int y) {
+        // entiendo que el problema es el indice negativo pero la cosa es como solucionarlo 
+
+        //TEendríamos que cargar la posición de la roca con unaç
+        //posicion RELATIVA al nivel que pertenece
+        //la cosa es que el spawn y asi que yo sepa funciona con 
+        /*
+         * coordenadas absolutas pero si es necesario la posicion relativa
+         * podemos traducir la posicion absoluta a relativa con un metodo que
+         * tenemos en el world
+         */
+        
+
+        //Algo que puede funcionar, pero que es indeseable:
+        while(x < 0) x += mWidth;
+
+        assert(x >= 0);
+        assert(y >= 0);
         if(GetBlockAt(x, y) != null) return GetBlockAt(x, y);
 
         AffineTransform transform = AffineTransform.getTranslateInstance(x, y);
         transform.concatenate(AffineTransform.getScaleInstance(mTileWidth, mTileHeight));
 
+
+        //Creo que el problema es obvio, llegados a este punto
+
+        //Mira los valores de la transofrmacion
+
+        //Está colocando el bloque en: -13 + (26*50)
         return mBlocks[x + (y * mHeight)] = new ObjectBlock(null, transform);
     }
 
