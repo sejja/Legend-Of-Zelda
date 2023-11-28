@@ -78,6 +78,13 @@ public class World {
     public static Pair GetLevelPair(Pair pair) {
         int x= pair.getFirst();
         int y= pair.getSecond();
+        x -= mCurrentLevel.GetBounds().GetPosition().x/64;
+        y -= mCurrentLevel.GetBounds().GetPosition().y/64;
+        return new Pair(x,y);
+    }
+    public static Pair GetWorldPair(Pair pair) {
+        int x= pair.getFirst();
+        int y= pair.getSecond();
         x += mCurrentLevel.GetBounds().GetPosition().x/64;
         y += mCurrentLevel.GetBounds().GetPosition().y/64;
         return new Pair(x,y);
@@ -239,4 +246,6 @@ public class World {
     void DespawnEntity(Entity e) {
         ObjectManager.GetObjectManager().RemoveEntity(e);
     }
+
+    
 }

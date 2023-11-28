@@ -42,7 +42,7 @@ public class PathRender extends Component implements Renderable{
 
         while (!mPath.isEmpty()) {
             Pair x = mPath.pop();
-            Pair p = Engine.ECSystem.World.GetLevelPair(x);
+            Pair p = Engine.ECSystem.World.GetWorldPair(x);
             g.drawRect(p.getFirst() * 64 - (int)(float)camcoord.x, p.getSecond() * 64 - (int)(float)camcoord.y, 64, 64);
         }
     }

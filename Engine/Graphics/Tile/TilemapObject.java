@@ -77,6 +77,8 @@ public class TilemapObject extends Tilemap {
 
         assert(x >= 0);
         assert(y >= 0);
+        //estas tres lineas no se como pero es lo que arregla
+
         if(GetBlockAt(x, y) != null) return GetBlockAt(x, y);
 
         AffineTransform transform = AffineTransform.getTranslateInstance(x, y);
