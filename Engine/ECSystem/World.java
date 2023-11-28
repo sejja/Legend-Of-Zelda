@@ -108,7 +108,7 @@ public class World {
             sPreviusLevel = this;
 
             if(!GetBounds().Collides(new AABB(position, new Vector2D<>(1.f, 1.f)))) {
-                //LEFT
+                //RIGHT
                 if(position.x > (GetBounds().GetPosition().x + GetBounds().GetWidth()) && mRight != null) {
                     mRight.Init(new Vector2D<>(GetBounds().GetPosition().x + GetBounds().GetWidth(), GetBounds().GetPosition().y));
                     sTransitioning = true;
@@ -117,11 +117,11 @@ public class World {
                     sPreviousBottomLeft = z.GetBottomLeftBound();
                 }
 
-                //RIGHT
+                //LEFT
                 if(position.x < (GetBounds().GetPosition().x) && mLeft != null) {
+                    var pos = GetBounds().GetPosition();
                     var b = mLeft.mTilemap.EstimateBounds(64, 64);
                     Vector2D<Float> scale = new Vector2D<>(b.GetWidth(), b.GetHeight());
-                    var pos = GetBounds().GetPosition();
                     pos.x -= scale.x;
 
                     mLeft.Init(pos);

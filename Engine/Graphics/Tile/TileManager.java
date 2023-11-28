@@ -158,14 +158,10 @@ public class TileManager extends ECObject implements Renderable {
         int layers = 0;
         DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder;
-        int width = 50;
-        int height = 50;
+        int width = 0;
+        int height = 0;
         try { // hermano que onda no hace nada 8=======3--
-            /*                                            \
-                                                           \
-                                                           0
-                                                          /-\
-                                                           /\
+                                                      
             builder = builderFactory.newDocumentBuilder();
             Document doc = builder.parse(new File(getClass().getClassLoader().getResource(mPath).toURI()));
             doc.getDocumentElement().normalize();
@@ -184,26 +180,38 @@ public class TileManager extends ECObject implements Renderable {
             Element element2 = (Element) node2;
             Node node3 = imagedata.item(0);
             Element element3 = (Element) node3;
-            */
+            
 
-            //list = doc.getElementsByTagName("layer");
-            //layers = list.getLength();
-            /* Este for no hace nada????
+            list = doc.getElementsByTagName("layer");
+            layers = list.getLength();
+            
             for(int i = 0; i < layers; i++) {
                 node = list.item(i);
                 eElement = (Element) node;
-                if(i <= 0) {
-                    //width = Math.max(width, Integer.parseInt(eElement.getAttribute("width"))); //<---------------Brother esta como muy mal no?
+                    // width se inicializa en 0 y al hacer el min que siempre pilla el cero hace que aparezcas por la izquierda del mapa y hace que
+                    // las entities del primer nivel tambien aparezcan + las entities del nuevo nivel pero hace que las cosas en plan 
+                    //rocas se comporten bien
+                    width = Math.max(width, Integer.parseInt(eElement.getAttribute("width"))); //<---------------Brother esta como muy mal no?
+
+
+                    ///ANTES
                     //height = Math.min(height, Integer.parseInt(eElement.getAttribute("height")));
-                }
+
+                    //AHORA
+                    height = Math.max(height, Integer.parseInt(eElement.getAttribute("height")));
+                                    
+
+                    //Esto deberia funcionar
             }
-            */
+            
             //return new AABB(new Vector2D<>(0.f, 0.f), new Vector2D<Float>((float)(width * blockwith), (float)(height * blockheigh)));
         } catch (Exception e) {
             // TODO Auto-generated catch block
             System.err.println("Ha saltado error en tileManager puto 8========3");
             e.printStackTrace();
         }
+
+
         return new AABB(new Vector2D<>(0.f, 0.f), new Vector2D<Float>((float)(width * blockwith), (float)(height * blockheigh)));
         //return null;
     }
