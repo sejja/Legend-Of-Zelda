@@ -22,7 +22,7 @@ public class ShadowLayer {
     private int[][] matrixOpacity; //Array de los gradients (width x height)
     public int opacity;
     private BoxCollider seeker;
-    private boolean isOn = true;
+    private boolean isOn = false;
 
     public ShadowLayer(int defaultOpacity){
         this.opacity = defaultOpacity;
@@ -84,7 +84,9 @@ public class ShadowLayer {
      * 
      */
     private Vector2D<Integer> getDrawPointPosition(CameraComponent mCamera){
+        if (ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).size() == 0){return new Vector2D<Integer>(0,0);}
         Player link = (Player)ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0);
+        //Player link = (Player)mCamera.GetParent();
 
         Vector2D<Integer> blockPosition = World.GetLevelSpaceCoordinates(link.getPseudoPosition()).getTilePosition();
 

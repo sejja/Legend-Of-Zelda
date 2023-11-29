@@ -35,12 +35,6 @@ public class Rock extends Interactive implements StaticPlayerCollision{
 
         setPseudoPosition(GetScale().x/2, GetScale().y/2);
         setPseudoPositionVisible();
-        mPositionPair = PositionToPair(getPseudoPosition());
-        Vector2D<Integer> pos = new Vector2D<>(mPositionPair.getFirst(), mPositionPair.getSecond());
-        block = TileManager.sLevelObjects.GetBlockAt(pos);
-        if(block == null) {
-            TileManager.sLevelObjects.PlaceBlockAt(pos);
-        }
     }
     @Override
 
