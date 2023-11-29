@@ -139,7 +139,7 @@ public final class AnimationMachine extends Component implements Renderable {
 
         //If the camera is on the bounds of the object, render it
         if(camerapos.OnBounds(new AABB(position, scale)))
-            g.drawImage(mAnimation.GetCurrentFrame(), (int)(float)position.x - (int)(float)camcoord.x, (int)(float)position.y - (int)(float)camcoord.y, (int)(float)scale.x, (int)(float)scale.y, null);
+            g.drawImage(mAnimation.GetCurrentFrame(), (int)(float)position.x - (int)(float)camcoord.x - (int)(float)camerapos.mPanning.x, (int)(float)position.y - (int)(float)camcoord.y - (int)(float)camerapos.mPanning.y, (int)(float)scale.x, (int)(float)scale.y, null);
     }
     
         

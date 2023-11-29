@@ -62,9 +62,9 @@ public class ZeldaCameraComponent extends CameraComponent {
     */ //----------------------------------------------------------------------
     @Override
     public Vector2D<Float> GetCoordinates() {
-        final Vector2D<Float> pos = GetParent().GetPosition();
+        final Vector2D<Float> pos = new Vector2D<Float>(GetParent().GetPosition());
         final Vector2D<Integer> dim = GraphicsPipeline.GetGraphicsPipeline().GetDimensions();
         return new Vector2D<>(Math.max(Math.min(pos.x, mBottomLeft.x), mTopRight.x) - dim.x / 2,
-            Math.max(Math.min(pos.y, mBottomLeft.y), mTopRight.y) - dim.y / 2);
+        Math.max(Math.min(pos.y, mBottomLeft.y), mTopRight.y) - dim.y / 2);
     }
 }
