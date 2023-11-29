@@ -88,8 +88,8 @@ public class Logger {
     }
 
     public void Log(Log log, String message, Level messagelevel, float screentime, Color screencolor) {
+        /*
         Log(log, message, messagelevel);
-
         if(java.lang.management.ManagementFactory.getRuntimeMXBean().getInputArguments().toString().contains("-agentlib:jdwp")) {
             if(messagelevel == Level.CONFIG) {
                 message = "[CONFIG]: " + message;
@@ -101,5 +101,6 @@ public class Logger {
 
             mLogQueue.add(new ScreenLog(message, screentime, screencolor));
         }
+        */
     }
 }

@@ -22,7 +22,7 @@ public class ShadowLayer {
     private int[][] matrixOpacity; //Array de los gradients (width x height)
     public int opacity;
     private BoxCollider seeker;
-    private boolean isOn = false;
+    private boolean isOn = true;
 
     public ShadowLayer(int defaultOpacity){
         this.opacity = defaultOpacity;
@@ -38,8 +38,11 @@ public class ShadowLayer {
         }
 
         try{
+
             matrixOpacity[tilePosition.x][tilePosition.y] += opacity;
+
         }catch(java.lang.ArrayIndexOutOfBoundsException e){
+            System.err.println("tilePosition out of the bounds error -> " + tilePosition);
             matrixOpacity[tilePosition.x][tilePosition.y] = this.opacity;
         }
     }
@@ -57,10 +60,10 @@ public class ShadowLayer {
         int cameraSizeY = mCamera.GetDimensions().y;
 
 
-        Vector2D<Integer> cameraDrawPoint = getDrawPointPosition(mCamera);
-        Vector2D<Integer> windowShadowDrawPoint = getWindowViewedDrawPoint(cameraDrawPoint, mCamera);
-
-
+        Vector2D<Integer> cameraDrawPoint = getDrawPointPosition(mCamera); //Superior Izquierdo donde empieza a dibujar la camara
+        Vector2D<Integer> windowShadowDrawPoint = World.GetLevelSpaceIntegerCoordinates(getWindowViewedDrawPoint(cameraDrawPoint, mCamera)); //Position de cada bloque de oscuridad que va dibujando con respecto a la ventana
+        System.out.println(windowShadowDrawPoint);
+        //Primero dibuja cada columna y luego cada fila
         //______________________________________________________________________________________________________
         for (int drawPointX = windowShadowDrawPoint.x; drawPointX < cameraSizeX; drawPointX+=scaleX ){
             int temp = cameraDrawPoint.y;
@@ -81,40 +84,38 @@ public class ShadowLayer {
      * 
      */
     private Vector2D<Integer> getDrawPointPosition(CameraComponent mCamera){
-        ArrayList<Entity> p = ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class);
-        
-        if(!p.isEmpty()) {
-            Player link = (Player)ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0);
-        Vector2D<Integer> blockPosition = TileCoordinates.ToTilePosition(World.GetLevelSpaceCoordinates(link.getPseudoPosition()));
+        Player link = (Player)ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0);
+
+        Vector2D<Integer> blockPosition = World.GetLevelSpaceCoordinates(link.getPseudoPosition()).getTilePosition();
+
+        //Offset de la camara con respecto a link
         int gapX = mCamera.GetDimensions().x/(2*64);
-        int gapY = mCamera.GetDimensions().x/(2*64);
+        int gapY = mCamera.GetDimensions().y/(2*64);
 
         int cameraDrawPointX = blockPosition.x-1 - gapX;
-        int cameraDrawPointY = blockPosition.y+3 - gapY;
-
-        //Cap the limit
+        int cameraDrawPointY = blockPosition.y-1 - gapY;
         int limitX = (int)(float)(World.mCurrentLevel.GetBounds().GetScale().x - mCamera.GetDimensions().x)/64;
         int limitY = (int)(float)(World.mCurrentLevel.GetBounds().GetScale().y - mCamera.GetDimensions().y)/64;
         if(cameraDrawPointX <0){cameraDrawPointX = 0;}
         else if(cameraDrawPointX > limitX){cameraDrawPointX = limitX;}
         if(cameraDrawPointY <0){cameraDrawPointY = 0;}
         else if(cameraDrawPointY > limitY){cameraDrawPointY = limitY;}
-        Vector2D<Float> result =  new Vector2D<Float>((Float)(float)cameraDrawPointX*64, (Float)(float)cameraDrawPointY*64);
+
+        Vector2D<Float> result =  new Vector2D<Float>((Float)(float)(cameraDrawPointX+1)*64, (Float)(float)(cameraDrawPointY+1)*64); // <---- quitar +1
         //To see where is the cameraDrawPoint
-        /*
+        //____________________________________________________________________________________________________________
         if(seeker == null){
-            seeker = new BoxCollider(link, result, 1);
+            seeker = new BoxCollider(link, result);
             link.AddComponent(seeker);
         }else{
             seeker.GetBounds().SetPosition(result);
         }
-        */
-        Vector2D<Integer> _result =  new Vector2D<Integer>((int)(result.x/64), (int)(result.y/64));
+        //____________________________________________________________________________________________________________
+
+        Vector2D<Integer> _result =  new Vector2D<Integer>((int)(float)(result.x/64), (int)(float)(result.y/64));
         return _result;
         }
 
-        return new Vector2D<Integer>(0, 0);
-    }
 
     public void Clear(int opacity){
         this.opacity = opacity;
@@ -130,15 +131,17 @@ public class ShadowLayer {
 
             return matrixOpacity[cameraDrawPoint.x][cameraDrawPoint.y];
         }catch(java.lang.ArrayIndexOutOfBoundsException e){
-
-
+            //e.printStackTrace();
             return opacity;
         }
     }
-
+    //Este es un cast a formato tile de pixeles
     private Vector2D<Integer> getWindowViewedDrawPoint (Vector2D<Integer> cameraTilePositionn, CameraComponent cameraComponent){
-        Vector2D<Float> cameraAABBPosition = new Vector2D<Float>(cameraComponent.GetCoordinates().x - cameraComponent.GetDimensions().x/2, cameraComponent.GetCoordinates().y - cameraComponent.GetDimensions().y/2);
-        return new Vector2D<Integer>( (cameraTilePositionn.x*64) - (int)(float)cameraAABBPosition.x - 640, (cameraTilePositionn.y*64) - (int)(float)cameraAABBPosition.y - 360);
+        //cameraComponentCoordinate = The middle of the camera
+        Vector2D<Float> cameraAABBPosition = new Vector2D<Float>(cameraComponent.GetCoordinates().x , cameraComponent.GetCoordinates().y );
+        cameraAABBPosition = World.GetLevelSpaceCoordinates(cameraAABBPosition);
+        //return new Vector2D<Integer>( (cameraTilePositionn.x*64) - (int)(float)cameraAABBPosition.x - 640, (cameraTilePositionn.y*64) - (int)(float)cameraAABBPosition.y - 360);
+        return new Vector2D<Integer>( (cameraTilePositionn.x*64) - (int)(float)(cameraAABBPosition.x) , (cameraTilePositionn.y*64) - (int)(float)(cameraAABBPosition.y ));
     }
 
     public void setOn(boolean isOn) {
@@ -146,7 +149,8 @@ public class ShadowLayer {
     }
 
     public void buildMatrix(){
-        matrixOpacity = new int[(int)(float)World.mCurrentLevel.GetBounds().GetScale().x/64][(int)(float)World.mCurrentLevel.GetBounds().GetScale().y/64];
+        matrixOpacity = new int[(int)(float)(World.mCurrentLevel.GetBounds().GetScale().x/64f)][(int)(float)(World.mCurrentLevel.GetBounds().GetScale().y/64f)];
+        //matrixOpacity = new int[50][50];
         for (int i = 0; i<matrixOpacity.length; i++){
             for(int j=0; j<matrixOpacity[0].length; j++){
                 matrixOpacity[i][j] = opacity;
@@ -157,7 +161,7 @@ public class ShadowLayer {
     public void resetMatrix(){
         for (int i = 0; i<matrixOpacity.length; i++){
             for(int j=0; j<matrixOpacity[0].length; j++){
-                matrixOpacity[i][j] = 0;
+                matrixOpacity[i][j] = opacity;
             }
         }
     }

@@ -3,8 +3,10 @@ package Gameplay.Interactives;
 
 
 import java.awt.image.BufferedImage;
+import java.util.Vector;
 
 import Engine.ECSystem.ObjectManager;
+import Engine.ECSystem.World;
 import Engine.ECSystem.Types.Actor;
 import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Animations.Animation;
@@ -24,6 +26,7 @@ public abstract class Interactive extends Actor{
 
     protected Pair mPositionPair;
     protected Block block;
+    protected Vector2D<Float> pos; // position for invisible blocks
 
     //stats
     protected int healthPoints = 1;
@@ -39,11 +42,13 @@ public abstract class Interactive extends Actor{
     */ //----------------------------------------------------------------------
     public Interactive( Vector2D<Float> position) {
         super(position);
-        mPositionPair = PositionToPair(getPseudoPosition());
-        Vector2D<Integer> pos = new Vector2D<>(mPositionPair.getFirst(), mPositionPair.getSecond());
-        block = TileManager.sLevelObjects.GetBlockAt(pos);
+        pos = position;
+        mPositionPair = World.GetLevelPair(PositionToPair(getPseudoPosition()));
+
+        System.out.println("ROck placed at: " + mPositionPair.getFirst() + " " + mPositionPair.getSecond());
+        block = TileManager.sLevelObjects.GetBlockAt(new Vector2D(mPositionPair.getFirst(),mPositionPair.getSecond()));
         if(block == null) {
-            TileManager.sLevelObjects.PlaceBlockAt(pos);
+            TileManager.sLevelObjects.PlaceBlockAt(new Vector2D<>(mPositionPair.getFirst(), mPositionPair.getSecond()));
         }
     }
 
@@ -60,16 +65,16 @@ public abstract class Interactive extends Actor{
     // ------------------------------------------------------------------------
     /*! Animate
     *
-    *   Adds the needed animation to the Enemy
+    *   Adds the needed animation
     */ //----------------------------------------------------------------------
     public void Animate() {
-        SetAnimation(0, mAnimation.GetSpriteSheet().GetSpriteArray(0), -1);
+        SetAnimation(0, mAnimation.GetSpriteSheet().GetSpriteArray(0), 1);
     }
 
     // ------------------------------------------------------------------------
     /*! Update
     *
-    *   Adds Behavior to the Enemy
+    *   Updates
     */ //----------------------------------------------------------------------
     public void Update() {
         super.Update();
@@ -91,10 +96,10 @@ public abstract class Interactive extends Actor{
     // ------------------------------------------------------------------------
     /*! Move
     *
-    *   Receives the movements in a stack and sets the movement of the Enemy with the A* search
+    *   Receives the movements in a stack and sets the movement
     */ //----------------------------------------------------------------------
     public void Move() {
-        
+        SetPosition(pos); // This somehow fixes invisible blocks
     }
 
 

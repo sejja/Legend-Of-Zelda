@@ -116,4 +116,8 @@ public class LifeBar {
             }
         }
     }
+
+    public Heart[] getHearts(){
+        return hearts;
+    }
 }
