@@ -46,7 +46,8 @@ public class Vector2D<T> {
     *   Copies another vector
     */ //----------------------------------------------------------------------
     public Vector2D(final Vector2D<T> rhs) {
-         new Vector2D<T>(rhs.x, rhs.y);
+        x = rhs.x;
+        y = rhs.y;
     } 
 
     // ------------------------------------------------------------------------

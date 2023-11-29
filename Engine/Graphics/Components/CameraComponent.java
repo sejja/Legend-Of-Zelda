@@ -19,6 +19,7 @@ import java.awt.geom.NoninvertibleTransformException;
 public class CameraComponent extends Component {
     protected AffineTransform mViewMatrix;
     protected AffineTransform mCameraMatrix;
+    protected Vector2D<Float> mPanning;
 
     // ------------------------------------------------------------------------
     /*! Custom Constructor
@@ -27,6 +28,7 @@ public class CameraComponent extends Component {
     */ //----------------------------------------------------------------------
     public CameraComponent(Actor parent) {
         super(parent);
+        mPanning = new Vector2D<Float>(0.f, 0.f);
     }
 
     // ------------------------------------------------------------------------
@@ -39,6 +41,10 @@ public class CameraComponent extends Component {
         mViewMatrix = mCameraMatrix = new AffineTransform();
     }
 
+    public void SetPanning(final Vector2D<Float> pan) {
+        mPanning = pan;
+    }
+
     // ------------------------------------------------------------------------
     /*! Update
     *
@@ -48,7 +54,8 @@ public class CameraComponent extends Component {
     public void Update() {
         final Vector2D<Float> pos = GetCoordinates();
         mCameraMatrix = AffineTransform.getTranslateInstance(pos.x, pos.y);
-        
+        mCameraMatrix.concatenate(AffineTransform.getTranslateInstance(mPanning.x, mPanning.y));
+
         //Try to invert the CameraMatrix, else, set it to the identity \_(-_-)_/
         try {
             mViewMatrix = mCameraMatrix.createInverse();
@@ -107,6 +114,10 @@ public class CameraComponent extends Component {
         final Vector2D<Integer> camera = GraphicsPipeline.GetGraphicsPipeline().GetDimensions();
 
         return new Vector2D<>(pos.x - camera.x / 2, pos.y - camera.y / 2);
+    }
+
+    public Vector2D<Float> GetPanning() {
+        return mPanning;
     }
 
     // ------------------------------------------------------------------------

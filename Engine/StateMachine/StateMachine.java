@@ -9,7 +9,6 @@
 package Engine.StateMachine;
 
 import java.util.ArrayList;
-
 import Gameplay.States.PlayState;
 
 public class StateMachine {
@@ -58,7 +57,7 @@ public class StateMachine {
     *
     *   Removes a ceratain state
     */ //----------------------------------------------------------------------
-    public void Remove(State state) {
+    public void Remove(final State state) {
         mStates.remove(state);
     }
 
@@ -67,7 +66,7 @@ public class StateMachine {
     *
     *   Adds one state
     */ //----------------------------------------------------------------------
-    public void Add(State state) {
+    public void Add(final State state) {
         mStates.add(state);
     }
 }

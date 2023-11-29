@@ -9,7 +9,6 @@
 package Engine.Window;
 
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 public class Window extends JFrame {
     private GameLoop mGameLoop;
@@ -20,7 +19,7 @@ public class Window extends JFrame {
     */ //----------------------------------------------------------------------
     public Window() {
         final PresentBuffer buffer = new PresentBuffer(1280, 720);
-        mGameLoop = new GameLoop(buffer);
+        mGameLoop = new GameLoop(buffer, this);
         setTitle("The Legend Of Zelda");
 
         //If we are on release mode, draw a fancy window
@@ -35,14 +34,5 @@ public class Window extends JFrame {
         setVisible(true);
         setAutoRequestFocus(true);
         mGameLoop.start();
-
-        while(mGameLoop.isAlive()) {try {
-            Thread.sleep(1000L);
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }}
-
-        this.dispose();
     }
 }
