@@ -73,6 +73,7 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     protected int mCurrentAnimation;
     protected AnimationMachine mAnimation;
     protected BoxCollider mCollision;
+    protected PathRender pathRender;
 
     private int delay = 10;
     
@@ -85,7 +86,8 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     public Enemy( Vector2D<Float> position) {
         super(position);
         //Render path (add to pipeline)
-        GraphicsPipeline.GetGraphicsPipeline().AddRenderable(this);
+        //GraphicsPipeline.GetGraphicsPipeline().AddRenderable(this);
+        pathRender = (PathRender)AddComponent(new PathRender(this));
     }
 
     public void SetAnimation(int i, BufferedImage[] frames, int delay) {
@@ -245,6 +247,7 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
             if(!path.empty()){
                 path.clear();
             }
+            SetPosition(pos); // setPosicion(pos) solves invisible enemies
             
         }
     }
@@ -359,7 +362,7 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     
     public void knockBack() {
         knockback=true;
-        Vector2D<Float> dir = new EuclideanCoordinates(pos).getVectorToAnotherActor(playerPos);
+        Vector2D<Float> dir = new Vector2D<>(pos.x - playerPos.x, pos.y - playerPos.y);
         normalizedDirection=normalize(dir);
         
     }
@@ -379,12 +382,6 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
             knockback=false;
             knockbackCounter=0;
         }
-    }
-
-    public void knockBack(Vector2D<Float> attackerPos) {
-        knockback=true;
-        Vector2D<Float> dir = new EuclideanCoordinates(pos).getVectorToAnotherActor(attackerPos);
-        normalizedDirection=normalize(dir);
     }
     
 
@@ -406,6 +403,14 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
         new DeadAnimation(this);
         Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/enemy-death.wav"));
         Audio.Instance().Play(sound);
+    }
+    /** Used to kill the enemy via code
+     * 
+     */
+    public void superDie() {
+        mCollision.ShutDown();
+        path.clear();
+        SetScale(new Vector2D<>(0f, 0f));
     }
 
     private boolean vision(){

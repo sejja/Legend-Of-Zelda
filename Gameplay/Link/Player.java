@@ -4,10 +4,9 @@ import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 import java.util.logging.Level;
-
-import Engine.Assets.Asset;
 import Engine.Assets.AssetManager;
 import Engine.Audio.Audio;
 import Engine.Audio.Sound;
@@ -38,8 +37,10 @@ import Engine.Physics.Components.BoxCollider;
 import Engine.Window.GameLoop;
 import Engine.Window.PresentBuffer;
 import Gameplay.Interaction;
+import Gameplay.AnimatedObject.AnimatedObject;
 import Gameplay.AnimatedObject.Bomb;
 import Gameplay.Enemies.Enemy;
+import Gameplay.Enemies.Search.pPair;
 import Gameplay.Interactives.Interactive;
 import Gameplay.LifeBar.LifeBar;
 import Gameplay.NPC.Npc;
@@ -64,12 +65,16 @@ public class Player extends Actor {
      */
     //private boolean up = false;
     private DIRECTION direction = DIRECTION.RIGHT;
+    private boolean movable = true;
     private boolean attack = false;
     private boolean stop = true;
     private boolean bow = false;
     public boolean dash = false;
     private boolean falling = false;
     private boolean canmove = true;
+    StackActioner stackActioner;
+    
+    private Vector2D<Float> previusPosition;
     //----------------------------------------------------------------------
 
     /* Animation
@@ -136,20 +141,23 @@ public class Player extends Actor {
         mCamera = AddComponent(new ZeldaCameraComponent(this));
         mCamera.Bind();
         SetAnimation(RIGHT, sprite.GetSpriteArray(RIGHT), delay);
+        stackActioner = new StackActioner(this);
         implementsActions();
         this.SetName("Player");
         //---------------------------------------------------------------------
         lifeBar = new LifeBar(getPlayer(), getHealthPoints());
         //---------------------------------------------------------------------
         mCollider = (BoxCollider)AddComponent(new BoxCollider(this));
-        
         setPseudoPosition(50f, 50f);
         setPseudoPositionVisible();
         hitbox = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<Float>(55f, 60f), true));
         terrainCollider = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<Float>(55f, 20f), false));
-        terrainCollider.SetPosition(new Vector2D<>(getPseudoPosition().x - terrainCollider.GetBounds().GetWidth()/2, getPseudoPosition().y+20));
+        terrainCollider.setPosition(new Vector2D<>(getPseudoPosition().x - terrainCollider.GetBounds().GetWidth()/2, getPseudoPosition().y+20));
+        //terrainCollider.setColor(Color.RED);
+        previusPosition = position;
         ColliderManager.GetColliderManager().addCollider(hitbox, true);
         ObjectManager.GetObjectManager().SetPawn(this);
+        GetPosition().y = GetPosition().y-10;
     }
     // ------------------------------------------------------------------------
 
@@ -165,29 +173,39 @@ public class Player extends Actor {
                 setVelocity(0);
                 stop = true;
                 attack = false;
+                stackActioner.pop(direction,Action.RUN);
             }
             });
         }
         //RUN______________________________________________________________________________________________
         InputManager.Instance().SubscribePressed(KeyEvent.VK_W, new InputFunction() {
-            @Override
-            public void Execute() {activateAction(UP);}
+            public void Execute() {
+                activateAction(UP);
+                stackActioner.push(direction, Action.RUN);
+            }
         });
         InputManager.Instance().SubscribePressed(KeyEvent.VK_S, new InputFunction() {
             @Override
-            public void Execute() {activateAction(DOWN);}
+            public void Execute() {
+                activateAction(DOWN);
+                stackActioner.push(direction, Action.RUN);
+            }
         });
         InputManager.Instance().SubscribePressed(KeyEvent.VK_A, new InputFunction() {
             @Override
-            public void Execute() {activateAction(LEFT);System.out.println("hola");}
+            public void Execute() {
+                activateAction(LEFT);
+                stackActioner.push(direction, Action.RUN);}
         });
         InputManager.Instance().SubscribePressed(KeyEvent.VK_D, new InputFunction() {
             @Override
-            public void Execute() {activateAction(RIGHT);}
+            public void Execute() {
+                activateAction(RIGHT);
+                stackActioner.push(direction, Action.RUN);}
         });
         InputManager.Instance().SubscribePressed(KeyEvent.VK_ESCAPE, new InputFunction() {
             @Override
-            public void Execute() {GameLoop.Quit(); }
+            public void Execute() {GameLoop.Quit();}
         });
         //ATTACK_____________________________________________________________________________________________
         InputManager.Instance().SubscribePressed(KeyEvent.VK_J, new InputFunction() {
@@ -209,6 +227,7 @@ public class Player extends Actor {
 
                 stop = true;
                 attack = true;
+                stackActioner.push(direction, Action.ATTACK);
             }
         });
         InputManager.Instance().SubscribeReleased(KeyEvent.VK_J, new InputFunction() {
@@ -216,9 +235,7 @@ public class Player extends Actor {
             public void Execute() {
                 setVelocity(0);
                 stop = true;
-                //attack = false;
                 bow = false;
-                dash = false;
             }
         });
         //BOW________________________________________________________________________________________________
@@ -229,8 +246,8 @@ public class Player extends Actor {
                 stop = true;
                 if(!attack){ //If not attacking, then shoot
                     bow = true;
+                    stackActioner.push(direction,Action.BOW);
                 }
-                dash = false;
             }
         });
         InputManager.Instance().SubscribeReleased(KeyEvent.VK_K, new InputFunction() {
@@ -238,7 +255,6 @@ public class Player extends Actor {
             public void Execute() {
                 setVelocity(0);
                 stop = true;
-                bow =false;
             }
         });
         //DASH_______________________________________________________________________________________________
@@ -285,25 +301,30 @@ public class Player extends Actor {
             @Override
             public void Execute() {interact();}
         });
-
+        var player = this; //<-----------------------------quitar
         mAnimation.AddFinishedListener(new AnimationEvent() {
 
             @Override
             public void OnTrigger() {
+                //System.out.println(player.actionToString());
                 if (falling) //Finished falling animation
                 {
                     linkHasFalled();
                 }
-                else if (nArrows != 0 && bow) //Spawn Arrow
+                else if (bow) //Spawn Arrow
                 {
                     shootArrow();
                     bow = false;
+                    stackActioner.pop(direction,Action.BOW);
+                    //System.out.println("Se popea arco");
                 }
                 else if (attack) //Finished Attack (attack && !bow)
                 {
                     Attack();
                     bow = false;
                     attack = false;
+                    stackActioner.pop(direction, Action.ATTACK);
+                    //System.out.println("Se popea espada");
                 }
                 //mAnimation.setMustComplete(false);
             }
@@ -312,7 +333,7 @@ public class Player extends Actor {
         InputManager.Instance().SubscribePressed(KeyEvent.VK_T, new InputFunction() {
             @Override
             public void Execute() {
-                System.out.println(ColliderManager.GetColliderManager().getCollision(hitbox, Interactive.class, true));
+                System.out.println(ColliderManager.GetColliderManager().getCollision(mCollider, Npc.class, true));
             }
         });
     }
@@ -333,7 +354,13 @@ public class Player extends Actor {
      */
     public void Animate() {
 
-        if (mAnimation.MustComplete()){return;} //Early return, if it is a animation thats has to be complete, do not animaate
+        if (mAnimation.MustComplete()){return;} //Early return, if it is a animation thats has to be complete, do not animate
+        /*
+        ActionObject currentAction = stackActioner.readCurrentAction();
+        direction = currentAction.getDirection();
+        setMovement(currentAction.getAction());
+         */
+        
         if (stop){
             setMovement(Action.STOP);
             if (attack){setMovement(Action.ATTACK);}
@@ -352,6 +379,7 @@ public class Player extends Actor {
                 }
             }
         }
+        
     }
     // ------------------------------------------------------------------------
 
@@ -362,6 +390,7 @@ public class Player extends Actor {
     @Override
     public void Update() { 
         super.Update();
+        //System.out.println(stackActioner);
         playerStateMachine();
         Animate();
         lifeBar.Update();
@@ -369,26 +398,31 @@ public class Player extends Actor {
         hitbox.Update();
         terrainColliderUpdate();
         //System.out.println("Player Position: " + this.getPseudoPosition());
-        System.out.println(velocity);
+        //System.out.println(velocity);
         //System.out.println(GetPosition());
-//SE VE GENIAL, SI QUIERES, MERGEO CON AUDIO PARA LOS FPSs
     }
-    public void playerStateMachine(){
+    private void playerStateMachine(){
         if(dash){dashCooldawn = 0;dash();return;}
         else if (dashCooldawn<120){dashCooldawn++;}
-        if (!mAnimation.MustComplete() && canmove){Move();}
+        //else {if(!mAnimation.MustComplete()){Move();}}
+        if(!mAnimation.MustComplete() && movable){Move();}
     }
     // ------------------------------------------------------------------------
     
     /* Colision
      *      -> True if there is no collision
      */
-    public boolean SolveCollisions(Vector2D<Integer> dif) {
-        CollisionResult res = terrainCollider.GetBounds().CollisionTile(
-            dif.x - World.mCurrentLevel.GetBounds().GetPosition().x, 
-            dif.y - World.mCurrentLevel.GetBounds().GetPosition().y);
-        falling = res == CollisionResult.Hole;
-        return (res == CollisionResult.None);
+    private boolean SolveCollisions(Vector2D<Integer> dif) {
+        float topLeftX =  dif.x - World.mCurrentLevel.GetBounds().GetPosition().x;
+        float topLeftY =  dif.y - World.mCurrentLevel.GetBounds().GetPosition().y;
+        CollisionResult res = terrainCollider.GetBounds().CollisionTile(topLeftX, topLeftY);
+        CollisionResult res_1 = terrainCollider.GetBounds().CollisionTile(topLeftX + terrainCollider.GetBounds().GetWidth(), topLeftY);
+        CollisionResult res_2 = terrainCollider.GetBounds().CollisionTile(topLeftX , topLeftY + terrainCollider.GetBounds().GetHeight());
+        CollisionResult res_3 = terrainCollider.GetBounds().CollisionTile(topLeftX + terrainCollider.GetBounds().GetWidth(), topLeftY + terrainCollider.GetBounds().GetHeight());
+        boolean result = (res == CollisionResult.None) && (res_1 == CollisionResult.None) && (res_2 == CollisionResult.None) && (res_3 == CollisionResult.None);
+        falling = (res == CollisionResult.Hole);
+        //return (result);
+        return true;
     }
     // ------------------------------------------------------------------------
     
@@ -396,8 +430,9 @@ public class Player extends Actor {
     *
     *   Moves the sprite on a certain direction
     */ //----------------------------------------------------------------------
-    public void Move() {
+    private void Move() {
         Vector2D<Float> pos = GetPosition();
+        previusPosition = new Vector2D<>(pos.x, pos.y);
         switch (direction){
             case UP:
                 if(SolveCollisions(new Vector2D<>(0, -velocity))) pos.y -= velocity;
@@ -416,7 +451,7 @@ public class Player extends Actor {
     }
     private void terrainColliderUpdate(){
         //terrainCollider.Update();
-        terrainCollider.SetPosition(new Vector2D<>(getPseudoPosition().x - terrainCollider.GetBounds().GetWidth()/2, getPseudoPosition().y+20));
+        terrainCollider.setPosition(new Vector2D<>(getPseudoPosition().x - terrainCollider.GetBounds().GetWidth()/2, getPseudoPosition().y+20));
     }
     // ------------------------------------------------------------------------
 
@@ -522,7 +557,8 @@ public class Player extends Actor {
     private Player getPlayer (){return this;}
     public boolean isAble_to_takeDamage() {return able_to_takeDamage;}
     public BoxCollider getHitbox() {return hitbox;}
-
+    public Vector2D<Float> getPreviusPosition(){return this.previusPosition;}
+    public BoxCollider getEnviromentCollider() {return this.terrainCollider;}
     //------------------------------------------------------------------------
     /* Setters
      * 
@@ -589,6 +625,8 @@ public class Player extends Actor {
                 return;
         }
     }
+    public void setPreviusPosition(Vector2D<Float> previusPosition){this.previusPosition = previusPosition;}
+    public void setMovable(Boolean value){this.movable = value;}
     //------------------------------------------------------------------------
 
     /* Spawn a Arrow object
@@ -596,7 +634,7 @@ public class Player extends Actor {
      */
     private void shootArrow(){ //Tiene que dar al enemigo
         nArrows--;
-        if(nArrows == 0){System.out.println("0 Arrows in quiver");}
+        if(nArrows <= 0){System.out.println("0 Arrows in quiver");}
         else{ObjectManager.GetObjectManager().AddEntity(new Arrow(this));}
     }
     //------------------------------------------------------------------------
@@ -727,6 +765,7 @@ public class Player extends Actor {
     private void interact(){
         if(currentNPCinteraction == null){
             currentNPCinteraction = nearestNPC();
+            //System.out.println("Contenido en el ObjectManager: " + ObjectManager.GetObjectManager().GetAllObjectsOfType(Npc.class));
         }
         try {
             currentNPCinteraction.INTERACTION();
@@ -734,12 +773,22 @@ public class Player extends Actor {
             System.err.println("No npc found");
             this.currentNPCinteraction = null;
         }
+        System.out.println("Interacion: " + currentNPCinteraction);
     }
     private Interaction nearestNPC (){
         ArrayList<Actor> allInteraction;
         try{
             allInteraction =ColliderManager.GetColliderManager().getCollision(mCollider, Npc.class, true);
+            npcInsertionSort(allInteraction);
+            Actor result;
+            for(Actor actor: allInteraction){
+                if(((Interaction)actor).playerIsLooking()){
+                    result = actor;
+                    return (Interaction)result;
+                }
+            }
             return (Interaction)allInteraction.get(0);
+
         }catch(java.lang.IndexOutOfBoundsException e){
             System.err.println("No interaction in hitbox");
             return(null);
@@ -757,26 +806,44 @@ public class Player extends Actor {
             else {return DIRECTION.UP;}
         }
     }
+    private void npcInsertionSort(ArrayList<Actor> npcs){
+        for(int i = 0; i < npcs.size()-1; i++){
+            Float distance = npcs.get(i).getPseudoPosition().getModuleDistance(this.getPseudoPosition());
+            Float distanceNext = npcs.get(i+1).getPseudoPosition().getModuleDistance(this.getPseudoPosition());
+            if(distanceNext < distance){
+                int a = i;
+                int b = i+1;
+                while (a>= 0) {
+                    Float distanceA = npcs.get(i).getPseudoPosition().getModuleDistance(this.getPseudoPosition());
+                    Float distanceB = npcs.get(i+1).getPseudoPosition().getModuleDistance(this.getPseudoPosition());
+                    if(distanceB < distanceA){
+                        Collections.swap(npcs, a, b);
+                        a--;
+                        b--;
+                    }else{
+                        a = -1;
+                    }
+                }
+            }
+        }
+    }
     //------------------------------------------------------------------------
     
     /* Dash mecanics functions
      * 
      */
-    public void dash (){
+    private void dash (){
         /*  This function used to arrows to simulate a classic dash
          *      The first arrow and player have the same instance of the vectorposition it moves modifiying the position of the arrow and the vecto at the same time
          *      The second arrow it a arrow that contais a 1 frame animation and its has a low range to emulate a dash effect
          */
+        //Asset dashaAsset = AssetManager.Instance().GetResource("Content/Animations/Link/LinkDashSpriteSheet.png");
 
-        Asset dashaAsset = AssetManager.Instance().GetResource("Content/Animations/Link/LinkDashSpriteSheet.png");
-
-        Arrow dash_movement = new Arrow(this, new Spritesheet(dashaAsset, new Vector2D<>(90, 50)), 30, 300, true);
+        Arrow dash_movement = new Arrow(this, 30, 250, true);
         dash_movement.SetScale(new Vector2D<>(0f, 0f));
-        Arrow dash_animation = new Arrow(this, new Spritesheet(dashaAsset, new Vector2D<>(90, 50)), 0.3f , 1, false);
-
-        ObjectManager.GetObjectManager().AddEntity(dash_animation);
         ObjectManager.GetObjectManager().AddEntity(dash_movement);
 
+        movable = false;
         dash = false;
         able_to_takeDamage = true;
     }
@@ -807,12 +874,16 @@ public class Player extends Actor {
         setDamage(2);
         this.direction = DIRECTION.DOWN;
         setToSpawnPoint();
-        hitbox.SetPosition(GetPosition());
+        hitbox.setPosition(GetPosition());
         hitbox.SetScale(GetScale());;
         mAnimation.SetFrameTrack(DOWN+Action.STOP.getID());
         canmove = true;
     }
     public void setBow(boolean bow) {this.bow = bow;}
+
+    public LifeBar getLifebar(){
+        return lifeBar;
+    }
     //------------------------------------------------------------------------
 
     @Override 

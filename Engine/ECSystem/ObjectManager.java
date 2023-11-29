@@ -13,8 +13,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Entity;
+import Engine.Graphics.GraphicsPipeline;
+import Engine.Graphics.Tile.ShadowLayer;
 import Engine.Math.Vector2D;
+import Gameplay.AnimatedObject.Torch;
 import Gameplay.Enemies.Enemy;
+import Gameplay.Link.Player;
 import Gameplay.NPC.Npc;
 
 //This is a Singleton
@@ -57,18 +61,29 @@ public class ObjectManager {
         return null;
     }
 
-    // ------------------------------------------------------------------------
-    /*! Add Entity
-    *
-    *   Adds an entity to the Object Manager, classifying it
-    */ //----------------------------------------------------------------------
+    /** Add a entity, if it is an actor and it already contains the same actor but different instance it will remove the previus instance and add the new instance
+     * 
+     * @param e entity to add
+     * @return
+     */
     public Entity AddEntity(Entity e) {
         final Class<?> type = e.GetSuperClass();
 
         //If we already contain the key, perfect
         if(mAliveEntities.containsKey(type)) {
             //System.out.println(type);
-            mNewEntities.get(type).add(e);
+            if(!mAliveEntities.get(e.GetSuperClass()).contains(e)){
+                 mNewEntities.get(type).add(e);
+            }
+            else{
+                if(e instanceof Actor){
+                    for(int i = 0; i < mAliveEntities.get(type).size(); i++){
+                        if( (mAliveEntities.get(type).get(i) != e ) &&  ((Actor)mAliveEntities.get(type).get(i)).equals((Actor)e) ){ //If it is the same Actor but different instance
+                            mAliveEntities.get(type).set(i, e);
+                        }
+                    }
+                }
+            }
 
         //else, create a new chunk
         } else {
@@ -141,7 +156,6 @@ public class ObjectManager {
 
         mDeadEntities.keySet().stream().forEach( x -> {
             final ArrayList<Entity> chunk = mAliveEntities.get(x);
-
             mDeadEntities.get(x).stream().forEach(y -> chunk.remove(y));
         });
 
@@ -155,5 +169,52 @@ public class ObjectManager {
 
         //mNewEntities.clear();
         mNewEntities.values().stream().forEach(x -> x.clear());
+        //managerInfo();
+    }
+
+    /** Inform aboout the content of the ObjectManager
+     * 
+     */
+    public void managerInfo(){
+        System.out.println("------------------------------------------------------------------------------------------");
+        for (Class code: mAliveEntities.keySet()){
+            System.out.println(code.descriptorString() + "Num: " + mAliveEntities.get(code).size());
+            //System.out.println("Contend : \n" + mAliveEntities.get(code));
+        }
+    }
+    public void mNewEntitiesInfo(){
+        System.out.println("------------------------------------------------------------------------------------------");
+        for (Class code: mNewEntities.keySet()){
+            System.out.println(code.descriptorString() + "Num: " + mAliveEntities.get(code).size());
+            System.out.println("Contend : \n" + mAliveEntities.get(code));
+        }
+    }
+    /** Remove all aliveEntities except NPC,Actor
+     * 
+     */
+    public void flush(){
+        ArrayList<Entity> player = mAliveEntities.get(Player.class);
+        ArrayList<Entity> NPCs = mAliveEntities.get(Npc.class);
+        for(Entity enemy: mAliveEntities.get(Enemy.class)){ //Kill all enemy
+            ((Enemy)enemy).superDie();
+        }
+        ShadowLayer.getShadowLayer().resetMatrix();
+        GraphicsPipeline.GetGraphicsPipeline().flush();
+        mAliveEntities.clear();
+        mAliveEntities.put(Player.class, player);
+        mAliveEntities.put(Npc.class, NPCs);
+    }
+    /** This function checks if the objectManager contais the INSTANCE of the entity, not the entity. So it does not call compareTo or equals.
+     * 
+     * @param type the superclass of the entity
+     * @param entity entity to search
+     * @return if the object Manager has the instance ? True : False
+     */
+    public boolean containsInstance(Class type, Entity entity){
+        boolean result = false;
+        for(Entity e: mAliveEntities.get(type)){
+            result = (result || (e == entity));
+        }
+        return result;
     }
 }

@@ -113,7 +113,7 @@ public class CameraComponent extends Component {
         final Vector2D<Float> pos = GetParent().GetPosition();
         final Vector2D<Integer> camera = GraphicsPipeline.GetGraphicsPipeline().GetDimensions();
 
-        return new Vector2D<>(pos.x - camera.x / 2, pos.y - camera.y / 2);
+        return new Vector2D<>( pos.x - (camera.x/2f), pos.y - (camera.y/2f) );
     }
 
     public Vector2D<Float> GetPanning() {

@@ -12,6 +12,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 
 import Engine.ECSystem.ObjectManager;
+import Engine.ECSystem.World;
 import Engine.Graphics.Spritesheet;
 import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
@@ -139,4 +140,10 @@ public abstract class Actor extends Entity implements ClassClasifier{
     }
 
     public Class GetSuperClass(){return Actor.class;}
+
+    @Override
+    public boolean equals(Object obj) {
+        Actor other = (Actor) obj;
+        return this.GetPosition().equals(other.GetPosition());
+    }
 }

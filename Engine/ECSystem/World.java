@@ -91,10 +91,13 @@ public class World {
     public void Init(Vector2D<Float> position) {
         mCurrentLevel = this;
         mTilemap.CreateTileMap(position, new Vector2D<>(64, 64));
-        if(!visited) {
-            visited = true;
-            spawnEntities();
+        try {
+            ObjectManager.GetObjectManager().flush();
+        }catch(NullPointerException e){
+            System.out.println("No hay nada que borrar MAMARRACHO");
         }
+        
+        spawnEntities();
     }
 
     public static Vector2D<Float> GetWorldSpaceCoordinates(Vector2D<Float> levelcoordinate) {
@@ -110,8 +113,21 @@ public class World {
         finalpos.y -= mCurrentLevel.GetBounds().GetPosition().y;
         return finalpos;
     }
+    public static Vector2D<Integer> GetLevelSpaceIntegerCoordinates(Vector2D<Integer> worldcoordinate) {
+        Vector2D<Integer> finalpos = new Vector2D<Integer>(worldcoordinate.x,worldcoordinate.y);
+        finalpos.x -= (int)(float)mCurrentLevel.GetBounds().GetPosition().x/64;
+        finalpos.y -= (int)(float)mCurrentLevel.GetBounds().GetPosition().y/64;
+        return finalpos;
+    }
 
     public static Pair GetLevelPair(Pair pair) {
+        int x= pair.getFirst();
+        int y= pair.getSecond();
+        x -= mCurrentLevel.GetBounds().GetPosition().x/64;
+        y -= mCurrentLevel.GetBounds().GetPosition().y/64;
+        return new Pair(x,y);
+    }
+    public static Pair GetWorldPair(Pair pair) {
         int x= pair.getFirst();
         int y= pair.getSecond();
         x += mCurrentLevel.GetBounds().GetPosition().x/64;
@@ -119,11 +135,11 @@ public class World {
         return new Pair(x,y);
     }
 
+    // Spawns the entities of entityQueue based on the ID and in the position specified
     private void spawnEntities() {
         //System.out.println(mTilemap.entityQueue);
         int firstEntity = TilemapEntities.firstEntity;
         while(mTilemap.entityQueue != null && !mTilemap.entityQueue.isEmpty() ) {
-            //System.out.println("Juan");
             var e = mTilemap.entityQueue.poll();
             //System.out.println(e.type+"  "+ firstEntity);
             if(e.type == firstEntity) {
@@ -166,8 +182,8 @@ public class World {
                     /* 
                     World v = new World(mLeft);
                     var b = v.mTilemap.EstimateBounds(new Vector2D<>(64, 64));
-                    Vector2D<Float> scale = new Vector2D<>(b.GetWidth(), b.GetHeight());
                     var pos = GetBounds().GetPosition();
+                    Vector2D<Float> scale = new Vector2D<>(b.GetWidth(), b.GetHeight());
                     pos.x -= scale.x;
 
                     v.Init(pos);
@@ -208,13 +224,13 @@ public class World {
 
             if(sElapsedTime < 1) {
                 GameLoop.SetPaused(true);
-                Actor p = ObjectManager.GetObjectManager().GetPawn();
+                Actor p = ObjectManager.GetObjectManager().GetPawn(); //<--- Its Link
 
                 z.SetPanning(new Vector2D<Float>(sTransitionDir.x * sElapsedTime * 20.f * 64.f,
                 sTransitionDir.y * sElapsedTime * 20.f * 64.f));
                 
                 sElapsedTime += 0.016;
-            } else {
+            } else { //END TRANSITION
                 GameLoop.SetPaused(false);
                 sTransitioning = false;
 
@@ -274,4 +290,6 @@ public class World {
     void DespawnEntity(Entity e) {
         ObjectManager.GetObjectManager().RemoveEntity(e);
     }
+
+    
 }

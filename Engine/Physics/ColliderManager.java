@@ -9,7 +9,7 @@ import Engine.ECSystem.Types.Actor;
 import Engine.Math.EuclideanCoordinates;
 import Engine.Physics.Components.BoxCollider;
 import Gameplay.Link.Player;
-/* ColliderManager is a static object thats manage the colision between objects
+/** ColliderManager is a static object thats manage the colision between objects
  *      -> All BoxCollider thats hasCollision it is added automatically to the colliderManager
  *      -> Use ColliderManager.GetColliderManager() to the the ColliderManager
  *      -> Use getCollision(BoxCollider collider, Class objective, boolean hasCollision) to get the objects thats has a collision with the currentCollider 
@@ -34,6 +34,11 @@ public class ColliderManager {
 
     public static ColliderManager GetColliderManager (){return colliderManager;}
 
+    /** Adds a collider; if it has the same collider but different instance it will remove the previus instance and add the next one
+     * 
+     * @param collider collider to add
+     * @param itCollides if it has collision
+     */
     public void addCollider(BoxCollider collider, boolean itCollides){
         Class CLASS = collider.GetParent().GetSuperClass();
         if(!mapAllCollider.containsKey(CLASS)){
@@ -50,7 +55,10 @@ public class ColliderManager {
                     mapAllNonCollision.get(CLASS).add(collider);
                 }
             }
-            else{return;}
+            else{
+                removeCollider(collider);
+                addCollider(collider, itCollides);
+            }
         }
         //System.out.println(mapAllCollision);
     }
