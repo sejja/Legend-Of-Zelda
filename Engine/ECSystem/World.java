@@ -9,6 +9,7 @@ import Engine.ECSystem.Types.Entity;
 import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.ZeldaCameraComponent;
+import Engine.Graphics.Tile.ShadowLayer;
 import Engine.Graphics.Tile.TileManager;
 import Engine.Graphics.Tile.TilemapEntities;
 import Engine.Math.Util;
@@ -215,7 +216,7 @@ public class World {
         } else {
             var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetBindedCamera();
             z.Update();
-
+            ShadowLayer.getShadowLayer().resetMatrix();
             if(sElapsedTime < 0.5) {
                 GameLoop.SetPaused(true);
                 Actor p = ObjectManager.GetObjectManager().GetPawn(); //<--- Its Link

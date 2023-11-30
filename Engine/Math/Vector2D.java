@@ -71,8 +71,8 @@ public class Vector2D<T> {
     }
 
     public Vector2D<Float> getVectorToAnotherActor(Vector2D<Float> enemyPosition){
-        Float xf = -((Float)this.x - enemyPosition.x);
-        Float yf = -((Float)this.y - enemyPosition.y);
+        Float xf = enemyPosition.x-(Float)this.x;
+        Float yf = enemyPosition.y-(Float)this.y;
         return new Vector2D<>(xf, yf);
     }
 
@@ -132,7 +132,7 @@ public class Vector2D<T> {
             return false;
         return true;
     }
-    
-
-    
+    static public Vector2D<Float> getRevertVector(Vector2D<Float> vector2d){
+        return (new Vector2D<Float>(-vector2d.x, -vector2d.y));
+    }
 }

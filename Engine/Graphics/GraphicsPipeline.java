@@ -243,7 +243,6 @@ public class GraphicsPipeline {
                     unremovableRenderables.addAll((Collection<? extends Renderable>)((Npc)npc).getmComponents()); //getAnimationMachine from Npc
                 }
             }
-            shadowLayer.resetMatrix();
         }
         mRenderables.clear();
         

@@ -48,7 +48,7 @@ public class ShadowLayer {
     }
 
     public void Render(Graphics2D g, CameraComponent mCamera) {
-        System.out.println(isOn + " " + mCamera);
+        //System.out.println(isOn + " " + mCamera);
         if(matrixOpacity == null){buildMatrix();}
         if(!isOn || mCamera == null){return;}
         final int scaleX = 64;
@@ -101,15 +101,17 @@ public class ShadowLayer {
         if(cameraDrawPointY <0){cameraDrawPointY = 0;}
         else if(cameraDrawPointY > limitY){cameraDrawPointY = limitY;}
 
-        Vector2D<Float> result =  new Vector2D<Float>((Float)(float)(cameraDrawPointX+1)*64, (Float)(float)(cameraDrawPointY+1)*64); // <---- quitar +1
+        Vector2D<Float> result =  new Vector2D<Float>((Float)(float)(cameraDrawPointX)*64, (Float)(float)(cameraDrawPointY-1)*64); // <---- quitar +1
         //To see where is the cameraDrawPoint
         //____________________________________________________________________________________________________________
+        /*
         if(seeker == null){
             seeker = new BoxCollider(link, result);
             link.AddComponent(seeker);
         }else{
             seeker.GetBounds().SetPosition(result);
         }
+        */
         //____________________________________________________________________________________________________________
 
         Vector2D<Integer> _result =  new Vector2D<Integer>((int)(float)(result.x/64), (int)(float)(result.y/64));

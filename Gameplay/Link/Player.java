@@ -155,7 +155,7 @@ public class Player extends Actor {
         terrainCollider.setPosition(new Vector2D<>(getPseudoPosition().x - terrainCollider.GetBounds().GetWidth()/2, getPseudoPosition().y+20));
         terrainCollider.setColor(Color.RED);
         previusPosition = position;
-        ColliderManager.GetColliderManager().addCollider(hitbox, true);
+        ColliderManager.GetColliderManager().addCollider(terrainCollider, true);
         ObjectManager.GetObjectManager().SetPawn(this);
         GetPosition().y = GetPosition().y-10;
     }
@@ -875,7 +875,7 @@ public class Player extends Actor {
         this.direction = DIRECTION.DOWN;
         setToSpawnPoint();
         hitbox.setPosition(GetPosition());
-        hitbox.SetScale(GetScale());;
+        hitbox.setHitboxScale(GetScale());;
         mAnimation.SetFrameTrack(DOWN+Action.STOP.getID());
         canmove = true;
     }

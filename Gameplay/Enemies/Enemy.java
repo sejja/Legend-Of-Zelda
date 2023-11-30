@@ -362,7 +362,7 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     
     public void knockBack() {
         knockback=true;
-        Vector2D<Float> dir = new Vector2D<>(pos.x - playerPos.x, pos.y - playerPos.y);
+        Vector2D<Float> dir = playerPos.getVectorToAnotherActor(pseudoPos);
         normalizedDirection=normalize(dir);
         
     }
