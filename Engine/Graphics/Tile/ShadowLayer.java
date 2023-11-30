@@ -36,11 +36,12 @@ public class ShadowLayer {
         if(matrixOpacity == null){
             buildMatrix();
         }
-
+        if(tilePosition.x >= 50 ||  tilePosition.y >= 50){
+            //System.err.println("Estas intentando iluminar fuera del mapa");
+            return;
+        }
         try{
-
             matrixOpacity[tilePosition.x][tilePosition.y] += opacity;
-
         }catch(java.lang.ArrayIndexOutOfBoundsException e){
             System.err.println("tilePosition out of the bounds error -> " + tilePosition);
             matrixOpacity[tilePosition.x][tilePosition.y] = this.opacity;

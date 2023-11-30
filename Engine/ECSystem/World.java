@@ -111,7 +111,7 @@ public class World {
         return finalpos;
     }
 
-    public static Vector2D<Float> GetLevelSpaceCoordinates(Vector2D<Float> worldcoordinate) {
+    public static Vector2D<Float> GetLevelSpaceCoordinates(Vector2D<Float> worldcoordinate) { // UwU
         Vector2D<Float> finalpos = new Vector2D<Float>(worldcoordinate.x,worldcoordinate.y);
         finalpos.x -= mCurrentLevel.GetBounds().GetPosition().x;
         finalpos.y -= mCurrentLevel.GetBounds().GetPosition().y;
