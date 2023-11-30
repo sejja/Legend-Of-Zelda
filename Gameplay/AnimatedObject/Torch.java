@@ -148,7 +148,7 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
     @Override
     public void RemoveAllComponent(){
         super.RemoveAllComponent();
-        this.removeIlumination();
+        //this.removeIlumination();
     }
     /*
     @Override
