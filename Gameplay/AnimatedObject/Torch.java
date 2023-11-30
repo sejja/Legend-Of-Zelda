@@ -112,7 +112,7 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
     public Class GetSuperClass(){return Npc.class;}
 
     private void addIlumination(){
-        Vector2D<Integer> tilePosition = new TileCoordinates(getPseudoPosition()).getTilePosition();
+        Vector2D<Integer> tilePosition = this.getWorldPseudoPosition().getTilePosition();
         final int maxDisctance = (int)Math.round(Math.sqrt(2)*radius);
         for (int i = tilePosition.x - maxDisctance; i <= tilePosition.x + maxDisctance; i++){
             for(int j = tilePosition.y - maxDisctance; j <= tilePosition.y+maxDisctance; j++){
@@ -122,8 +122,8 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
         }
     }
 
-    private void removeIlumination(){
-        Vector2D<Integer> tilePosition = new TileCoordinates(getPseudoPosition()).getTilePosition();
+    public void removeIlumination(){
+        Vector2D<Integer> tilePosition = this.getWorldPseudoPosition().getTilePosition();
         final int maxDisctance = (int)Math.round(Math.sqrt(2)*radius);
         for (int i = tilePosition.x - maxDisctance; i <= tilePosition.x + maxDisctance; i++){
             for(int j = tilePosition.y - maxDisctance; j <= tilePosition.y + maxDisctance; j++){

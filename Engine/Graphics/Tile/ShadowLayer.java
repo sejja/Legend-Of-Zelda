@@ -22,7 +22,7 @@ public class ShadowLayer {
     private int[][] matrixOpacity; //Array de los gradients (width x height)
     public int opacity;
     private BoxCollider seeker;
-    private boolean isOn = false;
+    private boolean isOn = true;
 
     public ShadowLayer(int defaultOpacity){
         this.opacity = defaultOpacity;
@@ -61,8 +61,9 @@ public class ShadowLayer {
 
 
         Vector2D<Integer> cameraDrawPoint = getDrawPointPosition(mCamera); //Superior Izquierdo donde empieza a dibujar la camara
-        Vector2D<Integer> windowShadowDrawPoint = World.GetLevelSpaceIntegerCoordinates(getWindowViewedDrawPoint(cameraDrawPoint, mCamera)); //Position de cada bloque de oscuridad que va dibujando con respecto a la ventana
-        System.out.println(windowShadowDrawPoint);
+        Vector2D<Integer> windowShadowDrawPoint = getWindowViewedDrawPoint(cameraDrawPoint, mCamera); //Position de cada bloque de oscuridad que va dibujando con respecto a la ventana
+        //System.out.println("Window shadowDrawPoint" + windowShadowDrawPoint);
+        //System.out.println("Camera drawPoint" + cameraDrawPoint);
         //Primero dibuja cada columna y luego cada fila
         //______________________________________________________________________________________________________
         for (int drawPointX = windowShadowDrawPoint.x; drawPointX < cameraSizeX; drawPointX+=scaleX ){
@@ -86,7 +87,6 @@ public class ShadowLayer {
     private Vector2D<Integer> getDrawPointPosition(CameraComponent mCamera){
         if (ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).size() == 0){return new Vector2D<Integer>(0,0);}
         Player link = (Player)ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0);
-        //Player link = (Player)mCamera.GetParent();
 
         Vector2D<Integer> blockPosition = World.GetLevelSpaceCoordinates(link.getPseudoPosition()).getTilePosition();
 
@@ -142,8 +142,12 @@ public class ShadowLayer {
         //cameraComponentCoordinate = The middle of the camera
         Vector2D<Float> cameraAABBPosition = new Vector2D<Float>(cameraComponent.GetCoordinates().x , cameraComponent.GetCoordinates().y );
         cameraAABBPosition = World.GetLevelSpaceCoordinates(cameraAABBPosition);
-        //return new Vector2D<Integer>( (cameraTilePositionn.x*64) - (int)(float)cameraAABBPosition.x - 640, (cameraTilePositionn.y*64) - (int)(float)cameraAABBPosition.y - 360);
-        return new Vector2D<Integer>( (cameraTilePositionn.x*64) - (int)(float)(cameraAABBPosition.x) , (cameraTilePositionn.y*64) - (int)(float)(cameraAABBPosition.y ));
+        //System.out.println("Camera drawPoint" + cameraTilePositionn);
+        //System.out.println("camera AABB position = " + cameraAABBPosition);
+        Vector2D<Integer> result = new Vector2D<Integer>( (cameraTilePositionn.x*64) - (int)(float)(cameraAABBPosition.x) , (cameraTilePositionn.y*64) - (int)(float)(cameraAABBPosition.y ));
+        //System.out.println("_result = " + ((cameraTilePositionn.x*64) - (int)(float)(cameraAABBPosition.x)) + " , " + ((cameraTilePositionn.y*64) - (int)(float)(cameraAABBPosition.y )));
+        //System.out.println("result = " + result);
+        return result;
     }
 
     public void setOn(boolean isOn) {
