@@ -48,11 +48,9 @@ public class ShadowLayer {
     }
 
     public void Render(Graphics2D g, CameraComponent mCamera) {
-
+        System.out.println(isOn + " " + mCamera);
         if(matrixOpacity == null){buildMatrix();}
-
         if(!isOn || mCamera == null){return;}
-
         final int scaleX = 64;
         final int scaleY = 64;
 

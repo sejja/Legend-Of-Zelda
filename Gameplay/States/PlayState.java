@@ -99,7 +99,6 @@ public class PlayState extends State {
     */ //----------------------------------------------------------------------
     @Override
     public void Update() {
-        ShadowLayer.getShadowLayer().setOn(false);
         ObjectManager.GetObjectManager().Update();
     }
 }
