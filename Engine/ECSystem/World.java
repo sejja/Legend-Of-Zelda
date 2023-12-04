@@ -18,6 +18,7 @@ import Engine.Physics.AABB;
 import Engine.Window.GameLoop;
 import Gameplay.AnimatedObject.Torch;
 import Gameplay.Enemies.Search.Pair;
+import Gameplay.Enemies.Units.BlueKnight;
 import Gameplay.Enemies.Units.GreenKnight;
 import Gameplay.Interactives.Blocks.Rock;
 import Gameplay.Link.Player;
@@ -152,6 +153,8 @@ public class World {
                 SpawnEntity(new Rock(e.position));
             }else if(e.type == firstEntity+2) {
                 SpawnEntity(new Torch(e.position));
+            }else if(e.type == firstEntity+3) {
+                SpawnEntity(new BlueKnight(e.position));
             }
             
         }
