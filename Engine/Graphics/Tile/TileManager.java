@@ -58,6 +58,7 @@ public class TileManager extends ECObject implements Renderable {
     *   From a file and the sizes, configure the tilemap to be render-ready
     */ //----------------------------------------------------------------------
     public void CreateTileMap(final Vector2D<Float> position, final Vector2D<Integer> blockscale) {
+        System.out.println(mPath);
         int width = 0;
         int height = 0;
         mLayers = new ArrayList<>();
@@ -122,26 +123,7 @@ public class TileManager extends ECObject implements Renderable {
     *   Estimates the Bounds that a Tile Manager might have, even if it hasn't been created yet
     */ //----------------------------------------------------------------------
     public AABB EstimateBounds(final Vector2D<Integer> blockscale) {
-        int width = 0;
-        int height = 0;
-
-        //In case something can't be read properly, it means the tsx is corrupt
-        try {
-            final DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            final Document doc = builder.parse(new File(getClass().getClassLoader().getResource(mPath).toURI()));
-            doc.getDocumentElement().normalize();
-
-            final Element eElement = (Element) doc.getElementsByTagName("layer").item(0);
-            width = Integer.parseInt(eElement.getAttribute("width"));
-            height = Integer.parseInt(eElement.getAttribute("height"));
-
-            return new AABB(new Vector2D<>(), new Vector2D<Float>((float)(width * blockscale.x), (float)(height * blockscale.y)));
-
-        } catch(ParserConfigurationException | SAXException | IOException | URISyntaxException e) {
-            Logger.Instance().Log(Logger.Instance().GetLog("Engine"), 
-                "Error - Can't read tilemap file. " + e.getMessage(), Level.SEVERE, 2, Color.red);
-            return null;
-        }
+        return new AABB(new Vector2D<>(), new Vector2D<Float>((float)(50 * blockscale.x), (float)(50 * blockscale.y)));
     }
 
     // ------------------------------------------------------------------------
