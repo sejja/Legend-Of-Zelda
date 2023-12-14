@@ -1,10 +1,13 @@
 package Gameplay.Levels;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import Engine.Assets.AssetManager;
 import Engine.Audio.Audio;
 import Engine.Audio.Sound;
+import Engine.Developer.DataBase.Database;
 import Engine.ECSystem.World;
 import Engine.ECSystem.ObjectManager;
 import Engine.Graphics.GraphicsPipeline;
@@ -36,10 +39,10 @@ public class TestRoom extends World {
     private final int yLineMovement = 6;
     private final int stop = 7;
     
-    public TestRoom(World right, World left, World up, World down, String tiles, Vector2D<Float> pos) {
-        super(right, left, up, down, new TileManager(tiles));
-        ObjectManager.GetObjectManager().AddEntity(new Player(new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/Link/Link.png")), new Vector2D<Float>(1430.f, 1400.f), new Vector2D<Float>(100.f, 100.f)));
-        Init(pos);
+    public TestRoom(Integer id) {
+        super(id);
+        ObjectManager.GetObjectManager().AddEntity(new Player(new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/Link/Link.png")), new Vector2D<Float>(1350.f, 800.f), new Vector2D<Float>(100.f, 100.f)));
+        Init(new Vector2D<Float>(0.f, 0.f));
         
         ArrayList<String> dialogueArrayList = new ArrayList<String>();
         ArrayList<String> dialogueArrayList2 = new ArrayList<String>();
@@ -57,13 +60,7 @@ public class TestRoom extends World {
             ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Integer>(23, 23)));
         }
         */
-
-        //ObjectManager.GetObjectManager().AddEntity(new Torch(new Vector2D<Float>(1680f, 1550.f)));
-        //ObjectManager.GetObjectManager().AddEntity(new Torch(new Vector2D<Float>(1500.f, 1550.f)));
-        //ObjectManager.GetObjectManager().AddEntity(new Torch(new Vector2D<Float>(1400.f, 1550.f)));
         var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetBindedCamera();
-        //ObjectManager.GetObjectManager().AddEntity(new Rock(new Vector2D<Float>(1470f, 750.f)));
-        //ObjectManager.GetObjectManager().AddEntity(new Rock(new Vector2D<Float>(1356f, 750.f)));
 
         Vector2D<Float> topright = new Vector2D<>(GetBounds().GetPosition().x + 1280.f / 2, GetBounds().GetPosition().y + 720.f / 2);
 

@@ -25,6 +25,7 @@ import Engine.Graphics.Tile.TileManager;
 import Engine.Graphics.Tile.Tilemap;
 import Engine.Input.InputFunction;
 import Engine.Input.InputManager;
+import Engine.Math.EuclideanCoordinates;
 import Engine.Math.Vector2D;
 import Engine.Physics.StaticPlayerCollision;
 import Engine.Physics.Components.BoxCollider;
@@ -75,7 +76,7 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
         
         allAnimations = transposeMatrix(sprite.GetSpriteArray2D());
         setSetopAnimationSet(allAnimations, allAnimations[0].length);
-        sprite.setmSpriteArray(allAnimations);
+        sprite.ChangeSpriteFrames(allAnimations);
         animationMachine = AddComponent(new AnimationMachine(this, sprite));
         animationMachine.SetFrameTrack(numberStartAnimation); //La diferencia entre correr a una direction y parase en la misma es un + 4
         animationMachine.GetAnimation().SetDelay(15);
@@ -127,7 +128,7 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
 
     public void lookAtPLayer(Vector2D<Float> playerPosition){
         Player player = (Player) ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0);
-        Vector2D<Float> vector = player.getPseudoPosition().getVectorToAnotherActor(this.getPseudoPosition());
+        Vector2D<Float> vector = new EuclideanCoordinates(player.getPseudoPosition()).getVectorToAnotherActor(this.getPseudoPosition());
         if((player.getPseudoPosition().x > this.getPseudoPosition().x) && (Math.abs(vector.x) > Math.abs(vector.y))){
             animationMachine.SetFrameTrack(RIGHT);
         } else if(player.getPseudoPosition().x < this.getPseudoPosition().x && (Math.abs(vector.x) > Math.abs(vector.y))){

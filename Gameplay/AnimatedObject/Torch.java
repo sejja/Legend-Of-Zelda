@@ -9,7 +9,9 @@ import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Animations.AnimationEvent;
 import Engine.Graphics.Tile.ShadowLayer;
+import Engine.Math.EuclideanCoordinates;
 import Engine.Math.Vector2D;
+import Engine.Math.TileCoordinates;
 import Engine.Physics.StaticPlayerCollision;
 import Engine.Physics.Components.BoxCollider;
 import Gameplay.Interaction;
@@ -23,9 +25,11 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
     private int radius;
     private int previusFrameCount = 0;
     final int defaultRadius = 1;
+    private Vector2D<Float> pos;
 
     public Torch(Vector2D<Float> position) {
-        super(position, new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/Torch.png"), 5,2, true));
+        super(position, new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/Torch.png"), 5,2));
+        this.pos = position;
         delay = -1;
         this.SetScale(new Vector2D<>(50f,100f));
         radius = defaultRadius;
@@ -135,4 +139,16 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
     public Vector2D<Float> getPseudoPosition(){
         return World.GetLevelSpaceCoordinates(super.getPseudoPosition());
     }
+
+    @Override
+    public void RemoveAllComponent(){
+        super.RemoveAllComponent();
+        //this.removeIlumination();
+    }
+    /*
+    @Override
+    public String toString() {
+        return this.getPseudoPosition().toString();
+    }
+    */
 }

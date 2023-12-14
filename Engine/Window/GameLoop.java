@@ -3,6 +3,9 @@ package Engine.Window;
 import java.awt.Color;
 import java.awt.Graphics;
 
+import javax.xml.crypto.Data;
+
+import Engine.Developer.DataBase.Database;
 import Engine.Developer.Logger.Log;
 import Engine.Developer.Logger.Logger;
 import Engine.ECSystem.ObjectManager;
@@ -10,7 +13,7 @@ import Engine.ECSystem.World;
 import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Tile.ShadowLayer;
 import Engine.Input.InputManager;
-import Engine.Physics.Components.ColliderManager;
+import Engine.Physics.ColliderManager;
 import Engine.StateMachine.StateMachine;
 
 public class GameLoop extends Thread {
@@ -36,13 +39,15 @@ public class GameLoop extends Thread {
 
         Logger.Instance().Log(v, "Engine Started!", java.util.logging.Level.INFO);
 
+        Database.Instance().InitConnection("game.db");
         mRunning = true;
         mStateManager = new StateMachine();
-        new InputManager(mTargetBuffer);
+        InputManager.Instance().SetSpeakingBuffer(mTargetBuffer);
     }
 
     public static void Quit() {
         mRunning = false;
+        Database.Instance().cerrarBD();
     }
 
     public static void Restart() {
@@ -55,7 +60,7 @@ public class GameLoop extends Thread {
         GraphicsPipeline.GetGraphicsPipeline().RemoveAllRenderables();
         ColliderManager.GetColliderManager().Clear();
         World.Reset();
-        InputManager.Clear();
+        InputManager.Instance().Clear();
         mStateManager.Restart();
     }
 

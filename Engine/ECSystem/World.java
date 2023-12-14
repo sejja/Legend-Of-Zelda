@@ -1,10 +1,15 @@
 package Engine.ECSystem;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import Engine.Developer.DataBase.Database;
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Entity;
 import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.ZeldaCameraComponent;
+import Engine.Graphics.Tile.ShadowLayer;
 import Engine.Graphics.Tile.TileManager;
 import Engine.Graphics.Tile.TilemapEntities;
 import Engine.Math.Util;
@@ -13,15 +18,16 @@ import Engine.Physics.AABB;
 import Engine.Window.GameLoop;
 import Gameplay.AnimatedObject.Torch;
 import Gameplay.Enemies.Search.Pair;
+import Gameplay.Enemies.Units.BlueKnight;
 import Gameplay.Enemies.Units.GreenKnight;
 import Gameplay.Interactives.Blocks.Rock;
 import Gameplay.Link.Player;
 
 public class World {
-    private World mRight;
-    private World mLeft;
-    private World mUpper;
-    private World mLower;
+    private Integer mRight;
+    private Integer mLeft;
+    private Integer mUpper;
+    private Integer mLower;
     public TileManager mTilemap;
     static public World mCurrentLevel = null;
     static private boolean sTransitioning = false;
@@ -38,12 +44,50 @@ public class World {
         sElapsedTime = 0;
     }
 
-    protected World(World right, World left, World up, World down, TileManager tiles) {
+    protected World(Integer id) {
+        ResultSet s = Database.Instance().Query("select * from Levels where id = " + id);
+        String tiles = null;
+        Integer left = null;
+        Integer right = null;
+        Integer up = null;
+        Integer down = null;
+
+        try {
+            tiles = s.getString("Path");
+            try {
+                left = Integer.parseInt(s.getString("Left"));
+            } catch(Exception e) {
+
+            }
+
+            try {
+                right = Integer.parseInt(s.getString("Right"));
+            } catch(Exception e) {
+
+            }
+
+            try {
+                up = Integer.parseInt(s.getString("Up"));
+                
+            } catch(Exception e) {
+
+            }
+
+            try {
+                down = Integer.parseInt(s.getString("Down"));
+            } catch(Exception e) {
+
+            }
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
         mRight = right;
         mLeft = left;
         mUpper = up;
         mLower = down;
-        mTilemap = tiles;
+        mTilemap = new TileManager(tiles);
     }
 
     public AABB GetBounds() {
@@ -53,10 +97,13 @@ public class World {
     public void Init(Vector2D<Float> position) {
         mCurrentLevel = this;
         mTilemap.CreateTileMap(position, new Vector2D<>(64, 64));
-        if(!visited) {
-            visited = true;
-            spawnEntities();
+        try {
+            ObjectManager.GetObjectManager().flush();
+        }catch(NullPointerException e){
+            System.out.println("No hay nada que borrar MAMARRACHO");
         }
+        
+        spawnEntities();
     }
 
     public static Vector2D<Float> GetWorldSpaceCoordinates(Vector2D<Float> levelcoordinate) {
@@ -66,14 +113,27 @@ public class World {
         return finalpos;
     }
 
-    public static Vector2D<Float> GetLevelSpaceCoordinates(Vector2D<Float> worldcoordinate) {
+    public static Vector2D<Float> GetLevelSpaceCoordinates(Vector2D<Float> worldcoordinate) { // UwU
         Vector2D<Float> finalpos = new Vector2D<Float>(worldcoordinate.x,worldcoordinate.y);
         finalpos.x -= mCurrentLevel.GetBounds().GetPosition().x;
         finalpos.y -= mCurrentLevel.GetBounds().GetPosition().y;
         return finalpos;
     }
+    public static Vector2D<Integer> GetLevelSpaceIntegerCoordinates(Vector2D<Integer> worldcoordinate) {
+        Vector2D<Integer> finalpos = new Vector2D<Integer>(worldcoordinate.x,worldcoordinate.y);
+        finalpos.x -= (int)(float)mCurrentLevel.GetBounds().GetPosition().x/64;
+        finalpos.y -= (int)(float)mCurrentLevel.GetBounds().GetPosition().y/64;
+        return finalpos;
+    }
 
     public static Pair GetLevelPair(Pair pair) {
+        int x= pair.getFirst();
+        int y= pair.getSecond();
+        x -= mCurrentLevel.GetBounds().GetPosition().x/64;
+        y -= mCurrentLevel.GetBounds().GetPosition().y/64;
+        return new Pair(x,y);
+    }
+    public static Pair GetWorldPair(Pair pair) {
         int x= pair.getFirst();
         int y= pair.getSecond();
         x += mCurrentLevel.GetBounds().GetPosition().x/64;
@@ -81,11 +141,11 @@ public class World {
         return new Pair(x,y);
     }
 
+    // Spawns the entities of entityQueue based on the ID and in the position specified
     private void spawnEntities() {
         //System.out.println(mTilemap.entityQueue);
         int firstEntity = TilemapEntities.firstEntity;
         while(mTilemap.entityQueue != null && !mTilemap.entityQueue.isEmpty() ) {
-            //System.out.println("Juan");
             var e = mTilemap.entityQueue.poll();
             //System.out.println(e.type+"  "+ firstEntity);
             if(e.type == firstEntity) {
@@ -94,6 +154,8 @@ public class World {
                 SpawnEntity(new Rock(e.position));
             }else if(e.type == firstEntity+2) {
                 SpawnEntity(new Torch(e.position));
+            }else if(e.type == firstEntity+3) {
+                SpawnEntity(new BlueKnight(e.position));
             }
             
         }
@@ -106,23 +168,25 @@ public class World {
             sPreviusLevel = this;
 
             if(!GetBounds().Collides(new AABB(position, new Vector2D<>(1.f, 1.f)))) {
-                //LEFT
+                //RIGHT
                 if(position.x > (GetBounds().GetPosition().x + GetBounds().GetWidth()) && mRight != null) {
-                    mRight.Init(new Vector2D<>(GetBounds().GetPosition().x + GetBounds().GetWidth(), GetBounds().GetPosition().y));
+                    World v = new World(mRight);
+                    v.Init(new Vector2D<>(GetBounds().GetPosition().x + GetBounds().GetWidth(), GetBounds().GetPosition().y));
                     sTransitioning = true;
-                     var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetBindedCamera();
+                    var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetBindedCamera();
                     sPreviousTopRight = z.GetTopRightBound();
                     sPreviousBottomLeft = z.GetBottomLeftBound();
                 }
 
-                //RIGHT
+                //LEFT
                 if(position.x < (GetBounds().GetPosition().x) && mLeft != null) {
-                    var b = mLeft.mTilemap.EstimateBounds(new Vector2D<>(64, 64));
-                    Vector2D<Float> scale = new Vector2D<>(b.GetWidth(), b.GetHeight());
+                    World v = new World(mLeft);
+                    var b = v.mTilemap.EstimateBounds(new Vector2D<>(64, 64));
                     var pos = GetBounds().GetPosition();
+                    Vector2D<Float> scale = new Vector2D<>(b.GetWidth(), b.GetHeight());
                     pos.x -= scale.x;
 
-                    mLeft.Init(pos);
+                    v.Init(pos);
                     sTransitioning = true;
                     var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetBindedCamera();
                     sPreviousTopRight = z.GetTopRightBound();
@@ -130,12 +194,13 @@ public class World {
                 }
                 //UP
                 if(position.y < (GetBounds().GetPosition().y) && mUpper != null) {
-                    var b = mUpper.mTilemap.EstimateBounds(new Vector2D<>(64, 64));
+                    World v = new World(mUpper);
+                    var b = v.mTilemap.EstimateBounds(new Vector2D<>(64, 64));
                     Vector2D<Float> scale = new Vector2D<>(b.GetWidth(), b.GetHeight());
                     var pos = GetBounds().GetPosition();
                     pos.y -= scale.y;
 
-                    mUpper.Init(pos);
+                    v.Init(pos);
                     sTransitioning = true;
                     var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetBindedCamera();
                     sPreviousTopRight = z.GetTopRightBound();
@@ -144,7 +209,8 @@ public class World {
 
                 //DOWN
                 if(position.y > (GetBounds().GetPosition().y + GetBounds().GetHeight()) && mLower != null) {
-                    mLower.Init(new Vector2D<>(GetBounds().GetPosition().x, GetBounds().GetPosition().y + GetBounds().GetHeight()));
+                    World v = new World(mUpper);
+                    v.Init(new Vector2D<>(GetBounds().GetPosition().x, GetBounds().GetPosition().y + GetBounds().GetHeight()));
                     sTransitioning = true;
                     var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetBindedCamera();
                     sPreviousTopRight = z.GetTopRightBound();
@@ -154,10 +220,10 @@ public class World {
         } else {
             var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetBindedCamera();
             z.Update();
-
+            ShadowLayer.getShadowLayer().resetMatrix();
             if(sElapsedTime < 0.5) {
                 GameLoop.SetPaused(true);
-                Actor p = ObjectManager.GetObjectManager().GetPawn();
+                Actor p = ObjectManager.GetObjectManager().GetPawn(); //<--- Its Link
 
                 Vector2D<Float> goaltopright = new Vector2D<>(p.GetPosition().x, p.GetPosition().y);
 
@@ -178,7 +244,7 @@ public class World {
                 z.SetBounds(new Vector2D<Float>(Util.LinearInterpolate(goaltopright.x, goaltopright2.x, (sElapsedTime - 0.5f) * 2), Util.LinearInterpolate(goaltopright.y, goaltopright2.y, (sElapsedTime - 0.5f) * 2)),
                             new Vector2D<Float>(Util.LinearInterpolate(goaltopleft.x, goaltopleft2.x, (sElapsedTime - 0.5f) * 2), Util.LinearInterpolate(goaltopleft.x, goaltopleft2.y, (sElapsedTime - 0.5f) * 2)));
                 sElapsedTime += 0.016;
-            } else {
+            } else { //END TRANSITION
                 GameLoop.SetPaused(false);
                 sTransitioning = false;
 
@@ -194,35 +260,35 @@ public class World {
 
     void ShutDown() {}
 
-    public World GetRightLevel() {
+    public Integer GetRightLevel() {
         return mRight;
     }
 
-    public World GetLeftLevel() {
+    public Integer GetLeftLevel() {
         return mLeft;
     }
 
-    public World GetUpperLevel() {
+    public Integer GetUpperLevel() {
         return mUpper;
     }
 
-    public World GetLowerLevel() {
+    public Integer GetLowerLevel() {
         return mLower;
     }
 
-    public void SetRightLevel(World l) {
+    public void SetRightLevel(Integer l) {
         mRight = l;
     }
 
-    public void SetUpperLevel(World l) {
+    public void SetUpperLevel(Integer l) {
         mUpper = l;
     }
 
-    public void SetLowerLevel(World l) {
+    public void SetLowerLevel(Integer l) {
         mLower = l;
     }
 
-    public void SetLeftLevel(World l) {
+    public void SetLeftLevel(Integer l) {
         mLeft = l;
     }
 
@@ -237,4 +303,6 @@ public class World {
     void DespawnEntity(Entity e) {
         ObjectManager.GetObjectManager().RemoveEntity(e);
     }
+
+    
 }

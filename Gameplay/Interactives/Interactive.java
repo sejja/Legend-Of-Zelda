@@ -3,8 +3,10 @@ package Gameplay.Interactives;
 
 
 import java.awt.image.BufferedImage;
+import java.util.Vector;
 
 import Engine.ECSystem.ObjectManager;
+import Engine.ECSystem.World;
 import Engine.ECSystem.Types.Actor;
 import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Animations.Animation;
@@ -32,6 +34,7 @@ public abstract class Interactive extends Actor{
     protected int mCurrentAnimation;
     protected AnimationMachine mAnimation;
     protected BoxCollider mCollision;
+    private Vector2D<Float> pos;
     // ------------------------------------------------------------------------
     /*! Conversion Constructor
     *
@@ -39,11 +42,13 @@ public abstract class Interactive extends Actor{
     */ //----------------------------------------------------------------------
     public Interactive( Vector2D<Float> position) {
         super(position);
-        mPositionPair = PositionToPair(getPseudoPosition());
-        Vector2D<Integer> pos = new Vector2D<>(mPositionPair.getFirst(), mPositionPair.getSecond());
-        block = TileManager.sLevelObjects.GetBlockAt(pos);
+        pos = position;
+        mPositionPair = World.GetLevelPair(PositionToPair(getPseudoPosition()));
+
+        System.out.println("ROck placed at: " + mPositionPair.getFirst() + " " + mPositionPair.getSecond());
+        block = TileManager.sLevelObjects.GetBlockAt(new Vector2D(mPositionPair.getFirst(),mPositionPair.getSecond()));
         if(block == null) {
-            TileManager.sLevelObjects.PlaceBlockAt(pos);
+            TileManager.sLevelObjects.PlaceBlockAt(new Vector2D<>(mPositionPair.getFirst(), mPositionPair.getSecond()));
         }
     }
 

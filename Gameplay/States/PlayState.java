@@ -11,9 +11,12 @@ package Gameplay.States;
 import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import Engine.ECSystem.World;
+import Engine.Developer.DataBase.Database;
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Entity;
@@ -24,12 +27,10 @@ import Engine.Graphics.Components.ZeldaCameraComponent;
 import Engine.Graphics.Tile.ShadowLayer;
 import Engine.Graphics.Tile.TileManager;
 import Engine.Math.Vector2D;
-import Engine.Physics.Components.ColliderManager;
+import Engine.Physics.ColliderManager;
 import Engine.StateMachine.State;
 import Gameplay.Enemies.*;
-import Gameplay.Levels.OverWorld1Left;
 import Gameplay.Levels.TestRoom;
-import Gameplay.Levels.TestRoom2;
 import Gameplay.Enemies.Units.GreenKnight;
 import Gameplay.Interactives.Blocks.Rock;
 import Gameplay.Link.Arrow;
@@ -45,7 +46,7 @@ public class PlayState extends State {
     *   Just assigns the statemachine child
     */ //----------------------------------------------------------------------
     public PlayState() {
-        var t = new TestRoom2(null, null, null, null, "Content/TiledProject/TestRoom2.tmx");
+        /*var t = new TestRoom2(null, null, null, null, "Content/TiledProject/TestRoom2.tmx");
         var pasilloDerAbajo3 = new TestRoom2(null, null, null, null, "Content/TiledProject/pasilloDerAbajo3.tmx");
         var pasilloIzqArriba3 = new TestRoom2(null, null, null, null, "Content/TiledProject/pasilloIzqArriba3.tmx");
         var pasilloIzqAbajo3 = new TestRoom2(null, null, null, null, "Content/TiledProject/pasilloIzqAbajo3.tmx");
@@ -55,9 +56,9 @@ public class PlayState extends State {
         //var OverWorld = new TestRoom2(t, t2, entrada, null, "Content/TiledProject/overworld1.tmx");
         var finalRoom3 = new TestRoom2(null, null, null, null, "Content/TiledProject/finalRoom3.tmx");
         var entradaArriba3 = new TestRoom2(null, null, null, null, "Content/TiledProject/entradaArriba3.tmx");
-        var pasilloDerArriba3 = new TestRoom2(null, null, null, null, "Content/TiledProject/pasilloDerArriba3.tmx");
+        var pasilloDerArriba3 = new TestRoom2(null, null, null, null, "Content/TiledProject/pasilloDerArriba3.tmx");*/
         
-        var overworld_left = new TestRoom2(null, null, null, null, "Content/TiledProject/OverWorld1Left.tmx");
+        /*var overworld_left = new TestRoom2(null, null, null, null, "Content/TiledProject/OverWorld1Left.tmx");
         var overworld_left_up = new TestRoom2(null, null, null, null, "Content/TiledProject/OverlWorld_-1_1.tmx");
         var overworld_left_up_left = new TestRoom2(null, null, null, null, "Content/TiledProject/overworld1_left_up_left.tmx");
         var overworld1_left_left = new TestRoom2(null, null, null, null, "Content/TiledProject/overworld1_left_left.tmx");
@@ -67,7 +68,12 @@ public class PlayState extends State {
 
 
         
-        pasilloDer3.SetLeftLevel(entrada);
+        pasilloDer3.SetLeftLevel(entrada);*/
+        mTestLevel = new TestRoom(1);
+
+
+        
+        /*pasilloDer3.SetLeftLevel(mTestLevel);
         pasilloDer3.SetUpperLevel(pasilloDerArriba3);
         pasilloDer3.SetLowerLevel(pasilloDerAbajo3);
         pasilloIzq3.SetRightLevel(entrada); 
@@ -97,6 +103,8 @@ public class PlayState extends State {
         entrada.SetUpperLevel(entradaArriba3);
         entrada.SetRightLevel(pasilloDer3);
         entrada.SetLeftLevel(pasilloIzq3);
+        t2.SetUpperLevel(t3);
+        t3.SetLowerLevel(t2);*/
 
         var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetBindedCamera();
         Vector2D<Float> topright = new Vector2D<>(mTestLevel.GetBounds().GetPosition().x + 1280.f / 2, mTestLevel.GetBounds().GetPosition().y + 720.f / 2);
@@ -113,7 +121,6 @@ public class PlayState extends State {
     */ //----------------------------------------------------------------------
     @Override
     public void Update() {
-        ShadowLayer.getShadowLayer().setOn(false);
         ObjectManager.GetObjectManager().Update();
     }
 }

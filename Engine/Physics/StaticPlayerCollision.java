@@ -1,9 +1,9 @@
 package Engine.Physics;
 
 import Engine.ECSystem.Types.Actor;
+import Engine.Math.EuclideanCoordinates;
 import Engine.Math.Vector2D;
 import Engine.Physics.Components.BoxCollider;
-import Engine.Physics.Components.ColliderManager;
 import Gameplay.Interactives.Interactive;
 import Gameplay.Link.Player;
 

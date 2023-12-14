@@ -18,23 +18,48 @@ import Engine.Window.PresentBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class InputManager implements KeyListener, MouseListener, MouseMotionListener {
-    public static HashMap<Integer, ArrayList<InputFunction>> mKeyPressedFuncs = new HashMap<>();
-    public static HashMap<Integer, ArrayList<InputFunction>> mKeyReleasedFuncs = new HashMap<>();
-    private static Vector2D<Integer> mMouseCoords;
-    private static int mMouseButton = -1;
+final public class InputManager implements KeyListener, MouseListener, MouseMotionListener {
+    private HashMap<Integer, ArrayList<InputFunction>> mKeyPressedFuncs;
+    private HashMap<Integer, ArrayList<InputFunction>> mKeyReleasedFuncs;
+    private Vector2D<Integer> mMouseCoords;
+    private int mMouseButton = -1;
+    private static InputManager sInstance = new InputManager();
+
+    // ------------------------------------------------------------------------
+    /*! Instance
+    *
+    *   Returns the Instance of the Input Manager
+    */ //----------------------------------------------------------------------
+    public static InputManager Instance() {
+        return sInstance;
+    }
 
     // ------------------------------------------------------------------------
     /*! Constructor
     *
-    *   Consntructs the Input Manager, setting it as the key listener
+    *   Consntructs the Input Manager
     */ //----------------------------------------------------------------------
-    public InputManager(PresentBuffer buf) {
+    private InputManager() {
+        mKeyPressedFuncs = new HashMap<>();
+        mKeyReleasedFuncs = new HashMap<>();
+    }
+
+    // ------------------------------------------------------------------------
+    /*! Set Speaking Buffer
+    *
+    *   Sets the buffer of which we are capturing input from
+    */ //----------------------------------------------------------------------
+    public void SetSpeakingBuffer(final PresentBuffer buf) {
         buf.addKeyListener(this);
         buf.addMouseListener(this);
     }
 
-    public static void Clear() {
+    // ------------------------------------------------------------------------
+    /*! Clear
+    *
+    *   Clears every key pressed
+    */ //----------------------------------------------------------------------
+    public void Clear() {
         mKeyPressedFuncs.clear();
         mKeyReleasedFuncs.clear();
     }
@@ -44,11 +69,8 @@ public class InputManager implements KeyListener, MouseListener, MouseMotionList
     *
     *   Subscribes to the Pressed Input Function
     */ //----------------------------------------------------------------------
-    public static void SubscribePressed(int vk, InputFunction f) {
-        //If we have a group for this key event
-        if(!mKeyPressedFuncs.containsKey(vk))
-            mKeyPressedFuncs.put(vk, new ArrayList<>());
-        mKeyPressedFuncs.get(vk).add(f);
+    public void SubscribePressed(final int vk, final InputFunction f) {
+        mKeyPressedFuncs.computeIfAbsent(vk, k -> new ArrayList<>()).add(f);
     }
 
     // ------------------------------------------------------------------------
@@ -56,11 +78,8 @@ public class InputManager implements KeyListener, MouseListener, MouseMotionList
     *
     *   Subscribes to the realeased Input functions
     */ //----------------------------------------------------------------------
-    public static void SubscribeReleased(int vk, InputFunction f) {
-        //If we have a group for this key event
-        if(!mKeyReleasedFuncs.containsKey(vk))
-            mKeyReleasedFuncs.put(vk, new ArrayList<>());
-        mKeyReleasedFuncs.get(vk).add(f);
+    public void SubscribeReleased(final int vk, final InputFunction f) {
+        mKeyReleasedFuncs.computeIfAbsent(vk, k -> new ArrayList<>()).add(f);
     }
 
     // ------------------------------------------------------------------------
@@ -96,7 +115,7 @@ public class InputManager implements KeyListener, MouseListener, MouseMotionList
     *   EMPTY FUNCTION
     */ //----------------------------------------------------------------------
     @Override
-    public void keyTyped(KeyEvent e) {}
+    public void keyTyped(final KeyEvent e) {}
 
     // ------------------------------------------------------------------------
     /*! Key Pressed
@@ -104,14 +123,8 @@ public class InputManager implements KeyListener, MouseListener, MouseMotionList
     *   toogles wether key was pressed
     */ //----------------------------------------------------------------------
     @Override
-    public void keyPressed(KeyEvent e) {
-        //If we have a group for this key event
-        if(mKeyPressedFuncs.containsKey(e.getKeyCode()))
-            //Execute every function
-            for(int i = 0; i < mKeyPressedFuncs.get(e.getKeyCode()).size(); i++)
-                mKeyPressedFuncs.get(e.getKeyCode()).get(i).Execute();
-        else
-            mKeyPressedFuncs.put(e.getKeyCode(), new ArrayList<>());
+    public void keyPressed(final KeyEvent e) {
+        mKeyPressedFuncs.getOrDefault(e.getKeyCode(), new ArrayList<InputFunction>()).forEach(x -> x.Execute());
     }
 
     // ------------------------------------------------------------------------
@@ -120,14 +133,8 @@ public class InputManager implements KeyListener, MouseListener, MouseMotionList
     *   releases wether key was released
     */ //----------------------------------------------------------------------
     @Override
-    public void keyReleased(KeyEvent e) {
-        //If we have a group for this key event
-        if(mKeyReleasedFuncs.containsKey(e.getKeyCode()))
-            //Execute every function
-            for(int i = 0; i < mKeyReleasedFuncs.get(e.getKeyCode()).size(); i++)
-                mKeyReleasedFuncs.get(e.getKeyCode()).get(i).Execute();
-        else
-            mKeyReleasedFuncs.put(e.getKeyCode(), new ArrayList<>());
+    public void keyReleased(final KeyEvent e) {
+        mKeyReleasedFuncs.getOrDefault(e.getKeyCode(), new ArrayList<InputFunction>()).forEach(x -> x.Execute());
     }
 
     // ------------------------------------------------------------------------
@@ -136,7 +143,7 @@ public class InputManager implements KeyListener, MouseListener, MouseMotionList
     *   EMPTY FUNCTION
     */ //----------------------------------------------------------------------
     @Override
-    public void mouseClicked(MouseEvent e) {}
+    public void mouseClicked(final MouseEvent e) {}
 
     // ------------------------------------------------------------------------
     /*! Mouse Pressed
@@ -144,7 +151,7 @@ public class InputManager implements KeyListener, MouseListener, MouseMotionList
     *   Refreshes the mouse button state
     */ //----------------------------------------------------------------------
     @Override
-    public void mousePressed(MouseEvent e) {
+    public void mousePressed(final MouseEvent e) {
         mMouseButton = e.getButton();
     }
 
@@ -154,7 +161,7 @@ public class InputManager implements KeyListener, MouseListener, MouseMotionList
     *   Mouse not pressed ATM
     */ //----------------------------------------------------------------------
     @Override
-    public void mouseReleased(MouseEvent e) {
+    public void mouseReleased(final MouseEvent e) {
         mMouseButton = -1;
     }
 
@@ -164,7 +171,7 @@ public class InputManager implements KeyListener, MouseListener, MouseMotionList
     *   EMPTY FUNCTION
     */ //----------------------------------------------------------------------
     @Override
-    public void mouseEntered(MouseEvent e) {}
+    public void mouseEntered(final MouseEvent e) {}
 
     // ------------------------------------------------------------------------
     /*! Mouse Clicked
@@ -172,7 +179,7 @@ public class InputManager implements KeyListener, MouseListener, MouseMotionList
     *   EMPTY FUNCTION
     */ //----------------------------------------------------------------------
     @Override
-    public void mouseExited(MouseEvent e) {}
+    public void mouseExited(final MouseEvent e) {}
 
     // ------------------------------------------------------------------------
     /*! Mouse Clicked
@@ -180,9 +187,8 @@ public class InputManager implements KeyListener, MouseListener, MouseMotionList
     *   Sets the right location for the mouse X and Y Positions
     */ //----------------------------------------------------------------------
     @Override
-    public void mouseDragged(MouseEvent e) {
-        mMouseCoords.x = e.getX();
-        mMouseCoords.y = e.getY();
+    public void mouseDragged(final MouseEvent e) {
+        mMouseCoords.Set(e.getX(), e.getY());
     }
 
     // ------------------------------------------------------------------------
@@ -191,5 +197,5 @@ public class InputManager implements KeyListener, MouseListener, MouseMotionList
     *   EMPTY FUNCTION
     */ //----------------------------------------------------------------------
     @Override
-    public void mouseMoved(MouseEvent e) {}
+    public void mouseMoved(final MouseEvent e) {}
 }

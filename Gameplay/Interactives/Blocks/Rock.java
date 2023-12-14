@@ -9,9 +9,9 @@ import Engine.Graphics.Tile.Block;
 import Engine.Graphics.Tile.Normblock;
 import Engine.Graphics.Tile.TileManager;
 import Engine.Math.Vector2D;
+import Engine.Physics.ColliderManager;
 import Engine.Physics.StaticPlayerCollision;
 import Engine.Physics.Components.BoxCollider;
-import Engine.Physics.Components.ColliderManager;
 import Gameplay.Interactives.Interactive;
 import Gameplay.Link.Player;
 
@@ -35,12 +35,6 @@ public class Rock extends Interactive implements StaticPlayerCollision{
 
         setPseudoPosition(GetScale().x/2, GetScale().y/2);
         setPseudoPositionVisible();
-        mPositionPair = PositionToPair(getPseudoPosition());
-        Vector2D<Integer> pos = new Vector2D<>(mPositionPair.getFirst(), mPositionPair.getSecond());
-        block = TileManager.sLevelObjects.GetBlockAt(pos);
-        if(block == null) {
-            TileManager.sLevelObjects.PlaceBlockAt(pos);
-        }
     }
     @Override
 

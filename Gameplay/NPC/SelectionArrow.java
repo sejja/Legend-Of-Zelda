@@ -26,7 +26,7 @@ public class SelectionArrow extends Actor{
         this.pos0 = position;
         this.pos1 = pos1;
 
-        InputManager.SubscribePressed(KeyEvent.VK_W, new InputFunction() {
+        InputManager.Instance().SubscribePressed(KeyEvent.VK_W, new InputFunction() {
 
             @Override
             public void Execute() {
@@ -34,7 +34,7 @@ public class SelectionArrow extends Actor{
             }
         });
 
-        InputManager.SubscribePressed(KeyEvent.VK_S, new InputFunction() {
+        InputManager.Instance().SubscribePressed(KeyEvent.VK_S, new InputFunction() {
 
             @Override
             public void Execute() {
@@ -42,7 +42,7 @@ public class SelectionArrow extends Actor{
             }
         });
 
-        InputManager.SubscribePressed(KeyEvent.VK_ENTER, new InputFunction() {
+        InputManager.Instance().SubscribePressed(KeyEvent.VK_ENTER, new InputFunction() {
             @Override
             public void Execute() {
                 Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/finish.wav"));

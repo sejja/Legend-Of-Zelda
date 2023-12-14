@@ -20,6 +20,7 @@ import Engine.Graphics.Components.CameraComponent;
 import Engine.Graphics.Components.Renderable;
 import Engine.Math.Vector2D;
 import Engine.Physics.AABB;
+import Engine.Physics.ColliderManager;
 /* Hitbox Implementation
  *      -> Add a hitbox properties in the Actor
  *      -> Use BoxCollider(Actor parent,Vector2D<Float> scale, boolean itCollides) 

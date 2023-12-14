@@ -30,16 +30,18 @@ import Engine.Graphics.Tile.ShadowLayer;
 import Engine.Graphics.Tile.TileManager;
 import Engine.Input.InputFunction;
 import Engine.Input.InputManager;
+import Engine.Math.EuclideanCoordinates;
 import Engine.Math.Vector2D;
+import Engine.Physics.ColliderManager;
 import Engine.Physics.CollisionResult;
 import Engine.Physics.Components.BoxCollider;
 import Engine.Window.GameLoop;
 import Engine.Window.PresentBuffer;
-import Engine.Physics.Components.ColliderManager;
 import Gameplay.Interaction;
 import Gameplay.AnimatedObject.Bomb;
 import Gameplay.Enemies.Enemy;
 import Gameplay.Interactives.Interactive;
+import Gameplay.LifeBar.Heart;
 import Gameplay.LifeBar.LifeBar;
 import Gameplay.NPC.Npc;
 import Gameplay.NPC.SelectionArrow;
@@ -69,6 +71,8 @@ public class Player extends Actor {
     public boolean dash = false;
     private boolean falling = false;
     private boolean canmove = true;
+    
+    private Vector2D<Float> previusPosition;
     //----------------------------------------------------------------------
 
     /* Animation
@@ -129,7 +133,7 @@ public class Player extends Actor {
         SetScale(size);
         this.direction = DIRECTION.DOWN;
         //Lets transpose the Sprite Matrix and add all extra Animations
-        sprite.setmSpriteArray(this.completeAnimationSet(sprite.GetSpriteArray2D()));
+        sprite.ChangeSpriteFrames(this.completeAnimationSet(sprite.GetSpriteArray2D()));
         //---------------------------------------------------------------------
         mAnimation = AddComponent(new AnimationMachine(this, sprite));
         mCamera = AddComponent(new ZeldaCameraComponent(this));
@@ -148,7 +152,8 @@ public class Player extends Actor {
         terrainCollider = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<Float>(55f, 20f), false));
         terrainCollider.setPosition(new Vector2D<>(getPseudoPosition().x - terrainCollider.GetBounds().GetWidth()/2, getPseudoPosition().y+20));
         terrainCollider.setColor(Color.RED);
-        ColliderManager.GetColliderManager().addCollider(hitbox, true);
+        previusPosition = position;
+        ColliderManager.GetColliderManager().addCollider(terrainCollider, true);
         ObjectManager.GetObjectManager().SetPawn(this);
     }
     // ------------------------------------------------------------------------
@@ -159,7 +164,7 @@ public class Player extends Actor {
     private void implementsActions (){ // it can be coptimazed
         int[] stop_run = new int[]{KeyEvent.VK_D, KeyEvent.VK_A, KeyEvent.VK_S, KeyEvent.VK_W};
         for (int i = 0; i<stop_run.length; i++){
-            InputManager.SubscribeReleased(stop_run[i], new InputFunction() {
+            InputManager.Instance().SubscribeReleased(stop_run[i], new InputFunction() {
             @Override
             public void Execute() {
                 setVelocity(0);
@@ -169,31 +174,32 @@ public class Player extends Actor {
             });
         }
         //RUN______________________________________________________________________________________________
-        InputManager.SubscribePressed(KeyEvent.VK_W, new InputFunction() {
-            @Override
-            public void Execute() {activateAction(UP);}
+        InputManager.Instance().SubscribePressed(KeyEvent.VK_W, new InputFunction() {
+            public void Execute() {
+                activateAction(UP);
+            }
         });
-        InputManager.SubscribePressed(KeyEvent.VK_S, new InputFunction() {
+        InputManager.Instance().SubscribePressed(KeyEvent.VK_S, new InputFunction() {
             @Override
             public void Execute() {activateAction(DOWN);}
         });
-        InputManager.SubscribePressed(KeyEvent.VK_A, new InputFunction() {
+        InputManager.Instance().SubscribePressed(KeyEvent.VK_A, new InputFunction() {
             @Override
             public void Execute() {activateAction(LEFT);
                 //System.out.println("hola");
             }
 
         });
-        InputManager.SubscribePressed(KeyEvent.VK_D, new InputFunction() {
+        InputManager.Instance().SubscribePressed(KeyEvent.VK_D, new InputFunction() {
             @Override
             public void Execute() {activateAction(RIGHT);}
         });
-        InputManager.SubscribePressed(KeyEvent.VK_ESCAPE, new InputFunction() {
+        InputManager.Instance().SubscribePressed(KeyEvent.VK_ESCAPE, new InputFunction() {
             @Override
             public void Execute() {GameLoop.Quit(); }
         });
         //ATTACK_____________________________________________________________________________________________
-        InputManager.SubscribePressed(KeyEvent.VK_J, new InputFunction() {
+        InputManager.Instance().SubscribePressed(KeyEvent.VK_J, new InputFunction() {
             @Override
             public void Execute() {
                 setVelocity(0);
@@ -214,7 +220,7 @@ public class Player extends Actor {
                 attack = true;
             }
         });
-        InputManager.SubscribeReleased(KeyEvent.VK_J, new InputFunction() {
+        InputManager.Instance().SubscribeReleased(KeyEvent.VK_J, new InputFunction() {
             @Override
             public void Execute() {
                 setVelocity(0);
@@ -225,7 +231,7 @@ public class Player extends Actor {
             }
         });
         //BOW________________________________________________________________________________________________
-        InputManager.SubscribePressed(KeyEvent.VK_K, new InputFunction() {
+        InputManager.Instance().SubscribePressed(KeyEvent.VK_K, new InputFunction() {
             @Override
             public void Execute() {
                 setVelocity(0);
@@ -236,7 +242,7 @@ public class Player extends Actor {
                 dash = false;
             }
         });
-        InputManager.SubscribeReleased(KeyEvent.VK_K, new InputFunction() {
+        InputManager.Instance().SubscribeReleased(KeyEvent.VK_K, new InputFunction() {
             @Override
             public void Execute() {
                 setVelocity(0);
@@ -245,7 +251,7 @@ public class Player extends Actor {
             }
         });
         //DASH_______________________________________________________________________________________________
-        InputManager.SubscribeReleased(KeyEvent.VK_SHIFT, new InputFunction() {
+        InputManager.Instance().SubscribeReleased(KeyEvent.VK_SHIFT, new InputFunction() {
             @Override
             public void Execute() {
                 if (dashCooldawn >= dashDelay){
@@ -257,7 +263,7 @@ public class Player extends Actor {
             }
         });
 
-        InputManager.SubscribeReleased(KeyEvent.VK_B, new InputFunction() {
+        InputManager.Instance().SubscribeReleased(KeyEvent.VK_B, new InputFunction() {
             @Override
             public void Execute() {
                 if(nbombs >= 0){
@@ -271,20 +277,20 @@ public class Player extends Actor {
             }
         });
         //Show LifeBar_______________________________________________________________________________________
-        InputManager.SubscribePressed(KeyEvent.VK_M, new InputFunction() {
+        InputManager.Instance().SubscribePressed(KeyEvent.VK_M, new InputFunction() {
             @Override
             public void Execute() {lifeBar.setVisible(true);}
         });
-        InputManager.SubscribeReleased(KeyEvent.VK_M, new InputFunction() {
+        InputManager.Instance().SubscribeReleased(KeyEvent.VK_M, new InputFunction() {
             @Override
             public void Execute() {lifeBar.setVisible(false);}
         });
-        InputManager.SubscribePressed(KeyEvent.VK_P, new InputFunction() { //Pause
+        InputManager.Instance().SubscribePressed(KeyEvent.VK_P, new InputFunction() { //Pause
             @Override
             public void Execute() {Pause();}
         });
         ///Interaction_______________________________________________________________________________________
-        InputManager.SubscribePressed(KeyEvent.VK_E, new InputFunction() {
+        InputManager.Instance().SubscribePressed(KeyEvent.VK_E, new InputFunction() {
             @Override
             public void Execute() {interact();}
         });
@@ -312,7 +318,7 @@ public class Player extends Actor {
             }
         });
 
-        InputManager.SubscribePressed(KeyEvent.VK_T, new InputFunction() {
+        InputManager.Instance().SubscribePressed(KeyEvent.VK_T, new InputFunction() {
             @Override
             public void Execute() {
                 System.out.println(ColliderManager.GetColliderManager().getCollision(hitbox, Interactive.class, true));
@@ -375,25 +381,30 @@ public class Player extends Actor {
         //System.out.println(velocity);
         //System.out.println(GetPosition());
         //System.out.println("Espacio ocupado" + Runtime.getRuntime().totalMemory()/Runtime.getRuntime().maxMemory()*100 + "%");
-        System.out.println(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory());
+        //System.out.println(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory());
 //SE VE GENIAL, SI QUIERES, MERGEO CON AUDIO PARA LOS FPSs
     }
     public void playerStateMachine(){
         if(dash){dashCooldawn = 0;dash();return;}
         else if (dashCooldawn<120){dashCooldawn++;}
-        if (!mAnimation.MustComplete() && canmove){Move();}
+        //else {if(!mAnimation.MustComplete()){Move();}}
+        if(!mAnimation.MustComplete() && canmove){Move();}
     }
     // ------------------------------------------------------------------------
     
     /* Colision
      *      -> True if there is no collision
      */
-    public boolean SolveCollisions(Vector2D<Integer> dif) {
-        CollisionResult res = terrainCollider.GetBounds().collisionTile(
-            dif.x - World.mCurrentLevel.GetBounds().GetPosition().x, 
-            dif.y - World.mCurrentLevel.GetBounds().GetPosition().y);
-        falling = res == CollisionResult.Hole;
-        return (res == CollisionResult.None);
+    private boolean SolveCollisions(Vector2D<Integer> dif) {
+        float topLeftX =  dif.x - World.mCurrentLevel.GetBounds().GetPosition().x;
+        float topLeftY =  dif.y - World.mCurrentLevel.GetBounds().GetPosition().y;
+        CollisionResult res = terrainCollider.GetBounds().CollisionTile(topLeftX, topLeftY);
+        CollisionResult res_1 = terrainCollider.GetBounds().CollisionTile(topLeftX + terrainCollider.GetBounds().GetWidth(), topLeftY);
+        CollisionResult res_2 = terrainCollider.GetBounds().CollisionTile(topLeftX , topLeftY + terrainCollider.GetBounds().GetHeight());
+        CollisionResult res_3 = terrainCollider.GetBounds().CollisionTile(topLeftX + terrainCollider.GetBounds().GetWidth(), topLeftY + terrainCollider.GetBounds().GetHeight());
+        boolean result = (res == CollisionResult.None) && (res_1 == CollisionResult.None) && (res_2 == CollisionResult.None) && (res_3 == CollisionResult.None);
+        falling = (res == CollisionResult.Hole);
+        return (result);
     }
     // ------------------------------------------------------------------------
     
@@ -527,6 +538,7 @@ public class Player extends Actor {
     private Player getPlayer (){return this;}
     public boolean isAble_to_takeDamage() {return able_to_takeDamage;}
     public BoxCollider getHitbox() {return hitbox;}
+    public LifeBar getLifebar(){return lifeBar;}
 
     //------------------------------------------------------------------------
     /* Setters
@@ -680,7 +692,7 @@ public class Player extends Actor {
         if (!enemies.isEmpty()){
             for(int i = 0; i < enemies.size(); i++){
                 Enemy enemy = (Enemy)enemies.get(i);
-                if(getPseudoPosition().getTargetDirection(enemy.getPseudoPosition()) == direction){
+                if(new EuclideanCoordinates(getPseudoPosition()).getTargetDirection(enemy.getPseudoPosition()) == direction){
                     enemy.setHealthPoints(damage);
                     enemy.knockBack();
                     System.out.println("Le da");
@@ -692,7 +704,7 @@ public class Player extends Actor {
         if (!interactives.isEmpty()){
             for(int i = 0; i < interactives.size(); i++){
                 Interactive interactive = (Interactive)interactives.get(i);
-                if(getPseudoPosition().getTargetDirection(interactive.getPseudoPosition()) == direction){
+                if(new EuclideanCoordinates(getPseudoPosition()).getTargetDirection(interactive.getPseudoPosition()) == direction){
                     Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/bombable-wall.wav"));
                     Audio.Instance().Play(sound);
                 }
@@ -812,7 +824,8 @@ public class Player extends Actor {
         setDamage(2);
         this.direction = DIRECTION.DOWN;
         setToSpawnPoint();
-        hitbox.Reset();
+        hitbox.setPosition(GetPosition());
+        hitbox.setHitboxScale(GetScale());;
         mAnimation.SetFrameTrack(DOWN+Action.STOP.getID());
         canmove = true;
     }

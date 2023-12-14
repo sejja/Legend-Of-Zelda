@@ -50,7 +50,7 @@ public abstract class AnimatedObject extends Actor{
     }
 
     public void setAnimationMachine(Spritesheet spritesheet) {
-        spritesheet.flip();
+        spritesheet.Transpose();
         animationMachine = AddComponent(new AnimationMachine(this, spritesheet));
         animationMachine.GetAnimation().SetDelay(delay);
         animation = spritesheet.GetSpriteArray2D()[defaultAnimationIndex];

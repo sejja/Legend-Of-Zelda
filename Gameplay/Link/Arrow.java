@@ -17,14 +17,15 @@ import Engine.Audio.Sound;
 import Engine.Developer.Logger.Log;
 import Engine.Developer.Logger.Logger;
 import Engine.ECSystem.ObjectManager;
+import Engine.ECSystem.World;
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Entity;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.AnimationMachine;
 import Engine.Math.Vector2D;
+import Engine.Physics.ColliderManager;
 import Engine.Physics.CollisionResult;
 import Engine.Physics.Components.BoxCollider;
-import Engine.Physics.Components.ColliderManager;
 import Gameplay.Enemies.Enemy;
 import Gameplay.Enemies.Units.GreenKnight;
 import Gameplay.Interactives.Interactive;
@@ -116,34 +117,49 @@ public class Arrow extends Actor{
         switch (direction){
             case UP:
                 currentPosition = pos.y;
-                if(hitbox.GetBounds().collisionTile(0, -speed) == CollisionResult.None){
+                if(hitbox.GetBounds().CollisionTile(0, -speed) == CollisionResult.None){
                     pos.y -= speed;
                     distance += Math.abs(currentPosition - pos.y);
                 }else{endArrow = true;}
                 return;
             case DOWN:
                 currentPosition = pos.y;
-                if(hitbox.GetBounds().collisionTile(0, +speed) == CollisionResult.None){
+                if(hitbox.GetBounds().CollisionTile(0, +speed) == CollisionResult.None){
                     pos.y += speed;
                     distance += Math.abs(currentPosition - pos.y);
                 }else{endArrow = true;}
                 return;
             case LEFT:
                 currentPosition = pos.x;
-                if(hitbox.GetBounds().collisionTile(-speed, 0) == CollisionResult.None){
+                if(hitbox.GetBounds().CollisionTile(-speed, 0) == CollisionResult.None){
                     pos.x -= speed;
                     distance += Math.abs(currentPosition - pos.x);
                 }else{endArrow = true;}
                 return;
             case RIGHT:
                 currentPosition = pos.x;
-                if(hitbox.GetBounds().collisionTile(+speed, 0) == CollisionResult.None){
+                if(hitbox.GetBounds().CollisionTile(+speed, 0) == CollisionResult.None){
                     pos.x += speed;
                     distance += Math.abs(currentPosition - pos.x);
                 }else{endArrow = true;}
                 return;
         }
-        SetPosition(pos);
+        //System.out.println(distance);
+        //SetPosition(pos);
+    }
+
+    public boolean SolveCollisions(Vector2D<Integer> dif) {
+        float topLeftX =  dif.x - World.mCurrentLevel.GetBounds().GetPosition().x;
+        float topLeftY =  dif.y - World.mCurrentLevel.GetBounds().GetPosition().y;
+        CollisionResult res = hitbox.GetBounds().CollisionTile(topLeftX, topLeftY);
+        CollisionResult res_1 = hitbox.GetBounds().CollisionTile(topLeftX + hitbox.GetBounds().GetWidth(), topLeftY);
+        CollisionResult res_2 = hitbox.GetBounds().CollisionTile(topLeftX , topLeftY + hitbox.GetBounds().GetHeight());
+        CollisionResult res_3 = hitbox.GetBounds().CollisionTile(topLeftX + hitbox.GetBounds().GetWidth(), topLeftY + hitbox.GetBounds().GetHeight());
+        boolean isMovable = (res == CollisionResult.None) && (res_1 == CollisionResult.None) && (res_2 == CollisionResult.None) && (res_3 == CollisionResult.None);
+        if(!isMovable){
+            endArrow = true;
+        }
+        return (isMovable);
     }
 
     public void WallSound() {

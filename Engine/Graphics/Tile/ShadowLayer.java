@@ -10,6 +10,7 @@ import Engine.ECSystem.Types.Entity;
 import Engine.ECSystem.World;
 import Engine.ECSystem.ObjectManager;
 import Engine.Graphics.Components.CameraComponent;
+import Engine.Math.TileCoordinates;
 import Engine.Math.Vector2D;
 import Engine.Physics.Components.BoxCollider;
 import Gameplay.Enemies.Search.pPair;
@@ -35,7 +36,10 @@ public class ShadowLayer {
         if(matrixOpacity == null){
             buildMatrix();
         }
-
+        if(tilePosition.x >= 50 ||  tilePosition.y >= 50){
+            //System.err.println("Estas intentando iluminar fuera del mapa");
+            return;
+        }
         try{
             matrixOpacity[tilePosition.x][tilePosition.y] += opacity;
         }catch(java.lang.ArrayIndexOutOfBoundsException e){
@@ -44,11 +48,9 @@ public class ShadowLayer {
     }
 
     public void Render(Graphics2D g, CameraComponent mCamera) {
-
+        //System.out.println(isOn + " " + mCamera);
         if(matrixOpacity == null){buildMatrix();}
-
         if(!isOn || mCamera == null){return;}
-
         final int scaleX = 64;
         final int scaleY = 64;
 
@@ -56,10 +58,11 @@ public class ShadowLayer {
         int cameraSizeY = mCamera.GetDimensions().y;
 
 
-        Vector2D<Integer> cameraDrawPoint = getDrawPointPosition(mCamera);
-        Vector2D<Integer> windowShadowDrawPoint = getWindowViewedDrawPoint(cameraDrawPoint, mCamera);
-
-
+        Vector2D<Integer> cameraDrawPoint = getDrawPointPosition(mCamera); //Superior Izquierdo donde empieza a dibujar la camara
+        Vector2D<Integer> windowShadowDrawPoint = getWindowViewedDrawPoint(cameraDrawPoint, mCamera); //Position de cada bloque de oscuridad que va dibujando con respecto a la ventana
+        //System.out.println("Window shadowDrawPoint" + windowShadowDrawPoint);
+        //System.out.println("Camera drawPoint" + cameraDrawPoint);
+        //Primero dibuja cada columna y luego cada fila
         //______________________________________________________________________________________________________
         for (int drawPointX = windowShadowDrawPoint.x; drawPointX < cameraSizeX; drawPointX+=scaleX ){
             int temp = cameraDrawPoint.y;
@@ -80,10 +83,9 @@ public class ShadowLayer {
      * 
      */
     private Vector2D<Integer> getDrawPointPosition(CameraComponent mCamera){
-        ArrayList<Entity> p = ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class);
-        
-        if(!p.isEmpty()) {
-            Player link = (Player)ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0);
+        if (ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).size() == 0){return new Vector2D<Integer>(0,0);}
+        Player link = (Player)ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0);
+
         Vector2D<Integer> blockPosition = World.GetLevelSpaceCoordinates(link.getPseudoPosition()).getTilePosition();
         int gapX = mCamera.GetDimensions().x/(2*64);
         int gapY = mCamera.GetDimensions().x/(2*64);
@@ -98,22 +100,24 @@ public class ShadowLayer {
         else if(cameraDrawPointX > limitX){cameraDrawPointX = limitX;}
         if(cameraDrawPointY <0){cameraDrawPointY = 0;}
         else if(cameraDrawPointY > limitY){cameraDrawPointY = limitY;}
-        Vector2D<Float> result =  new Vector2D<Float>((Float)(float)cameraDrawPointX*64, (Float)(float)cameraDrawPointY*64);
+
+        Vector2D<Float> result =  new Vector2D<Float>((Float)(float)(cameraDrawPointX)*64, (Float)(float)(cameraDrawPointY-1)*64); // <---- quitar +1
         //To see where is the cameraDrawPoint
+        //____________________________________________________________________________________________________________
         /*
         if(seeker == null){
-            seeker = new BoxCollider(link, result, 1);
+            seeker = new BoxCollider(link, result);
             link.AddComponent(seeker);
         }else{
             seeker.GetBounds().SetPosition(result);
         }
         */
-        Vector2D<Integer> _result =  new Vector2D<Integer>((int)(result.x/64), (int)(result.y/64));
+        //____________________________________________________________________________________________________________
+
+        Vector2D<Integer> _result =  new Vector2D<Integer>((int)(float)(result.x/64), (int)(float)(result.y/64));
         return _result;
         }
 
-        return new Vector2D<Integer>(0, 0);
-    }
 
     public void Clear(int opacity){
         this.opacity = opacity;
@@ -136,8 +140,15 @@ public class ShadowLayer {
     }
 
     private Vector2D<Integer> getWindowViewedDrawPoint (Vector2D<Integer> cameraTilePositionn, CameraComponent cameraComponent){
-        Vector2D<Float> cameraAABBPosition = new Vector2D<Float>(cameraComponent.GetCoordinates().x - cameraComponent.GetDimensions().x/2, cameraComponent.GetCoordinates().y - cameraComponent.GetDimensions().y/2);
-        return new Vector2D<Integer>( (cameraTilePositionn.x*64) - (int)(float)cameraAABBPosition.x - 640, (cameraTilePositionn.y*64) - (int)(float)cameraAABBPosition.y - 360);
+        //cameraComponentCoordinate = The middle of the camera
+        Vector2D<Float> cameraAABBPosition = new Vector2D<Float>(cameraComponent.GetCoordinates().x , cameraComponent.GetCoordinates().y );
+        cameraAABBPosition = World.GetLevelSpaceCoordinates(cameraAABBPosition);
+        //System.out.println("Camera drawPoint" + cameraTilePositionn);
+        //System.out.println("camera AABB position = " + cameraAABBPosition);
+        Vector2D<Integer> result = new Vector2D<Integer>( (cameraTilePositionn.x*64) - (int)(float)(cameraAABBPosition.x) , (cameraTilePositionn.y*64) - (int)(float)(cameraAABBPosition.y ));
+        //System.out.println("_result = " + ((cameraTilePositionn.x*64) - (int)(float)(cameraAABBPosition.x)) + " , " + ((cameraTilePositionn.y*64) - (int)(float)(cameraAABBPosition.y )));
+        //System.out.println("result = " + result);
+        return result;
     }
 
     public void setOn(boolean isOn) {
