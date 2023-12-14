@@ -60,7 +60,7 @@ public class PlayState extends State {
         var entradaArriba3 = new TestRoom2(null, null, null, null, "Content/TiledProject/entradaArriba3.tmx");
         var pasilloDerArriba3 = new TestRoom2(null, null, null, null, "Content/TiledProject/pasilloDerArriba3.tmx");*/
         
-        mTestLevel = new TestRoom(2);
+        mTestLevel = new TestRoom(1);
 
 
         
