@@ -1,17 +1,24 @@
+//
+//	GameLoop.java
+//	Legend Of Zelda
+//
+//	Created by Diego Revilla on 27/11/2023
+//	Copyright Deusto © 2023. All Rights reserved
+// 
+
 package Engine.Window;
 
 import java.awt.Color;
-import java.awt.Graphics;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-import javax.xml.crypto.Data;
+import javax.swing.JFrame;
 
 import Engine.Developer.DataBase.Database;
-import Engine.Developer.Logger.Log;
 import Engine.Developer.Logger.Logger;
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.World;
 import Engine.Graphics.GraphicsPipeline;
-import Engine.Graphics.Tile.ShadowLayer;
 import Engine.Input.InputManager;
 import Engine.Physics.ColliderManager;
 import Engine.StateMachine.StateMachine;
@@ -19,14 +26,23 @@ import Engine.StateMachine.StateMachine;
 public class GameLoop extends Thread {
     static private boolean mRunning;
     static private boolean mShouldRestart;
+    static private boolean mPause;
     static private StateMachine mStateManager;
     private PresentBuffer mTargetBuffer;
-    static private boolean mPause;
+    private ExecutorService mThreadPool;
+    private JFrame mOwner;
 
-    public GameLoop(PresentBuffer target) {
+    // ------------------------------------------------------------------------
+    /*! Custom Constructor
+    *
+    *   Creates the FrameBuffer (a BufferedImage)
+    */ //----------------------------------------------------------------------
+    public GameLoop(final PresentBuffer target, final JFrame window) {
         mTargetBuffer = target;
         mPause = false;
         mShouldRestart = false;
+        mThreadPool = Executors.newFixedThreadPool(1);
+        mOwner = window;
     }
 
     // ------------------------------------------------------------------------
@@ -35,26 +51,39 @@ public class GameLoop extends Thread {
     *   Creates the FrameBuffer (a BufferedImage)
     */ //----------------------------------------------------------------------
     public void Init() {
-        Log v = Logger.Instance().GetLog("GameLoop");
-
-        Logger.Instance().Log(v, "Engine Started!", java.util.logging.Level.INFO);
-
+        Logger.Instance().Log(Logger.Instance().GetLog("GameLoop"), 
+        "Engine Started!", java.util.logging.Level.INFO);
         Database.Instance().InitConnection("game.db");
         mRunning = true;
         mStateManager = new StateMachine();
         InputManager.Instance().SetSpeakingBuffer(mTargetBuffer);
     }
 
+    // ------------------------------------------------------------------------
+    /*! Quit
+    *
+    *   Queues the Game Loop from closure, and closes the Data Base.
+    */ //----------------------------------------------------------------------
     public static void Quit() {
         mRunning = false;
         Database.Instance().cerrarBD();
     }
 
+    // ------------------------------------------------------------------------
+    /*! Restart
+    *
+    *   Schedules the GameLoop to restart the game next frame
+    */ //----------------------------------------------------------------------
     public static void Restart() {
         mShouldRestart = true;
     }
 
-    private void _restart() {
+    // ------------------------------------------------------------------------
+    /*! Private Restart
+    *
+    *   Restarts the state of the graphics pipeline and the object managers
+    */ //----------------------------------------------------------------------
+    private void ClearsPipelineState() {
         PresentBuffer.SetClearColor(Color.BLACK);
         ObjectManager.GetObjectManager().Clear();
         GraphicsPipeline.GetGraphicsPipeline().RemoveAllRenderables();
@@ -87,7 +116,7 @@ public class GameLoop extends Thread {
     *
     *   Returns wether we pause the game or not
     */ //----------------------------------------------------------------------
-    static public void SetPaused(boolean b) {
+    static public void SetPaused(final boolean b) {
         mPause = b;
     }
 
@@ -103,44 +132,46 @@ public class GameLoop extends Thread {
         final double GAME_HERTZ = 60.0;
         final double TBU = 1000000000 / GAME_HERTZ;
 
-        final int MUBR = 3;
-
         double lastUpdateTime = System.nanoTime();
         double lastRenderTime;
 
-        final double TARGET_FPS = 1000;
+        final double TARGET_FPS = 60;
         final double TTBR = 1000000000 / TARGET_FPS;
         int lastSecondTime = (int) (lastUpdateTime / 1000000000);
 
         while (mRunning) {
 
             double now = System.nanoTime();
-            int updateCount = 0;
-            while (((now - lastUpdateTime) > TBU) && (updateCount < MUBR)) {
+
+            mThreadPool.execute(new Runnable() {
+
+                @Override
+                public void run() {
+                    mTargetBuffer.Render();
+                    mTargetBuffer.Present();
+                }
+                
+            });
+
+            while (((now - lastUpdateTime) > TBU)) {
                 World.mCurrentLevel.Update();
                 if(!mPause) Update();
                 lastUpdateTime += TBU;
-                updateCount++;
             }
 
-            if ((now - lastUpdateTime) > TBU) {
-                lastUpdateTime = now - TBU;
-            }
-            if(!mPause) mTargetBuffer.Render();
-            //mTargetBuffer.Render();
-            mTargetBuffer.Present();
+            lastUpdateTime = (now - lastUpdateTime) > TBU ? now - TBU : lastUpdateTime;
+            
             lastRenderTime = now;
 
-            int thisSecond = (int) (lastUpdateTime / 1000000000);
-            if (thisSecond > lastSecondTime) {
-                lastSecondTime = thisSecond;
-            }
+            final int thisSecond = (int) (lastUpdateTime / 1000000000);
+
+            lastSecondTime = thisSecond > lastSecondTime ? thisSecond : lastSecondTime;
 
             while (now - lastRenderTime < TTBR && now - lastUpdateTime < TBU) {
                 Thread.yield();
-
                 try {
-                    Thread.sleep((int)(16.66666666666666666666666 - ((System.nanoTime() - now) / 1000000.f)));
+                    mThreadPool.wait();
+                    Thread.sleep((int)((1 / GAME_HERTZ) * 1000 - ((System.nanoTime() - now) / 1000000.f)));
                 } catch (Exception e) {
 
                 }
@@ -149,12 +180,13 @@ public class GameLoop extends Thread {
             }
 
             if(mShouldRestart) {
-                _restart();
+                ClearsPipelineState();
                 mShouldRestart = false;
             }
         }
 
-        Log v = Logger.Instance().GetLog("GameLoop");
-        Logger.Instance().Log(v, "Bye bye", java.util.logging.Level.FINE);
+        mOwner.dispose();
+        Logger.Instance().Log(Logger.Instance().GetLog("GameLoop"),
+         "Bye bye", java.util.logging.Level.FINE);
     }
 }

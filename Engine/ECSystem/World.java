@@ -7,7 +7,6 @@ import Engine.Developer.DataBase.Database;
 import Engine.ECSystem.Types.Actor;
 import Engine.ECSystem.Types.Entity;
 import Engine.Graphics.GraphicsPipeline;
-import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.ZeldaCameraComponent;
 import Engine.Graphics.Tile.ShadowLayer;
 import Engine.Graphics.Tile.TileManager;
@@ -21,7 +20,6 @@ import Gameplay.Enemies.Search.Pair;
 import Gameplay.Enemies.Units.BlueKnight;
 import Gameplay.Enemies.Units.GreenKnight;
 import Gameplay.Interactives.Blocks.Rock;
-import Gameplay.Link.Player;
 
 public class World {
     private Integer mRight;
@@ -31,8 +29,7 @@ public class World {
     public TileManager mTilemap;
     static public World mCurrentLevel = null;
     static private boolean sTransitioning = false;
-    static private Vector2D<Float> sPreviousTopRight;
-    static private Vector2D<Float> sPreviousBottomLeft;
+    static private Vector2D<Integer> sTransitionDir = new Vector2D<Integer>();
     static private float sElapsedTime = 0;
     static private World sPreviusLevel;
     
@@ -173,12 +170,20 @@ public class World {
                     v.Init(new Vector2D<>(GetBounds().GetPosition().x + GetBounds().GetWidth(), GetBounds().GetPosition().y));
                     sTransitioning = true;
                     var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetBindedCamera();
-                    sPreviousTopRight = z.GetTopRightBound();
-                    sPreviousBottomLeft = z.GetBottomLeftBound();
+                    sTransitionDir.x = 1;
+                    sTransitionDir.y = 0;
                 }
 
                 //LEFT
                 if(position.x < (GetBounds().GetPosition().x) && mLeft != null) {
+                    World v = new World(mLeft);
+                    v.Init(new Vector2D<>(GetBounds().GetPosition().x - 50 * 64, GetBounds().GetPosition().y));
+                    sTransitioning = true;
+                    var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetBindedCamera();
+                    sTransitionDir.x = -1;
+                    sTransitionDir.y = 0;
+
+                    /* 
                     World v = new World(mLeft);
                     var b = v.mTilemap.EstimateBounds(new Vector2D<>(64, 64));
                     var pos = GetBounds().GetPosition();
@@ -189,8 +194,9 @@ public class World {
                     sTransitioning = true;
                     var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetBindedCamera();
                     sPreviousTopRight = z.GetTopRightBound();
-                    sPreviousBottomLeft = z.GetBottomLeftBound();
+                    sPreviousBottomLeft = z.GetBottomLeftBound(); */
                 }
+
                 //UP
                 if(position.y < (GetBounds().GetPosition().y) && mUpper != null) {
                     World v = new World(mUpper);
@@ -202,8 +208,8 @@ public class World {
                     v.Init(pos);
                     sTransitioning = true;
                     var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetBindedCamera();
-                    sPreviousTopRight = z.GetTopRightBound();
-                    sPreviousBottomLeft = z.GetBottomLeftBound();
+                    sTransitionDir.x = 0;
+                    sTransitionDir.y = -1;
                 }
 
                 //DOWN
@@ -212,36 +218,21 @@ public class World {
                     v.Init(new Vector2D<>(GetBounds().GetPosition().x, GetBounds().GetPosition().y + GetBounds().GetHeight()));
                     sTransitioning = true;
                     var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetBindedCamera();
-                    sPreviousTopRight = z.GetTopRightBound();
-                    sPreviousBottomLeft = z.GetBottomLeftBound();
+                    sTransitionDir.x = 0;
+                    sTransitionDir.y = 1;
                 }
             }
         } else {
             var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetBindedCamera();
             z.Update();
-            ShadowLayer.getShadowLayer().resetMatrix();
-            if(sElapsedTime < 0.5) {
+
+            if(sElapsedTime < 1) {
                 GameLoop.SetPaused(true);
                 Actor p = ObjectManager.GetObjectManager().GetPawn(); //<--- Its Link
 
-                Vector2D<Float> goaltopright = new Vector2D<>(p.GetPosition().x, p.GetPosition().y);
-
-                Vector2D<Float> goaltopleft = new Vector2D<>(p.GetPosition().x + p.GetScale().x - 1280.f / 2, p.GetPosition().y + p.GetScale().y - 760.f / 2);
-                z.SetBounds(new Vector2D<Float>(Util.LinearInterpolate(sPreviousTopRight.x, goaltopright.x, sElapsedTime * 2), Util.LinearInterpolate(sPreviousTopRight.y, goaltopright.y, sElapsedTime * 2)),
-                            new Vector2D<Float>(Util.LinearInterpolate(sPreviousBottomLeft.x, goaltopleft.x, sElapsedTime * 2), Util.LinearInterpolate(sPreviousBottomLeft.x, goaltopleft.x, sElapsedTime * 2)));
-                sElapsedTime += 0.016;
-            } else if(sElapsedTime < 1.f) {
-                Actor p = ObjectManager.GetObjectManager().GetPawn();
-
-                Vector2D<Float> goaltopright = new Vector2D<>(p.GetPosition().x, p.GetPosition().y);
-
-                Vector2D<Float> goaltopleft = new Vector2D<>(p.GetPosition().x + p.GetScale().x - 1280.f / 2, p.GetPosition().y + p.GetScale().y - 760.f / 2);
-
-                Vector2D<Float> goaltopright2 = new Vector2D<>(GetBounds().GetPosition().x + 1280.f / 2, GetBounds().GetPosition().y + 720.f / 2);
-
-                Vector2D<Float> goaltopleft2 = new Vector2D<>(GetBounds().GetPosition().x + GetBounds().GetWidth() - 1280.f / 2, GetBounds().GetPosition().y + GetBounds().GetHeight() - 760.f / 2);
-                z.SetBounds(new Vector2D<Float>(Util.LinearInterpolate(goaltopright.x, goaltopright2.x, (sElapsedTime - 0.5f) * 2), Util.LinearInterpolate(goaltopright.y, goaltopright2.y, (sElapsedTime - 0.5f) * 2)),
-                            new Vector2D<Float>(Util.LinearInterpolate(goaltopleft.x, goaltopleft2.x, (sElapsedTime - 0.5f) * 2), Util.LinearInterpolate(goaltopleft.x, goaltopleft2.y, (sElapsedTime - 0.5f) * 2)));
+                z.SetPanning(new Vector2D<Float>(sTransitionDir.x * sElapsedTime * 20.f * 64.f,
+                sTransitionDir.y * sElapsedTime * 20.f * 64.f));
+                
                 sElapsedTime += 0.016;
             } else { //END TRANSITION
                 GameLoop.SetPaused(false);
@@ -253,6 +244,7 @@ public class World {
                 z.SetBounds(topright, bottomleft);
                 GraphicsPipeline.GetGraphicsPipeline().RemoveRenderable(sPreviusLevel.mTilemap);
                 sElapsedTime = 0.f;
+                z.SetPanning(new Vector2D<Float>(0.f, 0.f));
             }
         }
     }

@@ -8,9 +8,7 @@
 
 package Engine.StateMachine;
 
-import java.awt.Graphics2D;
 import java.util.ArrayList;
-
 import Gameplay.States.PlayState;
 
 public class StateMachine {
@@ -26,10 +24,20 @@ public class StateMachine {
         Init();
     }
 
+    // ------------------------------------------------------------------------
+    /*! Init
+    *
+    *   Adds an Initial State (Hardcoded)
+    */ //----------------------------------------------------------------------
     private void Init() {
         mStates.add(new PlayState());
     }
 
+    // ------------------------------------------------------------------------
+    /*! Restart
+    *
+    *   Restarts the state machine, starting from the first state
+    */ //----------------------------------------------------------------------
     public void Restart() {
         mStates.clear();
         Init();
@@ -41,9 +49,7 @@ public class StateMachine {
     *   Calls the Update method on every sub-state
     */ //----------------------------------------------------------------------
     public void Update() {
-        //Iterate through every state
-        for(State x : mStates)
-            x.Update();
+        mStates.stream().forEach(x -> x.Update());
     }
 
     // ------------------------------------------------------------------------
@@ -51,7 +57,7 @@ public class StateMachine {
     *
     *   Removes a ceratain state
     */ //----------------------------------------------------------------------
-    public void Remove(State state) {
+    public void Remove(final State state) {
         mStates.remove(state);
     }
 
@@ -60,7 +66,7 @@ public class StateMachine {
     *
     *   Adds one state
     */ //----------------------------------------------------------------------
-    public void Add(State state) {
+    public void Add(final State state) {
         mStates.add(state);
     }
 }
