@@ -41,6 +41,18 @@ public class World {
         sElapsedTime = 0;
     }
 
+    private String getLevel(int id){
+        ResultSet res = Database.Instance().Query("select * from Levels where id = " + id);
+        String map = "";
+        try {
+            map = res.getString("Path");
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+         return map;
+    }
+
     protected World(Integer id) {
         ResultSet s = Database.Instance().Query("select * from Levels where id = " + id);
         String tiles = null;
@@ -51,8 +63,10 @@ public class World {
 
         try {
             tiles = s.getString("Path");
+            System.out.println(tiles);
             try {
                 left = Integer.parseInt(s.getString("Left"));
+                System.out.println("Left:" + left);
             } catch(Exception e) {
 
             }
@@ -71,6 +85,7 @@ public class World {
 
             try {
                 down = Integer.parseInt(s.getString("Down"));
+                System.out.println("Down:"+  down);
             } catch(Exception e) {
 
             }
@@ -84,6 +99,9 @@ public class World {
         mUpper = up;
         mLower = down;
         mTilemap = new TileManager(tiles);
+    }
+    public void WorldInfo(){
+        System.out.println("Path:" + mTilemap.getPath() + " Right:" +mRight +" Left:" + mLeft + " Up:" + mUpper + " Down:" + mLower);
     }
 
     public AABB GetBounds() {
@@ -214,7 +232,7 @@ public class World {
 
                 //DOWN
                 if(position.y > (GetBounds().GetPosition().y + GetBounds().GetHeight()) && mLower != null) {
-                    World v = new World(mUpper);
+                    World v = new World(mLower);
                     v.Init(new Vector2D<>(GetBounds().GetPosition().x, GetBounds().GetPosition().y + GetBounds().GetHeight()));
                     sTransitioning = true;
                     var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetBindedCamera();

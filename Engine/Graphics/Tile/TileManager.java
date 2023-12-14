@@ -58,6 +58,7 @@ public class TileManager extends ECObject implements Renderable {
     *   From a file and the sizes, configure the tilemap to be render-ready
     */ //----------------------------------------------------------------------
     public void CreateTileMap(final Vector2D<Float> position, final Vector2D<Integer> blockscale) {
+        
         int width = 0;
         int height = 0;
         mLayers = new ArrayList<>();
@@ -69,12 +70,13 @@ public class TileManager extends ECObject implements Renderable {
 
         //In case something can't be read properly, it means the tsx is corrupt
         try {
+            System.out.println("Creating " +mPath);
             final DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
             final Document doc = builder.parse(new File(getClass().getClassLoader().getResource(mPath).toURI()));
+            System.out.println(doc.getDocumentURI());
             doc.getDocumentElement().normalize();
 
             NodeList tilelist = doc.getElementsByTagName("tileset");
-            
             //Parse each of the tilesets, with it's image specs and it's image paths
             for(int i = 0, length = tilelist.getLength(); i < length; i++) {
                 final Element node = (Element) tilelist.item(i);
@@ -109,8 +111,8 @@ public class TileManager extends ECObject implements Renderable {
 
             mBounds.SetSize(new Vector2D<Float>((float)(width * blockscale.x), (float)(height * blockscale.y)));
             GraphicsPipeline.GetGraphicsPipeline().AddRenderableBottom(this);
-
-        } catch(ParserConfigurationException | SAXException | IOException | URISyntaxException e) {
+        } 
+        catch(ParserConfigurationException | SAXException | IOException | URISyntaxException e) {
             Logger.Instance().Log(Logger.Instance().GetLog("Engine"), 
                 "Error - Can't read tilemap file. " + e.getMessage(), Level.SEVERE, 2, Color.red);
         }
@@ -160,6 +162,10 @@ public class TileManager extends ECObject implements Renderable {
     */ //----------------------------------------------------------------------
     public void Render(final Graphics2D g, final CameraComponent camerapos) {
         mLayers.forEach(l -> l.Render(g, camerapos, mBounds));
+    }
+
+    public String getPath(){
+        return mPath;
     }
 }
  

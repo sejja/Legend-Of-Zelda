@@ -12,6 +12,7 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Vector;
 
 import Engine.Developer.Logger.Logger;
@@ -142,8 +143,14 @@ public class GraphicsPipeline {
 
 
         //Renderable
-        for (Renderable r: mRenderables) 
-            r.Render(g, mCamera);
+        Iterator<Renderable> iterator = mRenderables.iterator();
+        
+        while (iterator.hasNext()) {
+            iterator.next().Render(g, mCamera);
+        }
+        
+        //for (Renderable r: mRenderables) 
+           // r.Render(g, mCamera);
 
         for(Renderable r: mOldRenderables)
             mRenderables.remove(r);
@@ -154,15 +161,17 @@ public class GraphicsPipeline {
         shadowLayer.Render(g, mCamera);
         Logger.Instance().Render(g);
         //renderableInfo();
-        /*for(Renderable x : mRenderables){
+        /*
+        for(Renderable x : mRenderables){
             if(unremovableRenderables == null){
                 break;
             }
             if(x instanceof AnimationMachine && !unremovableRenderables.contains(x)){
                 System.out.println(((AnimationMachine)x).GetParent());
             }
-        }*/
-        //System.out.println(mRenderables);
+        }
+        System.out.println(mRenderables);
+         */
     }
 
     // ------------------------------------------------------------------------

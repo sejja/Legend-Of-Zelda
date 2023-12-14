@@ -55,7 +55,7 @@ public class CollisionLayer extends Tilemap {
 
                 //Find the corresponding sprite
                 for(Integer j : ids) {
-                    if(j > sprite_id) break;
+                    if(j > sprite_id ) break;
                     sprite_id++;
                 }
 
