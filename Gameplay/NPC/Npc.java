@@ -71,6 +71,7 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
     */ //----------------------------------------------------------------------
 
     public Npc(String nameNPC, Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size, int numberStartAnimation, int movement) {
+
         super(position);
         this.name = nameNPC;
         
@@ -92,7 +93,6 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
         this.setDefaultPseudoPosition();
         setPseudoPositionVisible();
         hitbox = (BoxCollider)AddComponent(new BoxCollider(this, new Vector2D<Float>(50f,50f), true));
-        
         dialogueWindow = new DialogueWindow(this);
         
     }
@@ -154,6 +154,16 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
             Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/finish.wav"));
             Audio.Instance().Play(sound);
         }
+    }
+
+    private void removeDialogWindown(){
+        RemoveComponent(dialogueWindow);
+        Player link = (Player) ObjectManager.GetObjectManager().GetPawn();
+        link.removeInteraction();
+        animationMachine.SetFrameTrack(currentDirection);
+        Pause();
+        Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/finish.wav"));
+        Audio.Instance().Play(sound);
     }
 
     private void Pause(){

@@ -193,12 +193,12 @@ public class ObjectManager {
      * 
      */
     public void flush(){
+        ShadowLayer.getShadowLayer().resetMatrix();
         ArrayList<Entity> player = mAliveEntities.get(Player.class);
         ArrayList<Entity> NPCs = mAliveEntities.get(Npc.class);
         for(Entity enemy: mAliveEntities.get(Enemy.class)){ //Kill all enemy
             ((Enemy)enemy).superDie();
         }
-        ShadowLayer.getShadowLayer().resetMatrix();
         GraphicsPipeline.GetGraphicsPipeline().flush();
         mAliveEntities.clear();
         mAliveEntities.put(Player.class, player);
