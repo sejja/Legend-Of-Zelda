@@ -146,17 +146,11 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
             Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/message.wav"));
             Audio.Instance().Play(sound);
         }else{
-            RemoveComponent(dialogueWindow);
-            Player link = (Player) ObjectManager.GetObjectManager().GetPawn();
-            link.removeInteraction();
-            animationMachine.SetFrameTrack(currentDirection);
-            Pause();
-            Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/finish.wav"));
-            Audio.Instance().Play(sound);
+            removeDialogWindown();
         }
     }
 
-    private void removeDialogWindown(){
+    public void removeDialogWindown(){
         RemoveComponent(dialogueWindow);
         Player link = (Player) ObjectManager.GetObjectManager().GetPawn();
         link.removeInteraction();
