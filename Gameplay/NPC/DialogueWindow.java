@@ -30,7 +30,7 @@ public class DialogueWindow extends Component implements Renderable{
     private static int j = 0; //Index del String del arraylist del dialogo
     private Npc npc; //the Npc we are interacting with
     private String linea;
-    private File f = new File("Legend-Of-Zelda/Gameplay/NPC/Dialogues.txt");
+    private File f = new File("Gameplay/NPC/Dialogues.txt");
     private int l = 0;
     protected ArrayList<String> dialogue = new ArrayList<>();
 
