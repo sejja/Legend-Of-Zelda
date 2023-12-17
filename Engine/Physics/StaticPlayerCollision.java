@@ -9,9 +9,10 @@ import Gameplay.Link.Player;
 
 /** Statical Object Collision with the player
  *      StaticalObject
- *          -> No movable
- *      -> The statical Object must have a hitbox
- *      -> Implement it at the end of update
+ *      No movable
+ *      The statical Object must have a hitbox
+ *      <p> Implement it at the end of update </p>
+ * @author Lingfeng
  */
 public interface StaticPlayerCollision {
     default void playerCollision(BoxCollider hitbox){

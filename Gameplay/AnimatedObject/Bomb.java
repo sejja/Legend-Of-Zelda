@@ -19,6 +19,9 @@ import Gameplay.Enemies.Enemy;
 import Gameplay.Interactives.Interactive;
 import Gameplay.Interactives.Blocks.Rock;
 
+/** Bomb actor
+ *  @author Lingfeng
+ */
 public class Bomb extends AnimatedObject {
     
     private BufferedImage[][] allAnimtion;

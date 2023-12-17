@@ -886,7 +886,7 @@ public class Player extends Actor {
     }
     //------------------------------------------------------------------------
 
-    /* *This function is called when Link fell out or the Border
+    /**This function is called when Link fell out or the Border
      * 
      */
     private void linkHasFalled(){

@@ -4,20 +4,19 @@ import Engine.Assets.AssetManager;
 import Engine.Audio.Audio;
 import Engine.Audio.Sound;
 import Engine.ECSystem.World;
-import Engine.ECSystem.ObjectManager;
-import Engine.Graphics.GraphicsPipeline;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Animations.AnimationEvent;
 import Engine.Graphics.Tile.ShadowLayer;
-import Engine.Math.EuclideanCoordinates;
 import Engine.Math.Vector2D;
-import Engine.Math.TileCoordinates;
 import Engine.Physics.StaticPlayerCollision;
 import Engine.Physics.Components.BoxCollider;
 import Gameplay.Interaction;
-import Gameplay.Link.Player;
 import Gameplay.NPC.Npc;
 
+/** Torch object it modifies the ShadowLayer
+ *  
+ * @author Lingfeng
+ */
 public class Torch extends AnimatedObject implements Interaction, StaticPlayerCollision {
     
     private BoxCollider hitbox;

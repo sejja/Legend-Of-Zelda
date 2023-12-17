@@ -1,25 +1,15 @@
 package Gameplay.Link;
 
-import java.awt.Color;
-import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.ListIterator;
 import java.util.Random;
-import java.util.logging.Level;
-
-import javax.lang.model.element.ModuleElement.DirectiveKind;
 
 import Engine.Assets.AssetManager;
 import Engine.Audio.Audio;
 import Engine.Audio.Sound;
-import Engine.Developer.Logger.Log;
-import Engine.Developer.Logger.Logger;
 import Engine.ECSystem.ObjectManager;
 import Engine.ECSystem.World;
 import Engine.ECSystem.Types.Actor;
-import Engine.ECSystem.Types.Entity;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.AnimationMachine;
 import Engine.Math.Vector2D;
@@ -27,7 +17,6 @@ import Engine.Physics.ColliderManager;
 import Engine.Physics.CollisionResult;
 import Engine.Physics.Components.BoxCollider;
 import Gameplay.Enemies.Enemy;
-import Gameplay.Enemies.Units.GreenKnight;
 import Gameplay.Interactives.Interactive;
 
 /** This is a class that sometimes is a arrow and sometimes dash
