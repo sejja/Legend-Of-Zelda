@@ -3,6 +3,10 @@ package Gameplay.Link;
 import java.util.HashSet;
 import java.util.LinkedList;
 
+/** This is a deprecated class which purpose was manage the action of the link in order to substitute the statemachine
+ *  @author Lingfeng
+ */
+@Deprecated
 public class StackActioner {
 
     private Player link;

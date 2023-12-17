@@ -2,6 +2,11 @@ package Gameplay.Link;
 
 import Engine.Math.Vector2D;
 
+/** This is a threat that is activated when link receives damage
+ * 
+ * @author Lingfeng
+ * 
+ */
 public class ThreadInmortal extends Thread {
     Player Link;
     public ThreadInmortal(Player link){

@@ -1,8 +1,8 @@
 package Gameplay.Link;
 
-/**
- *  This class contains the information of what link is doing
+/** This class contains the information of what link is doing
  */
+@Deprecated
 public class ActionObject {
     private DIRECTION direction;
     private Action action;

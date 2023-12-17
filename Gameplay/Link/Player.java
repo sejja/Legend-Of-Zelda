@@ -21,12 +21,8 @@ import Engine.Graphics.Animations.Animation;
 import Engine.Graphics.Animations.AnimationEvent;
 import Engine.Graphics.Components.AnimationMachine;
 import Engine.Graphics.Components.FontComponent;
-import Engine.Graphics.Components.SpriteComponent;
 import Engine.Graphics.Components.ZeldaCameraComponent;
-import Engine.Graphics.Tile.Block;
-import Engine.Graphics.Tile.ObjectBlock;
 import Engine.Graphics.Tile.ShadowLayer;
-import Engine.Graphics.Tile.TileManager;
 import Engine.Input.InputFunction;
 import Engine.Input.InputManager;
 import Engine.Math.EuclideanCoordinates;
@@ -37,16 +33,17 @@ import Engine.Physics.Components.BoxCollider;
 import Engine.Window.GameLoop;
 import Engine.Window.PresentBuffer;
 import Gameplay.Interaction;
-import Gameplay.AnimatedObject.AnimatedObject;
 import Gameplay.AnimatedObject.Bomb;
 import Gameplay.Enemies.Enemy;
-import Gameplay.Enemies.Search.pPair;
 import Gameplay.Interactives.Interactive;
 import Gameplay.LifeBar.LifeBar;
 import Gameplay.NPC.Npc;
 import Gameplay.NPC.SelectionArrow;
-import Engine.Graphics.Components.FontComponent;
 
+/** This is Link, there must be only one player in the ObjectManager
+ * 
+ * @author Lingfeng 
+ */
 public class Player extends Actor {
     
     /*  Animation types
@@ -72,37 +69,32 @@ public class Player extends Actor {
     public boolean dash = false;
     private boolean falling = false;
     private boolean canmove = true;
-    StackActioner stackActioner;
+    //StackActioner stackActioner;
     
     private Vector2D<Float> previusPosition;
     //----------------------------------------------------------------------
 
-    /* Animation
-     */
+    /* Animation */
     private int mCurrentAnimation;
     protected AnimationMachine mAnimation;
     private int delay = 3; //This is the delay of the all animations
     //----------------------------------------------------------------------
 
-    /*  Enable skills
-     */
-    private boolean haveDash;
+    /*  Enable skills */
+    //private boolean haveDash;
     private boolean haveArc;
     private boolean haveLighter;
     private boolean HaveBomb;
     protected boolean able_to_takeDamage=true;
     //----------------------------------------------------------------------
 
-    /* CoolDowns
-     */
+    /* CoolDowns */
     private static int nArrows = 10;
     private static int nbombs = 3;
     private static int dashCooldawn = 30;
     //----------------------------------------------------------------------
 
-    /* Player Stats
-     * 
-     */
+    /* Player Stats */
     protected int healthPoints = 10;
     private ZeldaCameraComponent mCamera;
     protected BoxCollider mCollider;
@@ -118,22 +110,24 @@ public class Player extends Actor {
     Sound low_hp_sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/low-hp.wav"));
     //----------------------------------------------------------------------
 
-    /* NPC
-     */
+    /* NPC */
     private Interaction currentNPCinteraction;
     //----------------------------------------------------------------------
     public Float getVelocity;
 
     //Methods______________________________________________________________________________________________________________________________________________________________________________
 
-    /*! Conversion Constructor
-    *
-    *   Constructs a Player with a sprite, a position, and gives it a size
-    */ //----------------------------------------------------------------------
+    /** Player builder that receives the link spritesheet
+     * 
+     * @param sprite
+     * @param position
+     * @param size
+     */
     public Player(Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size) {
         super(position);
         SetScale(size);
         this.direction = DIRECTION.RIGHT;
+
         //Lets transpose the Sprite Matrix and add all extra Animations
         sprite.ChangeSpriteFrames(this.completeAnimationSet(sprite.GetSpriteArray2D()));
         //---------------------------------------------------------------------
@@ -141,12 +135,14 @@ public class Player extends Actor {
         mCamera = AddComponent(new ZeldaCameraComponent(this));
         mCamera.Bind();
         SetAnimation(RIGHT, sprite.GetSpriteArray(RIGHT), delay);
-        stackActioner = new StackActioner(this);
+        //stackActioner = new StackActioner(this);
         implementsActions();
         this.SetName("Player");
         //---------------------------------------------------------------------
         lifeBar = new LifeBar(getPlayer(), getHealthPoints());
         //---------------------------------------------------------------------
+
+        /* Set Collisions */
         mCollider = (BoxCollider)AddComponent(new BoxCollider(this));
         setPseudoPosition(50f, 50f);
         setPseudoPositionVisible();
@@ -161,10 +157,10 @@ public class Player extends Actor {
     }
     // ------------------------------------------------------------------------
 
-    /* This function only implements actionlisteners
-     * 
+    /** This function only implements actionlisteners
+     *
      */
-    private void implementsActions (){ // it can be coptimazed
+    private void implementsActions (){
         int[] stop_run = new int[]{KeyEvent.VK_D, KeyEvent.VK_A, KeyEvent.VK_S, KeyEvent.VK_W};
         for (int i = 0; i<stop_run.length; i++){
             InputManager.Instance().SubscribeReleased(stop_run[i], new InputFunction() {
@@ -173,7 +169,7 @@ public class Player extends Actor {
                 setVelocity(0);
                 stop = true;
                 attack = false;
-                stackActioner.pop(direction,Action.RUN);
+                //stackActioner.pop(direction,Action.RUN);
             }
             });
         }
@@ -181,27 +177,29 @@ public class Player extends Actor {
         InputManager.Instance().SubscribePressed(KeyEvent.VK_W, new InputFunction() {
             public void Execute() {
                 activateAction(UP);
-                stackActioner.push(direction, Action.RUN);
+                //stackActioner.push(direction, Action.RUN);
             }
         });
         InputManager.Instance().SubscribePressed(KeyEvent.VK_S, new InputFunction() {
             @Override
             public void Execute() {
                 activateAction(DOWN);
-                stackActioner.push(direction, Action.RUN);
+                //stackActioner.push(direction, Action.RUN);
             }
         });
         InputManager.Instance().SubscribePressed(KeyEvent.VK_A, new InputFunction() {
             @Override
             public void Execute() {
                 activateAction(LEFT);
-                stackActioner.push(direction, Action.RUN);}
+                //stackActioner.push(direction, Action.RUN);
+            }
         });
         InputManager.Instance().SubscribePressed(KeyEvent.VK_D, new InputFunction() {
             @Override
             public void Execute() {
                 activateAction(RIGHT);
-                stackActioner.push(direction, Action.RUN);}
+                //stackActioner.push(direction, Action.RUN);
+            }
         });
         InputManager.Instance().SubscribePressed(KeyEvent.VK_ESCAPE, new InputFunction() {
             @Override
@@ -227,7 +225,7 @@ public class Player extends Actor {
 
                 stop = true;
                 attack = true;
-                stackActioner.push(direction, Action.ATTACK);
+                //stackActioner.push(direction, Action.ATTACK);
             }
         });
         InputManager.Instance().SubscribeReleased(KeyEvent.VK_J, new InputFunction() {
@@ -246,7 +244,7 @@ public class Player extends Actor {
                 stop = true;
                 if(!attack){ //If not attacking, then shoot
                     bow = true;
-                    stackActioner.push(direction,Action.BOW);
+                    //stackActioner.push(direction,Action.BOW);
                 }
             }
         });
@@ -301,7 +299,7 @@ public class Player extends Actor {
             @Override
             public void Execute() {interact();}
         });
-        var player = this; //<-----------------------------quitar
+        //var player = this; //<-----------------------------quitar
         mAnimation.AddFinishedListener(new AnimationEvent() {
 
             @Override
@@ -315,7 +313,7 @@ public class Player extends Actor {
                 {
                     shootArrow();
                     bow = false;
-                    stackActioner.pop(direction,Action.BOW);
+                    //stackActioner.pop(direction,Action.BOW);
                     //System.out.println("Se popea arco");
                 }
                 else if (attack) //Finished Attack (attack && !bow)
@@ -323,7 +321,7 @@ public class Player extends Actor {
                     Attack();
                     bow = false;
                     attack = false;
-                    stackActioner.pop(direction, Action.ATTACK);
+                    //stackActioner.pop(direction, Action.ATTACK);
                     //System.out.println("Se popea espada");
                 }
                 //mAnimation.setMustComplete(false);
@@ -339,8 +337,8 @@ public class Player extends Actor {
     }
     // ------------------------------------------------------------------------
 
-    /* This function set the delay and the frames of a animation to the animation machine
-     * 
+    /** This function set the delay and the frames of a animation to the animation machine
+     *
      */
     public void SetAnimation(int i, BufferedImage[] frames, int delay) {
         mCurrentAnimation = i;
@@ -349,8 +347,8 @@ public class Player extends Actor {
     }
     // ------------------------------------------------------------------------
 
-    /* Animation StateMachine
-     * 
+    /** <p>Animation StateMachine that is based on prioritys</p>
+     * <p> Falling > Dash > Attack > Bow > Run > Stop </p> 
      */
     public void Animate() {
 
@@ -383,10 +381,9 @@ public class Player extends Actor {
     }
     // ------------------------------------------------------------------------
 
-    /*! Update
-    *
-    *   Adds Behavior to the Player
-    */ //----------------------------------------------------------------------
+    /** This is in everyframe and update extra-components to display it in side
+     * 
+     */
     @Override
     public void Update() { 
         super.Update();
@@ -402,15 +399,18 @@ public class Player extends Actor {
         //System.out.println(velocity);
         //System.out.println(GetPosition());
     }
+
+    /** This function activates the statemachine of stats
+     * 
+     */
     private void playerStateMachine(){
         if(dash){dashCooldawn = 0;dash();return;}
         else if (dashCooldawn<120){dashCooldawn++;}
-        //else {if(!mAnimation.MustComplete()){Move();}}
         if(!mAnimation.MustComplete() && movable){Move();}
     }
     // ------------------------------------------------------------------------
     
-    /* Colision
+    /** Colision
      *      -> True if there is no collision
      */
     private boolean SolveCollisions(Vector2D<Integer> dif) {
@@ -426,10 +426,10 @@ public class Player extends Actor {
     }
     // ------------------------------------------------------------------------
     
-    /*! Move
+    /** Move
     *
-    *   Moves the sprite on a certain direction
-    */ //----------------------------------------------------------------------
+    *   Moves the sprite on a certain direction and save the previus position
+    */
     private void Move() {
         Vector2D<Float> pos = GetPosition();
         previusPosition = new Vector2D<>(pos.x, pos.y);
@@ -449,13 +449,16 @@ public class Player extends Actor {
         }
         SetPosition(pos);
     }
+
+    /** Update the collider that interact with the enviroment
+     * 
+     */
     private void terrainColliderUpdate(){
-        //terrainCollider.Update();
         terrainCollider.setPosition(new Vector2D<>(getPseudoPosition().x - terrainCollider.GetBounds().GetWidth()/2, getPseudoPosition().y+20));
     }
     // ------------------------------------------------------------------------
 
-    /* Functions to set all animations
+    /** Functions to set all animations
     *       @Param  -> BufferedImage 2D Matrix
     *       ret     -> Transposed BufferedImage 2D Matrix
     */ //----------------------------------------------------------------------
@@ -513,7 +516,7 @@ public class Player extends Actor {
     }
     //------------------------------------------------------------------------
 
-    /* Functions to take damage from the enemies
+    /* Functions to take damage from the enemies and remove the dialog window in case of movin
     */
     public void activateAction(int action){
         if (currentNPCinteraction != null){
@@ -564,8 +567,11 @@ public class Player extends Actor {
     public Vector2D<Float> getPreviusPosition(){return this.previusPosition;}
     public BoxCollider getEnviromentCollider() {return this.terrainCollider;}
     //------------------------------------------------------------------------
-    /* Setters
+    /* Setters*/
+
+    /** it activates a thread that create a poping animation of the link and set him inmortal for a brief moments
      * 
+     * @param healthPoints
      */
     public void setDamage(int healthPoints) {
         if(able_to_takeDamage){
@@ -590,6 +596,11 @@ public class Player extends Actor {
     public void setVelocity(int velocity) {this.velocity = velocity;}
     public void setAttack(boolean attack) {this.attack = attack;}
     public void setAble_to_takeDamage(boolean able_to_takeDamage) {this.able_to_takeDamage = able_to_takeDamage;}
+
+    /** This function sets the movements of link and it dischard all enviroment cases
+     * 
+     * @param type
+     */
     private void setMovement(Action type){
 
         if (type == null){
@@ -633,7 +644,7 @@ public class Player extends Actor {
     public void setMovable(Boolean value){this.movable = value;}
     //------------------------------------------------------------------------
 
-    /* Spawn a Arrow object
+    /** <p>Spawn a Arrow object</p>
      *  !this function it is called in Update() not in keylistener
      */
     private void shootArrow(){ //Tiene que dar al enemigo
@@ -643,10 +654,10 @@ public class Player extends Actor {
     }
     //------------------------------------------------------------------------
 
-    /*  This function is only called if Link has no healthpoints
+    /**  This function is only called if Link has no healthpoints
     *   
     */
-    private void dead(){ //falta hacer que link se muera y termine el juego
+    private void dead(){
         Log v = Logger.Instance().GetLog("Gameplay");
         Logger.Instance().Log(v, "I Died", Level.INFO, 1, Color.BLACK);
         canmove = false;
@@ -703,7 +714,7 @@ public class Player extends Actor {
     }
     //------------------------------------------------------------------------
     
-    /*  These functions are called when link interact with other entities
+    /**  These functions are called when link interact with other entities using the collider manager
      * 
      */
     public void Attack(){
@@ -766,6 +777,10 @@ public class Player extends Actor {
         }
 
     }
+
+    /** Stablish interaction
+     * 
+     */
     private void interact(){
         if(currentNPCinteraction == null){
             currentNPCinteraction = nearestNPC();
@@ -833,7 +848,9 @@ public class Player extends Actor {
     }
     //------------------------------------------------------------------------
     
-    /* Dash mecanics functions
+    /** Dash mecanics functions  this function used to arrows to simulate a classic dash
+     *  The first arrow and player have the same instance of the vectorposition it moves modifiying the position of the arrow and the vecto at the same time
+     *  The second arrow it a arrow that contais a 1 frame animation and its has a low range to emulate a dash effect
      * 
      */
     private void dash (){
@@ -853,7 +870,7 @@ public class Player extends Actor {
     }
     //------------------------------------------------------------------------
     
-    /* To pause the gameplay
+    /** To pause the gameplay
      * 
      */
     private void Pause(){
@@ -861,7 +878,7 @@ public class Player extends Actor {
     }
     //------------------------------------------------------------------------
 
-    /* This function set the player position to the spawn Point
+    /** This function set the player position to the spawn Point
      * 
      */
     private void setToSpawnPoint(){
@@ -869,7 +886,7 @@ public class Player extends Actor {
     }
     //------------------------------------------------------------------------
 
-    /* This function is called when Link fell out or the Border
+    /* *This function is called when Link fell out or the Border
      * 
      */
     private void linkHasFalled(){

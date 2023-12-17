@@ -30,6 +30,10 @@ import Gameplay.Enemies.Enemy;
 import Gameplay.Enemies.Units.GreenKnight;
 import Gameplay.Interactives.Interactive;
 
+/** This is a class that sometimes is a arrow and sometimes dash
+ * 
+ * @author Lingfeng
+ */
 public class Arrow extends Actor{
 
     BufferedImage[][] allAnimation;
