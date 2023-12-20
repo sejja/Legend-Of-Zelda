@@ -33,6 +33,12 @@ import Gameplay.Link.Arrow;
 import Gameplay.Link.DIRECTION;
 import Gameplay.Link.Player;
 
+/**
+ * Abstract class representing an enemy in the game.
+ * Extends Actor and implements Renderable.
+ * 
+ * 
+ */
 public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Renderable{
 
     protected final int UP = 0;
@@ -78,11 +84,12 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
     private int delay = 10;
     
     LifeBar lifeBar;
-    // ------------------------------------------------------------------------
-    /*! Conversion Constructor
-    *
-    *   Constructs an Enemy with a sprite, a position, and gives it a size
-    */ //----------------------------------------------------------------------
+
+    /**
+     * Constructs an Enemy with a sprite, a position, and gives it a size.
+     *
+     * @param position The initial position of the enemy.
+     */
     public Enemy( Vector2D<Float> position) {
         super(position);
         //Render path (add to pipeline)
@@ -90,21 +97,34 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
         pathRender = (PathRender)AddComponent(new PathRender(this));
     }
 
+    /**
+     * Sets the animation for the enemy.
+     *
+     * @param i      The animation index.
+     * @param frames The array of frames for the animation.
+     * @param delay  The delay between frames.
+     */
     public void SetAnimation(int i, BufferedImage[] frames, int delay) {
         mCurrentAnimation = i;
         mAnimation.GetAnimation().SetFrames(frames);
         mAnimation.GetAnimation().SetDelay(this.delay);
     }
 
+    /**
+     * Gets the current animation of the enemy.
+     *
+     * @return The current animation.
+     */
     public Animation GetAnimation() {
         return mAnimation.GetAnimation();
     }
 
-    // ------------------------------------------------------------------------
-    /*! normalize
-    *
-    *   Utility Function for Normalizing a Vector
-    */ //----------------------------------------------------------------------
+    /**
+     * Normalizes a vector.
+     *
+     * @param vector The vector to be normalized.
+     * @return The normalized vector.
+     */
     public Vector2D<Float> normalize(Vector2D<Float> vector) {
         float magnitude = (float) Math.sqrt(vector.x * vector.x + vector.y * vector.y);
         if (magnitude > 0) {
@@ -114,11 +134,11 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
         }
     }
 
-    // ------------------------------------------------------------------------
-    /*! getDirection
-    *
-    *   Utility Function for Getting the Direction of a Vector
-    */ //----------------------------------------------------------------------
+    /**
+     * Determines the direction of a vector and updates the enemy's direction attribute.
+     *
+     * @param vector The vector for which the direction is determined.
+     */
     public void getDirection(Vector2D<Float> vector) {
 
         if (Math.abs(vector.x) > Math.abs(vector.y)) {
@@ -136,11 +156,9 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
         }
     }
 
-    // ------------------------------------------------------------------------
-    /*! animate
-    *
-    *   Adds the needed animation to the Enemy
-    */ //----------------------------------------------------------------------
+    /**
+     * Adds the needed animation to the Enemy based on its behavior.
+     */
     public void animate() {
         if(mAnimation.MustComplete()){return;}
 
@@ -200,11 +218,9 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
         }
     }
 
-    // ------------------------------------------------------------------------
-    /*! Update
-    *
-    *   Adds Behavior to the Enemy
-    */ //----------------------------------------------------------------------
+    /**
+     * Updates the behavior of the enemy, including decision-making, pathfinding, and attacking.
+     */
     public void Update() {
         if(player == null) {
             player = (Player)ObjectManager.GetObjectManager().GetPawn();
@@ -219,11 +235,10 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
             //System.out.println(playerPos.x + " " + playerPos.y + " " + normalizedDirection+ " " );
         }
     }
-    // ------------------------------------------------------------------------
-    /*! decisionMaking
-    *
-    *   Decides the behavior of the Enemy based on if it is being knocked back and if the player is in its vision
-    */ //----------------------------------------------------------------------
+
+    /**
+     * Decides the behavior of the Enemy based on if it is being knocked back and if the player is in its vision.
+     */
     public void decisionMaking(){
         if(!knockback){
             checkVision(); 
@@ -231,11 +246,10 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
             knockbackRepeat();
         }
     }
-    // ------------------------------------------------------------------------
-    /*! checkVision
-    *
-    *   If player is in vision, calls pathfinding
-    */ //----------------------------------------------------------------------
+
+    /**
+     * Checks if the player is in vision, calls pathfinding if true.
+     */
     public void checkVision(){
         if(vision()){
             pathfinding();
@@ -247,16 +261,14 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
             if(!path.empty()){
                 path.clear();
             }
-            SetPosition(pos); // setPosicion(pos) solves invisible enemies
+            SetPosition(pos); // setPosition(pos) solves invisible enemies
             
         }
     }
 
-    // ------------------------------------------------------------------------
-    /*! pathfinding
-    *
-    *   Calculates the path to the player if the path is unblocked and is not the same as the last time A* was called
-    */ //----------------------------------------------------------------------
+    /**
+     * Calculates the path to the player if the path is unblocked and is not the same as the last time A* was called.
+     */
     public void pathfinding() {
         Pair enemyTile = positionToPair(World.GetLevelSpaceCoordinates(getPseudoPosition()));
         finalDestination = positionToPair(World.GetLevelSpaceCoordinates(playerPos));
@@ -265,25 +277,19 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
             path = aStarSearch.aStarSearch(enemyTile, finalDestination);
         }
     }
-
-    // ------------------------------------------------------------------------
-    /*! positionToPair
-    *
-    *   Changes the position given to a Pair
-    */ //----------------------------------------------------------------------
+ 
+    /**
+     * Changes the position given to a Pair
+     */
     public Pair positionToPair(Vector2D<Float> position) {
         int divisior = 64;
         Pair pair = new Pair(Math.round((position.x/divisior)), Math.round((position.y/divisior)));
         return pair;
     }
 
-
-
-    // ------------------------------------------------------------------------
-    /*! isDestinationChanged
-    *
-    *   Checks if the destination (Player) has changed of Tile
-    */ //----------------------------------------------------------------------
+    /**
+     * Checks if the destination (Player) has changed of Tile
+     */
     public boolean isDestinationChanged() {
         if(lastFinalDestination.getFirst() != finalDestination.getFirst() || lastFinalDestination.getSecond() != finalDestination.getSecond()){
             return true;
@@ -292,11 +298,9 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
         }
     }
 
-    // ------------------------------------------------------------------------
-    /*! isDestinationReachable
-    *
-    *   Checks if the destination is reachable by the Enemy
-    */ //----------------------------------------------------------------------
+    /**
+     * Checks if the destination is reachable by the Enemy
+     */
     public boolean isDestinationReachable() {
         if(aStarSearch.isUnBlocked(finalDestination.getFirst(), finalDestination.getSecond())){
             return true;
@@ -305,24 +309,17 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
         }
     }
 
-
-
-    // ------------------------------------------------------------------------
-    /*! movementVector
-    *
-    *   Calculates the movement of the Enemy
-    */ //----------------------------------------------------------------------
+    /**
+     * Calculates the movement of the Enemy
+     */
     public void movementVector() {
         Vector2D<Float> dir = new Vector2D<Float>(playerPos.x - pseudoPos.x, playerPos.y - pseudoPos.y);
         normalizedDirection=normalize(dir);
     }
 
-
-    // ------------------------------------------------------------------------
-    /*! move
-    *
-    *   Receives the movements in a stack and sets the movement of the Enemy with the A* search
-    */ //----------------------------------------------------------------------
+    /**
+     * Updates the position of the enemy based on the A* path and the current destination.
+     */
     public void move() {
         if(!path.isEmpty()){
             if(!path.isEmpty()){
@@ -360,6 +357,9 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
         return new Vector2D<Float>(currentDestination.getFirst()*64 - (pseudoPos.x), currentDestination.getSecond()*64 - (pseudoPos.y+GetScale().y/2));
     }
     
+    /**
+     * Applies knockback to the enemy based on the player's position.
+     */
     public void knockBack() {
         knockback=true;
         Vector2D<Float> dir = playerPos.getVectorToAnotherActor(pseudoPos);
@@ -367,6 +367,9 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
         
     }
     
+    /**
+     * Repeats the knockback effect for a certain duration.
+     */
     public void knockbackRepeat(){
         if (aStarSearch.isUnBlocked(positionToPair(getPseudoPosition()).getFirst(),positionToPair(getPseudoPosition()).getSecond())){
             pos.x -= normalizedDirection.x * 7;
@@ -384,7 +387,11 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
         }
     }
     
-
+    /**
+     * Sets the health points of the enemy and triggers death if health reaches zero.
+     *
+     * @param damage The amount of damage to be applied.
+     */
     public void setHealthPoints(int damage){
         this.healthPoints -= damage;
         if (healthPoints <= 0){
@@ -394,6 +401,9 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
         //______________________
     }
 
+    /**
+     * Calls the dead animation and plays the death sound.
+     */
     private void die() {
         //Log v = Logger.Instance().GetLog("Gameplay");
         //Logger.Instance().Log(v, "Enemy died", Level.INFO, 1, Color.GREEN);
@@ -431,6 +441,12 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
         
     }
 
+    /**
+     * Renders the path followed by the enemy.
+     *
+     * @param g           The graphics context.
+     * @param camerapos   The camera position.
+     */
     @Override
     public void Render(Graphics2D g, CameraComponent camerapos) {
         var camcoord = camerapos.GetCoordinates();
@@ -473,12 +489,20 @@ public abstract class Enemy extends Engine.ECSystem.Types.Actor implements Rende
         return (Enemy)this;
     }
 
+    /**
+     * Makes the player take damage if the enemy collides with it.
+     */
     public void attack(){
         if(ColliderManager.GetColliderManager().playerCollision(mCollision)){
             player.setDamage(damage);
         }
     }
 
+    /**
+     * Gets the superclass of the enemy class.
+     *
+     * @return The superclass of the enemy class.
+     */
     @Override 
     public Class GetSuperClass(){return Enemy.class;}
 }

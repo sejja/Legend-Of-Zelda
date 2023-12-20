@@ -731,7 +731,7 @@ public class Player extends Actor {
                 if(new EuclideanCoordinates(getPseudoPosition()).getTargetDirection(enemy.getPseudoPosition()) == direction){
                     enemy.setHealthPoints(damage);
                     enemy.knockBack();
-                    System.out.println("Le da");
+                    //System.out.println("Le da");
                 }
             }
         }

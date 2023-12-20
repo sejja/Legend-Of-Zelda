@@ -7,6 +7,10 @@ import Engine.Math.Vector2D;
 import Engine.Physics.Components.BoxCollider;
 import Gameplay.Enemies.*;
 
+/**
+ * Represents a Green Knight enemy unit in the game.
+ * Extends the Enemy class.
+ */
 public class GreenKnight extends Enemy{
     
     protected Vector2D<Float> size = new Vector2D<Float>(50f, 100f);
@@ -17,13 +21,18 @@ public class GreenKnight extends Enemy{
     protected Spritesheet sprite=new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/gknight.png"), new Vector2D<>(16, 28));
     
 
+    /**
+     * Constructs a Green Knight object at the specified position.
+     *
+     * @param position The initial position of the Green Knight.
+     */
     public GreenKnight(Vector2D<Float> position) {
         super(position);
         setPseudoPosition(25f, 50f);
         SetScale(size);
         setDamage(2);
         setHp(4);
-        setSpeed(0f);
+        setSpeed(1f);
 
         // TRANSPOSE SPRITE MATRIX
         sprite.Transpose();

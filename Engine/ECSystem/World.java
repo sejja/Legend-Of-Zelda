@@ -114,7 +114,7 @@ public class World {
         try {
             ObjectManager.GetObjectManager().flush();
         }catch(NullPointerException e){
-            System.out.println("No hay nada que borrar MAMARRACHO");
+            //System.out.println("No hay nada que borrar MAMARRACHO");
         }
         
         spawnEntities();
@@ -155,7 +155,9 @@ public class World {
         return new Pair(x,y);
     }
 
-    // Spawns the entities of entityQueue based on the ID and in the position specified
+    /**
+    * Spawns the entities of entityQueue based on the ID and in the position specified
+    */ 
     private void spawnEntities() {
         //System.out.println(mTilemap.entityQueue);
         int firstEntity = TilemapEntities.firstEntity;
