@@ -37,6 +37,10 @@ public class Arrow extends Actor{
     private boolean endArrow;
     private boolean fixed;
 
+    /** Default Arrow builder 
+     * 
+     * @param Link
+     */
     public Arrow(Player Link){
         super(new Vector2D<Float>(Link.GetPosition().x + 28, Link.GetPosition().y + 45));
 
@@ -59,6 +63,13 @@ public class Arrow extends Actor{
         ArrowSound();
     }
 
+    /** Dash builder
+     * 
+     * @param Link
+     * @param speed
+     * @param range
+     * @param fixed
+     */
     public Arrow (Player Link, float speed, float range, boolean fixed){ //This is actually a dash XD
         super(Link.GetPosition());
         this.speed = (int)speed;

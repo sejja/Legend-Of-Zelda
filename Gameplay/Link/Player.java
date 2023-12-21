@@ -516,7 +516,7 @@ public class Player extends Actor {
     }
     //------------------------------------------------------------------------
 
-    /* Functions to take damage from the enemies and remove the dialog window in case of movin
+    /** Functions to take damage from the enemies and remove the dialog window in case of movin
     */
     public void activateAction(int action){
         if (currentNPCinteraction != null){
