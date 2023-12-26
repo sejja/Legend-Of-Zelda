@@ -29,7 +29,7 @@ import Engine.Physics.ColliderManager;
  *      -> Add pseudoPositionUpdate() at the end of the Actor.Update()
  * 
  */
-public class BoxCollider extends Component {
+public class BoxCollider extends Component implements Renderable{
 
     private AABB mBounds;
     private boolean hasCollision;
@@ -82,6 +82,7 @@ public class BoxCollider extends Component {
     */ //----------------------------------------------------------------------
     @Override
     public void Init() {
+        GraphicsPipeline.GetGraphicsPipeline().AddRenderable(this);
     }
 
     // ------------------------------------------------------------------------
@@ -108,6 +109,7 @@ public class BoxCollider extends Component {
     */ //----------------------------------------------------------------------
     @Override
     public void ShutDown() {
+        GraphicsPipeline.GetGraphicsPipeline().RemoveRenderable(this);
         try{
             ColliderManager.GetColliderManager().removeCollider(this);
         }catch(NullPointerException e){
@@ -130,6 +132,9 @@ public class BoxCollider extends Component {
 
     public void setColor (Color color ){
         this.color = color;
+    }
+    @Override
+    public void Render(Graphics2D g, CameraComponent camerapos) {
     }
 
     public void disable(){
