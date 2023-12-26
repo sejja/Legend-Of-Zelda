@@ -431,6 +431,8 @@ public class Player extends Actor {
     *   Moves the sprite on a certain direction and save the previus position
     */
     private void Move() {
+        if(!canmove){return;}
+
         Vector2D<Float> pos = GetPosition();
         previusPosition = new Vector2D<>(pos.x, pos.y);
         switch (direction){
