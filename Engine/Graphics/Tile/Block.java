@@ -8,63 +8,113 @@
 
 package Engine.Graphics.Tile;
 
+import Engine.Graphics.Components.CameraComponent;
 import Engine.Math.Vector2D;
 import Engine.Physics.AABB;
-
-import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
+import java.io.IOException;
+import java.util.HashMap;
 
 public abstract class Block {
-    protected static int mWidth;
-    protected static int mHeight;
+    static protected Vector2D<Integer> sScale = new Vector2D<>();
+    static private HashMap<BufferedImage, BufferedImage> sScaledBuffers;
+    private BufferedImage mImg;
+    protected AffineTransform mPosition;
 
-    protected BufferedImage mImg;
-    protected Vector2D<Integer> mPosition;
-    protected int opacity;
-
-    public Block(BufferedImage img, Vector2D<Integer> position, int w, int h) {
-        mImg = img;
-        mPosition = position;
-        mWidth = w;
-        mHeight = h;
+    // ------------------------------------------------------------------------
+    /*! Custom Constructor
+    *
+    *   Constructs a block with a custom image, a position, and dimensions
+    */ //----------------------------------------------------------------------
+    public Block(final BufferedImage img, final AffineTransform transform) {
+        final int sX = (int)transform.getScaleX();
+        final int sY = (int)transform.getScaleY();
         
-        if(mImg != null){
-            //setImageTransparency(35);;
+        try {
+            mImg = ScaleBuffer(img, sX, sY);
+        } catch (IOException e) {
+            System.err.println("Exception thrown when resizing buffered image, with Stack Trace:");
+            e.printStackTrace();
+            mImg = img;
+        } finally {
+            mPosition = AffineTransform.getTranslateInstance(transform.getTranslateX(), transform.getTranslateY());
+            sScale.x = sX;
+            sScale.y = sY;
         }
     }
 
-    public abstract boolean Update(AABB p);
-    public abstract boolean IsInside(AABB p);
-
-    public void Render(Graphics2D g, Vector2D<Float> camerapos) {
-        //g.drawImage(mImg, (int)(float)mPosition.x - (int)(float)camerapos.x, (int)(float)mPosition.y - (int)(float)camerapos.y, 64, 64, new Color(0,0,0, 128), null);
-        g.drawImage(mImg, (int)(float)mPosition.x - (int)(float)camerapos.x, (int)(float)mPosition.y - (int)(float)camerapos.y, 64, 64, null);
+    // ------------------------------------------------------------------------
+    /*! Cleanse Buffers
+    *
+    *   Empties the Scaled Buffers
+    */ //----------------------------------------------------------------------
+    public static void CleanseBuffers() {
+        sScaledBuffers.clear();
     }
 
-
-    public static int getWidth() {
-        return mWidth;
+    // ------------------------------------------------------------------------
+    /*! Scale Buffer
+    *
+    *   Returns a new Buffered Image, scaled already
+    */ //----------------------------------------------------------------------
+    private static BufferedImage ScaleBuffer(final BufferedImage image, final int width, final int height) throws IOException {      
+        if(image == null || image.getType() == 0) return image;
+        
+        return new AffineTransformOp(
+            AffineTransform.getScaleInstance(
+                (double)width/image.getWidth(), 
+                (double)height/image.getHeight()), 
+                AffineTransformOp.TYPE_NEAREST_NEIGHBOR)
+                .filter(
+                    image,
+                    new BufferedImage(width, height, image.getType()
+                ));
     }
 
-    public static int getHeight() {
-        return mHeight;
+    public abstract boolean HasCollision();
+    public abstract boolean IsInside(final AABB p);
+
+    // ------------------------------------------------------------------------
+    /*! Render
+    *
+    *   Renders the image, on a certain position given the Camera Position
+    */ //----------------------------------------------------------------------
+    public void Render(final Graphics2D g, final CameraComponent camera) {
+        mPosition.concatenate(camera.GetViewMatrix());
+        g.drawImage(mImg, mPosition, null);
+        mPosition.concatenate(camera.GetCameraMatrix());
     }
 
-    private void setImageTransparency(int alpha){
-        //mImg = scale1(mImg, 1);
-        for(int i = 0; i< 16 ; i++){
-            for (int j = 0; j < 16; j++){
-                if(mImg.getRGB(i, j) != 0){
-                    int pixel = mImg.getRGB(i, j);
-                    Color model = new Color(pixel, true);
-                    mImg.setRGB(i,j, ( new Color(model.getRed(), model.getGreen(), model.getBlue(), alpha)  ).getRGB());
-                }
-             }
-        }
+    // ------------------------------------------------------------------------
+    /*! Render
+    *
+    *   Renders the image, on a certain position given the Camera Position
+    */ //----------------------------------------------------------------------
+    public void RenderAtPosition(final Graphics2D g, final AffineTransform tranf) throws NoninvertibleTransformException {
+        mPosition.concatenate(tranf);
+        g.drawImage(mImg, mPosition, null);
+        mPosition.concatenate(tranf.createInverse());
+    }
+
+    // ------------------------------------------------------------------------
+    /*! Get Width
+    *
+    *   returns the Width of the blocks
+    */ //----------------------------------------------------------------------
+    public static int GetWidth() {
+        return sScale.x;
+    }
+
+    // ------------------------------------------------------------------------
+    /*! Get Height
+    *
+    *   Returns the height of the blocks
+    */ //----------------------------------------------------------------------
+    public static int GetHeight() {
+        return sScale.y;
     }
 }

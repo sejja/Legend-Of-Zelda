@@ -1,5 +1,9 @@
 package Gameplay.AnimatedObject;
 
+import Engine.Assets.AssetManager;
+import Engine.Audio.Audio;
+import Engine.Audio.Sound;
+import Engine.ECSystem.World;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Animations.AnimationEvent;
 import Engine.Graphics.Tile.ShadowLayer;
@@ -7,19 +11,24 @@ import Engine.Math.Vector2D;
 import Engine.Physics.StaticPlayerCollision;
 import Engine.Physics.Components.BoxCollider;
 import Gameplay.Interaction;
-import Gameplay.Link.Player;
 import Gameplay.NPC.Npc;
 
+/** Torch object it modifies the ShadowLayer
+ *  
+ * @author Lingfeng
+ */
 public class Torch extends AnimatedObject implements Interaction, StaticPlayerCollision {
     
     private BoxCollider hitbox;
     private boolean isIluminating = false;
     private int radius;
     private int previusFrameCount = 0;
+    private Vector2D<Float> pos;
     final int defaultRadius = 1;
 
     public Torch(Vector2D<Float> position) {
-        super(position, new Spritesheet( "Content/Animations/Torch.png", 5,2, true));
+        super(position, new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/Torch.png"), 5,2));
+        this.pos = position;
         delay = -1;
         this.SetScale(new Vector2D<>(50f,100f));
         radius = defaultRadius;
@@ -28,31 +37,31 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
         this.setDefaultPseudoPosition();
         setPseudoPositionVisible();
         hitbox = (BoxCollider)AddComponent(new BoxCollider(this, GetScale(), true));
+        animationMachine.SetFrameTrack(1);
 
         animationMachine.AddFinishedListener(new AnimationEvent() {
-
             @Override
             public void OnTrigger() {
                 iluminate();
             }
-            
         });
     }
-
+    @Override
     public void Update(){
         super.Update();
         hitbox.Update();
         playerCollision(hitbox);
         if (this.animationMachine.MustComplete()){
+            //System.out.println("Animacion que debe terminal");
             if(this.animationMachine.GetAnimation().GetFrame() != previusFrameCount){
+                //System.out.println("sigue iluminando");
                 previusFrameCount = this.animationMachine.GetAnimation().GetFrame();
                 removeIlumination();
                 radius++;
-                //System.out.println("Aumentando radio de iluminacion a : " + radius);
                 addIlumination();
-                //System.out.println("____________________________________________________________________");
             }
         }
+        SetPosition(pos);
     }
 
     @Override
@@ -61,6 +70,7 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
            if (isIluminating){
                 turnOff();
             }else{
+                //System.out.println("Se ilumina");
                 turnON();
             }
         }
@@ -68,21 +78,22 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
     }
     
     private void turnON(){
-        //System.out.println("Se enciende con radio: "+ radius);
         animationMachine.setMustComplete(true);
+
+        //System.out.println("Esta en el ObjectManager -> " + ObjectManager.GetObjectManager().containsInstance(this.GetSuperClass(), this));
         delay = 8;
-        Animate(1);
+        Animate(0);
+        Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/fire.wav"));
+        Audio.Instance().Play(sound);
         addIlumination();
     }
 
     private void iluminate(){
         removeIlumination();
         radius++;
-        //System.out.println("Final radius: " + radius);
         delay = 18;
         isIluminating = true;
         Animate(0);
-        //System.out.println("Sun bless you");
         addIlumination();
     }
 
@@ -90,6 +101,7 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
         removeIlumination();
         delay = -1;
         Animate(1);
+        this.animationMachine.SetFrameTrack(1);
         isIluminating = false;
         previusFrameCount = 0;
         radius = defaultRadius;
@@ -99,8 +111,7 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
     public Class GetSuperClass(){return Npc.class;}
 
     private void addIlumination(){
-        //System.out.println("remove opacity in radius = " + radius);
-        Vector2D<Integer> tilePosition = this.getPseudoPosition().getTilePosition();
+        Vector2D<Integer> tilePosition = this.getWorldPseudoPosition().getTilePosition();
         final int maxDisctance = (int)Math.round(Math.sqrt(2)*radius);
         for (int i = tilePosition.x - maxDisctance; i <= tilePosition.x + maxDisctance; i++){
             for(int j = tilePosition.y - maxDisctance; j <= tilePosition.y+maxDisctance; j++){
@@ -110,9 +121,8 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
         }
     }
 
-    private void removeIlumination(){
-        //System.out.println("Adding opacity in radius = " + radius);
-        Vector2D<Integer> tilePosition = this.getPseudoPosition().getTilePosition();
+    public void removeIlumination(){
+        Vector2D<Integer> tilePosition = this.getWorldPseudoPosition().getTilePosition();
         final int maxDisctance = (int)Math.round(Math.sqrt(2)*radius);
         for (int i = tilePosition.x - maxDisctance; i <= tilePosition.x + maxDisctance; i++){
             for(int j = tilePosition.y - maxDisctance; j <= tilePosition.y + maxDisctance; j++){
@@ -126,7 +136,23 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
         double distance = Math.sqrt( Math.pow(tilePosition.x-origin.x,2) + Math.pow(tilePosition.y-origin.y,2) );
         if (distance>radius){return 0;}
         final double coeficient = ShadowLayer.getShadowLayer().opacity;
-        double difference = Math.round( (-( ( coeficient*distance ) / radius ) + coeficient)); //Esos espacios NO SE TOCA
+        double difference = Math.round( (-( ( coeficient*distance ) / radius ) + coeficient)); //Esos espacios NO SE TOCA <-----------------------------------------
         return (int) difference;
     }
+
+    public Vector2D<Float> getWorldPseudoPosition(){
+        return World.GetLevelSpaceCoordinates(super.getPseudoPosition());
+    }
+
+    @Override
+    public void RemoveAllComponent(){
+        super.RemoveAllComponent();
+        //this.removeIlumination();
+    }
+    /*
+    @Override
+    public String toString() {
+        return this.getPseudoPosition().toString();
+    }
+    */
 }

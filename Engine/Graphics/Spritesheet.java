@@ -8,34 +8,26 @@
 
 package Engine.Graphics;
 
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import javax.imageio.ImageIO;
+import java.util.stream.IntStream;
 
 import Engine.Assets.Asset;
-import Engine.Assets.AssetManager;
 import Engine.Math.Vector2D;
 
-public class Spritesheet {
-    protected Asset mSpriteSheet = null;
+public class Spritesheet extends Sprite {
     protected BufferedImage[][] mSpriteArray;
-    protected int mUCoord;
-    protected int mVCoord;
-    protected int mWidth;
-    protected int mHeight;
+    protected Vector2D<Integer> mUVCoord;
+    protected Vector2D<Integer> mSize;
 
     // ------------------------------------------------------------------------
     /*! Constructor
     *
     *   Constructs an Sprite from the filename
     */ //----------------------------------------------------------------------
-    public Spritesheet(String file) {
-        mVCoord = mUCoord = 32;
-        mSpriteSheet = LoadSprite(file);
-        mWidth = ((BufferedImage)mSpriteSheet.Raw()).getWidth() / mUCoord;
-        mHeight = ((BufferedImage)mSpriteSheet.Raw()).getHeight() / mVCoord;
-        LoadSpriteArray();
+    public Spritesheet(final Asset file) {
+        super(file);
+        mUVCoord = new Vector2D<Integer>(32, 32);
+        SetUpSpriteSheet();
     }
 
     // ------------------------------------------------------------------------
@@ -43,50 +35,49 @@ public class Spritesheet {
     *
     *   Consntructs an sprite from the filename, the width, and the height
     */ //----------------------------------------------------------------------
-    public Spritesheet(String file, int nrow, int ncol, boolean whatever) {
-        mSpriteSheet = LoadSprite(file);  
-        mUCoord = ((BufferedImage)mSpriteSheet.Raw()).getWidth()/nrow;
-        mVCoord = ((BufferedImage)mSpriteSheet.Raw()).getHeight()/ncol;
-
-        mWidth = ((BufferedImage)mSpriteSheet.Raw()).getWidth() / mUCoord;
-        mHeight = ((BufferedImage)mSpriteSheet.Raw()).getHeight() / mVCoord; 
-        LoadSpriteArray();
+    public Spritesheet(final Asset file, final int nrow, final int ncol) {
+        super(file);
+        mUVCoord = new Vector2D<Integer>(((BufferedImage)mSpriteSheet.Raw()).getWidth()/nrow, ((BufferedImage)mSpriteSheet.Raw()).getHeight()/ncol); 
+        SetUpSpriteSheet();
     }
 
-
-    public Spritesheet(String file, int w, int h) {
-        mUCoord = w;
-        mVCoord = h;
-
-        mSpriteSheet = LoadSprite(file);
-        mWidth = ((BufferedImage)mSpriteSheet.Raw()).getWidth() / mUCoord;
-        mHeight = ((BufferedImage)mSpriteSheet.Raw()).getHeight() / mVCoord; 
-        LoadSpriteArray();
-    }
     // ------------------------------------------------------------------------
-    /*! Constructor
+    /*! Custom Constructor
     *
-    *   Constructs a copy of an sprite
+    *   Builds an SpriteSheet with a file and the dimensions that each frame should have
     */ //----------------------------------------------------------------------
-    public Spritesheet(Spritesheet original, String path) {
-        mUCoord = original.mUCoord;
-        mVCoord = original.mVCoord;
-        mWidth = original.mWidth;
-        mHeight = original.mHeight;
-
-        mSpriteSheet = new Spritesheet(path, mUCoord, mVCoord).GetSpriteSheet();
-        LoadSpriteArray();
+    public Spritesheet(final Asset file, final Vector2D<Integer> dimensions) {
+        super(file);
+        mUVCoord = dimensions;
+        SetUpSpriteSheet();
     }
 
+    // ------------------------------------------------------------------------
+    /*! Set Up Sprite Sheet
+    *
+    *   Given a Sprite Sheet and the UV Coords, calculate the size of each frame
+    *   and populate the sprite array
+    */ //----------------------------------------------------------------------
+    private void SetUpSpriteSheet() {
+        final BufferedImage bf = ((BufferedImage)mSpriteSheet.Raw());
+        mSize = new Vector2D<Integer>(bf.getWidth() / mUVCoord.x, bf.getHeight() / mUVCoord.y);
+        mSpriteArray = new BufferedImage[mSize.x][mSize.y];
+
+        IntStream.range(0, mSize.x).forEach(i -> {
+            IntStream.range(0, mSize.y).forEach(j -> {
+                mSpriteArray[i][j] = GetSprite(i, j);
+            });
+        });
+    }
 
     // ------------------------------------------------------------------------
     /*! Set Size
     *
     *   Sets the size of a Sprite
     */ //----------------------------------------------------------------------
-    public void SetSize(int width, int height) {
-        mUCoord = width;
-        mVCoord = height;
+    public void SetSize(final int width, final int height) {
+        mUVCoord.x = width;
+        mUVCoord.y = height;
     }
 
     // ------------------------------------------------------------------------
@@ -94,8 +85,8 @@ public class Spritesheet {
     *
     *   Sets the Width of an sprite
     */ //----------------------------------------------------------------------
-    public void SetWidth(int i) {
-        mUCoord = i;
+    public void SetWidth(final int i) {
+        mUVCoord.x = i;
     }
 
     // ------------------------------------------------------------------------
@@ -103,8 +94,8 @@ public class Spritesheet {
     *
     *   Sets the Height of an Sprite
     */ //----------------------------------------------------------------------
-    public void SetHeight(int h) {
-        mVCoord = h;
+    public void SetHeight(final int h) {
+        mUVCoord.y = h;
     }
 
     // ------------------------------------------------------------------------
@@ -113,7 +104,7 @@ public class Spritesheet {
     *   Returns the width of an sprite
     */ //----------------------------------------------------------------------
     public int GetWidth() {
-        return mUCoord;
+        return mUVCoord.x;
     }
 
     // ------------------------------------------------------------------------
@@ -121,34 +112,8 @@ public class Spritesheet {
     *
     *   Returns the height in pixels
     */ //----------------------------------------------------------------------
-    public int getHeight() {
-        return mVCoord;
-    }
-
-    // ------------------------------------------------------------------------
-    /*! Load Sprite
-    *
-    *   Loads an sprite from the fisk and uploads it as a bufferedimage
-    */ //----------------------------------------------------------------------
-    protected Asset LoadSprite(String file) {
-        return AssetManager.Instance().GetResource(file);
-    }
-
-    // ------------------------------------------------------------------------
-    /*! Load Sprite Array
-    *
-    *   Given a Sprite Sheet, loads every individual sprites in an array
-    */ //----------------------------------------------------------------------
-    private void LoadSpriteArray() {
-        mSpriteArray = new BufferedImage[mWidth][mHeight];
-        int x;
-        for(x = 0; x < mWidth; x++){
-            int y;
-            for(y = 0; y < mHeight; y++){
-                mSpriteArray[x][y]  = GetSprite(x, y);
-                //System.out.println("x: " + x + "|" + "y: " + y );
-            }
-        }
+    public int GetHeight() {
+        return mUVCoord.y;
     }
 
     // ------------------------------------------------------------------------
@@ -165,8 +130,16 @@ public class Spritesheet {
     *
     *   Given an UV coordinate, returns the sprite located at a point in the spritesheet
     */ //----------------------------------------------------------------------
-    public BufferedImage GetSprite(int x, int y) {
-        return ((BufferedImage)mSpriteSheet.Raw()).getSubimage(x * mUCoord, y * mVCoord, mUCoord, mVCoord);
+    public BufferedImage GetSprite(final int x, int y) {
+        try {
+            return ((BufferedImage)mSpriteSheet.Raw()).getSubimage(x * mUVCoord.x, y * mUVCoord.y, mUVCoord.x, mUVCoord.y);
+        } catch (Exception e) {
+            float aux = Math.max(Math.min(y, mUVCoord.y - 1), 0);
+            if(y != aux) {
+                y = y % (mUVCoord.y - 1); 
+            }
+           return ((BufferedImage)mSpriteSheet.Raw()).getSubimage(x * mUVCoord.x, y * mUVCoord.y, mUVCoord.x, mUVCoord.y);
+        }
     }
 
     // ------------------------------------------------------------------------
@@ -174,7 +147,7 @@ public class Spritesheet {
     *
     *   Returns all the sprite array, as a one-dimensional array
     */ //----------------------------------------------------------------------
-    public BufferedImage[] GetSpriteArray(int i) {
+    public BufferedImage[] GetSpriteArray(final int i) {
         return mSpriteArray[i];
     }
 
@@ -188,29 +161,13 @@ public class Spritesheet {
     }
 
     // ------------------------------------------------------------------------
-    /*! Draw Array
+    /*! Get Sprite Array 2D
     *
-    *   Draws an entire array of images
+    *   Returns the 2D Array reference of the sprite sheet
     */ //----------------------------------------------------------------------
-    public static void DrawArray(Graphics2D g, ArrayList<BufferedImage> img, Vector2D<Float> pos, int width, int height, int xOffset, int yOffset) {
-        float x = pos.x;
-        float y = pos.y;
-
-        //For every image
-        for(int i = 0; i < img.size(); i++) {
-            //If the image is not null
-            if(img.get(i) != null) {
-                g.drawImage(img.get(i), (int)x, (int)y, width, height, null);
-            }
-
-            x += xOffset;
-            y += yOffset;
-        }
-    }
-
-        
-    public void setmSpriteArray(BufferedImage[][] mSpriteArray) {
+    public void ChangeSpriteFrames(final BufferedImage[][] mSpriteArray) {
         this.mSpriteArray = mSpriteArray;
+        mSpriteSheet = null;
     }
 
     // ------------------------------------------------------------------------
@@ -218,15 +175,20 @@ public class Spritesheet {
     *
     *   Utility Function for Transposing a Matrix
     */ //----------------------------------------------------------------------
-    public void flip(){
-        BufferedImage[][] m = this.GetSpriteArray2D();
-        BufferedImage[][] temp = new BufferedImage[m[0].length+4][m.length];
-        for (int i = 0; i < m.length; i++){
-            for (int j = 0; j < m[0].length; j++){
-                temp[j][i] = m[i][j];
-            }
-        }
-        this.setmSpriteArray(temp);
-    }
+    public void Transpose(){
+        final BufferedImage[][] temp = new BufferedImage[mSize.y][mSize.x];
 
+        IntStream.range(0, mSize.x).forEach(i -> {
+            IntStream.range(0, mSize.y).forEach(j -> {
+                temp[j][i] = mSpriteArray[i][j];
+            });
+        });
+
+        mSpriteArray = temp;
+
+        //Can anyone guess what does this do? ;)
+        mSize.x = mSize.x ^ mSize.y;
+        mSize.y = mSize.x ^ mSize.y;
+        mSize.x = mSize.x ^ mSize.y;
+    }
 }

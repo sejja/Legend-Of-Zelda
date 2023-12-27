@@ -12,11 +12,12 @@ import java.awt.Color;
 import java.util.ArrayList;
 
 import Engine.ECSystem.ObjectManager;
+import Engine.ECSystem.World;
 import Engine.Graphics.Spritesheet;
 import Engine.Input.InputManager;
 import Engine.Math.Vector2D;
+import Engine.Physics.ColliderManager;
 import Engine.Physics.Components.BoxCollider;
-import Engine.Physics.Components.ColliderManager;
 import Gameplay.Enemies.Search.Pair;
 import Gameplay.Interactives.Blocks.Rock;
 import Gameplay.LifeBar.Heart;
@@ -135,9 +136,14 @@ public abstract class Actor extends Entity implements ClassClasifier{
     public void setPseudoPositionVisible (){
         mCollider = new BoxCollider(this);
         mCollider.GetBounds().SetBox(pseudoPosition, new Vector2D<>(5f,5f));
-        mCollider.setColor(Color.RED);
         AddComponent(mCollider);
     }
 
     public Class GetSuperClass(){return Actor.class;}
+
+    @Override
+    public boolean equals(Object obj) {
+        Actor other = (Actor) obj;
+        return this.GetPosition().equals(other.GetPosition());
+    }
 }

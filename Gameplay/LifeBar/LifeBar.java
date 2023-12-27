@@ -13,6 +13,11 @@ import Engine.Math.Vector2D;
  *              -> Use setVisible() to show lifeBar or not
  *              -> Use setHealthpoints() to change the healthpoints of the actor in the lifebar
  */
+
+/** Lifebar properties
+ *      Add LifeBarUpdate() at the end of Actor.Update() ->  Use setVisible() to show lifeBar or not -> Use setHealthpoints() to change the healthpoints of the actor in the lifebar
+ *      @author
+ */
 public class LifeBar {
     private int healthPoints;
     private Heart[] hearts;
@@ -115,5 +120,9 @@ public class LifeBar {
                 hearts[i].addToObjectManager();
             }
         }
+    }
+
+    public Heart[] getHearts(){
+        return hearts;
     }
 }

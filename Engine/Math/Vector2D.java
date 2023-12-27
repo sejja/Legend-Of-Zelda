@@ -1,4 +1,4 @@
-//
+//eqiañ
 //	Vector2D.java
 //	Legend Of Zelda
 //
@@ -27,7 +27,17 @@ public class Vector2D<T> {
     *
     *   Initializes the values to the given values
     */ //----------------------------------------------------------------------
-    public Vector2D(T x, T y) {
+    public Vector2D(final T x, final T y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    // ------------------------------------------------------------------------
+    /*! Set
+    *
+    *   Sets the vector to two distinct values
+    */ //----------------------------------------------------------------------
+    public void Set(final T x, final T y) {
         this.x = x;
         this.y = y;
     }
@@ -37,8 +47,9 @@ public class Vector2D<T> {
     *
     *   Copies another vector
     */ //----------------------------------------------------------------------
-    public Vector2D(Vector2D<T> rhs) {
-         new Vector2D<T>(rhs.x, rhs.y);
+    public Vector2D(final Vector2D<T> rhs) {
+        x = rhs.x;
+        y = rhs.y;
     } 
 
     // ------------------------------------------------------------------------
@@ -61,8 +72,8 @@ public class Vector2D<T> {
     }
 
     public Vector2D<Float> getVectorToAnotherActor(Vector2D<Float> enemyPosition){
-        Float xf = -((Float)this.x - enemyPosition.x);
-        Float yf = -((Float)this.y - enemyPosition.y);
+        Float xf = enemyPosition.x-(Float)this.x;
+        Float yf = enemyPosition.y-(Float)this.y;
         return new Vector2D<>(xf, yf);
     }
 
@@ -90,5 +101,39 @@ public class Vector2D<T> {
 
     public Vector2D<Integer> getTilePosition(){
         return new Vector2D<Integer>((Integer)(int)(float)this.x/64, (Integer)(int)(float)this.y/64);
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((x == null) ? 0 : x.hashCode());
+        result = prime * result + ((y == null) ? 0 : y.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Vector2D other = (Vector2D) obj;
+        if (x == null) {
+            if (other.x != null)
+                return false;
+        } else if (!x.equals(other.x))
+            return false;
+        if (y == null) {
+            if (other.y != null)
+                return false;
+        } else if (!y.equals(other.y))
+            return false;
+        return true;
+    }
+    static public Vector2D<Float> getRevertVector(Vector2D<Float> vector2d){
+        return (new Vector2D<Float>(-vector2d.x, -vector2d.y));
     }
 }

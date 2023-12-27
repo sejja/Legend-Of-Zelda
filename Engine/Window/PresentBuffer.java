@@ -24,17 +24,28 @@ public class PresentBuffer extends JPanel {
     private static int mHeight;
     private BufferedImage mFrameBuffer;
     private Graphics2D mGFX;
+    private static Color mClearColor;
 
     // ------------------------------------------------------------------------
     /*! Constructor
     *
     *   As a JPanel, which behaves as a FrameBuffer, request the focus and sets the size
     */ //----------------------------------------------------------------------
-    public PresentBuffer(int width, int height) {
+    public PresentBuffer(final int width, final int height) {
         setPreferredSize(new Dimension(mWidth = width, mHeight = height));
         setFocusable(true);
         requestFocus();
+        mClearColor = Color.BLACK;
         mGFX = (Graphics2D)(mFrameBuffer = new BufferedImage(mWidth, mHeight, BufferedImage.TYPE_INT_ARGB)).getGraphics();
+    }
+
+    // ------------------------------------------------------------------------
+    /*! Set Clear Color
+    *
+    *   Sets the color of the clear frame buffer
+    */ //----------------------------------------------------------------------
+    static public void SetClearColor(final Color c) {
+        mClearColor = c;
     }
 
     // ------------------------------------------------------------------------
@@ -55,7 +66,7 @@ public class PresentBuffer extends JPanel {
         final Rectangle rect = getBounds();
         final GraphicsPipeline gfxpip = GraphicsPipeline.GetGraphicsPipeline();
         gfxpip.SetDimensions(new Vector2D<>(rect.width, rect.height));
-        mGFX.setColor(Color.black);
+        mGFX.setColor(mClearColor);
         mGFX.fillRect(0, 0, mWidth, mHeight);
         gfxpip.Render(mGFX);
     }

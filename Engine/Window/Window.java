@@ -9,7 +9,6 @@
 package Engine.Window;
 
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 public class Window extends JFrame {
     private GameLoop mGameLoop;
@@ -20,7 +19,7 @@ public class Window extends JFrame {
     */ //----------------------------------------------------------------------
     public Window() {
         final PresentBuffer buffer = new PresentBuffer(1280, 720);
-        mGameLoop = new GameLoop(buffer);
+        mGameLoop = new GameLoop(buffer, this);
         setTitle("The Legend Of Zelda");
 
         //If we are on release mode, draw a fancy window

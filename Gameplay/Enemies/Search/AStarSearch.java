@@ -1,6 +1,7 @@
 package Gameplay.Enemies.Search;
 import java.util.*;
 import Engine.Graphics.Tile.*;
+import Engine.Math.Vector2D;
 
 
 public class AStarSearch{
@@ -22,11 +23,13 @@ public class AStarSearch{
     public boolean isUnBlocked(int Column, int Row) {
         // Returns true if the cell is not blocked else false
         if (isValid(Column, Row)){
-            Block block = TileManager.sLevelObjects.GetBlockAt(Column, Row);
+            Vector2D<Integer> pos = new Vector2D<>(Column, Row);
+            Block block = TileManager.sLevelObjects.GetBlockAt(pos);
             //System.out.println(Column + " " + Row);
-            if(block instanceof Normblock) return !((Normblock)block).isBlocked();
-            if(block instanceof HoleBlock || block instanceof ObjectBlock) return false;
-            return true;
+            if(block == null){
+                return true;
+            }
+            return !block.HasCollision();
         }else{
             //System.out.println(Column + " " + Row);
             return false;
@@ -71,7 +74,7 @@ public class AStarSearch{
         }
 
         boolean[][] closedList = new boolean[COL][ROW];
-        cell[][] cellDetails = new cell[COL][ROW];
+        Gameplay.Enemies.Search.cell[][] cellDetails = new Gameplay.Enemies.Search.cell[COL][ROW];
 
         int i, j;
         for (i = 0; i < COL; i++) {

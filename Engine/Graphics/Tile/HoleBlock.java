@@ -8,36 +8,46 @@
 
 package Engine.Graphics.Tile;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.awt.geom.AffineTransform;
 
+import Engine.Graphics.Components.CameraComponent;
 import Engine.Math.Vector2D;
 import Engine.Physics.AABB;
 
 public class HoleBlock extends Block {
-    public HoleBlock(BufferedImage img, Vector2D<Integer> position, int w, int h) {
-        super(img, position, w, h);
+    // ------------------------------------------------------------------------
+    /*! Custom Constructor
+    *
+    *   Creates a Hole Block with an image and a desired transformation
+    */ //----------------------------------------------------------------------
+    public HoleBlock(final BufferedImage img, final AffineTransform transform) {
+        super(img, transform);
     }
 
+    // ------------------------------------------------------------------------
+    /*! Has Collision
+    *
+    *   A hole block DOES collide
+    */ //----------------------------------------------------------------------
     @Override
-    public boolean Update(AABB p) {
+    public boolean HasCollision() {
         return true;
     }
 
-    public void Render(Graphics2D g, Vector2D<Float> camerapos) {
-        super.Render(g, camerapos);
-        //g.setColor(Color.green);
-        //g.drawRect((int)(float)mPosition.x - (int)(float)camerapos.x, (int)(float)mPosition.y - (int)(float)camerapos.y, mWidth, mHeight);
-    }
-
+    // ------------------------------------------------------------------------
+    /*! Is Inside
+    *
+    *   Returns wether an object is completely inside us
+    */ //----------------------------------------------------------------------
     @Override
-    public boolean IsInside(AABB p) {
-        if(p.GetPosition().x < mPosition.x) return false;
-        if(p.GetPosition().y < mPosition.y) return false;
-        if(mWidth + mPosition.x <  p.GetWidth() + p.GetPosition().x) return false;
-        if(mHeight + mPosition.y <  p.GetHeight() + p.GetPosition().y) return false;
-    
-        return true;
+    public boolean IsInside(final AABB p) {
+        final double x = mPosition.getTranslateX();
+        final double y = mPosition.getTranslateY();
+        final Vector2D<Float> pPos = p.GetPosition();
+
+        return !(pPos.x < x || pPos.y < y || sScale.x + x <  p.GetWidth() + pPos.x ||
+            sScale.y + y <  p.GetHeight() + pPos.y);
     } 
 }

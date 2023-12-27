@@ -1,11 +1,16 @@
 package Gameplay.Enemies.Units;
 
+import Engine.Assets.AssetManager;
 import Engine.Graphics.Spritesheet;
 import Engine.Graphics.Components.AnimationMachine;
 import Engine.Math.Vector2D;
 import Engine.Physics.Components.BoxCollider;
 import Gameplay.Enemies.*;
 
+/**
+ * Represents a Green Knight enemy unit in the game.
+ * Extends the Enemy class.
+ */
 public class GreenKnight extends Enemy{
     
     protected Vector2D<Float> size = new Vector2D<Float>(50f, 100f);
@@ -13,9 +18,14 @@ public class GreenKnight extends Enemy{
     //animation
     protected int xoffset = 8;
     protected int yoffset = 32;
-    protected Spritesheet sprite=new Spritesheet("Content/Animations/gknight.png", 16,28);
+    protected Spritesheet sprite=new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/gknight.png"), new Vector2D<>(16, 28));
     
 
+    /**
+     * Constructs a Green Knight object at the specified position.
+     *
+     * @param position The initial position of the Green Knight.
+     */
     public GreenKnight(Vector2D<Float> position) {
         super(position);
         setPseudoPosition(25f, 50f);
@@ -25,7 +35,7 @@ public class GreenKnight extends Enemy{
         setSpeed(1f);
 
         // TRANSPOSE SPRITE MATRIX
-        sprite.flip();
+        sprite.Transpose();
 
         // ADD ANIMATION COMPONENT
         mAnimation = AddComponent(new AnimationMachine(this, sprite));

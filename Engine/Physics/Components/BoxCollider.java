@@ -20,6 +20,7 @@ import Engine.Graphics.Components.CameraComponent;
 import Engine.Graphics.Components.Renderable;
 import Engine.Math.Vector2D;
 import Engine.Physics.AABB;
+import Engine.Physics.ColliderManager;
 /* Hitbox Implementation
  *      -> Add a hitbox properties in the Actor
  *      -> Use BoxCollider(Actor parent,Vector2D<Float> scale, boolean itCollides) 
@@ -32,8 +33,8 @@ public class BoxCollider extends Component implements Renderable{
 
     private AABB mBounds;
     private boolean hasCollision;
-
     private Color color = Color.BLUE;
+    private Vector2D<Float> size;
     // ------------------------------------------------------------------------
     /*! Conversion Constructor
     *
@@ -125,14 +126,44 @@ public class BoxCollider extends Component implements Renderable{
         return mBounds;
     }
 
+    public void setPosition(Vector2D<Float> position){
+        this.mBounds.SetPosition(position);
+    }
+
     public void setColor (Color color ){
         this.color = color;
     }
     @Override
     public void Render(Graphics2D g, CameraComponent camerapos) {
-        var campos = camerapos.GetCoordinates();
-       g.setColor(color);
-       g.drawRect((int)(float)(mBounds.GetPosition().x - campos.x), (int)(float)(mBounds.GetPosition().y - campos.y), (int)mBounds.GetWidth(), (int)mBounds.GetHeight());
     }
 
+    public void disable(){
+        size = mBounds.GetScale();
+        mBounds.SetSize(new Vector2D<>(0f,0f));
+    }
+
+    public void enable(){
+        if(size == null){System.out.println("AlreadyEnabled");}
+        else{this.mBounds.SetSize(size);}
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((mBounds == null) ? 0 : mBounds.hashCode());
+        result = prime * result + (hasCollision ? 1231 : 1237);
+        result = prime * result + ((color == null) ? 0 : color.hashCode());
+        result = prime * result + ((size == null) ? 0 : size.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof BoxCollider){
+            BoxCollider other = (BoxCollider) obj;
+            return this.GetParent().equals(other.GetParent());
+        }
+        return false;
+    }
 }

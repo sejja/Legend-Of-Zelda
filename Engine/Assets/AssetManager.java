@@ -16,6 +16,8 @@ public class AssetManager {
         mAssets = new HashMap<>();
         
         mImporters.put("png", new ImageImporter());
+        mImporters.put("wav", new AudioImporter());
+        mImporters.put("tsx", new TSXImporter());
     }
 
     public Asset GetResource(String path) {
