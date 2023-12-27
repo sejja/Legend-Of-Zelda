@@ -24,9 +24,9 @@ public class Water extends AnimatedObject implements StaticPlayerCollision {
     private Vector2D<Float> pos;
 
     public Water(Vector2D<Float> position) {
-        super(position, new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/agua2.png"), 3,2));
+        super(position, new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/agua.png"), 3,2));
         this.pos = position;
-        delay = -1;
+        delay = 30;
         this.SetScale(new Vector2D<>(64f,32f));
         Animate(1);
         this.setDefaultPseudoPosition();
@@ -39,12 +39,7 @@ public class Water extends AnimatedObject implements StaticPlayerCollision {
         super.Update();
         hitbox.Update();
         playerCollision(hitbox);
-        if (this.animationMachine.MustComplete()){
-            if(this.animationMachine.GetAnimation().GetFrame() != previusFrameCount){
-                previusFrameCount = this.animationMachine.GetAnimation().GetFrame();
-                
-            }
-        }
+        
         SetPosition(pos);
     }
 
