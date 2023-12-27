@@ -15,7 +15,6 @@ import Engine.Math.Util;
 import Engine.Math.Vector2D;
 import Engine.Physics.AABB;
 import Engine.Window.GameLoop;
-import Gameplay.AnimatedObject.Lava;
 import Gameplay.AnimatedObject.Torch;
 import Gameplay.AnimatedObject.Water;
 import Gameplay.Enemies.Search.Pair;
@@ -175,8 +174,6 @@ public class World {
                 SpawnEntity(new BlueKnight(e.position));
             }else if(e.type == firstEntity+4) {
                 SpawnEntity(new Water(e.position));
-            }else if(e.type == firstEntity+5) {
-                SpawnEntity(new Lava(e.position));
             }
             
         }
