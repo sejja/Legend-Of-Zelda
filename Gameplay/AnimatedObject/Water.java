@@ -29,9 +29,17 @@ public class Water extends AnimatedObject implements StaticPlayerCollision {
         setPseudoPositionVisible();
         hitbox = (BoxCollider)AddComponent(new BoxCollider(this, GetScale(), true));
         animationMachine.SetFrameTrack(1);
+    }
 
-        ;
+    public void Update(){
+        super.Update();
+        hitbox.Update();
+        playerCollision(hitbox);
+        SetPosition(pos);
     }
     
+    public Vector2D<Float> getWorldPseudoPosition(){
+        return World.GetLevelSpaceCoordinates(super.getPseudoPosition());
+    }
 
 }
