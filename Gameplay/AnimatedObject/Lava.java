@@ -12,7 +12,7 @@ public class Lava extends AnimatedObject implements StaticPlayerCollision {
     public Lava(Vector2D<Float> position) {
         super(position, new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/lava.png"), 2,2));
         this.pos = position;
-        delay = 70;
+        delay = 60;
         this.SetScale(new Vector2D<>(64f,64f));
         Animate(1);
         this.setDefaultPseudoPosition();
