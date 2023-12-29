@@ -16,7 +16,7 @@ import Gameplay.Enemies.Search.Pair;
  * Represents a rendering component for displaying the path of an enemy.
  * Extends the Component class and implements the Renderable interface.
  */
-public class PathRender extends Component implements Renderable{
+public class PathRender extends Component {
     Stack<Pair> path;
 
     /**
@@ -34,7 +34,6 @@ public class PathRender extends Component implements Renderable{
      */
     @Override
     public void Init() {
-        GraphicsPipeline.GetGraphicsPipeline().AddRenderable(this);
     }
 
     /**
@@ -50,26 +49,5 @@ public class PathRender extends Component implements Renderable{
      */
     @Override
     public void ShutDown() {
-        GraphicsPipeline.GetGraphicsPipeline().RemoveRenderable(this);;
     }
-
-    /**
-     * Renders the path on the screen.
-     *
-     * @param g          The graphics context used for rendering.
-     * @param camerapos  The camera component providing the camera position.
-     */
-    @Override
-    public void Render(Graphics2D g, CameraComponent camerapos) {
-        var camcoord = camerapos.GetCoordinates();
-        g.setColor(Color.green);
-        Stack<Pair> mPath = (Stack<Pair>)path.clone();
-
-        while (!mPath.isEmpty()) {
-            Pair x = mPath.pop();
-            Pair p = Engine.ECSystem.World.GetWorldPair(x);
-            g.drawRect(p.getFirst() * 64 - (int)(float)camcoord.x, p.getSecond() * 64 - (int)(float)camcoord.y, 64, 64);
-        }
-    }
-    
 }

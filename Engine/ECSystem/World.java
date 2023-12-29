@@ -15,7 +15,9 @@ import Engine.Math.Util;
 import Engine.Math.Vector2D;
 import Engine.Physics.AABB;
 import Engine.Window.GameLoop;
+import Gameplay.AnimatedObject.Lava;
 import Gameplay.AnimatedObject.Torch;
+import Gameplay.AnimatedObject.Water;
 import Gameplay.Enemies.Search.Pair;
 import Gameplay.Enemies.Units.BlueKnight;
 import Gameplay.Enemies.Units.GreenKnight;
@@ -32,7 +34,6 @@ public class World {
     static private Vector2D<Integer> sTransitionDir = new Vector2D<Integer>();
     static private float sElapsedTime = 0;
     static private World sPreviusLevel;
-    
     private boolean visited = false;
 
     public static void Reset() {
@@ -172,6 +173,10 @@ public class World {
                 SpawnEntity(new Torch(e.position));
             }else if(e.type == firstEntity+3) {
                 SpawnEntity(new BlueKnight(e.position));
+            }else if(e.type == firstEntity+4) {
+                SpawnEntity(new Water(e.position));
+            }else if(e.type == firstEntity+5) {
+                SpawnEntity(new Lava(e.position));
             }
             
         }
