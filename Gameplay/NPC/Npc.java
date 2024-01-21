@@ -34,7 +34,13 @@ import Gameplay.Interaction;
 import Gameplay.Link.Player;
 
 
-public class Npc extends Actor implements StaticPlayerCollision, Interaction{
+/**
+ * Npc class represents non-player characters (NPCs) in the game.
+ * It extends Actor and implements StaticPlayerCollision and Interaction interfaces.
+ */
+public class Npc extends Actor implements StaticPlayerCollision, Interaction {
+    
+    // Fields for NPC properties and behavior
     private String name;
     protected BoxCollider hitbox;
     static boolean interact = false;
@@ -51,7 +57,7 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
     private float xInicial;
     private float yInicial;
 
-
+    // Constants representing movement directions
     private final int DOWN = 0;
     private final int LEFT = 1;
     private final int RIGHT= 2;
@@ -59,19 +65,17 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
 
     private int typeOfMovement;
 
-    //Type of movement
+    // Constants representing types of movement
     private final int squareMovement = 4;
     private final int xLineMovement = 5;
     private final int yLineMovement = 6;
     private final int stop = 7;
 
-
     /*! Conversion Constructor
-    * Constructs a NPC with a name, a sprite, a position, a dialog and gives it a size
-    */ //----------------------------------------------------------------------
-
+    * Constructs an NPC with a name, a sprite, a position, a dialog and gives it a size
+    */
     public Npc(String nameNPC, Spritesheet sprite, Vector2D<Float> position, Vector2D<Float> size, int numberStartAnimation, int movement) {
-
+        // Constructor initializes NPC properties
         super(position);
         this.name = nameNPC;
         
@@ -79,7 +83,7 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
         setSetopAnimationSet(allAnimations, allAnimations[0].length);
         sprite.ChangeSpriteFrames(allAnimations);
         animationMachine = AddComponent(new AnimationMachine(this, sprite));
-        animationMachine.SetFrameTrack(numberStartAnimation); //La diferencia entre correr a una direction y parase en la misma es un + 4
+        animationMachine.SetFrameTrack(numberStartAnimation); // The difference between running in a direction and stopping in the same is +4
         animationMachine.GetAnimation().SetDelay(15);
 
         typeOfMovement = movement;
@@ -97,14 +101,25 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
         
     }
 
+    /**
+     * Updates the NPC's state.
+     */
     public void Update() {
+        // Updates NPC logic and components
         super.Update();
         movement();
         hitbox.Update();
         pseudoPositionUpdate();
     }
+
     //______________________________________________________________________________________
-    private BufferedImage[][] transposeMatrix(BufferedImage [][] m){
+    /**
+     * Transposes a 2D matrix of BufferedImages.
+     * @param m The original matrix to be transposed.
+     * @return The transposed matrix.
+     */
+    private BufferedImage[][] transposeMatrix(BufferedImage[][] m) {
+        // Implementation of matrix transposition
         BufferedImage[][] temp = new BufferedImage[m[0].length + 4][m.length];
         for (int i = 0; i < m.length; i++){
             for (int j = 0; j < m[0].length; j++){
@@ -113,7 +128,14 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
         }
         return temp;
     }
-    private void setSetopAnimationSet(BufferedImage[][] m, int size){
+
+    /**
+     * Sets up the stop animation set by copying the first frame to the next four frames.
+     * @param m The animation matrix.
+     * @param size The size of the animation set.
+     */
+    private void setSetopAnimationSet(BufferedImage[][] m, int size) {
+        // Set up the stop animation set
         for (int i = 0; i < 4; i++){
             for (int j = 0;  j < m[0].length; j++){
                 m[size+i][j] = m[i][0];
@@ -122,11 +144,35 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
     }
     //______________________________________________________________________________________
     
-    public static void setInteract(boolean interact1){interact = interact1;}
-    public static void setRemove() {remove = true;}
-    public String getName() {return name;}
+    /**
+     * Sets the interact flag.
+     * @param interact1 The new value for the interact flag.
+     */
+    public static void setInteract(boolean interact1) {
+        interact = interact1;
+    }
 
-    public void lookAtPLayer(Vector2D<Float> playerPosition){
+    /**
+     * Sets the remove flag.
+     */
+    public static void setRemove() {
+        remove = true;
+    }
+
+    /**
+     * Gets the name of the NPC.
+     * @return The name of the NPC.
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Sets the NPC's direction based on the player's position.
+     * @param playerPosition The position of the player.
+     */
+    public void lookAtPLayer(Vector2D<Float> playerPosition) {
+        // Sets NPC's direction based on player's position
         Player player = (Player) ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0);
         Vector2D<Float> vector = new EuclideanCoordinates(player.getPseudoPosition()).getVectorToAnotherActor(this.getPseudoPosition());
         if((player.getPseudoPosition().x > this.getPseudoPosition().x) && (Math.abs(vector.x) > Math.abs(vector.y))){
@@ -140,8 +186,12 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
         }
     }
 
-    public void nextDialog(){
-        if(dialogueWindow.getJ() + 1 <=  dialogueWindow.getDialogue().size()-1){ // Si hay siguiente
+    /**
+     * Moves to the next dialogue in the dialogue window.
+     */
+    public void nextDialog() {
+        // Moves to the next dialogue in the dialogue window
+        if(dialogueWindow.getJ() + 1 <=  dialogueWindow.getDialogue().size()-1){ // If there is a next dialogue
             dialogueWindow.setSiguiente();
             Sound sound = new Sound(AssetManager.Instance().GetResource("Content/Audio/Props/message.wav"));
             Audio.Instance().Play(sound);
@@ -150,7 +200,11 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
         }
     }
 
-    public void removeDialogWindown(){
+    /**
+     * Removes the dialogue window and resets the player's interaction state.
+     */
+    public void removeDialogWindown() {
+        // Removes the dialogue window and resets player's interaction state
         RemoveComponent(dialogueWindow);
         Player link = (Player) ObjectManager.GetObjectManager().GetPawn();
         link.removeInteraction();
@@ -160,21 +214,32 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
         Audio.Instance().Play(sound);
     }
 
-    private void Pause(){
+    /**
+     * Pauses or resumes the game loop.
+     */
+    private void Pause() {
+        // Pauses or resumes the game loop
         GameLoop.SetPaused(!GameLoop.IsPaused());
     }
 
+    /**
+     * Handles NPC movement based on the type of movement specified.
+     */
     private void movement() {
+        // Handles NPC movement
         Vector2D<Float> pos = GetPosition();
         Vector2D<Float> distance = new Vector2D<Float>(100.f, 100.f);
         if(typeOfMovement != stop){
             switch(typeOfMovement){
                 case squareMovement:
                     squareMovement(pos, distance);
+                    break;
                 case xLineMovement:
                     xLineMovement(pos, distance);
+                    break;
                 case yLineMovement:
                     yLineMovement(pos, distance);
+                    break;
             }
             if (direction == UP){
                 pos.y -= speed;
@@ -188,7 +253,14 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
         }
         SetPosition(pos);
     }
+
+    /**
+     * Handles square movement pattern.
+     * @param pos The current position of the NPC.
+     * @param distance The distance vector for the square movement.
+     */
     public void squareMovement(Vector2D<Float> pos, Vector2D<Float> distance) {
+        // Handles square movement pattern
         if(pos.y == yInicial + distance.y && pos.x == xInicial){
             animationMachine.SetFrameTrack(LEFT);
             direction = LEFT;
@@ -208,7 +280,13 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
         }
     }
     
+    /**
+     * Handles X-line movement pattern.
+     * @param pos The current position of the NPC.
+     * @param distance The distance vector for the X-line movement.
+     */
     public void xLineMovement(Vector2D<Float> pos, Vector2D<Float> distance){
+        // Handles X-line movement pattern
         if(pos.x == xInicial - distance.x && pos.y == yInicial){
             animationMachine.SetFrameTrack(RIGHT);
             direction = RIGHT;
@@ -220,7 +298,13 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
         }
     }
 
-    public void  yLineMovement(Vector2D<Float> pos, Vector2D<Float> distance) {
+    /**
+     * Handles Y-line movement pattern.
+     * @param pos The current position of the NPC.
+     * @param distance The distance vector for the Y-line movement.
+     */
+    public void yLineMovement(Vector2D<Float> pos, Vector2D<Float> distance) {
+        // Handles Y-line movement pattern
         if(pos.y == yInicial - distance.y && pos.x == xInicial){
             animationMachine.SetFrameTrack(DOWN);
             direction = DOWN;
@@ -231,20 +315,38 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
             xInicial = pos.x;
         }
     }
+
+    /**
+     * Gets the current direction of the NPC.
+     * @return The current direction of the NPC.
+     */
     public int getDirection() {
         return direction;
     }
+
+    /**
+     * Sets the current direction of the NPC.
+     * @param direction The new direction value.
+     */
     public void setDirection(int direction) {
         this.direction = direction;
     }
 
-    @Override 
-    public Class GetSuperClass(){return Npc.class;}
-    
+    /**
+     * Returns the superclass of the NPC class.
+     * @return The superclass of the NPC class.
+     */
+    @Override
+    public Class GetSuperClass() {
+        return Npc.class;
+    }
+
+    /**
+     * Handles NPC interaction with the player.
+     */
     @Override
     public void interaction() {
-
-        // TODO Auto-generated method stub
+        // Handles NPC interaction with the player
         lookAtPLayer(ObjectManager.GetObjectManager().GetAllObjectsOfType(Player.class).get(0).GetPosition());
         dialogueWindow.setNpc(this);
         currentDirection = this.getDirection(); 
@@ -258,5 +360,4 @@ public class Npc extends Actor implements StaticPlayerCollision, Interaction{
             nextDialog();
         }
     }
-
 }
