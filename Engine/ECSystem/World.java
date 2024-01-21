@@ -234,7 +234,7 @@ public class World {
                     sTransitioning = true;
                     var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetBindedCamera();
                     sTransitionDir.x = 0;
-                    sTransitionDir.y = -1;
+                    sTransitionDir.y = 1;
                 }
 
                 //DOWN
@@ -244,7 +244,7 @@ public class World {
                     sTransitioning = true;
                     var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetBindedCamera();
                     sTransitionDir.x = 0;
-                    sTransitionDir.y = 1;
+                    sTransitionDir.y = -1;
                 }
             }
         } else {
@@ -252,6 +252,7 @@ public class World {
             z.Update();
 
             if(sElapsedTime < 1) {
+
                 GameLoop.SetPaused(true);
                 Actor p = ObjectManager.GetObjectManager().GetPawn(); //<--- Its Link
 
@@ -259,6 +260,7 @@ public class World {
                 sTransitionDir.y * sElapsedTime * 20.f * 64.f));
                 
                 sElapsedTime += 0.016;
+
             } else { //END TRANSITION
                 GameLoop.SetPaused(false);
                 sTransitioning = false;
