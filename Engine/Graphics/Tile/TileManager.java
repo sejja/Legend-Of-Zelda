@@ -161,7 +161,11 @@ public class TileManager extends ECObject implements Renderable {
     *   Renders every layer that the tile manager contains
     */ //----------------------------------------------------------------------
     public void Render(final Graphics2D g, final CameraComponent camerapos) {
-        mLayers.forEach(l -> l.Render(g, camerapos, mBounds));
+
+        mLayers.forEach(l -> {
+            l.Render(g, camerapos, mBounds);
+        }
+        );
     }
 
     public String getPath(){

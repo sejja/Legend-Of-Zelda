@@ -64,10 +64,10 @@ public class World {
 
         try {
             tiles = s.getString("Path");
-            System.out.println(tiles);
+            //System.out.println(tiles);
             try {
                 left = Integer.parseInt(s.getString("Left"));
-                System.out.println("Left:" + left);
+                //System.out.println("Left:" + left);
             } catch(Exception e) {
 
             }
@@ -86,7 +86,7 @@ public class World {
 
             try {
                 down = Integer.parseInt(s.getString("Down"));
-                System.out.println("Down:"+  down);
+                //System.out.println("Down:"+  down);
             } catch(Exception e) {
 
             }

@@ -95,7 +95,7 @@ public class Player extends Actor {
     //----------------------------------------------------------------------
 
     /* Player Stats */
-    protected int healthPoints = 10;
+    protected int healthPoints = 100;
     private ZeldaCameraComponent mCamera;
     protected BoxCollider mCollider;
     protected BoxCollider hitbox;
@@ -398,6 +398,16 @@ public class Player extends Actor {
         //System.out.println("Player Position: " + this.getPseudoPosition());
         //System.out.println(velocity);
         //System.out.println(GetPosition());
+        long heapSize = Runtime.getRuntime().totalMemory(); 
+
+        // Get maximum size of heap in bytes. The heap cannot grow beyond this size.// Any attempt will result in an OutOfMemoryException.
+        long heapMaxSize = Runtime.getRuntime().maxMemory();
+
+         // Get amount of free memory within the heap in bytes. This size will increase // after garbage collection and decrease as new objects are created.
+        long heapFreeSize = Runtime.getRuntime().freeMemory(); 
+        
+        System.out.println("heap size: " + (heapSize - heapFreeSize));
+
     }
 
     /** This function activates the statemachine of stats
