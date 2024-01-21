@@ -44,7 +44,7 @@ public class ShadowLayer {
         if(matrixOpacity == null){
             buildMatrix();
         }
-        if(tilePosition.x >= 50 ||  tilePosition.y >= 50){
+        if(tilePosition.x >= 50 ||  tilePosition.y >= 50){ 
             //System.err.println("Estas intentando iluminar fuera del mapa");
             return;
         }
@@ -76,9 +76,6 @@ public class ShadowLayer {
 
         Vector2D<Integer> cameraDrawPoint = getDrawPointPosition(mCamera); //Superior Izquierdo donde empieza a dibujar la camara
         Vector2D<Integer> windowShadowDrawPoint = getWindowViewedDrawPoint(cameraDrawPoint, mCamera); //Position de cada bloque de oscuridad que va dibujando con respecto a la ventana
-        //System.out.println("Window shadowDrawPoint" + windowShadowDrawPoint);
-        //System.out.println("Camera drawPoint" + cameraDrawPoint);
-        //Primero dibuja cada columna y luego cada fila
         //______________________________________________________________________________________________________
         for (int drawPointX = windowShadowDrawPoint.x; drawPointX < cameraSizeX; drawPointX+=scaleX ){
             int temp = cameraDrawPoint.y;
@@ -141,18 +138,13 @@ public class ShadowLayer {
 
     private int getOpacity (Vector2D<Integer> cameraDrawPoint){
         try{
-            if(matrixOpacity[cameraDrawPoint.x][cameraDrawPoint.y] > opacity){
-                return opacity;
-            }else if(matrixOpacity[cameraDrawPoint.x][cameraDrawPoint.y] < 0 ){
-                return 0;
-            }
-
+            if(matrixOpacity[cameraDrawPoint.x][cameraDrawPoint.y] > opacity){ return opacity; }
+            else if(matrixOpacity[cameraDrawPoint.x][cameraDrawPoint.y] < 0 ){ return 0; }
             return matrixOpacity[cameraDrawPoint.x][cameraDrawPoint.y];
-        }catch(java.lang.ArrayIndexOutOfBoundsException e){
-            //e.printStackTrace();
-            return opacity;
         }
+        catch(java.lang.ArrayIndexOutOfBoundsException e){ return opacity; }
     }
+
     //Este es un cast a formato tile de pixeles
     private Vector2D<Integer> getWindowViewedDrawPoint (Vector2D<Integer> cameraTilePositionn, CameraComponent cameraComponent){
         Vector2D<Float> cameraAABBPosition = new Vector2D<Float>(cameraComponent.GetCoordinates().x , cameraComponent.GetCoordinates().y );

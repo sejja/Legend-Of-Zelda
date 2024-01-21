@@ -119,16 +119,12 @@ public class ColliderManager {
     }
 
     private boolean hasCollided(BoxCollider colliderA, BoxCollider colliderB){
-        //Classical paradigm
         EuclideanCoordinates coords = new EuclideanCoordinates(colliderA.GetParent().getPseudoPosition());
         Float distanceY = Math.abs(coords.getVectorToAnotherActor(colliderB.GetParent().getPseudoPosition()).y);
         Float limitY = (colliderA.GetBounds().GetScale().y + colliderB.GetBounds().GetScale().y)/2;
         Float distanceX = Math.abs(coords.getVectorToAnotherActor(colliderB.GetParent().getPseudoPosition()).x);
         Float limitX = (colliderA.GetBounds().GetScale().x + colliderB.GetBounds().GetScale().x)/2;
         return (distanceX < limitX) && (distanceY < limitY);
-
-        //purely functional 0 readability 
-        //return Math.abs((colliderA.GetParent().getPseudoPosition()).getVectorToAnotherActor(colliderB.GetParent().getPseudoPosition()).x) < (colliderA.GetBounds().GetScale().y + colliderB.GetBounds().GetScale().y)/2 && Math.abs((colliderA.GetParent().getPseudoPosition()).getVectorToAnotherActor(colliderB.GetParent().getPseudoPosition()).y) < (colliderA.GetBounds().GetScale().y + colliderB.GetBounds().GetScale().y)/2;
     }
 
     /** Determine if it has collided with the player

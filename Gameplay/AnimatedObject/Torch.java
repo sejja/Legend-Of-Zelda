@@ -136,7 +136,7 @@ public class Torch extends AnimatedObject implements Interaction, StaticPlayerCo
         double distance = Math.sqrt( Math.pow(tilePosition.x-origin.x,2) + Math.pow(tilePosition.y-origin.y,2) );
         if (distance>radius){return 0;}
         final double coeficient = ShadowLayer.getShadowLayer().opacity;
-        double difference = Math.round( (-( ( coeficient*distance ) / radius ) + coeficient)); //Esos espacios NO SE TOCA <-----------------------------------------
+        double difference = Math.round( (-( ( coeficient*distance ) / radius ) + coeficient)); 
         return (int) difference;
     }
 
