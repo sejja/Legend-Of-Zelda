@@ -259,8 +259,7 @@ public class World {
                 z.SetPanning(new Vector2D<Float>(sTransitionDir.x * sElapsedTime * 20.f * 64.f,
                 sTransitionDir.y * sElapsedTime * 20.f * 64.f));
                 
-                sElapsedTime += 0.016;
-
+                sElapsedTime += 0.005;
             } else { //END TRANSITION
                 GameLoop.SetPaused(false);
                 sTransitioning = false;
