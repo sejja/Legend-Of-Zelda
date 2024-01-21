@@ -852,24 +852,19 @@ public class Player extends Actor {
     
     /** Dash mecanics functions  this function used to arrows to simulate a classic dash
      *  The first arrow and player have the same instance of the vectorposition it moves modifiying the position of the arrow and the vecto at the same time
-     *  The second arrow it a arrow that contais a 1 frame animation and its has a low range to emulate a dash effect
      * 
      */
     private void dash (){
-        /*  This function used to arrows to simulate a classic dash
-         *      The first arrow and player have the same instance of the vectorposition it moves modifiying the position of the arrow and the vecto at the same time
-         *      The second arrow it a arrow that contais a 1 frame animation and its has a low range to emulate a dash effect
-         */
-        //Asset dashaAsset = AssetManager.Instance().GetResource("Content/Animations/Link/LinkDashSpriteSheet.png");
 
         Arrow dash_movement = new Arrow(this, 30, 250, true);
         dash_movement.SetScale(new Vector2D<>(0f, 0f));
         ObjectManager.GetObjectManager().AddEntity(dash_movement);
-
         movable = false;
         dash = false;
         able_to_takeDamage = true;
+
     }
+
     //------------------------------------------------------------------------
     
     /** To pause the gameplay
