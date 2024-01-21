@@ -406,7 +406,7 @@ public class Player extends Actor {
          // Get amount of free memory within the heap in bytes. This size will increase // after garbage collection and decrease as new objects are created.
         long heapFreeSize = Runtime.getRuntime().freeMemory(); 
         
-        System.out.println("heap size: " + (heapSize - heapFreeSize));
+        //System.out.println("heap size: " + (heapSize - heapFreeSize));
 
     }
 
