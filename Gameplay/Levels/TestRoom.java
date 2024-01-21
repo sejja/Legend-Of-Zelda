@@ -55,13 +55,6 @@ public class TestRoom extends World {
         ObjectManager.GetObjectManager().AddEntity(new Npc("Juan", new Spritesheet(AssetManager.Instance().GetResource("Content/Animations/NPC/NPC_boy.png"), new Vector2D<Integer>(64, 64)), new Vector2D<Float>(1580.f, 1550.f), new Vector2D<Float>(78.f, 78.f),0, stop) );
         
         
-      /* 
-        for(int i = 0; i < 1; i++){
-            ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Integer>(10, 10)));
-            ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Integer>(11, 11)));
-            ObjectManager.GetObjectManager().AddEntity(new GreenKnight(new Vector2D<Integer>(23, 23)));
-        }
-        */
         var z = (ZeldaCameraComponent) GraphicsPipeline.GetGraphicsPipeline().GetBindedCamera();
 
         Vector2D<Float> topright = new Vector2D<>(GetBounds().GetPosition().x + 1280.f / 2, GetBounds().GetPosition().y + 720.f / 2);
